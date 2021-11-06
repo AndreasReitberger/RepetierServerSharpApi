@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net472</TargetFrameworks>
+    <RootNamespace>AndreasReitberger</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>Andreas Reitberger</Authors>
+    <Company>Andreas Reitberger</Company>
+    <Copyright>Andreas Reitberger</Copyright>
+    <Description>A simple RestApi for interacting with a Repetier Server Pro instance.</Description>
+    <PackageTags>Repetier, Server, Pro, API, Rest, Sharp</PackageTags>
+    <PackageProjectUrl>https://github.com/AndreasReitberger/RepetierServerSharpApi</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AndreasReitberger/RepetierServerSharpApi</RepositoryUrl>
+    <AssemblyVersion>1.1.18.0</AssemblyVersion>
+    <FileVersion>1.1.18.0</FileVersion>
+    <Version>1.1.18</Version>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="RCoreSharp" Version="1.0.4" />
+    <PackageReference Include="RestSharp" Version="106.13.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
+  </ItemGroup>
+
+</Project>
