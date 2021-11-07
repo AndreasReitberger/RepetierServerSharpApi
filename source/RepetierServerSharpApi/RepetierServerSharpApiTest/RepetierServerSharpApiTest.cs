@@ -90,7 +90,7 @@ namespace RepetierServerSharpApiTest
                 }
 
             }
-            catch (Exception exc) 
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -102,7 +102,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 // Check if all works
-                _ = new GcodeCommandInfo() { Sent = true, Command = "G28 M500;", Id = Guid.NewGuid(), Succeeded = true, TimeStamp = DateTime.Now}.ToString();
+                _ = new GcodeCommandInfo() { Sent = true, Command = "G28 M500;", Id = Guid.NewGuid(), Succeeded = true, TimeStamp = DateTime.Now }.ToString();
                 _ = new RepetierGcodeScript() { Name = "My Script", Script = "G28 M500" }.ToString();
                 _ = new RepetierPrinterConfig()
                 {
@@ -112,21 +112,21 @@ namespace RepetierServerSharpApiTest
                     },
                     Extruders = new()
                     {
-                        new() { Acceleration = 5000, Alias = "My #1 Extruder", ExtrudeSpeed=5000, MaxTemp=300, Num=0},
-                        new() { Acceleration = 5000, Alias = "My #2 Extruder", ExtrudeSpeed=5000, MaxTemp=300, Num=1},
+                        new() { Acceleration = 5000, Alias = "My #1 Extruder", ExtrudeSpeed = 5000, MaxTemp = 300, Num = 0 },
+                        new() { Acceleration = 5000, Alias = "My #2 Extruder", ExtrudeSpeed = 5000, MaxTemp = 300, Num = 1 },
                     },
                     HeatedBeds = new()
                     {
-                        new() { Alias = "My Heated bed", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() {Temp = 75} } }
+                        new() { Alias = "My Heated bed", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() { Temp = 75 } } }
                     },
                     HeatedChambers = new()
                     {
-                        new() { Alias = "My Heated chamber", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() { Temp = 75} } }
+                        new() { Alias = "My Heated chamber", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() { Temp = 75 } } }
                     },
                     Webcams = new()
                     {
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 0, Orientation = 90},
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 1, Orientation = 180},
+                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 0, Orientation = 90 },
+                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 1, Orientation = 180 },
                     }
 
                 }.ToString();
@@ -160,7 +160,7 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
+
         [TestMethod]
         public async Task ServerLoginTest()
         {
@@ -173,21 +173,22 @@ namespace RepetierServerSharpApiTest
                     bool succeed = false;
                     // Wait 5 minutes
                     CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
-                    _server.LoginResultReceived += ((sender, args) => {
+                    _server.LoginResultReceived += ((sender, args) =>
+                    {
                         Assert.IsTrue(args.LoginSucceeded);
                         succeed = true;
                         cts.Cancel();
                     });
                     _server.StartListening();
                     // Wait till session is esstablished
-                    while(_server.Session == null && !cts.IsCancellationRequested)
+                    while (_server.Session == null && !cts.IsCancellationRequested)
                     {
                         await Task.Delay(250);
                     }
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
                     _server.Login("testuser", SecureStringHelper.ConvertToSecureString("testpassword"), _server.SessionId);
-                    while(!cts.IsCancellationRequested && !succeed)
+                    while (!cts.IsCancellationRequested && !succeed)
                     {
                         await Task.Delay(100);
                     }
@@ -312,7 +313,7 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync(-1, true);
 
                     ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
-                    if(models?.Count > 0)
+                    if (models?.Count > 0)
                     {
                         bool printed = await _server.CopyModelToPrintQueueAsync(Model: models[0], startPrintIfPossible: true);
                         Assert.IsTrue(printed);
@@ -469,13 +470,13 @@ namespace RepetierServerSharpApiTest
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
                     await _server.RefreshAllAsync();
-                    if(_server.IsPrinting)
+                    if (_server.IsPrinting)
                     {
                         var info = _server.ActivePrintInfo;
                         if (info == null)
                             Assert.Fail("Print info was null");
                     }
-                } while (_server.IsOnline && !cts.IsCancellationRequested);                
+                } while (_server.IsOnline && !cts.IsCancellationRequested);
                 Assert.IsTrue(cts.IsCancellationRequested);
             }
             catch (Exception exc)
@@ -483,7 +484,7 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
+
         [TestMethod]
         public async Task WebsocketTest()
         {
@@ -542,7 +543,7 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
+
         /**/
         [TestMethod]
         public async Task SetHeatedbedTest()
@@ -587,7 +588,7 @@ namespace RepetierServerSharpApiTest
                         cts = new CancellationTokenSource(new TimeSpan(0, 5, 0));
                         if (result)
                         {
-                            
+
                             while (temp > 23)
                             {
                                 var state = await _server.GetStateObjectAsync();
@@ -614,7 +615,7 @@ namespace RepetierServerSharpApiTest
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
             }
-            catch(TaskCanceledException texc)
+            catch (TaskCanceledException texc)
             {
                 Assert.Fail(texc.Message);
             }
@@ -668,7 +669,7 @@ namespace RepetierServerSharpApiTest
                         cts = new CancellationTokenSource(new TimeSpan(0, 3, 0));
                         if (result)
                         {
-                            
+
                             while (extruderTemp > 28)
                             {
                                 var state = await _server.GetStateObjectAsync();
@@ -695,7 +696,7 @@ namespace RepetierServerSharpApiTest
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
             }
-            catch(TaskCanceledException texc)
+            catch (TaskCanceledException texc)
             {
                 Assert.Fail(texc.Message);
             }
@@ -705,6 +706,6 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
+
     }
 }
