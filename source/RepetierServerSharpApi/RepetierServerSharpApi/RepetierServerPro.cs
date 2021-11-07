@@ -1029,7 +1029,7 @@ namespace AndreasReitberger
         }
 
         #endregion
-        
+
         #region Jobs
         [JsonIgnore]
         [XmlIgnore]
@@ -3678,7 +3678,7 @@ namespace AndreasReitberger
             try
             {
                 RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(currentPrinter, "copyModel", $"{{\"id\":{Model.Id}, \"autostart\":{(startPrintIfPossible ? "true": "false")}}}")
+                    await SendRestApiRequestAsync(currentPrinter, "copyModel", $"{{\"id\":{Model.Id}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}")
                     .ConfigureAwait(false);
                 await RefreshJobListAsync().ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
@@ -3733,7 +3733,7 @@ namespace AndreasReitberger
 
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "addModelGroup", string.Format("{{\"groupName\":\"{0}\"}}", GroupName))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3748,7 +3748,7 @@ namespace AndreasReitberger
         {
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(PrinterName, "addModelGroup", string.Format("{{\"groupName\":\"{0}\"}}", GroupName))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3767,7 +3767,7 @@ namespace AndreasReitberger
 
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "delModelGroup", string.Format("{{\"groupName\":\"{0}\"}}", GroupName))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3782,7 +3782,7 @@ namespace AndreasReitberger
         {
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(PrinterName, "delModelGroup", string.Format("{{\"groupName\":\"{0}\"}}", GroupName))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3801,7 +3801,7 @@ namespace AndreasReitberger
 
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "moveModelFileToGroup", string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", GroupName, Id))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3816,7 +3816,7 @@ namespace AndreasReitberger
         {
             try
             {
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(PrinterName, "moveModelFileToGroup", string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", GroupName, Id))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -3948,7 +3948,7 @@ namespace AndreasReitberger
                     return false;
                 }
 
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "startJob", string.Format("{{\"id\":{0}}}", Id))
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
@@ -4015,7 +4015,7 @@ namespace AndreasReitberger
                     return false;
                 }
 
-                RepetierApiRequestRespone result = 
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "continueJob")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
@@ -4054,8 +4054,8 @@ namespace AndreasReitberger
                 {
                     return false;
                 }
-                
-                RepetierApiRequestRespone result = 
+
+                RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(currentPrinter, "stopJob", "")
                     .ConfigureAwait(false);
 
@@ -4352,7 +4352,7 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        
+
         public async Task<bool> SetPrinterConfigAsync(RepetierPrinterConfig newConfig, string PrinterName = "")
         {
             string currentPrinter = string.IsNullOrEmpty(PrinterName) ? GetActivePrinterSlug() : PrinterName;
