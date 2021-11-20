@@ -240,7 +240,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    var modelgroups = await _server.GetModelGroupsAsync();
+                    ObservableCollection<string> modelgroups = await _server.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
                 }
                 else
@@ -265,7 +265,12 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync(0, true);
 
                     ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
-                    Assert.IsTrue(models != null && models.Count > 0);
+                    Assert.IsTrue(models?.Count > 0);
+
+                    // Try to fetch models from a second printer, which is not set active at the moment
+                    string secondPrinter = "Prusa_i3_MK3S1";
+                    ObservableCollection<RepetierModel> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
+                    Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -342,9 +347,9 @@ namespace RepetierServerSharpApiTest
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    var report = RepetierServerPro.Instance.GetHistoryReport(522);
+                    byte[] report = RepetierServerPro.Instance.GetHistoryReport(522);
                     Assert.IsTrue(report.Length > 0);
-                    string downloadTarget = @"C:\VS\RepetierServerSharpApi\Source\RepetierServerSharpApi\TestResults\report.pdf";
+                    string downloadTarget = @"TestResults/report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
                     Assert.IsTrue(File.Exists(downloadTarget));
                     //Process.Start(downloadTarget);

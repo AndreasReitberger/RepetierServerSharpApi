@@ -1884,7 +1884,7 @@ namespace AndreasReitberger
                 if (IsSecure)
                 {
                     // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    var sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
+                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
                     //Avoid TlsHandshakeFailure
                     if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
                     {
@@ -1917,22 +1917,22 @@ namespace AndreasReitberger
                 if (WebSocket != null)
                 {
                     if (WebSocket.State == WebSocketState.Open)
+                    {
 #if NETSTANDARD
                         WebSocket.CloseAsync();
 #else
                         WebSocket.Close();
 #endif
+                    }
                     StopPingTimer();
 
                     WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    //WebSocket.DataReceived -= WebSocket_DataReceived;
                     WebSocket.Opened -= WebSocket_Opened;
                     WebSocket.Closed -= WebSocket_Closed;
                     WebSocket.Error -= WebSocket_Error;
 
                     WebSocket = null;
                 }
-                //WebSocket = null;
             }
             catch (Exception exc)
             {
@@ -1942,9 +1942,20 @@ namespace AndreasReitberger
 
         private void WebSocket_Error(object sender, ErrorEventArgs e)
         {
-            IsListeningToWebsocket = false;
-            OnWebSocketError(e);
-            OnError(e);
+            try
+            {
+                IsListeningToWebsocket = false;
+                OnWebSocketError(e);
+                OnError(e);
+            }
+            catch(Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+            finally
+            {
+                DisconnectWebSocket();
+            }
         }
 
         private void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -2332,7 +2343,9 @@ namespace AndreasReitberger
             {
                 //CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
                 if (string.IsNullOrEmpty(PrinterName))
+                {
                     PrinterName = "";
+                }
 
                 // https://www.repetier-server.com/manuals/programming/API/index.html
                 RestClient client = new(FullWebAddress);
@@ -2357,9 +2370,13 @@ namespace AndreasReitberger
                 request.AddParameter("a", Command, ParameterType.QueryString);
                 request.AddParameter("data", JsonDataString, ParameterType.QueryString);
                 if (!string.IsNullOrEmpty(API))
+                {
                     request.AddParameter("apikey", API, ParameterType.QueryString);
+                }
                 else if (!string.IsNullOrEmpty(SessionId))
+                {
                     request.AddParameter("sess", SessionId, ParameterType.QueryString);
+                }
 
                 Uri fullUri = client.BuildUri(request);
                 try
@@ -2407,7 +2424,9 @@ namespace AndreasReitberger
                 catch (TaskCanceledException texp)
                 {
                     if (!IsOnline)
+                    {
                         OnError(new UnhandledExceptionEventArgs(texp, false));
+                    }
                     // Throws exception on timeout, not actually an error but indicates if the server is reachable.
                 }
 
@@ -3544,7 +3563,9 @@ namespace AndreasReitberger
 
                 // Reporting
                 if (Prog != null)
+                {
                     Prog.Report(0);
+                }
 
                 RepetierModelList models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
                 if (models != null)
@@ -3563,14 +3584,18 @@ namespace AndreasReitberger
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
                                 // Load image depending on settings
-                                if (ImageType == RepetierImageType.Thumbnail)
-                                    model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                else if (ImageType == RepetierImageType.Image)
-                                    model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                                else
+                                switch (ImageType)
                                 {
-                                    model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                    model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                                    case RepetierImageType.Thumbnail:
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                                        break;
+                                    case RepetierImageType.Image:
+                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                                        break;
+                                    default:
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                                        break;
                                 }
 
                                 if (Prog != null)
@@ -3578,9 +3603,13 @@ namespace AndreasReitberger
                                     float progress = ((float)i / total) * 100f;
                                     //int progressInt = Convert.ToInt32(progress);
                                     if (i < total - 1)
+                                    {
                                         Prog.Report(Convert.ToInt32(progress));
+                                    }
                                     else
+                                    {
                                         Prog.Report(100);
+                                    }
                                 }
                             }
                         }
@@ -3617,14 +3646,18 @@ namespace AndreasReitberger
                     model.IsLoadingImage = true;
                     model.ImageType = ImageType;
                     // Load image depending on settings
-                    if (ImageType == RepetierImageType.Thumbnail)
-                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                    else if (ImageType == RepetierImageType.Image)
-                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                    else
+                    switch (ImageType)
                     {
-                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                        case RepetierImageType.Thumbnail:
+                            model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                            break;
+                        case RepetierImageType.Image:
+                            model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                            break;
+                        default:
+                            model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                            model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                            break;
                     }
                     model.IsLoadingImage = false;
                 }
