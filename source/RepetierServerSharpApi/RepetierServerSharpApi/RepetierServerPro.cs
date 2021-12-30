@@ -240,6 +240,14 @@ namespace AndreasReitberger
         [JsonIgnore]
         [XmlIgnore]
         HttpMessageHandler _httpHandler;
+        /*
+        HttpMessageHandler _httpHandler = new HttpClientHandler()
+        {
+            UseProxy = false,
+            UseDefaultCredentials = true,
+            AllowAutoRedirect = true,
+        };
+        */
         [JsonIgnore]
         [XmlIgnore]
         public HttpMessageHandler HttpHandler
@@ -1444,18 +1452,17 @@ namespace AndreasReitberger
         {
             get
             {
-                return (
-                    !string.IsNullOrEmpty(ServerAddress) && !string.IsNullOrEmpty(API)) && Port > 0 &&
+                return 
+                    !string.IsNullOrEmpty(ServerAddress) && Port > 0 && //  !string.IsNullOrEmpty(API)) &&
                     (
                         // Address
                         (Regex.IsMatch(ServerAddress, RegexHelper.IPv4AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.IPv6AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.Fqdn)) &&
-                        // API-Key
-                        (Regex.IsMatch(API, RegexHelper.RepetierServerProApiKey))
+                        // API-Key (also allow empty key if the user performs a login instead
+                        (string.IsNullOrEmpty(API) ? true : Regex.IsMatch(API, RegexHelper.RepetierServerProApiKey))
                     ||
                         // Or validation rules are overriden
                         OverrideValidationRules
-                    )
-                    ;
+                    );
             }
         }
         #endregion
@@ -2843,16 +2850,20 @@ namespace AndreasReitberger
 
         WebProxy GetCurrentProxy()
         {
-            var proxy = new WebProxy()
+            WebProxy proxy = new WebProxy()
             {
                 Address = GetProxyUri(),
                 BypassProxyOnLocal = false,
                 UseDefaultCredentials = ProxyUseDefaultCredentials,
             };
             if (ProxyUseDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
+            {
                 proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
+            }
             else
+            {
                 proxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
+            }
             return proxy;
         }
         void UpdateWebClientInstance()
@@ -2860,21 +2871,19 @@ namespace AndreasReitberger
             if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
             {
                 //var proxy = GetCurrentProxy();
-                var handler = HttpHandler ?? new HttpClientHandler()
+                HttpMessageHandler handler = HttpHandler ?? new HttpClientHandler()
+                //HttpMessageHandler handler = new HttpClientHandler()
                 {
                     UseProxy = true,
                     Proxy = GetCurrentProxy(),
                     AllowAutoRedirect = true,
                 };
-
                 client = new HttpClient(handler: handler, disposeHandler: true);
             }
             else
             {
-                if (HttpHandler == null)
-                    client = new HttpClient();
-                else
-                    client = new HttpClient(handler: HttpHandler, disposeHandler: true);
+                // Init a default handler
+                client = HttpHandler == null ? new HttpClient() : new HttpClient(handler: HttpHandler, disposeHandler: true);
             }
         }
         #endregion
@@ -2949,9 +2958,13 @@ namespace AndreasReitberger
             if (IsListening)// avoid multiple sessions
             {
                 if (StopActiveListening)
+                {
                     StopListening();
+                }
                 else
+                {
                     return; // StopListening();
+                }
             }
             ConnectWebSocket();
             Timer = new Timer(async (action) =>
@@ -2974,7 +2987,9 @@ namespace AndreasReitberger
                     await Task.WhenAll(tasks).ConfigureAwait(false);
                 }
                 else if (IsListening)
+                {
                     StopListening();
+                }
             }, null, 0, RefreshInterval * 1000);
             IsListening = true;
         }
@@ -3237,31 +3252,48 @@ namespace AndreasReitberger
             return isReachable;
         }
 
-        public async Task CheckOnlineAsync(int Timeout = 10000)
+        public async Task CheckOnlineAsync(int Timeout = 10000, bool resolveDnsFirst = true)
         {
             CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
-            await CheckOnlineAsync(cts).ConfigureAwait(false);
+            await CheckOnlineAsync(cts, resolveDnsFirst).ConfigureAwait(false);
         }
 
-        public async Task CheckOnlineAsync(CancellationTokenSource cts)
+        public async Task CheckOnlineAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
         {
             if (IsConnecting) return; // Avoid multiple calls
             IsConnecting = true;
             bool isReachable = false;
             try
             {
-                // Cancel after timeout
-                //var cts = new CancellationTokenSource(new TimeSpan(0, 0, 0, 0, Timeout));
-                //string uriString = string.Format("{0}{1}:{2}", httpProtocol, ServerAddress, Port);
-                string uriString = FullWebAddress; // $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
+                string uriString = FullWebAddress;
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(uriString, cts.Token).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
+                    // This will try to resolve the hostname before sending the reqeuest.
+                    if (resolveDnsFirst)
+                    {
+                        try
+                        {
+                            IPHostEntry host = Dns.GetHostEntry(ServerAddress);
+                            IPAddress address = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                            if(address != null)
+                            {
+                                uriString = $"{(IsSecure ? "https" : "http")}://{address}:{Port}";
+                            }
+                        }
+                        catch (Exception exc)
+                        {
+                            OnError(new UnhandledExceptionEventArgs(exc, false));
+                        }
+                    }
+                    await Task.Delay(10);
+                    HttpResponseMessage response =
+                        await client.GetAsync(uriString, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false);
+                    _ = response.EnsureSuccessStatusCode();
                     if (response != null)
                     {
                         isReachable = response.IsSuccessStatusCode;
                     }
+                    await Task.Delay(50);
                 }
                 catch (InvalidOperationException iexc)
                 {
@@ -3470,10 +3502,10 @@ namespace AndreasReitberger
             {
                 if (temp == null) return false;
                 else return
-                    !(this.ServerAddress == temp.ServerAddress &&
-                        this.Port == temp.Port &&
-                        this.API == temp.API &&
-                        this.IsSecure == temp.IsSecure
+                    !(ServerAddress == temp.ServerAddress &&
+                        Port == temp.Port &&
+                        API == temp.API &&
+                        IsSecure == temp.IsSecure
                         )
                     ;
             }
@@ -3961,13 +3993,13 @@ namespace AndreasReitberger
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierJobListRespone result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
-                JobList = result != null ? new ObservableCollection<RepetierJobListItem>(result.Data) : jobList;
+                JobList = result != null ? new(result.Data) : jobList;
 
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ModelGroups = new ObservableCollection<string>();
+                JobList = new();
             }
         }
 
@@ -4558,26 +4590,29 @@ namespace AndreasReitberger
 
         #region Fan
 
-        public async Task<bool> SetFanSpeedAsync(int FanId, int Speed, bool inPercent)
+        public async Task<bool> SetFanSpeedAsync(int fanId, int speed, bool inPercent)
         {
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                int SetSpeed = 0;
+                int SetSpeed = speed;
                 if (!inPercent)
                 {
                     // Avoid invalid ranges
-                    if (Speed > 255)
+                    if (speed > 255)
                         SetSpeed = 255;
-                    else if (Speed < 0)
+                    else if (speed < 0)
                         SetSpeed = 0;
                 }
                 else
-                    SetSpeed = Convert.ToInt32(((float)Speed) * 255f / 100f);
-                var result = await SendRestApiRequestAsync(currentPrinter, "setFanSpeed",
-                    string.Format("{{\"speed\":{0}, \"fanid\":{1}}}", SetSpeed, FanId)).ConfigureAwait(false);
+                {
+                    SetSpeed = Convert.ToInt32(((float)speed) * 255f / 100f);
+                }
+
+                RepetierApiRequestRespone result = await SendRestApiRequestAsync(currentPrinter, "setFanSpeed",
+                    string.Format("{{\"speed\":{0}, \"fanid\":{1}}}", SetSpeed, fanId)).ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4983,7 +5018,7 @@ namespace AndreasReitberger
         #endregion
 
         #region Projects
-        public byte[] GetImageFromUri(string path, int Timeout = 10000)
+        public byte[] GetImageFromUri(string path, int timeout = 10000)
         {
             try
             {
@@ -4993,7 +5028,7 @@ namespace AndreasReitberger
                 {
                     RequestFormat = DataFormat.None,
                     Method = Method.GET,
-                    Timeout = Timeout
+                    Timeout = timeout
                 };
 
                 request.AddParameter("apikey", API);
@@ -5008,7 +5043,7 @@ namespace AndreasReitberger
                 return new byte[0];
             }
         }
-        public byte[] GetFileFromUri(string path, int Timeout = 10000)
+        public byte[] GetFileFromUri(string path, int timeout = 10000)
         {
             try
             {
@@ -5018,7 +5053,7 @@ namespace AndreasReitberger
                 {
                     RequestFormat = DataFormat.None,
                     Method = Method.GET,
-                    Timeout = Timeout
+                    Timeout = timeout
                 };
 
                 request.AddParameter("apikey", API);

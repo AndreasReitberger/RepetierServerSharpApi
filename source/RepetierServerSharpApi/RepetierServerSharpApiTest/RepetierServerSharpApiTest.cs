@@ -20,10 +20,10 @@ namespace RepetierServerSharpApiTest
 
         private readonly string _host = "192.168.10.112";
         private readonly int _port = 3344;
-        private readonly string _api = "aa99e140-bc3c-4eb5-b136-880517f2480d";
+        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1";
         private readonly bool _ssl = false;
 
-        private readonly bool _skipWebSocketTests = true;
+        private readonly bool _skipWebSocketTests = false;
         private readonly bool _skipOnlineTests = true;
         private readonly bool _skipPrinterActionTests = true;
 
@@ -294,7 +294,7 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync(-1, true);
 
                     ObservableCollection<RepetierJobListItem> jobs = await _server.GetJobListAsync();
-                    Assert.IsTrue(jobs != null && jobs.Count > 0);
+                    Assert.IsTrue(jobs != null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");

@@ -6,7 +6,7 @@ namespace AndreasReitberger.Models
     public class RepetierModelsChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public ObservableCollection<RepetierModel> NewModels { get; set; } = new ObservableCollection<RepetierModel>();
+        public ObservableCollection<RepetierModel> NewModels { get; set; } = new();
         #endregion
 
         #region Overrides
