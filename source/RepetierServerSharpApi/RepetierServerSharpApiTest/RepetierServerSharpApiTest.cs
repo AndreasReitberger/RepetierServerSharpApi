@@ -210,6 +210,10 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -234,14 +238,23 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
+                    {
+                        await _server.SetPrinterActiveAsync();
+                    }
 
                     ObservableCollection<string> modelgroups = await _server.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
+
+                    await _server.RefreshModelGroupsAsync();
+                    Assert.IsTrue(_server.ModelGroups?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -258,6 +271,10 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -287,6 +304,10 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -320,7 +341,7 @@ namespace RepetierServerSharpApiTest
                     ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
                     if (models?.Count > 0)
                     {
-                        bool printed = await _server.CopyModelToPrintQueueAsync(Model: models[0], startPrintIfPossible: true);
+                        bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: true);
                         Assert.IsTrue(printed);
                     }
                     else
@@ -369,11 +390,15 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    var report = await RepetierServerPro.Instance.GetGPIOListAsync();
+                    ObservableCollection<RepetierGpioListItem> report = await _server.GetGPIOListAsync();
                     Assert.IsTrue(report.Count > 0);
                 }
                 else
@@ -391,11 +416,15 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    var report = await RepetierServerPro.Instance.GetHistoryListAsync(_server.ActivePrinter.Slug);
+                    ObservableCollection<RepetierHistoryListItem> report = await _server.GetHistoryListAsync(_server.ActivePrinter.Slug);
                     Assert.IsTrue(report.Count > 0);
                 }
                 else
@@ -413,11 +442,15 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    var report = await RepetierServerPro.Instance.GetWebCallActionsAsync();
+                    ObservableCollection<RepetierWebCallAction> report = await _server.GetWebCallActionsAsync();
                     Assert.IsTrue(report.Count > 0);
                 }
                 else
@@ -435,11 +468,15 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<ExternalCommand> commands = await RepetierServerPro.Instance.GetExternalCommandsAsync();
+                    ObservableCollection<ExternalCommand> commands = await _server.GetExternalCommandsAsync();
                     Assert.IsTrue(commands.Count > 0);
                 }
                 else
@@ -455,10 +492,11 @@ namespace RepetierServerSharpApiTest
         [TestMethod]
         public async Task OnlineTest()
         {
-            if (_skipOnlineTests) return;
+            //if (_skipOnlineTests) return;
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                var host = "192.168.10.112";
+                RepetierServerPro _server = new(host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.Error += (o, args) =>
                 {
@@ -468,6 +506,7 @@ namespace RepetierServerSharpApiTest
                 {
                     Assert.Fail(args.ToString());
                 };
+                await _server.CheckOnlineAsync(3500);//.ConfigureAwait(false);
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 do
@@ -644,7 +683,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(1, true);
 
-                    bool result = await _server.SetExtruderTemperatureAsync(Extruder: 0, Temperature: 30);
+                    bool result = await _server.SetExtruderTemperatureAsync(extruder: 0, temperature: 30);
                     // Set timeout to 3 minutes
                     var cts = new CancellationTokenSource(new TimeSpan(0, 3, 0));
 

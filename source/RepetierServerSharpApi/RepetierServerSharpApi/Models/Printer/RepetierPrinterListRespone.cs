@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public class RepetierJsonConvertEventArgs : EventArgs
+    public partial class RepetierPrinterListRespone
     {
         #region Properties
-        public string Message { get; set; }
-        public string OriginalString { get; set; }
-        public string TargetType { get; set; }
-        public Exception Exception { get; set; }
+        [JsonProperty("data")]
+        public List<RepetierPrinter> Printers { get; set; } = new();
         #endregion
 
         #region Overrides
