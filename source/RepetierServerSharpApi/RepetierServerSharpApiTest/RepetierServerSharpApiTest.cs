@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace RepetierServerSharpApiTest
 {
@@ -23,8 +24,6 @@ namespace RepetierServerSharpApiTest
         private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1";
         private readonly bool _ssl = false;
 
-        private readonly bool _skipWebSocketTests = false;
-        private readonly bool _skipOnlineTests = true;
         private readonly bool _skipPrinterActionTests = true;
 
         [TestMethod]
@@ -304,7 +303,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                _server.Error += (sender, e) =>
                 {
                     Assert.Fail(e.ToString());
                 };
@@ -364,13 +363,26 @@ namespace RepetierServerSharpApiTest
             try
             {
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                _server.Error += (sender, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
-                    await _server.SetPrinterActiveAsync(1);
-                    byte[] report = RepetierServerPro.Instance.GetHistoryReport(522);
+                    await _server.SetPrinterActiveAsync();
+                    ObservableCollection<RepetierHistorySummaryItem> history = await _server.GetHistorySummaryItemsAsync("", 2021, true);
+                    Assert.IsTrue(history?.Any());
+
+                    ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
+                    Assert.IsTrue(list?.Any());
+
+                    RepetierHistoryListItem historyItem = list.FirstOrDefault();
+                    Assert.IsNotNull(historyItem);
+
+                    byte[] report = await RepetierServerPro.Instance.GetHistoryReportAsync(historyItem.Id);
                     Assert.IsTrue(report.Length > 0);
-                    string downloadTarget = @"TestResults/report.pdf";
+                    string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
                     Assert.IsTrue(File.Exists(downloadTarget));
                     //Process.Start(downloadTarget);
@@ -534,8 +546,6 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                if (_skipWebSocketTests) return;
-
                 Dictionary<DateTime, string> websocketMessages = new();
                 RepetierServerPro _server = new(_host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
