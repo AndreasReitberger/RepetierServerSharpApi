@@ -1,5 +1,10 @@
 # RepetierServerSharpApi
-An api to interact with a Repetier Server Pro instance.
+An C# based library to to interact with a Repetier Server Pro instance via REST-API.
+
+# Nuget
+Get the latest version from nuget.org<br>
+[![NuGet](https://img.shields.io/nuget/v/RepetierServerSharpApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/RepetierServerSharpApi/)
+[![NuGet](https://img.shields.io/nuget/dt/RepetierServerSharpApi.svg)](https://www.nuget.org/packages/RepetierServerSharpApi)
 
 # Usage
 You can find some usage examples in the TestProject of the source code.
