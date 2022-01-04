@@ -1,6 +1,6 @@
-﻿using AndreasReitberger.Core.Utilities;
+﻿using AndreasReitberger.Core.Interfaces;
+using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Enum;
-using AndreasReitberger.Interfaces;
 using AndreasReitberger.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -26,7 +26,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger
 {
-    public class RepetierServerPro : IPrintServerClient
+    public class RepetierServerPro : IRestApiClient
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -2561,9 +2561,22 @@ namespace AndreasReitberger
                 request.AddParameter("t", thumbnail ? "s" : "l");
                 request.AddParameter("apikey", API, ParameterType.QueryString);
 
+                Uri fullUrl = restClient.BuildUri(request);
+
+                // Workaround, because the RestClient returns bad requests
+                using WebClient client = new();
+                byte[] bytes = await client.DownloadDataTaskAsync(fullUrl);
+                if (bytes?.Length == 0)
+                {
+
+                }
+                return bytes;
+
+                /*
                 CancellationTokenSource cts = new(timeout);
                 byte[] respone = await restClient.DownloadDataAsync(request, cts.Token).ConfigureAwait(false);
                 return respone;
+                */
             }
             catch (Exception exc)
             {
@@ -3223,7 +3236,7 @@ namespace AndreasReitberger
 
         public async Task CheckOnlineAsync(int timeout = 10000)
         {
-            CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
+            CancellationTokenSource cts = new(timeout);
             await CheckOnlineAsync(cts).ConfigureAwait(false);
         }
 
@@ -3276,7 +3289,8 @@ namespace AndreasReitberger
             {
                 // Retry with shorter timeout to see if the connection loss is real
                 _retries++;
-                await CheckOnlineAsync(3500).ConfigureAwait(false);
+                cts = new(3500);
+                await CheckOnlineAsync(cts).ConfigureAwait(false);
             }
         }
 
@@ -3482,18 +3496,21 @@ namespace AndreasReitberger
 #endregion
 
 #region DetectChanges
-        public bool CheckIfConfigurationHasChanged(RepetierServerPro temp)
+        public bool CheckIfConfigurationHasChanged(object temp)
         {
             try
             {
-                if (temp == null) return false;
-                else return
-                    !(ServerAddress == temp.ServerAddress &&
-                        Port == temp.Port &&
-                        API == temp.API &&
-                        IsSecure == temp.IsSecure
+                if (temp is not RepetierServerPro tempServer) return false;
+                else
+                {
+                    return
+                    !(ServerAddress == tempServer.ServerAddress &&
+                        Port == tempServer.Port &&
+                        API == tempServer.API &&
+                        IsSecure == tempServer.IsSecure
                         )
                     ;
+                }
             }
             catch (Exception exc)
             {
@@ -5163,12 +5180,18 @@ namespace AndreasReitberger
                 }
 
                 Uri fullUrl = restClient.BuildUri(request);
+
+                // Workaround, because the RestClient returns bad requests
+                return await DownloadFileFromUriAsync(fullUrl).ConfigureAwait(false);
+                
+                /*
                 CancellationTokenSource cts = new(timeout);
                 byte[] respone = await restClient.DownloadDataAsync(request, cts.Token)
                     .ConfigureAwait(false)
                     ;
 
                 return respone;
+                */
             }
             catch (Exception exc)
             {
@@ -5176,63 +5199,19 @@ namespace AndreasReitberger
                 return null;
             }
         }
-
-        [Obsolete("Use \"DownloadFileFromUriAsync()\" instead")]
-        public async Task<byte[]> GetImageFromUriAsync(string path, int timeout = 10000)
+        public async Task<byte[]> DownloadFileFromUriAsync(Uri uri)
         {
             try
             {
-                return await DownloadFileFromUriAsync(path, timeout).ConfigureAwait(false);
-                /*
-                // https://www.repetier-server.com/manuals/programming/API/index.html
-                RestClient client = new(FullWebAddress);
-                RestRequest request = new(path)
-                {
-                    RequestFormat = DataFormat.None,
-                    Method = Method.Get,
-                    Timeout = timeout
-                };
-
-                request.AddParameter("apikey", API);
-                Uri fullUrl = client.BuildUri(request);
-
-                byte[] respone = client.DownloadData(request, true);
-                return respone;
-                */
+                // Workaround, because the RestClient returns bad requests
+                using WebClient client = new();
+                byte[] bytes = await client.DownloadDataTaskAsync(uri);
+                return bytes;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new byte[0];
-            }
-        }
-        [Obsolete("Use \"DownloadFileFromUriAsync()\" instead")]
-        public async Task<byte[]> GetFileFromUriAsync(string path, int timeout = 10000)
-        {
-            try
-            {
-                return await DownloadFileFromUriAsync(path, timeout).ConfigureAwait(false);
-                /*
-                // https://www.repetier-server.com/manuals/programming/API/index.html
-                RestClient client = new(FullWebAddress);
-                RestRequest request = new(path)
-                {
-                    RequestFormat = DataFormat.None,
-                    Method = Method.Get,
-                    Timeout = timeout
-                };
-
-                request.AddParameter("apikey", API);
-                Uri fullUrl = client.BuildUri(request);
-
-                byte[] respone = client.DownloadData(request, true);
-                return respone;
-                */
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new byte[0];
+                return null;
             }
         }
 
@@ -5246,23 +5225,6 @@ namespace AndreasReitberger
                 };
                 string path = $"project/{server}/{action}/{project}/{preview}/";
                 return await DownloadFileFromUriAsync(path, timeout, parameters).ConfigureAwait(false);
-                /*
-                // https://www.repetier-server.com/manuals/programming/API/index.html
-                RestClient client = new(FullWebAddress);
-                RestRequest request = new($"project/{server}/{action}/{project}/{preview}/")
-                {
-                    RequestFormat = DataFormat.None,
-                    Method = Method.Get,
-                    Timeout = timeout
-                };
-
-                request.AddParameter("apikey", API);
-                request.AddParameter("v", size);
-                Uri fullUrl = client.BuildUri(request);
-
-                byte[] respone = client.DownloadData(request, true);
-                return respone;
-                */
             }
             catch (Exception exc)
             {
@@ -5314,34 +5276,6 @@ namespace AndreasReitberger
             }
         }
 
-        /*
-        public RepetierProjectsServerListRespone GetProjectsListServer(string printerName = "")
-        {
-            string result = string.Empty;
-            try
-            {
-                result = SendRestAPIRequest(printerName, "projectsListServer");
-                var info = JsonConvert.DeserializeObject<RepetierProjectsServerListRespone>(result);
-                return info;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result,
-                    Message = jecx.Message,
-                });
-                return new RepetierProjectsServerListRespone();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierProjectsServerListRespone();
-            }
-        }
-        */
-
         public async Task<RepetierProjectsFolderRespone> GetProjectsGetFolderAsync(Guid serverUuid, int index = 1, string printerName = "")
         {
             RepetierApiRequestRespone result = new();
@@ -5378,40 +5312,6 @@ namespace AndreasReitberger
             }
         }
         
-        /*
-        public RepetierProjectsFolderRespone GetProjectsGetFolder(Guid serverUuid, int index = 1, string printerName = "")
-        {
-            string result = string.Empty;
-            try
-            {
-                object data = new
-                {
-                    serveruuid = serverUuid,
-                    idx = index,
-                };
-
-                result = SendRestAPIRequest(printerName, "projectsGetFolder", data);
-                RepetierProjectsFolderRespone info = JsonConvert.DeserializeObject<RepetierProjectsFolderRespone>(result);
-                return info;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result,
-                    Message = jecx.Message,
-                });
-                return new RepetierProjectsFolderRespone();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierProjectsFolderRespone();
-            }
-        }
-        */
-
         public async Task<ObservableCollection<RepetierProjectItem>> GetProjectItemsAsync(Guid serverUuid, int index = 1, string printerName = "")
         {
             RepetierProjectsFolderRespone result;
@@ -5481,77 +5381,6 @@ namespace AndreasReitberger
             }
         }
         
-        /*
-        [Obsolete]
-        public ObservableCollection<RepetierProjectItem> GetProjectItems(Guid serverUuid, int index = 1, string printerName = "")
-        {
-            RepetierProjectsFolderRespone result;
-            ObservableCollection<RepetierProjectItem> items = new();
-            try
-            {
-
-                object data = new
-                {
-                    serveruuid = serverUuid,
-                    idx = index,
-                };
-
-                result = GetProjectsGetFolder(serverUuid, index, printerName);
-                if (result != null && result.Folder != null)
-                {
-                    foreach (RepetierProjectSubFolder item in result.Folder.Folders)
-                        items.Add(new RepetierProjectItem()
-                        {
-                            Index = item.Idx,
-                            Path = item.Name,
-                            Folder = item,
-                            Project = null,
-                        });
-                    foreach (RepetierProject item in result.Folder.Projects)
-                        items.Add(new RepetierProjectItem()
-                        {
-                            Index = item.Folder,
-                            Path = item.Name,
-                            Folder = null,
-                            Project = item,
-                        });
-
-                    // Avoid multiple requests
-                    byte[] emptyProject = GetImageFromUriAsync("img/emptyproject.png");
-                    byte[] folder = GetImageFromUriAsync("img/folder_m.png");
-
-                    foreach (RepetierProjectItem project in items)
-                    {
-                        if (!project.IsFolder && project.Project != null)
-                        {
-                            if (!string.IsNullOrEmpty(project.Project.Preview))
-                                // Load image from server
-                                project.PreviewImage = GetProjectImageAsync(serverUuid, project);
-                            else
-                                // Static image from the server
-                                project.PreviewImage = emptyProject;
-                        }
-                        else if (project.Folder != null)
-                        {
-                            // Static image from the server
-                            project.PreviewImage = folder;
-                        }
-
-                    }
-
-                    return items;
-                }
-                else
-                    return new ObservableCollection<RepetierProjectItem>();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<RepetierProjectItem>();
-            }
-        }
-        */
-
         public async Task<RepetierProjectsProjectRespone> GetProjectsGetProjectAsync(Guid serverUuid, Guid projectUuid, string printerName = "")
         {
             RepetierApiRequestRespone result = new();
@@ -5587,41 +5416,6 @@ namespace AndreasReitberger
                 return new RepetierProjectsProjectRespone();
             }
         }
-        
-        /*
-        [Obsolete]
-        public RepetierProjectsProjectRespone GetProjectsGetProject(Guid serverUuid, Guid projectUuid, string printerName = "")
-        {
-            string result = string.Empty;
-            try
-            {
-                object data = new
-                {
-                    serveruuid = serverUuid,
-                    uuid = projectUuid,
-                };
-
-                result = SendRestAPIRequest(printerName, "projectsGetProject", data);
-                var info = JsonConvert.DeserializeObject<RepetierProjectsProjectRespone>(result);
-                return info;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result,
-                    Message = jecx.Message,
-                });
-                return new RepetierProjectsProjectRespone();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierProjectsProjectRespone();
-            }
-        }
-        */
 
         public async Task<bool> UpdateProjectsGetProjectAsync(Guid serverUuid, RepetierProjectsProject project, string printerName = "")
         {
@@ -5648,30 +5442,6 @@ namespace AndreasReitberger
                 return false;
             }
         }
-
-        /*
-        [Obsolete]
-        public bool UpdateProjectsGetProject(Guid serverUuid, RepetierProjectsProjectRespone project, string printerName = "")
-        {
-            string result;
-            try
-            {
-                object data = new
-                {
-                    serveruuid = serverUuid,
-                    project = project,
-                };
-
-                result = SendRestAPIRequest(printerName, "projectsUpdateProject", data);
-                return GetQueryResult(result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        */
 
         public Uri GetProjectFileUri(Guid serverUuid, RepetierProjectFile file, string action = "view")
         {
@@ -5752,34 +5522,6 @@ namespace AndreasReitberger
                 return false;
             }
         }
-        
-        /*
-        [Obsolete]
-        public bool DeleteProjectFileFromServer(Guid serverUuid, Guid projectUuid, RepetierProjectsProjectComment comment, string printerName = "")
-        {
-            string result;
-            try
-            {
-
-                object data = new
-                {
-                    serveruuid = serverUuid,
-                    projectuuid = projectUuid,
-                    username = comment.User,
-                    comment = comment.Comment,
-                };
-
-                result = SendRestAPIRequest(printerName, "projectDelComment", data);
-                return GetQueryResult(result);
-            }
-
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        */
 
         #endregion
 
@@ -5952,7 +5694,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region GPIO 
+        #region GPIO 
         async Task<RepetierGpioListRespone> GetGPIOListResponeAsync()
         {
             RepetierApiRequestRespone result = new();
@@ -6019,23 +5761,9 @@ namespace AndreasReitberger
 
         #endregion
 
-#region Static
-        public static string ConvertStackToPath(Stack<string> stack, string separator)
-        {
-            StringBuilder sb = new();
-            for (int i = stack.Count - 1; i >= 0; i--)
-            {
-                sb.Append(stack.ElementAt(i));
-                if (i > 0)
-                    sb.Append(separator);
-            }
-            return sb.ToString();
-        }
-#endregion
+        #endregion
 
-#endregion
-
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             try
@@ -6058,9 +5786,9 @@ namespace AndreasReitberger
         {
             return Id.GetHashCode();
         }
-#endregion
+        #endregion
 
-#region Dispose
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -6078,6 +5806,6 @@ namespace AndreasReitberger
                 DisconnectWebSocket();
             }
         }
-#endregion
+        #endregion
     }
 }

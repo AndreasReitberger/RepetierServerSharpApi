@@ -1,6 +1,0 @@
-﻿namespace AndreasReitberger
-{
-    class MultiRepetierServerManager
-    {
-    }
-}
