@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Enum;
 using Newtonsoft.Json;
 using System;
 
@@ -49,22 +50,6 @@ namespace AndreasReitberger.Models
             }
         }
 
-        /*
-        [JsonProperty(nameof(IsEnabled))]
-        bool _isEnabled = false;
-        [JsonIgnore]
-        public bool IsEnabled
-        {
-            get => _isEnabled;
-            set
-            {
-                if (_isEnabled == value) return;
-                _isEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-        */
-
         [JsonProperty(nameof(Name))]
         string _name = string.Empty;
         [JsonIgnore]
@@ -75,6 +60,20 @@ namespace AndreasReitberger.Models
             {
                 if (_name == value) return;
                 _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonProperty(nameof(Type))]
+        RepetierWebcamType _type = RepetierWebcamType.Dynamic;
+        [JsonIgnore]
+        public RepetierWebcamType Type
+        {
+            get => _type;
+            set
+            {
+                if (_type == value) return;
+                _type = value;
                 OnPropertyChanged();
             }
         }
@@ -155,6 +154,11 @@ namespace AndreasReitberger.Models
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
+        }
+
+        public RepetierWebCamSettingsInfo FirstOrDefault(Func<object, bool> p)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

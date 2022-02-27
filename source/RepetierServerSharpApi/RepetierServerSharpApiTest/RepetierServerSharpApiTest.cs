@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Collections.ObjectModel;
 using System.Linq;
+using AndreasReitberger.Enum;
 
 namespace RepetierServerSharpApiTest
 {
@@ -534,6 +535,38 @@ namespace RepetierServerSharpApiTest
                     }
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
                 Assert.IsTrue(cts.IsCancellationRequested);
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task WebcamTest()
+        {
+            try
+            {
+                string host = "192.168.10.113";
+                string api = "671a482d-2879-4a11-a68d-170883c1ba25";
+
+                RepetierServerPro _server = new(host, api, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                Assert.IsTrue(_server.IsOnline);
+
+                await _server.SetPrinterActiveAsync();
+
+                _server.Error += (o, args) =>
+                {
+                    Assert.Fail(args.ToString());
+                };
+
+                RepetierWebcamType type = RepetierWebcamType.Dynamic;
+                string webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
+                
+                type = RepetierWebcamType.Static;              
+                webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
+
             }
             catch (Exception exc)
             {

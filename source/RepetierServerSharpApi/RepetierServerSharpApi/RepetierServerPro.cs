@@ -1,4 +1,5 @@
-﻿using AndreasReitberger.Core.Interfaces;
+﻿using AndreasReitberger.Core.Enums;
+using AndreasReitberger.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Enum;
 using AndreasReitberger.Models;
@@ -26,7 +27,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger
 {
-    public class RepetierServerPro : IRestApiClient
+    public partial class RepetierServerPro : IRestApiClient
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -132,11 +133,9 @@ namespace AndreasReitberger
         #endregion
 
         #region RefreshTimer
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         Timer _timer;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public Timer Timer
         {
             get => _timer;
@@ -167,11 +166,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isListening = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsListening
         {
             get => _isListening;
@@ -189,11 +186,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _initialDataFetched = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool InitialDataFetched
         {
             get => _initialDataFetched;
@@ -344,8 +339,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(OverrideValidationRules))]
         [XmlAttribute(nameof(OverrideValidationRules))]
         bool _overrideValidationRules = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool OverrideValidationRules
         {
             get => _overrideValidationRules;
@@ -432,8 +426,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(RetriesWhenOffline))]
         [XmlAttribute(nameof(RetriesWhenOffline))]
         int _retriesWhenOffline = 2;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int RetriesWhenOffline
         {
             get => _retriesWhenOffline;
@@ -491,8 +484,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(EnableProxy))]
         [XmlAttribute(nameof(EnableProxy))]
         bool _enableProxy = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool EnableProxy
         {
             get => _enableProxy;
@@ -508,8 +500,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(ProxyUseDefaultCredentials))]
         [XmlAttribute(nameof(ProxyUseDefaultCredentials))]
         bool _proxyUseDefaultCredentials = true;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool ProxyUseDefaultCredentials
         {
             get => _proxyUseDefaultCredentials;
@@ -525,8 +516,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(SecureProxyConnection))]
         [XmlAttribute(nameof(SecureProxyConnection))]
         bool _secureProxyConnection = true;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool SecureProxyConnection
         {
             get => _secureProxyConnection;
@@ -541,8 +531,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(ProxyAddress))]
         [XmlAttribute(nameof(ProxyAddress))]
         string _proxyAddress = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string ProxyAddress
         {
             get => _proxyAddress;
@@ -557,8 +546,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(ProxyPort))]
         [XmlAttribute(nameof(ProxyPort))]
         int _proxyPort = 443;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int ProxyPort
         {
             get => _proxyPort;
@@ -573,8 +561,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(ProxyUser))]
         [XmlAttribute(nameof(ProxyUser))]
         string _proxyUser = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string ProxyUser
         {
             get => _proxyUser;
@@ -589,8 +576,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(ProxyPassword))]
         [XmlAttribute(nameof(ProxyPassword))]
         SecureString _proxyPassword;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public SecureString ProxyPassword
         {
             get => _proxyPassword;
@@ -607,8 +593,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(FreeDiskSpace))]
         [XmlAttribute(nameof(FreeDiskSpace))]
         long _freeDiskspace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long FreeDiskSpace
         {
             get => _freeDiskspace;
@@ -624,8 +609,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(AvailableDiskSpace))]
         [XmlAttribute(nameof(AvailableDiskSpace))]
         long _availableDiskSpace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long AvailableDiskSpace
         {
             get => _availableDiskSpace;
@@ -640,8 +624,7 @@ namespace AndreasReitberger
         [JsonProperty(nameof(TotalDiskSpace))]
         [XmlAttribute(nameof(TotalDiskSpace))]
         long _totalDiskSpace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long TotalDiskSpace
         {
             get => _totalDiskSpace;
@@ -658,11 +641,9 @@ namespace AndreasReitberger
 
         #region ConfigurationInfo
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long _activeExtruder = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long ActiveExtruder
         {
             get => _activeExtruder;
@@ -674,11 +655,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long _numberOfExtruders = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long NumberOfExtruders
         {
             get => _numberOfExtruders;
@@ -690,11 +669,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isDualExtruder = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsDualExtruder
         {
             get => _isDualExtruder;
@@ -706,11 +683,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _hasHeatedBed = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool HasHeatedBed
         {
             get => _hasHeatedBed;
@@ -722,11 +697,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _hasHeatedChamber = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool HasHeatedChamber
         {
             get => _hasHeatedChamber;
@@ -738,11 +711,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _hasFan = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool HasFan
         {
             get => _hasFan;
@@ -754,11 +725,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _hasWebCam = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool HasWebCam
         {
             get => _hasWebCam;
@@ -769,11 +738,9 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         RepetierPrinterConfigWebcam _selectedWebCam;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public RepetierPrinterConfigWebcam SelectedWebCam
         {
             get => _selectedWebCam;
@@ -787,11 +754,9 @@ namespace AndreasReitberger
         #endregion
 
         #region PrinterState
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isPrinting = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsPrinting
         {
             get => _isPrinting;
@@ -803,11 +768,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isPaused = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsPaused
         {
             get => _isPaused;
@@ -819,11 +782,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isConnectedPrinterOnline = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsConnectedPrinterOnline
         {
             get => _isConnectedPrinterOnline;
@@ -838,11 +799,9 @@ namespace AndreasReitberger
 
         #region Temperatures
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         double _temperatureExtruderMain = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public double TemperatureExtruderMain
         {
             get => _temperatureExtruderMain;
@@ -854,11 +813,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         double _temperatureExtruderSecondary = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public double TemperatureExtruderSecondary
         {
             get => _temperatureExtruderSecondary;
@@ -870,11 +827,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         double _temperatureHeatedBedMain = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public double TemperatureHeatedBedMain
         {
             get => _temperatureHeatedBedMain;
@@ -886,11 +841,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         double _temperatureHeatedChamberMain = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public double TemperatureHeatedChamberMain
         {
             get => _temperatureHeatedChamberMain;
@@ -905,11 +858,9 @@ namespace AndreasReitberger
         #endregion
 
         #region Fans
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         int _speedFanMain = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int SpeedFanMain
         {
             get => _speedFanMain;
@@ -925,11 +876,9 @@ namespace AndreasReitberger
         #endregion
 
         #region Printers
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         RepetierPrinter _activePrinter;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public RepetierPrinter ActivePrinter
         {
             get => _activePrinter;
@@ -948,11 +897,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinter> _printers = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinter> Printers
         {
             get => _printers;
@@ -971,11 +918,9 @@ namespace AndreasReitberger
         #endregion
 
         #region Models
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<string> _modelGroups = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<string> ModelGroups
         {
             get => _modelGroups;
@@ -994,11 +939,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierModel> _models = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierModel> Models
         {
             get => _models;
@@ -1020,11 +963,9 @@ namespace AndreasReitberger
         #endregion
 
         #region Jobs
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierJobListItem> _jobList = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierJobListItem> JobList
         {
             get => _jobList;
@@ -1046,11 +987,9 @@ namespace AndreasReitberger
         #endregion
 
         #region ExternalCommands
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<ExternalCommand> _externalCommands = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<ExternalCommand> ExternalCommands
         {
             get => _externalCommands;
@@ -1073,11 +1012,9 @@ namespace AndreasReitberger
         #endregion
 
         #region Messages
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierMessage> _messages = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierMessage> Messages
         {
             get => _messages;
@@ -1098,11 +1035,9 @@ namespace AndreasReitberger
         #endregion
 
         #region WebCalls
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierWebCallAction> _webCallActions = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierWebCallAction> WebCallActions
         {
             get => _webCallActions;
@@ -1124,11 +1059,9 @@ namespace AndreasReitberger
         #endregion
 
         #region GPIO
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierGpioListItem> _GPIOList = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierGpioListItem> GPIOList
         {
             get => _GPIOList;
@@ -1151,11 +1084,9 @@ namespace AndreasReitberger
         #endregion
 
         #region State & Config
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         RepetierPrinterConfig _config;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public RepetierPrinterConfig Config
         {
             get => _config;
@@ -1175,11 +1106,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         RepetierPrinterState _state;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public RepetierPrinterState State
         {
             get => _state;
@@ -1199,11 +1128,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         RepetierCurrentPrintInfo _activePrintInfo;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public RepetierCurrentPrintInfo ActivePrintInfo
         {
             get => _activePrintInfo;
@@ -1222,11 +1149,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierCurrentPrintInfo> _activePrintInfos = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierCurrentPrintInfo> ActivePrintInfos
         {
             get => _activePrintInfos;
@@ -1244,11 +1169,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterExtruder> _extruders = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinterExtruder> Extruders
         {
             get => _extruders;
@@ -1260,11 +1183,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeatbed> _heatedBeds = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinterHeatbed> HeatedBeds
         {
             get => _heatedBeds;
@@ -1276,11 +1197,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeatchamber> _heatedChambers = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinterHeatchamber> HeatedChambers
         {
             get => _heatedChambers;
@@ -1292,11 +1211,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterFan> _fans = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinterFan> Fans
         {
             get => _fans;
@@ -1308,11 +1225,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterConfigWebcam> _webCams = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<RepetierPrinterConfigWebcam> WebCams
         {
             get => _webCams;
@@ -1323,14 +1238,26 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
+
+        [JsonIgnore, XmlIgnore]
+        bool _shutdownAfterPrint = false;
+        [JsonIgnore, XmlIgnore]
+        public bool ShutdownAfterPrint
+        {
+            get => _shutdownAfterPrint;
+            set
+            {
+                if (_shutdownAfterPrint == value) return;
+                _shutdownAfterPrint = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region Position
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long _curX = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long CurX
         {
             get => _curX;
@@ -1341,11 +1268,9 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long _curY = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long CurY
         {
             get => _curY;
@@ -1356,11 +1281,9 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long _curZ = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long CurZ
         {
             get => _curZ;
@@ -1372,11 +1295,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _yHomed = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool YHomed
         {
             get => _yHomed;
@@ -1388,11 +1309,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _zHomed = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool ZHomed
         {
             get => _zHomed;
@@ -1404,11 +1323,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _xHomed = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool XHomed
         {
             get => _xHomed;
@@ -1451,11 +1368,9 @@ namespace AndreasReitberger
         #endregion
 
         #region WebSocket
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         WebSocket _webSocket;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public WebSocket WebSocket
         {
             get => _webSocket;
@@ -1467,11 +1382,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         Timer _pingTimer;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public Timer PingTimer
         {
             get => _pingTimer;
@@ -1483,11 +1396,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         int _pingCounter = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int PingCounter
         {
             get => _pingCounter;
@@ -1499,11 +1410,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         int _refreshCounter = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int RefreshCounter
         {
             get => _refreshCounter;
@@ -1515,11 +1424,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isListeningToWebSocket = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsListeningToWebsocket
         {
             get => _isListeningToWebSocket;
@@ -2174,7 +2081,7 @@ namespace AndreasReitberger
             {
                 if ((string.IsNullOrEmpty(result) || result == "{}") && emptyResultIsValid)
                     return true;
-                var actionResult = JsonConvert.DeserializeObject<RepetierActionResult>(result);
+                RepetierActionResult actionResult = JsonConvert.DeserializeObject<RepetierActionResult>(result);
                 if (actionResult != null)
                     return actionResult.Ok;
                 else
@@ -2195,6 +2102,72 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return false;
             }
+        }
+
+        RepetierApiRequestRespone ValidateRespone(RestResponse respone, Uri targetUri)
+        {
+            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
+            try
+            {
+                if ((
+                    respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
+                    respone.ResponseStatus == ResponseStatus.Completed)
+                {
+                    apiRsponeResult.IsOnline = true;
+                    AuthenticationFailed = false;
+                    apiRsponeResult.Result = respone.Content;
+                    apiRsponeResult.Succeeded = true;
+                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
+                    {
+                        Status = respone.ResponseStatus.ToString(),
+                        Exception = respone.ErrorException,
+                        Message = respone.ErrorMessage,
+                        Uri = targetUri,
+                    };
+                }
+                else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
+                    || respone.StatusCode == HttpStatusCode.Forbidden
+                    || respone.StatusCode == HttpStatusCode.Unauthorized
+                    )
+                {
+                    apiRsponeResult.IsOnline = true;
+                    apiRsponeResult.HasAuthenticationError = true;
+                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
+                    {
+                        Status = respone.ResponseStatus.ToString(),
+                        Exception = respone.ErrorException,
+                        Message = respone.ErrorMessage,
+                        Uri = targetUri,
+                    };
+                }
+                else if (respone.StatusCode == HttpStatusCode.Conflict)
+                {
+                    apiRsponeResult.IsOnline = true;
+                    apiRsponeResult.HasAuthenticationError = false;
+                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
+                    {
+                        Status = respone.ResponseStatus.ToString(),
+                        Exception = respone.ErrorException,
+                        Message = respone.ErrorMessage,
+                        Uri = targetUri,
+                    };
+                }
+                else
+                {
+                    OnRestApiError(new RepetierRestEventArgs()
+                    {
+                        Status = respone.ResponseStatus.ToString(),
+                        Exception = respone.ErrorException,
+                        Message = respone.ErrorMessage,
+                        Uri = targetUri,
+                    });
+                }
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+            return apiRsponeResult;
         }
         #endregion
 
@@ -2297,6 +2270,8 @@ namespace AndreasReitberger
                 try
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
+                    apiRsponeResult = ValidateRespone(respone, fullUri);
+                    /*
                     if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
                     {
                         apiRsponeResult.IsOnline = true;
@@ -2337,6 +2312,7 @@ namespace AndreasReitberger
                         });
                         //throw respone.ErrorException;
                     }
+                    */
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -2408,6 +2384,8 @@ namespace AndreasReitberger
                 try
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
+                    apiRsponeResult = ValidateRespone(respone, fullUri);
+                    /*
                     if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
                     {
                         apiRsponeResult.IsOnline = true;
@@ -2448,6 +2426,7 @@ namespace AndreasReitberger
                         });
                         //throw respone.ErrorException;
                     }
+                    */
                 }
                 catch (TaskCanceledException)
                 {
@@ -2498,7 +2477,7 @@ namespace AndreasReitberger
                 };
                 if (!string.IsNullOrEmpty(API))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    request.AddHeader("X-Api-Key", $"{API}");
                 }
                 //request.AddHeader("Content-Type", "image/png");
                 request.AddParameter("q", "models");
@@ -2512,10 +2491,6 @@ namespace AndreasReitberger
                 // Workaround, because the RestClient returns bad requests
                 using WebClient client = new();
                 byte[] bytes = await client.DownloadDataTaskAsync(fullUrl);
-                if (bytes?.Length == 0)
-                {
-
-                }
                 return bytes;
 
                 /*
@@ -2616,6 +2591,8 @@ namespace AndreasReitberger
                 YHomed = newState.HasYHome;
                 ZHomed = newState.HasZHome;
 
+                ShutdownAfterPrint = newState.ShutdownAfterPrint;
+
             }
             catch (Exception exc)
             {
@@ -2703,7 +2680,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region ModelGroups
+        #region ModelGroups
         async Task<RepetierModelGroup> GetModelGroupsAsync(string printerName)
         {
             RepetierApiRequestRespone result = new();
@@ -2811,7 +2788,7 @@ namespace AndreasReitberger
         }
         #endregion
 
-#region Proxy
+        #region Proxy
         Uri GetProxyUri()
         {
             return ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
@@ -2873,7 +2850,7 @@ namespace AndreasReitberger
             {
                 try
                 {
-                    PingTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                    PingTimer?.Change(Timeout.Infinite, Timeout.Infinite);
                     PingTimer = null;
                     IsListeningToWebsocket = false;
                 }
@@ -2889,7 +2866,7 @@ namespace AndreasReitberger
             {
                 try
                 {
-                    Timer.Change(Timeout.Infinite, Timeout.Infinite);
+                    Timer?.Change(Timeout.Infinite, Timeout.Infinite);
                     Timer = null;
                     IsListening = false;
                 }
@@ -2905,7 +2882,7 @@ namespace AndreasReitberger
 
         #region Public
 
-#region Proxy
+        #region Proxy
         public void SetProxy(bool secure, string address, int port, bool enable = true)
         {
             EnableProxy = enable;
@@ -3181,20 +3158,80 @@ namespace AndreasReitberger
         #endregion
 
         #region WebCam
-        public string GetWebCamUri(int camIndex = 0)
+        public string GetWebCamUri(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
         {
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
 
-                //return string.Format("{0}{1}:{2}/printer/cammjpg/{3}?cam={4}&apikey={5}", httpProtocol, ServerAddress, Port, currentPrinter, CamIndex, API);
-                return $"{FullWebAddress}/printer/cammjpg/{currentPrinter}?cam={camIndex}&apikey={API}";
+                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={API}";
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return "";
+            }
+        }
+        public async Task<string> GetWebCamUriAsync(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
+
+                await RefreshPrinterConfigAsync();
+                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={API}";
+                /*
+                RepetierPrinterConfigWebcam webcamConfig = WebCams?.FirstOrDefault(config => config.Pos == camIndex);
+                if(webcamConfig != null)
+                {
+                    Uri webcamUri = type == RepetierWebcamType.Dynamic ? webcamConfig.DynamicUrl : webcamConfig.StaticUrl;
+                    return $"{FullWebAddress}/printer/camjpg/{currentPrinter}?cam={camIndex}&apikey={API}";
+                }
+                else
+                {
+                    return $"{FullWebAddress}/printer/cammjpg/{currentPrinter}?cam={camIndex}&apikey={API}";
+                }
+                */
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return "";
+            }
+        }
+        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter)) return null;
+
+                if (refreshConfigs)
+                {
+                    await RefreshPrinterConfigAsync();
+                }
+                
+                return WebCams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
+        }
+        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(string slug, int camIndex = 0)
+        {
+            try
+            {
+                RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);             
+                return config?.Webcams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
             }
         }
         #endregion
@@ -3339,7 +3376,7 @@ namespace AndreasReitberger
         }
         #endregion
 
-#region WebSocket
+        #region WebSocket
         public void SendWebSocketCommand(string command)
         {
             try
@@ -3357,7 +3394,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region Updates
+        #region Updates
         public async Task CheckForServerUpdateAsync()
         {
             RepetierApiRequestRespone result = new();
@@ -3457,9 +3494,9 @@ namespace AndreasReitberger
             }
 
         }
-#endregion
+        #endregion
 
-#region License
+        #region License
 
         public async Task<RepetierLicenseInfo> GetLicenseDataAsync()
         {
@@ -3493,9 +3530,9 @@ namespace AndreasReitberger
                 return null;
             }
         }
-#endregion
+        #endregion
 
-#region DetectChanges
+        #region DetectChanges
         public bool CheckIfConfigurationHasChanged(object temp)
         {
             try
@@ -3518,9 +3555,9 @@ namespace AndreasReitberger
                 return false;
             }
         }
-#endregion
+        #endregion
 
-#region GCode
+        #region GCode
 
         public async Task<RepetierErrorCodes> SendGcodeAsync(string printerName, string filePath)
         {
@@ -3820,7 +3857,7 @@ namespace AndreasReitberger
 
 #endregion
 
-#region ModelGroups
+        #region ModelGroups
         public async Task<bool> AddModelGroupAsync(string groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -4008,9 +4045,9 @@ namespace AndreasReitberger
                 ModelGroups = new ObservableCollection<string>();
             }
         }
-#endregion
+        #endregion
 
-#region Jobs
+        #region Jobs
         public async Task<ObservableCollection<RepetierJobListItem>> GetJobListAsync()
         {
             ObservableCollection<RepetierJobListItem> resultObject = new();
@@ -4196,6 +4233,30 @@ namespace AndreasReitberger
             }
         }
 
+        public async Task<bool> SetShutdownAfterPrintAsync(bool shutdown)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter))
+                {
+                    return false;
+                }
+
+                RepetierApiRequestRespone result =
+                    await SendRestApiRequestAsync(
+                        RepetierCommandBase.printer, RepetierCommandFeature.api,
+                        command: "setShutdownAfterPrint", jsonData: $"{{\"shutdown\":{(shutdown ? "true" : "false")}}}",
+                        printerName: currentPrinter)
+                    .ConfigureAwait(false);
+                return GetQueryResult(result.Result, true);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
+        }
         #endregion
 
         #region PrinterState
@@ -5175,7 +5236,7 @@ namespace AndreasReitberger
                 {
                     foreach (KeyValuePair<string, object> parameter in additionalParameters)
                     {
-                        request.AddParameter(parameter.Key, parameter.Value);
+                        request.AddParameter(parameter.Key, parameter.Value.ToString());
                     }
                 }
 

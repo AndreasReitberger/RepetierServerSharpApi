@@ -75,6 +75,9 @@ namespace AndreasReitberger.Models
 
         [JsonProperty("z")]
         public long Z { get; set; }
+
+        [JsonProperty("shutdownAfterPrint")]
+        public bool ShutdownAfterPrint { get; set; }
         #endregion
 
         #region Overrides
