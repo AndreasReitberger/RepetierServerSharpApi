@@ -245,6 +245,20 @@ namespace AndreasReitberger
             }
         }
 
+        [JsonProperty(nameof(ServerName))]
+        string _serverName = string.Empty;
+        [JsonIgnore]
+        public string ServerName
+        {
+            get => _serverName;
+            set
+            {
+                if (_serverName == value) return;
+                _serverName = value;
+                OnPropertyChanged();
+            }
+        }
+
         [JsonProperty(nameof(ServerAddress))]
         string _address = string.Empty;
         [JsonIgnore]

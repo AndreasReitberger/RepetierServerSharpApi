@@ -22,7 +22,7 @@ namespace RepetierServerSharpApiTest
 
         private readonly string _host = "192.168.10.112";
         private readonly int _port = 3344;
-        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1";
+        private readonly string _api = "_yourkey";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -548,7 +548,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 string host = "192.168.10.113";
-                string api = "671a482d-2879-4a11-a68d-170883c1ba25";
+                string api = "_yourkey";
 
                 RepetierServerPro _server = new(host, api, _port, _ssl);
                 await _server.CheckOnlineAsync();
@@ -794,5 +794,18 @@ namespace RepetierServerSharpApiTest
             }
         }
 
+        [TestMethod]
+        public async Task ConnectionBuilderTest()
+        {
+            string host = "192.168.10.112";
+            string api = "_yourkey";
+
+            using RepetierServerPro client = new RepetierServerPro.RepetierServerProConnectionBuilder()
+                .WithServerAddress(host, 3344, false)
+                .WithApiKey(api)
+                .Build();
+            await client.CheckOnlineAsync();
+            Assert.IsTrue(client?.IsOnline ?? false);
+        }
     }
 }
