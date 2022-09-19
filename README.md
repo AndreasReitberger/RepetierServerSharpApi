@@ -18,9 +18,9 @@ Get the latest version from nuget.org<br>
 You can find some usage examples in the TestProject of the source code.
 
 ## Init a new server
-Just create a new `RepetierServerPro` object by passing the host, api, port and ssl connection type.
+Just create a new `RepetierClient` object by passing the host, api, port and ssl connection type.
 ```csharp
-RepetierServerPro _server = new RepetierServerPro(_host, _api, _port, _ssl);
+RepetierClient _server = new RepetierClient(_host, _api, _port, _ssl);
 await _server.CheckOnlineAsync();
 if (_server.IsOnline)
 {
@@ -35,13 +35,13 @@ if (_server.IsOnline)
 Since then, you can access all functions from the `RepetierServerPro` object.
 
 ## Instance
-If you want to use the `RepetierServerPro` from different places, use the `Instance`.
+If you want to use the `RepetierClient` from different places, use the `Instance`.
 ```csharp
-RepetierServerPro.Instance = new RepetierServerPro(_host, _api, _port, _ssl);
-await RepetierServerPro.Instance.CheckOnlineAsync();
+RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl);
+await RepetierClient.Instance.CheckOnlineAsync();
 ```
 
-Aferwards you can use the OctoPrintServer.Instance property to access all functions 
+Aferwards you can use the `RepetierClient.Instance` property to access all functions 
 through your project.
 ```csharp
 ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
