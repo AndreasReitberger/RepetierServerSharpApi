@@ -1,6 +1,14 @@
 # RepetierServerSharpApi
 An C# based library to to interact with a Repetier Server Pro instance via REST-API.
 
+# Important!
+With the upcoming version, starting from `1.2.7`, `RepetierServerPro` become `RepetierClient`. also the namespaces will changed and generalized with our other print server api nugets.
+
+| Old                             | New                              |
+| ------------------------------- |:--------------------------------:|
+| `AndreasReitberger`             | `AndreasReitberger.API.Repetier` |
+| `RepetierServerPro`             | `RepetierClient`                 |
+
 # Nuget
 Get the latest version from nuget.org<br>
 [![NuGet](https://img.shields.io/nuget/v/RepetierServerSharpApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/RepetierServerSharpApi/)
