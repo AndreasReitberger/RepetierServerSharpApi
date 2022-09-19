@@ -1,21 +1,21 @@
-﻿namespace AndreasReitberger
+﻿namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierServerPro
+    public partial class RepetierClient
     {
-        public class RepetierServerProConnectionBuilder
+        public class RepetierConnectionBuilder
         {
             #region Instance
-            readonly RepetierServerPro _client = new();
+            readonly RepetierClient _client = new();
             #endregion
 
             #region Methods
 
-            public RepetierServerPro Build()
+            public RepetierClient Build()
             {
                 return _client;
             }
 
-            public RepetierServerProConnectionBuilder WithServerAddress(string serverAddress, int port = 3344, bool https = false)
+            public RepetierConnectionBuilder WithServerAddress(string serverAddress, int port = 3344, bool https = false)
             {
                 _client.IsSecure = https;
                 _client.ServerAddress = serverAddress;
@@ -23,7 +23,7 @@
                 return this;
             }
 
-            public RepetierServerProConnectionBuilder WithApiKey(string apiKey)
+            public RepetierConnectionBuilder WithApiKey(string apiKey)
             {
                 _client.API = apiKey;
                 return this;

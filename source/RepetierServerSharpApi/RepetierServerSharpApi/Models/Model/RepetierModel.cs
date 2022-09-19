@@ -1,7 +1,7 @@
-﻿using AndreasReitberger.Enum;
+﻿using AndreasReitberger.API.Repetier.Enum;
 using Newtonsoft.Json;
 
-namespace AndreasReitberger.Models
+namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierModel
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace AndreasReitberger.Models
+namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierWebCallAction
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace AndreasReitberger
+namespace AndreasReitberger.API.Repetier
 {
     public partial class RepetierLicenseInfo
     {
