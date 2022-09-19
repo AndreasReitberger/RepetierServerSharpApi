@@ -2837,7 +2837,7 @@ namespace AndreasReitberger
                 RestClientOptions options = new(FullWebAddress)
                 {
                     ThrowOnAnyError = true,
-                    Timeout = 10000,
+                    MaxTimeout = 10000,
                 };
                 HttpClientHandler httpHandler = new()
                 {
