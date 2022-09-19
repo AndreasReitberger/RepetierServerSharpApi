@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace AndreasReitberger.Models
+namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class EventPrinterListChanged
     {

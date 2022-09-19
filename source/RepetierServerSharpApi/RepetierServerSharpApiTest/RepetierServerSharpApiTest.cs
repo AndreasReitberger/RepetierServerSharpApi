@@ -1,18 +1,18 @@
-using AndreasReitberger;
-using AndreasReitberger.Models;
+using AndreasReitberger.API.Repetier;
+using AndreasReitberger.API.Repetier.Enum;
+using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using System.Collections.ObjectModel;
-using System.Linq;
-using AndreasReitberger.Enum;
 
 namespace RepetierServerSharpApiTest
 {
@@ -38,16 +38,16 @@ namespace RepetierServerSharpApiTest
             try
             {
 
-                RepetierServerPro.Instance = new RepetierServerPro(_host, _api, _port, _ssl)
+                RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                 };
-                RepetierServerPro.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = JsonSerializer.Serialize(RepetierServerPro.Instance);
-                var serializedObject = JsonSerializer.Deserialize<RepetierServerPro>(serializedString);
-                Assert.IsTrue(serializedObject is RepetierServerPro server && server != null);
+                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance);
+                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString);
+                Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
             catch (Exception exc)
@@ -66,10 +66,10 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                var xmlSerializer = new XmlSerializer(typeof(RepetierServerPro));
+                var xmlSerializer = new XmlSerializer(typeof(RepetierClient));
                 using (var fileStream = new FileStream(serverConfig, FileMode.Create))
                 {
-                    RepetierServerPro.Instance = new RepetierServerPro(_host, _api, _port, _ssl)
+                    RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                     {
                         ActiveExtruder = 1,
                         AvailableDiskSpace = 1523152132,
@@ -77,16 +77,16 @@ namespace RepetierServerSharpApiTest
                         TotalDiskSpace = 65621361616161,
                         IsDualExtruder = true,
                     };
-                    RepetierServerPro.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                    RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                    xmlSerializer.Serialize(fileStream, RepetierServerPro.Instance);
+                    xmlSerializer.Serialize(fileStream, RepetierClient.Instance);
                     Assert.IsTrue(File.Exists(Path.Combine(dir, "server.xml")));
                 }
 
-                xmlSerializer = new XmlSerializer(typeof(RepetierServerPro));
+                xmlSerializer = new XmlSerializer(typeof(RepetierClient));
                 using (var fileStream = new FileStream(serverConfig, FileMode.Open))
                 {
-                    var instance = (RepetierServerPro)xmlSerializer.Deserialize(fileStream);
+                    var instance = (RepetierClient)xmlSerializer.Deserialize(fileStream);
                 }
 
             }
@@ -142,7 +142,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -166,7 +166,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _port, _ssl);
+                RepetierClient _server = new(_host, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -209,7 +209,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -237,7 +237,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -270,7 +270,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -303,7 +303,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -331,7 +331,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -363,7 +363,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -381,7 +381,7 @@ namespace RepetierServerSharpApiTest
                     RepetierHistoryListItem historyItem = list.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
-                    byte[] report = await RepetierServerPro.Instance.GetHistoryReportAsync(historyItem.Id);
+                    byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
                     Assert.IsTrue(report.Length > 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
@@ -402,7 +402,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -428,7 +428,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -454,7 +454,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -480,7 +480,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, e) =>
                 {
                     Assert.Fail(e.ToString());
@@ -509,7 +509,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 var host = "192.168.10.112";
-                RepetierServerPro _server = new(host, _api, _port, _ssl);
+                RepetierClient _server = new(host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.Error += (o, args) =>
                 {
@@ -550,7 +550,7 @@ namespace RepetierServerSharpApiTest
                 string host = "192.168.10.113";
                 string api = "_yourkey";
 
-                RepetierServerPro _server = new(host, api, _port, _ssl);
+                RepetierClient _server = new(host, api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 Assert.IsTrue(_server.IsOnline);
 
@@ -580,7 +580,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 Dictionary<DateTime, string> websocketMessages = new();
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.StartListening();
 
@@ -638,7 +638,7 @@ namespace RepetierServerSharpApiTest
             if (_skipPrinterActionTests) return;
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -719,7 +719,7 @@ namespace RepetierServerSharpApiTest
             if (_skipPrinterActionTests) return;
             try
             {
-                RepetierServerPro _server = new(_host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -800,7 +800,7 @@ namespace RepetierServerSharpApiTest
             string host = "192.168.10.112";
             string api = "_yourkey";
 
-            using RepetierServerPro client = new RepetierServerPro.RepetierServerProConnectionBuilder()
+            using RepetierClient client = new RepetierClient.RepetierConnectionBuilder()
                 .WithServerAddress(host, 3344, false)
                 .WithApiKey(api)
                 .Build();

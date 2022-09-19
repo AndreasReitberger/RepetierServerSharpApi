@@ -1,7 +1,7 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 
-namespace AndreasReitberger.Models
+namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierPrinter : BaseModel
     {

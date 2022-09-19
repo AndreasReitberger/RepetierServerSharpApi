@@ -1,8 +1,8 @@
 ﻿using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Enum;
-using AndreasReitberger.Models;
+using AndreasReitberger.API.Repetier.Enum;
+using AndreasReitberger.API.Repetier.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -25,9 +25,9 @@ using System.Xml.Serialization;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
-namespace AndreasReitberger
+namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierServerPro : IRestApiClient
+    public partial class RepetierClient : IRestApiClient
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -62,16 +62,16 @@ namespace AndreasReitberger
         #endregion
 
         #region Instance
-        static RepetierServerPro _instance = null;
+        static RepetierClient _instance = null;
         static readonly object Lock = new();
-        public static RepetierServerPro Instance
+        public static RepetierClient Instance
         {
             get
             {
                 lock (Lock)
                 {
                     if (_instance == null)
-                        _instance = new RepetierServerPro();
+                        _instance = new RepetierClient();
                 }
                 return _instance;
             }
@@ -1460,20 +1460,20 @@ namespace AndreasReitberger
         #endregion
 
         #region Constructor
-        public RepetierServerPro()
+        public RepetierClient()
         {
             Id = Guid.NewGuid();
             UpdateRestClientInstance();
         }
 
-        public RepetierServerPro(string serverAddress, string api, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
 
-        public RepetierServerPro(string serverAddress, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, "", isSecure);
@@ -1482,7 +1482,7 @@ namespace AndreasReitberger
         #endregion
 
         #region Destructor
-        ~RepetierServerPro()
+        ~RepetierClient()
         {
             if (WebSocket != null)
             {
@@ -1517,7 +1517,7 @@ namespace AndreasReitberger
                 IsInitialized = false;
             }
         }
-        public static void UpdateSingleInstance(RepetierServerPro Inst)
+        public static void UpdateSingleInstance(RepetierClient Inst)
         {
             try
             {
@@ -3551,7 +3551,7 @@ namespace AndreasReitberger
         {
             try
             {
-                if (temp is not RepetierServerPro tempServer) return false;
+                if (temp is not RepetierClient tempServer) return false;
                 else
                 {
                     return
@@ -5853,7 +5853,7 @@ namespace AndreasReitberger
         }
         public override bool Equals(object obj)
         {
-            if (obj is not RepetierServerPro item)
+            if (obj is not RepetierClient item)
                 return false;
             return Id.Equals(item.Id);
         }
