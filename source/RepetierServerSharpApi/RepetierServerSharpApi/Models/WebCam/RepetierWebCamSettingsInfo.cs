@@ -92,6 +92,20 @@ namespace AndreasReitberger.API.Repetier.Models
             }
         }
 
+        [JsonProperty(nameof(ServerId))]
+        Guid _serverId = Guid.Empty;
+        [JsonIgnore]
+        public Guid ServerId
+        {
+            get => _serverId;
+            set
+            {
+                if (_serverId == value) return;
+                _serverId = value;
+                OnPropertyChanged();
+            }
+        }
+
         [JsonProperty(nameof(CamIndex))]
         int _camIndex = -1;
         [JsonIgnore]
