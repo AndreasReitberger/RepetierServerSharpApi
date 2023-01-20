@@ -1849,6 +1849,79 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
+#if NET5_0_OR_GREATER || NETSTANDARD
+        public async Task ConnectWebSocketAsync()
+        {
+            try
+            {
+                //if (!IsReady) return;
+                if (!string.IsNullOrEmpty(FullWebAddress) && (
+                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
+                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
+                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
+                {
+                    return;
+                }
+                //if (!IsReady || IsListeningToWebsocket) return;
+                await DisconnectWebSocketAsync();
+                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(API) ? $"?apikey={API}" : "")}";
+                WebSocket = new WebSocket(target)
+                {
+                    EnableAutoSendPing = false,
+
+                };
+
+                if (IsSecure)
+                {
+                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
+                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
+                    //Avoid TlsHandshakeFailure
+                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
+                    {
+                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
+                    }
+                }
+
+                WebSocket.MessageReceived += WebSocket_MessageReceived;
+                //WebSocket.DataReceived += WebSocket_DataReceived;
+                WebSocket.Opened += WebSocket_Opened;
+                WebSocket.Closed += WebSocket_Closed;
+                WebSocket.Error += WebSocket_Error;
+
+                await WebSocket.OpenAsync();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+        public async Task DisconnectWebSocketAsync()
+        {
+            try
+            {
+                if (WebSocket != null)
+                {
+                    if (WebSocket.State == WebSocketState.Open)
+                        await WebSocket.CloseAsync();
+                    StopPingTimer();
+
+                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
+                    //WebSocket.DataReceived -= WebSocket_DataReceived;
+                    WebSocket.Opened -= WebSocket_Opened;
+                    WebSocket.Closed -= WebSocket_Closed;
+                    WebSocket.Error -= WebSocket_Error;
+
+                    WebSocket = null;
+                }
+                //WebSocket = null;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+#endif
+
         private void WebSocket_Error(object sender, ErrorEventArgs e)
         {
             try
@@ -2081,7 +2154,7 @@ namespace AndreasReitberger.API.Repetier
         {
 
         }
-        #endregion
+#endregion
 
         #region Methods
 
@@ -2972,6 +3045,60 @@ namespace AndreasReitberger.API.Repetier
                 DisconnectWebSocket();
             IsListening = false;
         }
+
+#if NET5_0_OR_GREATER || NETSTANDARD
+        public async Task StartListeningAsync(bool stopActiveListening = false)
+        {
+            if (IsListening)// avoid multiple sessions
+            {
+                if (stopActiveListening)
+                {
+                    await StopListeningAsync();
+                }
+                else
+                {
+                    return; // StopListening();
+                }
+            }
+            await ConnectWebSocketAsync().ConfigureAwait(false);
+            Timer = new Timer(async (action) =>
+            {
+                // Do not check the online state ever tick
+                if (RefreshCounter > 5)
+                {
+                    RefreshCounter = 0;
+                    await CheckOnlineAsync(3500).ConfigureAwait(false);
+                }
+                else RefreshCounter++;
+                if (IsOnline)
+                {
+                    List<Task> tasks = new()
+                    {
+                        RefreshPrinterStateAsync(),
+                        RefreshCurrentPrintInfosAsync(),
+                    };
+                    await Task.WhenAll(tasks).ConfigureAwait(false);               
+                }
+                else if (IsListening)
+                {
+                    await StopListeningAsync(); // StopListening();
+                }
+            }, null, 0, RefreshInterval * 1000);
+            IsListening = true;
+        }
+        public async Task StopListeningAsync()
+        {
+            CancelCurrentRequests();
+            StopPingTimer();
+            StopTimer();
+
+            if (IsListeningToWebsocket)
+            {
+                await DisconnectWebSocketAsync().ConfigureAwait(false);
+            }
+            IsListening = false;
+        }
+#endif
         public async Task RefreshAllAsync(RepetierImageType imageType = RepetierImageType.Thumbnail)
         {
             try
