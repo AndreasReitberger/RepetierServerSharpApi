@@ -3,15 +3,9 @@ using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace RepetierServerSharpApiTest
@@ -30,7 +24,6 @@ namespace RepetierServerSharpApiTest
         [TestMethod]
         public void SerializeJsonTest()
         {
-
             var dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
@@ -47,6 +40,34 @@ namespace RepetierServerSharpApiTest
 
                 var serializedString = JsonSerializer.Serialize(RepetierClient.Instance);
                 var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString);
+                Assert.IsTrue(serializedObject is RepetierClient server && server != null);
+
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [TestMethod]
+        public void SerializeNewetonsoftJsonTest()
+        {
+            var dir = @"TestResults\Serialization\";
+            Directory.CreateDirectory(dir);
+            string serverConfig = Path.Combine(dir, "server.xml");
+            if (File.Exists(serverConfig)) File.Delete(serverConfig);
+            try
+            {
+
+                RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
+                {
+                    FreeDiskSpace = 1523165212,
+                    TotalDiskSpace = 65621361616161,
+                };
+                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+
+                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance);
+                var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
