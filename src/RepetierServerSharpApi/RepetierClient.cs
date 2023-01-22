@@ -25,7 +25,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : ObservableObject //, IRestApiClient
+    public partial class RepetierClient : ObservableObject, IDisposable //, IRestApiClient
     {
 
         #region Variables
