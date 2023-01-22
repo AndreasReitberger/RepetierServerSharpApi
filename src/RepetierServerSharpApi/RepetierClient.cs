@@ -86,7 +86,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region RefreshTimer
         [ObservableProperty]
-        [proeprty: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, XmlIgnore]
         Timer timer;
 
 
