@@ -1,19 +1,17 @@
-﻿using AndreasReitberger.Core.Enums;
-using AndreasReitberger.Core.Interfaces;
-using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.API.Repetier.Enum;
+﻿using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.Core.Enums;
+using AndreasReitberger.Core.Utilities;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -27,17 +25,8 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : IRestApiClient
+    public partial class RepetierClient : ObservableObject //, IRestApiClient
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
 
         #region Variables
         RestClient restClient;
@@ -46,19 +35,9 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Id
-        [JsonProperty(nameof(Id))]
-        Guid _id = Guid.Empty;
-        [JsonIgnore]
-        public Guid Id
-        {
-            get => _id;
-            set
-            {
-                if (_id == value) return;
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        Guid id = Guid.Empty;
+
         #endregion
 
         #region Instance
@@ -87,118 +66,56 @@ namespace AndreasReitberger.API.Repetier
 
         }
 
-        bool _isActive = false;
-        public bool IsActive
+        [ObservableProperty]
+        bool isActive = false;
+
+        [ObservableProperty]
+        bool updateInstance = false;
+        partial void OnUpdateInstanceChanged(bool value)
         {
-            get => _isActive;
-            set
+            if (value)
             {
-                if (_isActive == value)
-                    return;
-                _isActive = value;
-                OnPropertyChanged();
+                InitInstance(ServerAddress, Port, ApiKey, IsSecure);
             }
         }
 
-        bool _updateInstance = false;
-        public bool UpdateInstance
-        {
-            get => _updateInstance;
-            set
-            {
-                if (_updateInstance == value)
-                    return;
-                _updateInstance = value;
-                // Update the instance to the latest settings
-                if (_updateInstance)
-                    InitInstance(this.ServerAddress, this.Port, this.API, this.IsSecure);
-
-                OnPropertyChanged();
-            }
-        }
-
-        bool _isInitialized = false;
-        public bool IsInitialized
-        {
-            get => _isInitialized;
-            set
-            {
-                if (_isInitialized == value)
-                    return;
-                _isInitialized = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        bool isInitialized = false;
 
         #endregion
 
         #region RefreshTimer
-        [JsonIgnore, XmlIgnore]
-        Timer _timer;
-        [JsonIgnore, XmlIgnore]
-        public Timer Timer
+        [ObservableProperty]
+        [proeprty: JsonIgnore, XmlIgnore]
+        Timer timer;
+
+
+        [ObservableProperty]
+        int refreshInterval = 3;
+        partial void OnRefreshIntervalChanged(int value)
         {
-            get => _timer;
-            set
+            if (IsListening)
             {
-                if (_timer == value) return;
-                _timer = value;
-                OnPropertyChanged();
+                StartListening(stopActiveListening: true);
             }
         }
 
-        [JsonProperty(nameof(RefreshInterval))]
-        int _refreshInterval = 3;
-        [JsonIgnore]
-        public int RefreshInterval
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isListening = false;
+        partial void OnIsListeningChanged(bool value)
         {
-            get => _refreshInterval;
-            set
+            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
             {
-                if (_refreshInterval == value) return;
-                _refreshInterval = value;
-                if (IsListening)
-                {
-                    StopListening();
-                    StartListening();
-                }
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                IsListening = value,
+                IsListeningToWebSocket = IsListeningToWebsocket,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        bool _isListening = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsListening
-        {
-            get => _isListening;
-            set
-            {
-                if (_isListening == value) return;
-                _isListening = value;
-                OnListeningChanged(new RepetierEventListeningChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    IsListening = value,
-                    IsListeningToWebSocket = IsListeningToWebsocket,
-                });
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        bool _initialDataFetched = false;
-        [JsonIgnore, XmlIgnore]
-        public bool InitialDataFetched
-        {
-            get => _initialDataFetched;
-            set
-            {
-                if (_initialDataFetched == value) return;
-                _initialDataFetched = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool initialDataFetched = false;
 
         #endregion
 
@@ -206,1159 +123,506 @@ namespace AndreasReitberger.API.Repetier
 
         #region Connection
 
-        [JsonIgnore, XmlIgnore]
-        EventSession _session;
-        [JsonIgnore, XmlIgnore]
-        public EventSession Session
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        EventSession session;
+        partial void OnSessionChanged(EventSession value)
         {
-            get => _session;
-            set
+            SessionId = Session?.Session;
+            OnSessionChangedEvent(new RepetierEventSessionChangedEventArgs()
             {
-                if (_session == value) return;
-                _session = value;
-                if (_session != null)
+                CallbackId = Session?.CallbackId ?? -1,
+                Sesson = value,
+                SessonId = value?.Session
+            });           
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        string sessionId = string.Empty;
+
+
+        [ObservableProperty]
+        string serverName = string.Empty;
+
+        [ObservableProperty]
+        string serverAddress = string.Empty;
+        partial void OnServerAddressChanged(string value)
+        {
+            UpdateRestClientInstance();
+        }
+
+
+        [ObservableProperty]
+        bool loginRequired = false;
+
+        [ObservableProperty]
+        bool isSecure = false;
+        partial void OnIsSecureChanged(bool value)
+        {
+            UpdateRestClientInstance();
+        }
+
+        [ObservableProperty]
+        string apiKey = string.Empty;
+
+        [ObservableProperty]
+        int port = 3344;
+        partial void OnPortChanged(int value)
+        {
+            UpdateRestClientInstance();
+        }
+
+        [ObservableProperty]
+        int defaultTimeout = 10000;
+
+        [ObservableProperty]
+        bool overrideValidationRules = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isOnline = false;
+        partial void OnIsOnlineChanged(bool value)
+        {
+            if (value)
+            {
+                OnServerWentOnline(new RepetierEventArgs()
                 {
-                    SessionId = Session.Session;
-                    OnSessionChanged(new RepetierEventSessionChangedEventArgs()
-                    {
-                        CallbackId = Session.CallbackId,
-                        Sesson = value,
-                        SessonId = value.Session
-                    });
-                }
-                OnPropertyChanged();
-
+                    SessonId = SessionId,
+                });
             }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        string _sessionId = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string SessionId
-        {
-            get => _sessionId;
-            set
+            else
             {
-                if (_sessionId == value) return;
-                _sessionId = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(ServerName))]
-        string _serverName = string.Empty;
-        [JsonIgnore]
-        public string ServerName
-        {
-            get => _serverName;
-            set
-            {
-                if (_serverName == value) return;
-                _serverName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(ServerAddress))]
-        string _address = string.Empty;
-        [JsonIgnore]
-        public string ServerAddress
-        {
-            get => _address;
-            set
-            {
-                if (_address == value) return;
-                _address = value;
-                OnPropertyChanged();
-                UpdateRestClientInstance();
-            }
-        }
-
-        [JsonProperty(nameof(LoginRequired))]
-        bool _loginRequired = false;
-        [JsonIgnore]
-        public bool LoginRequired
-        {
-            get => _loginRequired;
-            set
-            {
-                if (_loginRequired == value) return;
-                _loginRequired = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(IsSecure))]
-        bool _isSecure = false;
-        [JsonIgnore]
-        public bool IsSecure
-        {
-            get => _isSecure;
-            set
-            {
-                if (_isSecure == value) return;
-                _isSecure = value;
-                OnPropertyChanged();
-                UpdateRestClientInstance();
-            }
-        }
-
-        [JsonProperty(nameof(API))]
-        string _api = string.Empty;
-        [JsonIgnore]
-        public string API
-        {
-            get => _api;
-            set
-            {
-                if (_api == value) return;
-                _api = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(Port))]
-        int _port = 3344;
-        [JsonIgnore]
-        public int Port
-        {
-            get => _port;
-            set
-            {
-                if (_port != value)
+                OnServerWentOffline(new RepetierEventArgs()
                 {
-                    _port = value;
-                    OnPropertyChanged();
-                    UpdateRestClientInstance();
-                }
+                    SessonId = SessionId,
+                });
             }
         }
 
-        [JsonProperty(nameof(DefaultTimeout))]
-        int _defaultTimeout = 10000;
-        [JsonIgnore]
-        public int DefaultTimeout
-        {
-            get => _defaultTimeout;
-            set
-            {
-                if (_defaultTimeout != value)
-                {
-                    _defaultTimeout = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isConnecting = false;
 
-        [JsonProperty(nameof(OverrideValidationRules))]
-        [XmlAttribute(nameof(OverrideValidationRules))]
-        bool _overrideValidationRules = false;
-        [JsonIgnore, XmlIgnore]
-        public bool OverrideValidationRules
-        {
-            get => _overrideValidationRules;
-            set
-            {
-                if (_overrideValidationRules == value)
-                    return;
-                _overrideValidationRules = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool authenticationFailed = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isOnline = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsOnline
-        {
-            get => _isOnline;
-            set
-            {
-                if (_isOnline == value) return;
-                _isOnline = value;
-                // Notify subscribres 
-                if (IsOnline)
-                {
-                    OnServerWentOnline(new RepetierEventArgs()
-                    {
-                        SessonId = SessionId,
-                    });
-                }
-                else
-                {
-                    OnServerWentOffline(new RepetierEventArgs()
-                    {
-                        SessonId = SessionId,
-                    });
-                }
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isRefreshing = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isConnecting = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsConnecting
-        {
-            get => _isConnecting;
-            set
-            {
-                if (_isConnecting == value) return;
-                _isConnecting = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        bool _authenticationFailed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool AuthenticationFailed
-        {
-            get => _authenticationFailed;
-            set
-            {
-                if (_authenticationFailed == value) return;
-                _authenticationFailed = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        bool _isRefreshing = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsRefreshing
-        {
-            get => _isRefreshing;
-            set
-            {
-                if (_isRefreshing == value) return;
-                _isRefreshing = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(RetriesWhenOffline))]
-        [XmlAttribute(nameof(RetriesWhenOffline))]
-        int _retriesWhenOffline = 2;
-        [JsonIgnore, XmlIgnore]
-        public int RetriesWhenOffline
-        {
-            get => _retriesWhenOffline;
-            set
-            {
-                if (_retriesWhenOffline == value) return;
-                _retriesWhenOffline = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        //[property: JsonIgnore, XmlIgnore]
+        int retriesWhenOffline = 2;
 
         #endregion
 
         #region General
-        [JsonIgnore]
-        [XmlIgnore]
-        bool _updateAvailable = false;
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool UpdateAvailable
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool updateAvailable = false;
+        partial void OnUpdateAvailableChanged(bool value)
         {
-            get => _updateAvailable;
-            private set
+            if (value)
             {
-                if (_updateAvailable == value) return;
-                _updateAvailable = value;
-                if (_updateAvailable)
-                    // Notify on update available
-                    OnServerUpdateAvailable(new RepetierEventArgs()
-                    {
-                        SessonId = this.SessionId,
-                    });
-                OnPropertyChanged();
+                OnServerUpdateAvailable(new RepetierEventArgs()
+                {
+                    SessonId = SessionId,
+                });
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
-        RepetierAvailableUpdateInfo _update;
-        [JsonIgnore]
-        [XmlIgnore]
-        public RepetierAvailableUpdateInfo Update
-        {
-            get => _update;
-            private set
-            {
-                if (_update == value) return;
-                _update = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierAvailableUpdateInfo update;
+
         #endregion
 
         #region Proxy
-        [JsonProperty(nameof(EnableProxy))]
-        [XmlAttribute(nameof(EnableProxy))]
-        bool _enableProxy = false;
-        [JsonIgnore, XmlIgnore]
-        public bool EnableProxy
+        [ObservableProperty]
+        bool enableProxy = false;
+        partial void OnEnableProxyChanged(bool value)
         {
-            get => _enableProxy;
-            set
-            {
-                if (_enableProxy == value) return;
-                _enableProxy = value;
-                OnPropertyChanged();
-                UpdateRestClientInstance();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(ProxyUseDefaultCredentials))]
-        [XmlAttribute(nameof(ProxyUseDefaultCredentials))]
-        bool _proxyUseDefaultCredentials = true;
-        [JsonIgnore, XmlIgnore]
-        public bool ProxyUseDefaultCredentials
+        [ObservableProperty]
+        bool proxyUseDefaultCredentials = true;
+        partial void OnProxyUseDefaultCredentialsChanged(bool value)
         {
-            get => _proxyUseDefaultCredentials;
-            set
-            {
-                if (_proxyUseDefaultCredentials == value) return;
-                _proxyUseDefaultCredentials = value;
-                OnPropertyChanged();
-                UpdateRestClientInstance();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(SecureProxyConnection))]
-        [XmlAttribute(nameof(SecureProxyConnection))]
-        bool _secureProxyConnection = true;
-        [JsonIgnore, XmlIgnore]
-        public bool SecureProxyConnection
+        [ObservableProperty]
+        bool secureProxyConnection = true;
+        partial void OnSecureProxyConnectionChanged(bool value)
         {
-            get => _secureProxyConnection;
-            private set
-            {
-                if (_secureProxyConnection == value) return;
-                _secureProxyConnection = value;
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(ProxyAddress))]
-        [XmlAttribute(nameof(ProxyAddress))]
-        string _proxyAddress = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string ProxyAddress
+        [ObservableProperty]
+        string proxyAddress = string.Empty;
+        partial void OnProxyAddressChanged(string value)
         {
-            get => _proxyAddress;
-            private set
-            {
-                if (_proxyAddress == value) return;
-                _proxyAddress = value;
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(ProxyPort))]
-        [XmlAttribute(nameof(ProxyPort))]
-        int _proxyPort = 443;
-        [JsonIgnore, XmlIgnore]
-        public int ProxyPort
+        [ObservableProperty]
+        int proxyPort = 443;
+        partial void OnProxyPortChanged(int value)
         {
-            get => _proxyPort;
-            private set
-            {
-                if (_proxyPort == value) return;
-                _proxyPort = value;
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(ProxyUser))]
-        [XmlAttribute(nameof(ProxyUser))]
-        string _proxyUser = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string ProxyUser
+        [ObservableProperty]
+        string proxyUser = string.Empty;
+        partial void OnProxyUserChanged(string value)
         {
-            get => _proxyUser;
-            private set
-            {
-                if (_proxyUser == value) return;
-                _proxyUser = value;
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(ProxyPassword))]
-        [XmlAttribute(nameof(ProxyPassword))]
-        SecureString _proxyPassword;
-        [JsonIgnore, XmlIgnore]
-        public SecureString ProxyPassword
+        [ObservableProperty]
+        SecureString proxyPassword;
+        partial void OnProxyPasswordChanged(SecureString value)
         {
-            get => _proxyPassword;
-            private set
-            {
-                if (_proxyPassword == value) return;
-                _proxyPassword = value;
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
         #endregion
 
         #region DiskSpace
-        [JsonProperty(nameof(FreeDiskSpace))]
-        [XmlAttribute(nameof(FreeDiskSpace))]
-        long _freeDiskspace = 0;
+        [ObservableProperty]
+        long freeDiskSpace = 0;
         [JsonIgnore, XmlIgnore]
-        public long FreeDiskSpace
-        {
-            get => _freeDiskspace;
-            set
-            {
-                if (_freeDiskspace == value) return;
-                _freeDiskspace = value;
-                OnPropertyChanged();
 
-            }
-        }
+        [ObservableProperty]
+        long availableDiskSpace = 0;
 
-        [JsonProperty(nameof(AvailableDiskSpace))]
-        [XmlAttribute(nameof(AvailableDiskSpace))]
-        long _availableDiskSpace = 0;
-        [JsonIgnore, XmlIgnore]
-        public long AvailableDiskSpace
-        {
-            get => _availableDiskSpace;
-            set
-            {
-                if (_availableDiskSpace == value) return;
-                _availableDiskSpace = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        long totalDiskSpace = 0;
 
-        [JsonProperty(nameof(TotalDiskSpace))]
-        [XmlAttribute(nameof(TotalDiskSpace))]
-        long _totalDiskSpace = 0;
-        [JsonIgnore, XmlIgnore]
-        public long TotalDiskSpace
-        {
-            get => _totalDiskSpace;
-            set
-            {
-                if (_totalDiskSpace == value) return;
-                _totalDiskSpace = value;
-                OnPropertyChanged();
-            }
-        }
         #endregion
 
         #region PrinterStateInformation
 
         #region ConfigurationInfo
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
         long _activeExtruder = 0;
-        [JsonIgnore, XmlIgnore]
-        public long ActiveExtruder
-        {
-            get => _activeExtruder;
-            set
-            {
-                if (_activeExtruder == value) return;
-                _activeExtruder = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore, XmlIgnore]
-        long _numberOfExtruders = 0;
-        [JsonIgnore, XmlIgnore]
-        public long NumberOfExtruders
-        {
-            get => _numberOfExtruders;
-            set
-            {
-                if (_numberOfExtruders == value) return;
-                _numberOfExtruders = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        long numberOfExtruders = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isDualExtruder = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsDualExtruder
-        {
-            get => _isDualExtruder;
-            set
-            {
-                if (_isDualExtruder == value) return;
-                _isDualExtruder = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isDualExtruder = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _hasHeatedBed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool HasHeatedBed
-        {
-            get => _hasHeatedBed;
-            set
-            {
-                if (_hasHeatedBed == value) return;
-                _hasHeatedBed = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool hasHeatedBed = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _hasHeatedChamber = false;
-        [JsonIgnore, XmlIgnore]
-        public bool HasHeatedChamber
-        {
-            get => _hasHeatedChamber;
-            set
-            {
-                if (_hasHeatedChamber == value) return;
-                _hasHeatedChamber = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool hasHeatedChamber = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _hasFan = false;
-        [JsonIgnore, XmlIgnore]
-        public bool HasFan
-        {
-            get => _hasFan;
-            set
-            {
-                if (_hasFan == value) return;
-                _hasFan = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool hasFan = false;
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
         bool _hasWebCam = false;
-        [JsonIgnore, XmlIgnore]
-        public bool HasWebCam
-        {
-            get => _hasWebCam;
-            set
-            {
-                if (_hasWebCam == value) return;
-                _hasWebCam = value;
-                OnPropertyChanged();
-            }
-        }
-        [JsonIgnore, XmlIgnore]
-        RepetierPrinterConfigWebcam _selectedWebCam;
-        [JsonIgnore, XmlIgnore]
-        public RepetierPrinterConfigWebcam SelectedWebCam
-        {
-            get => _selectedWebCam;
-            set
-            {
-                if (_selectedWebCam == value) return;
-                _selectedWebCam = value;
-                OnPropertyChanged();
-            }
-        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierPrinterConfigWebcam selectedWebCam;
+
         #endregion
 
         #region PrinterState
-        [JsonIgnore, XmlIgnore]
-        bool _isPrinting = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsPrinting
-        {
-            get => _isPrinting;
-            set
-            {
-                if (_isPrinting == value) return;
-                _isPrinting = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isPrinting = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isPaused = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsPaused
-        {
-            get => _isPaused;
-            set
-            {
-                if (_isPaused == value) return;
-                _isPaused = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isPaused = false;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isConnectedPrinterOnline = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsConnectedPrinterOnline
-        {
-            get => _isConnectedPrinterOnline;
-            set
-            {
-                if (_isConnectedPrinterOnline == value) return;
-                _isConnectedPrinterOnline = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isConnectedPrinterOnline = false;
+
         #endregion
 
         #region Temperatures
 
-        [JsonIgnore, XmlIgnore]
-        double _temperatureExtruderMain = 0;
-        [JsonIgnore, XmlIgnore]
-        public double TemperatureExtruderMain
-        {
-            get => _temperatureExtruderMain;
-            set
-            {
-                if (_temperatureExtruderMain == value) return;
-                _temperatureExtruderMain = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double temperatureExtruderMain = 0;
 
-        [JsonIgnore, XmlIgnore]
-        double _temperatureExtruderSecondary = 0;
-        [JsonIgnore, XmlIgnore]
-        public double TemperatureExtruderSecondary
-        {
-            get => _temperatureExtruderSecondary;
-            set
-            {
-                if (_temperatureExtruderSecondary == value) return;
-                _temperatureExtruderSecondary = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double temperatureExtruderSecondary = 0;
 
-        [JsonIgnore, XmlIgnore]
-        double _temperatureHeatedBedMain = 0;
-        [JsonIgnore, XmlIgnore]
-        public double TemperatureHeatedBedMain
-        {
-            get => _temperatureHeatedBedMain;
-            set
-            {
-                if (_temperatureHeatedBedMain == value) return;
-                _temperatureHeatedBedMain = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double temperatureHeatedBedMain = 0;
 
-        [JsonIgnore, XmlIgnore]
-        double _temperatureHeatedChamberMain = 0;
-        [JsonIgnore, XmlIgnore]
-        public double TemperatureHeatedChamberMain
-        {
-            get => _temperatureHeatedChamberMain;
-            set
-            {
-                if (_temperatureHeatedChamberMain == value) return;
-                _temperatureHeatedChamberMain = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double temperatureHeatedChamberMain = 0;
 
         #endregion
 
         #region Fans
-        [JsonIgnore, XmlIgnore]
-        int _speedFanMain = 0;
-        [JsonIgnore, XmlIgnore]
-        public int SpeedFanMain
-        {
-            get => _speedFanMain;
-            set
-            {
-                if (_speedFanMain == value) return;
-                _speedFanMain = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int speedFanMain = 0;
+
         #endregion
 
         #endregion
 
         #region Printers
-        [JsonIgnore, XmlIgnore]
-        RepetierPrinter _activePrinter;
-        [JsonIgnore, XmlIgnore]
-        public RepetierPrinter ActivePrinter
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierPrinter activePrinter;
+        partial void OnActivePrinterChanging(RepetierPrinter value)
         {
-            get => _activePrinter;
-            set
+            OnActivePrinterChangedEvent(new RepetierActivePrinterChangedEventArgs()
             {
-                if (_activePrinter == value) return;
-                OnActivePrinterChanged(new RepetierActivePrinterChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    NewPrinter = value,
-                    OldPrinter = _activePrinter,
-                    Printer = GetActivePrinterSlug(),
-                });
-                _activePrinter = value;
-                OnPropertyChanged();
+                SessonId = SessionId,
+                NewPrinter = value,
+                OldPrinter = ActivePrinter,
+                Printer = GetActivePrinterSlug(),
+            });
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinter> printers = new();
+        partial void OnPrintersChanged(ObservableCollection<RepetierPrinter> value)
+        {
+            if (value?.Count > 0 && ActivePrinter == null)
+            {
+                ActivePrinter = value.FirstOrDefault();
             }
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinter> _printers = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinter> Printers
-        {
-            get => _printers;
-            set
-            {
-                if (_printers == value) return;
-                _printers = value;
-                if (_printers != null && _printers.Count > 0)
-                {
-                    if (ActivePrinter == null)
-                        ActivePrinter = _printers[0];
-                }
-                OnPropertyChanged();
-            }
-        }
         #endregion
 
         #region Models
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<string> _modelGroups = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<string> ModelGroups
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<string> modelGroups = new();
+        partial void OnModelGroupsChanged(ObservableCollection<string> value)
         {
-            get => _modelGroups;
-            set
+            OnRepetierModelGroupsChangedEvent(new RepetierModelGroupsChangedEventArgs()
             {
-                if (_modelGroups == value) return;
-                _modelGroups = value;
-                OnRepetierModelGroupsChanged(new RepetierModelGroupsChangedEventArgs()
-                {
-                    NewModelGroups = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                OnPropertyChanged();
-            }
+                NewModelGroups = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierModel> _models = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierModel> Models
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierModel> models = new();
+        partial void OnModelsChanged(ObservableCollection<RepetierModel> value)
         {
-            get => _models;
-            set
+            OnRepetierModelsChangedEvent(new RepetierModelsChangedEventArgs()
             {
-                if (_models == value) return;
-                _models = value;
-                OnRepetierModelsChanged(new RepetierModelsChangedEventArgs()
-                {
-                    NewModels = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                OnPropertyChanged();
-            }
+                NewModels = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
         }
 
         #endregion
 
         #region Jobs
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierJobListItem> _jobList = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierJobListItem> JobList
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierJobListItem> jobList = new();
+        partial void OnJobListChanged(ObservableCollection<RepetierJobListItem> value)
         {
-            get => _jobList;
-            set
+            OnRepetierJobListChangedEvent(new RepetierJobListChangedEventArgs()
             {
-                if (_jobList == value) return;
-                _jobList = value;
-                OnRepetierJobListChanged(new RepetierJobListChangedEventArgs()
-                {
-                    NewJobList = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                OnPropertyChanged();
-            }
+                NewJobList = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
         }
 
         #endregion
 
         #region ExternalCommands
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<ExternalCommand> _externalCommands = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<ExternalCommand> ExternalCommands
-        {
-            get => _externalCommands;
-            set
-            {
-                if (_externalCommands == value) return;
-                _externalCommands = value;
-                /*
-                OnRepetierModelsChanged(new RepetierModelsChangedEventArgs()
-                {
-                    NewModels = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                */
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<ExternalCommand> externalCommands = new();
+
         #endregion
 
         #region Messages
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierMessage> _messages = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierMessage> Messages
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierMessage> messages = new();
+        partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
         {
-            get => _messages;
-            set
-            {
-                if (_messages == value) return;
-                _messages = value;
-                OnMessagesChanged(new RepetierMessagesChangedEventArgs()
+            OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
                 {
                     RepetierMessages = value,
                     SessonId = SessionId,
                     CallbackId = -1,
                     Printer = GetActivePrinterSlug(),
                 });
-                OnPropertyChanged();
-            }
         }
+
         #endregion
 
         #region WebCalls
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierWebCallAction> _webCallActions = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierWebCallAction> WebCallActions
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierWebCallAction> webCallActions = new();
+        partial void OnWebCallActionsChanged(ObservableCollection<RepetierWebCallAction> value)
         {
-            get => _webCallActions;
-            set
+            OnWebCallActionsChangedEvent(new RepetierWebCallActionsChangedEventArgs()
             {
-                if (_webCallActions == value) return;
-                _webCallActions = value;
-                OnWebCallActionsChanged(new RepetierWebCallActionsChangedEventArgs()
-                {
-                    NewWebCallActions = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-
-                OnPropertyChanged();
-            }
+                NewWebCallActions = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
         }
+
         #endregion
 
         #region GPIO
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierGpioListItem> _GPIOList = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierGpioListItem> GPIOList
-        {
-            get => _GPIOList;
-            set
-            {
-                if (_GPIOList == value) return;
-                _GPIOList = value;
-                /*
-                OnWebCallActionsChanged(new RepetierWebCallActionsChangedEventArgs()
-                {
-                    NewWebCallActions = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                */
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierGpioListItem> gPIOList = new();
+
         #endregion
 
         #region State & Config
-        [JsonIgnore, XmlIgnore]
-        RepetierPrinterConfig _config;
-        [JsonIgnore, XmlIgnore]
-        public RepetierPrinterConfig Config
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierPrinterConfig config;
+        partial void OnConfigChanged(RepetierPrinterConfig value)
         {
-            get => _config;
-            set
+           OnRepetierPrinterConfigChangedEvent(new RepetierPrinterConfigChangedEventArgs()
             {
-                if (_config == value) return;
-                _config = value;
-                OnRepetierPrinterConfigChanged(new RepetierPrinterConfigChangedEventArgs()
-                {
-                    NewConfiguration = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                UpdatePrinterConfig(value);
-                OnPropertyChanged();
-            }
+                NewConfiguration = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
+            UpdatePrinterConfig(value); 
         }
 
-        [JsonIgnore, XmlIgnore]
-        RepetierPrinterState _state;
-        [JsonIgnore, XmlIgnore]
-        public RepetierPrinterState State
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierPrinterState state;
+        partial void OnStateChanged(RepetierPrinterState value)
         {
-            get => _state;
-            set
+            OnRepetierPrinterStateChangedEvent(new RepetierPrinterStateChangedEventArgs()
             {
-                if (_state == value) return;
-                _state = value;
-                OnRepetierPrinterStateChanged(new RepetierPrinterStateChangedEventArgs()
-                {
-                    NewPrinterState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
-                UpdatePrinterState(value);
-                OnPropertyChanged();
-            }
+                NewPrinterState = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
+            UpdatePrinterState(value);
         }
 
-        [JsonIgnore, XmlIgnore]
-        RepetierCurrentPrintInfo _activePrintInfo;
-        [JsonIgnore, XmlIgnore]
-        public RepetierCurrentPrintInfo ActivePrintInfo
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        RepetierCurrentPrintInfo activePrintInfo;
+        partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo value)
         {
-            get => _activePrintInfo;
-            set
+            OnPrintInfoChangedEvent(new RepetierActivePrintInfoChangedEventArgs()
             {
-                if (_activePrintInfo == value) return;
-                _activePrintInfo = value;
-                OnPrintInfoChanged(new RepetierActivePrintInfoChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    NewActivePrintInfo = value,
-                    Printer = GetActivePrinterSlug(),
-                });
-                UpdateActivePrintInfo(value);
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                NewActivePrintInfo = value,
+                Printer = GetActivePrinterSlug(),
+            });
+            UpdateActivePrintInfo(value);
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierCurrentPrintInfo> _activePrintInfos = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierCurrentPrintInfo> ActivePrintInfos
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierCurrentPrintInfo> activePrintInfos = new();
+        partial void OnActivePrintInfosChanged(ObservableCollection<RepetierCurrentPrintInfo> value)
         {
-            get => _activePrintInfos;
-            set
+            OnPrintInfosChangedEvent(new RepetierActivePrintInfosChangedEventArgs()
             {
-                if (_activePrintInfos == value) return;
-                _activePrintInfos = value;
-                OnPrintInfosChanged(new RepetierActivePrintInfosChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    NewActivePrintInfos = value,
-                    Printer = GetActivePrinterSlug(),
-                });
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                NewActivePrintInfos = value,
+                Printer = GetActivePrinterSlug(),
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterExtruder> _extruders = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinterExtruder> Extruders
-        {
-            get => _extruders;
-            set
-            {
-                if (_extruders == value) return;
-                _extruders = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinterExtruder> extruders = new();
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeatbed> _heatedBeds = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinterHeatbed> HeatedBeds
-        {
-            get => _heatedBeds;
-            set
-            {
-                if (_heatedBeds == value) return;
-                _heatedBeds = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinterHeatbed> heatedBeds = new();
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeatchamber> _heatedChambers = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinterHeatchamber> HeatedChambers
-        {
-            get => _heatedChambers;
-            set
-            {
-                if (_heatedChambers == value) return;
-                _heatedChambers = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinterHeatchamber> heatedChambers = new();
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterFan> _fans = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinterFan> Fans
-        {
-            get => _fans;
-            set
-            {
-                if (_fans == value) return;
-                _fans = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinterFan> fans = new();
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterConfigWebcam> _webCams = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<RepetierPrinterConfigWebcam> WebCams
-        {
-            get => _webCams;
-            set
-            {
-                if (_webCams == value) return;
-                _webCams = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        ObservableCollection<RepetierPrinterConfigWebcam> webCams = new();
 
-        [JsonIgnore, XmlIgnore]
-        bool _shutdownAfterPrint = false;
-        [JsonIgnore, XmlIgnore]
-        public bool ShutdownAfterPrint
-        {
-            get => _shutdownAfterPrint;
-            set
-            {
-                if (_shutdownAfterPrint == value) return;
-                _shutdownAfterPrint = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool shutdownAfterPrint = false;
+
         #endregion
 
         #region Position
-        [JsonIgnore, XmlIgnore]
-        long _curX = 0;
-        [JsonIgnore, XmlIgnore]
-        public long CurX
-        {
-            get => _curX;
-            set
-            {
-                if (_curX == value) return;
-                _curX = value;
-                OnPropertyChanged();
-            }
-        }
-        [JsonIgnore, XmlIgnore]
-        long _curY = 0;
-        [JsonIgnore, XmlIgnore]
-        public long CurY
-        {
-            get => _curY;
-            set
-            {
-                if (_curY == value) return;
-                _curY = value;
-                OnPropertyChanged();
-            }
-        }
-        [JsonIgnore, XmlIgnore]
-        long _curZ = 0;
-        [JsonIgnore, XmlIgnore]
-        public long CurZ
-        {
-            get => _curZ;
-            set
-            {
-                if (_curZ == value) return;
-                _curZ = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        long curX = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _yHomed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool YHomed
-        {
-            get => _yHomed;
-            set
-            {
-                if (_yHomed == value) return;
-                _yHomed = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        long curY = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _zHomed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool ZHomed
-        {
-            get => _zHomed;
-            set
-            {
-                if (_zHomed == value) return;
-                _zHomed = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        long curZ = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _xHomed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool XHomed
-        {
-            get => _xHomed;
-            set
-            {
-                if (_xHomed == value) return;
-                _xHomed = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool yHomed = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool zHomed = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool xHomed = false;
 
         #endregion
 
         #region ReadOnly
 
-        public string FullWebAddress
-        {
-            get => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
-        }
+        public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
 
         public bool IsReady
         {
@@ -1370,7 +634,7 @@ namespace AndreasReitberger.API.Repetier
                         // Address
                         (Regex.IsMatch(ServerAddress, RegexHelper.IPv4AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.IPv6AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.Fqdn)) &&
                         // API-Key (also allow empty key if the user performs a login instead
-                        (string.IsNullOrEmpty(API) ? true : Regex.IsMatch(API, RegexHelper.RepetierServerProApiKey))
+                        (string.IsNullOrEmpty(ApiKey) ? true : Regex.IsMatch(ApiKey, RegexHelper.RepetierServerProApiKey))
                     ||
                         // Or validation rules are overriden
                         OverrideValidationRules
@@ -1382,80 +646,33 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region WebSocket
-        [JsonIgnore, XmlIgnore]
-        WebSocket _webSocket;
-        [JsonIgnore, XmlIgnore]
-        public WebSocket WebSocket
-        {
-            get => _webSocket;
-            set
-            {
-                if (_webSocket == value) return;
-                _webSocket = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        WebSocket webSocket;
 
-        [JsonIgnore, XmlIgnore]
-        Timer _pingTimer;
-        [JsonIgnore, XmlIgnore]
-        public Timer PingTimer
-        {
-            get => _pingTimer;
-            set
-            {
-                if (_pingTimer == value) return;
-                _pingTimer = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        Timer pingTimer;
 
-        [JsonIgnore, XmlIgnore]
-        int _pingCounter = 0;
-        [JsonIgnore, XmlIgnore]
-        public int PingCounter
-        {
-            get => _pingCounter;
-            set
-            {
-                if (_pingCounter == value) return;
-                _pingCounter = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int pingCounter = 0;
 
-        [JsonIgnore, XmlIgnore]
-        int _refreshCounter = 0;
-        [JsonIgnore, XmlIgnore]
-        public int RefreshCounter
-        {
-            get => _refreshCounter;
-            set
-            {
-                if (_refreshCounter == value) return;
-                _refreshCounter = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int refreshCounter = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isListeningToWebSocket = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsListeningToWebsocket
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool isListeningToWebsocket = false;
+        partial void OnIsListeningToWebsocketChanged(bool value)
         {
-            get => _isListeningToWebSocket;
-            set
+            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
             {
-                if (_isListeningToWebSocket == value) return;
-                _isListeningToWebSocket = value;
-                OnListeningChanged(new RepetierEventListeningChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    IsListening = IsListening,
-                    IsListeningToWebSocket = value,
-                });
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                IsListening = IsListening,
+                IsListeningToWebSocket = value,
+            });
         }
         #endregion
 
@@ -1533,7 +750,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 ServerAddress = serverAddress;
-                API = api;
+                ApiKey = api;
                 Port = port;
                 IsSecure = isSecure;
 
@@ -1554,202 +771,6 @@ namespace AndreasReitberger.API.Repetier
                 IsInitialized = false;
             }
         }
-        #endregion
-
-        #region EventHandlerss
-
-        #region WebSocket
-
-        public event EventHandler<RepetierEventArgs> WebSocketConnected;
-        protected virtual void OnWebSocketConnected(RepetierEventArgs e)
-        {
-            WebSocketConnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> WebSocketDisconnected;
-        protected virtual void OnWebSocketDisconnected(RepetierEventArgs e)
-        {
-            WebSocketDisconnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<ErrorEventArgs> WebSocketError;
-        protected virtual void OnWebSocketError(ErrorEventArgs e)
-        {
-            WebSocketError?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(RepetierEventArgs e)
-        {
-            WebSocketDataReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierLoginRequiredEventArgs> LoginResultReceived;
-        protected virtual void OnLoginResultReceived(RepetierLoginRequiredEventArgs e)
-        {
-            LoginResultReceived?.Invoke(this, e);
-        }
-
-        #endregion
-
-        #region ServerConnectionState
-
-        public event EventHandler<RepetierEventArgs> ServerWentOffline;
-        protected virtual void OnServerWentOffline(RepetierEventArgs e)
-        {
-            ServerWentOffline?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> ServerWentOnline;
-        protected virtual void OnServerWentOnline(RepetierEventArgs e)
-        {
-            ServerWentOnline?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> ServerUpdateAvailable;
-        protected virtual void OnServerUpdateAvailable(RepetierEventArgs e)
-        {
-            ServerUpdateAvailable?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Errors
-
-        public event EventHandler Error;
-        protected virtual void OnError()
-        {
-            Error?.Invoke(this, EventArgs.Empty);
-        }
-        protected virtual void OnError(ErrorEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(UnhandledExceptionEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(RepetierJsonConvertEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        public event EventHandler<RepetierRestEventArgs> RestApiError;
-        protected virtual void OnRestApiError(RepetierRestEventArgs e)
-        {
-            RestApiError?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierRestEventArgs> RestApiAuthenticationError;
-        protected virtual void OnRestApiAuthenticationError(RepetierRestEventArgs e)
-        {
-            RestApiAuthenticationError?.Invoke(this, e);
-        }
-        public event EventHandler<RepetierRestEventArgs> RestApiAuthenticationSucceeded;
-        protected virtual void OnRestApiAuthenticationSucceeded(RepetierRestEventArgs e)
-        {
-            RestApiAuthenticationSucceeded?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierJsonConvertEventArgs> RestJsonConvertError;
-        protected virtual void OnRestJsonConvertError(RepetierJsonConvertEventArgs e)
-        {
-            RestJsonConvertError?.Invoke(this, e);
-        }
-
-        #endregion
-
-        #region ServerStateChanges
-
-        public event EventHandler<RepetierEventListeningChangedEventArgs> ListeningChanged;
-        protected virtual void OnListeningChanged(RepetierEventListeningChangedEventArgs e)
-        {
-            ListeningChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventSessionChangedEventArgs> SessionChanged;
-        protected virtual void OnSessionChanged(RepetierEventSessionChangedEventArgs e)
-        {
-            SessionChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierMessagesChangedEventArgs> MessagesChanged;
-        protected virtual void OnMessagesChanged(RepetierMessagesChangedEventArgs e)
-        {
-            MessagesChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierActivePrintInfosChangedEventArgs> PrintInfosChanged;
-        protected virtual void OnPrintInfosChanged(RepetierActivePrintInfosChangedEventArgs e)
-        {
-            PrintInfosChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierActivePrintInfoChangedEventArgs> PrintInfoChanged;
-        protected virtual void OnPrintInfoChanged(RepetierActivePrintInfoChangedEventArgs e)
-        {
-            PrintInfoChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierJobsChangedEventArgs> JobsChanged;
-        protected virtual void OnJobsChanged(RepetierJobsChangedEventArgs e)
-        {
-            JobsChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierJobFinishedEventArgs> JobFinished;
-        protected virtual void OnJobFinished(RepetierJobFinishedEventArgs e)
-        {
-            JobFinished?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierTempDataEventArgs> TempDataReceived;
-        protected virtual void OnTempDataReceived(RepetierTempDataEventArgs e)
-        {
-            TempDataReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierPrinterConfigChangedEventArgs> RepetierPrinterConfigChanged;
-        protected virtual void OnRepetierPrinterConfigChanged(RepetierPrinterConfigChangedEventArgs e)
-        {
-            RepetierPrinterConfigChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierPrinterStateChangedEventArgs> RepetierPrinterStateChanged;
-        protected virtual void OnRepetierPrinterStateChanged(RepetierPrinterStateChangedEventArgs e)
-        {
-            RepetierPrinterStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierModelsChangedEventArgs> RepetierModelsChanged;
-        protected virtual void OnRepetierModelsChanged(RepetierModelsChangedEventArgs e)
-        {
-            RepetierModelsChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierModelGroupsChangedEventArgs> RepetierModelGroupsChanged;
-        protected virtual void OnRepetierModelGroupsChanged(RepetierModelGroupsChangedEventArgs e)
-        {
-            RepetierModelGroupsChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierJobListChangedEventArgs> RepetierJobListChanged;
-        protected virtual void OnRepetierJobListChanged(RepetierJobListChangedEventArgs e)
-        {
-            RepetierJobListChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierActivePrinterChangedEventArgs> ActivePrinterChanged;
-        protected virtual void OnActivePrinterChanged(RepetierActivePrinterChangedEventArgs e)
-        {
-            ActivePrinterChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierWebCallActionsChangedEventArgs> WebCallActionsChanged;
-        protected virtual void OnWebCallActionsChanged(RepetierWebCallActionsChangedEventArgs e)
-        {
-            WebCallActionsChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #endregion
 
         #region WebSocket
@@ -1784,7 +805,7 @@ namespace AndreasReitberger.API.Repetier
 
                 DisconnectWebSocket();
 
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(API) ? $"?apikey={API}" : "")}";
+                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}";
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false
@@ -1864,7 +885,7 @@ namespace AndreasReitberger.API.Repetier
                 }
                 //if (!IsReady || IsListeningToWebsocket) return;
                 await DisconnectWebSocketAsync();
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(API) ? $"?apikey={API}" : "")}";
+                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}";
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
@@ -2002,7 +1023,7 @@ namespace AndreasReitberger.API.Repetier
                                 // Gets triggered when a model has been deleted
                                 EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString);
                                 if (eventJobsChanged != null)
-                                    OnJobsChanged(new RepetierJobsChangedEventArgs()
+                                    OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                     {
                                         Data = eventJobsChanged,
                                         CallbackId = PingCounter,
@@ -2026,7 +1047,7 @@ namespace AndreasReitberger.API.Repetier
                             {
                                 EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString);
                                 if (eventMessageChanged != null)
-                                    OnMessagesChanged(new RepetierMessagesChangedEventArgs()
+                                    OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
                                     {
                                         RepetierMessage = eventMessageChanged,
                                         CallbackId = PingCounter,
@@ -2344,9 +1365,9 @@ namespace AndreasReitberger.API.Repetier
                 }
                 
                 request.AddParameter("data", jsonDataString, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(API))
+                if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddParameter("apikey", API, ParameterType.QueryString);
+                    request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
                 }
                 else if (!string.IsNullOrEmpty(SessionId))
                 {
@@ -2458,9 +1479,9 @@ namespace AndreasReitberger.API.Repetier
                     Method = Method.Post
                 };
                 _ = request.AddParameter("a", command, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(API))
+                if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    _ = request.AddParameter("apikey", API, ParameterType.QueryString);
+                    _ = request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
                 }
                 else if (!string.IsNullOrEmpty(SessionId))
                 {
@@ -2562,16 +1583,16 @@ namespace AndreasReitberger.API.Repetier
                     Method = Method.Get,
                     Timeout = -1,
                 };
-                if (!string.IsNullOrEmpty(API))
+                if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                 }
                 //request.AddHeader("Content-Type", "image/png");
                 request.AddParameter("q", "models");
                 request.AddParameter("id", modelId);
                 request.AddParameter("slug", currentPrinter);
                 request.AddParameter("t", thumbnail ? "s" : "l");
-                request.AddParameter("apikey", API, ParameterType.QueryString);
+                request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
 
                 Uri fullUrl = restClient.BuildUri(request);
                 
@@ -2621,7 +1642,7 @@ namespace AndreasReitberger.API.Repetier
                 request.AddParameter("id", jobId);
                 request.AddParameter("slug", currentPrinter);
                 request.AddParameter("t", thumbnail ? "s" : "l");
-                request.AddParameter("apikey", API, ParameterType.QueryString);
+                request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
 
                 Uri fullUrl = restClient.BuildUri(request);
 
@@ -2711,9 +1732,9 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (newPrintInfo != null)
                 {
-                    IsConnectedPrinterOnline = _activePrintInfo.Online > 0;
-                    IsPrinting = _activePrintInfo.Jobid > 0;
-                    IsPaused = _activePrintInfo.Paused;
+                    IsConnectedPrinterOnline = newPrintInfo.Online > 0;
+                    IsPrinting = newPrintInfo.Jobid > 0;
+                    IsPaused = newPrintInfo.Paused;
                 }
                 else
                 {
@@ -3306,7 +2327,7 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
 
-                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={API}";
+                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
             }
             catch (Exception exc)
             {
@@ -3322,7 +2343,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
 
                 await RefreshPrinterConfigAsync();
-                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={API}";
+                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
                 /*
                 RepetierPrinterConfigWebcam webcamConfig = WebCams?.FirstOrDefault(config => config.Pos == camIndex);
                 if(webcamConfig != null)
@@ -3684,7 +2705,7 @@ namespace AndreasReitberger.API.Repetier
                     return
                     !(ServerAddress == tempServer.ServerAddress &&
                         Port == tempServer.Port &&
-                        API == tempServer.API &&
+                        ApiKey == tempServer.ApiKey &&
                         IsSecure == tempServer.IsSecure
                         )
                     ;
@@ -3732,7 +2753,7 @@ namespace AndreasReitberger.API.Repetier
                     AlwaysMultipartFormData = true,
                 };
 
-                request.AddHeader("x-api-key", API);
+                request.AddHeader("x-api-key", ApiKey);
                 request.AddFile(Path.GetFileNameWithoutExtension(filePath), filePath);
                 
                 CancellationTokenSource cts = new(timeout);
@@ -5368,7 +4389,7 @@ namespace AndreasReitberger.API.Repetier
                     UpdateRestClientInstance();
                 }
                 RestRequest request = new(path);
-                request.AddParameter("apikey", API);
+                request.AddParameter("apikey", ApiKey);
                 request.RequestFormat = DataFormat.Json;
                 request.Method = Method.Get;
                 request.Timeout = timeout;
@@ -5654,11 +4675,11 @@ namespace AndreasReitberger.API.Repetier
                 {
                     case RepetierProjectFileType.Model:
                     case RepetierProjectFileType.Other:
-                        uriString = $"{FullWebAddress}/project/{serverUuid}/{action}/{file.ProjectUuid}/{file.Name}/?apikey={API}";
+                        uriString = $"{FullWebAddress}/project/{serverUuid}/{action}/{file.ProjectUuid}/{file.Name}/?apikey={ApiKey}";
                         break;
 
                     case RepetierProjectFileType.Image:
-                        uriString = $"{FullWebAddress}/project/{serverUuid}/image/{file.ProjectUuid}/{file.Name}/?apikey={API}&v=19";
+                        uriString = $"{FullWebAddress}/project/{serverUuid}/image/{file.ProjectUuid}/{file.Name}/?apikey={ApiKey}&v=19";
                         break;
                     default:
                         break;
@@ -5841,7 +4862,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (string.IsNullOrEmpty(printerName))
                     printerName = GetActivePrinterSlug();
-                byte[] report = await DownloadFileFromUriAsync($"{FullWebAddress}/printer/export/{printerName}?a=history_report&id={reportId}&apikey={API}")
+                byte[] report = await DownloadFileFromUriAsync($"{FullWebAddress}/printer/export/{printerName}?a=history_report&id={reportId}&apikey={ApiKey}")
                     .ConfigureAwait(false)
                     ;
                 return report;
