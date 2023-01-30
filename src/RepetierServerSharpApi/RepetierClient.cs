@@ -943,7 +943,7 @@ namespace AndreasReitberger.API.Repetier
         }
 #endif
 
-        private void WebSocket_Error(object sender, ErrorEventArgs e)
+        void WebSocket_Error(object sender, ErrorEventArgs e)
         {
             try
             {
@@ -961,7 +961,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        private void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
+        void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             try
             {
@@ -1122,11 +1122,11 @@ namespace AndreasReitberger.API.Repetier
                         }
                     }
                 }
-                OnWebSocketDataReceived(new RepetierEventArgs()
+                OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
                     Message = e.Message,
-                    SessonId = this.SessionId,
+                    SessonId = SessionId,
                 });
             }
             catch (JsonException jecx)
@@ -1144,38 +1144,64 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        private void WebSocket_Closed(object sender, EventArgs e)
+        void WebSocket_Closed(object sender, EventArgs e)
         {
-            IsListeningToWebsocket = false;
-            StopPingTimer();
-            OnWebSocketDisconnected(new RepetierEventArgs()
+            try
             {
-                Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        private void WebSocket_Opened(object sender, EventArgs e)
-        {
-            // Trigger ping to get session id
-            string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
-            WebSocket.Send(pingCommand);
-
-            PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
-
-            IsListeningToWebsocket = true;
-            OnWebSocketConnected(new RepetierEventArgs()
+                IsListeningToWebsocket = false;
+                StopPingTimer();
+                OnWebSocketDisconnected(new RepetierEventArgs()
+                {
+                    Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
+                    Printer = GetActivePrinterSlug(),
+                });
+            }
+            catch (Exception exc)
             {
-                Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
-                Printer = GetActivePrinterSlug(),
-            });
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
 
-        private void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
+        void WebSocket_Opened(object sender, EventArgs e)
         {
+            try
+            {
+                // Trigger ping to get session id
+                string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
+                WebSocket?.Send(pingCommand);
 
+                PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
+
+                IsListeningToWebsocket = true;
+                OnWebSocketConnected(new RepetierEventArgs()
+                {
+                    Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
+                    Printer = GetActivePrinterSlug(),
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
-#endregion
+
+        void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            try
+            {
+                OnWebSocketDataReceived(new RepetierWebsocketEventArgs()
+                {
+                    CallbackId = PingCounter,
+                    Data = e.Data,
+                    SessonId = SessionId,
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+        #endregion
 
         #region Methods
 
@@ -2527,7 +2553,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        private Task SendRestApiRequestAsync(string v1, string v2, string pingCommand, int timeout)
+        Task SendRestApiRequestAsync(string v1, string v2, string pingCommand, int timeout)
         {
             throw new NotImplementedException();
         }

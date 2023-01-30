@@ -29,8 +29,14 @@ namespace AndreasReitberger.API.Repetier
             WebSocketError?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(RepetierEventArgs e)
+        public event EventHandler<RepetierWebsocketEventArgs> WebSocketMessageReceived;
+        protected virtual void OnWebSocketMessageReceived(RepetierWebsocketEventArgs e)
+        {
+            WebSocketMessageReceived?.Invoke(this, e);
+        }
+
+        public event EventHandler<RepetierWebsocketEventArgs> WebSocketDataReceived;
+        protected virtual void OnWebSocketDataReceived(RepetierWebsocketEventArgs e)
         {
             WebSocketDataReceived?.Invoke(this, e);
         }
