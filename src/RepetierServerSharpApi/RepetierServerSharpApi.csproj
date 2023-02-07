@@ -12,8 +12,6 @@
     <PackageTags>Repetier, Server, Pro, API, Rest, Sharp</PackageTags>
     <PackageProjectUrl>https://github.com/AndreasReitberger/RepetierServerSharpApi</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AndreasReitberger/RepetierServerSharpApi</RepositoryUrl>
-    <AssemblyVersion>1.2.8.0</AssemblyVersion>
-    <FileVersion>1.2.8.0</FileVersion>
     <Version>1.2.8</Version>
     <LangVersion>10.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

@@ -13,6 +13,9 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("visibleWhenPrinting")]
+        public bool VisibleWhenPrinting { get; set; }
         #endregion
 
         #region Overrides
