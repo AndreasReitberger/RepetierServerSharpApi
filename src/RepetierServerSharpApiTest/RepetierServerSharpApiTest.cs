@@ -16,7 +16,7 @@ namespace RepetierServerSharpApiTest
 
         private readonly string _host = "192.168.10.112";
         private readonly int _port = 3344;
-        private readonly string _api = "_yourkey";
+        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1"; // _yourkey";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -827,6 +827,46 @@ namespace RepetierServerSharpApiTest
                 .Build();
             await client.CheckOnlineAsync();
             Assert.IsTrue(client?.IsOnline ?? false);
+        }
+
+        [TestMethod]
+        public async Task ServerQueryTests()
+        {
+            try
+            {
+                RepetierClient _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    if (_server.ActivePrinter == null)
+                        await _server.SetPrinterActiveAsync(0, true);
+
+                    var update = await _server.GetAvailableServerUpdateAsync();
+                    Assert.IsNotNull(update);
+
+                    var printInfo = await _server.GetCurrentPrintInfoAsync();
+                    Assert.IsNotNull(printInfo);
+
+                    await _server.GetCurrentPrintInfosAsync();
+                    await _server.GetExternalCommandsAsync();
+                    await _server.GetGPIOListAsync();
+                    await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
+
+
+                    //await _server.RefreshAllAsync();
+                    //Assert.IsTrue(_server.InitialDataFetched);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
         }
     }
 }

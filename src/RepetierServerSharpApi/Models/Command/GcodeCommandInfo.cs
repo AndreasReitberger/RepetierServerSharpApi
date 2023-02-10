@@ -1,89 +1,36 @@
-﻿using AndreasReitberger.Core.Utilities;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class GcodeCommandInfo : BaseModel
+    public partial class GcodeCommandInfo : ObservableObject//, ICloneable
     {
         #region Id
-        [JsonProperty(nameof(Id))]
-        Guid _id;
-        [JsonIgnore]
-        public Guid Id
-        {
-            get => _id;
-            set
-            {
-                if (_id == value) return;
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        Guid id;
         #endregion
 
         #region Properties
-        [JsonProperty(nameof(Command))]
-        string _command = string.Empty;
-        [JsonIgnore]
-        public string Command
-        {
-            get => _command;
-            set
-            {
-                if (_command == value) return;
-                _command = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        string command = string.Empty;
 
-        [JsonProperty(nameof(Sent))]
-        bool _sent = false;
-        [JsonIgnore]
-        public bool Sent
-        {
-            get => _sent;
-            set
-            {
-                if (_sent == value) return;
-                _sent = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(Succeeded))]
-        bool _succeeded = false;
-        [JsonIgnore]
-        public bool Succeeded
-        {
-            get => _succeeded;
-            set
-            {
-                if (_succeeded == value) return;
-                _succeeded = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        bool sent = false;
 
-        [JsonProperty(nameof(TimeStamp))]
-        DateTime _timeStamp = DateTime.Now;
-        [JsonIgnore]
-        public DateTime TimeStamp
-        {
-            get => _timeStamp;
-            set
-            {
-                if (_timeStamp == value) return;
-                _timeStamp = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        bool succeeded = false;
+
+        [ObservableProperty]
+        DateTime timeStamp = DateTime.Now;
+
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

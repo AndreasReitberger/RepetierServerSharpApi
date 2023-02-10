@@ -66,6 +66,9 @@ namespace AndreasReitberger.API.Repetier.Models
         [JsonProperty("radiusMove")]
         public long RadiusMove { get; set; }
 
+        [JsonProperty("repeat")]
+        public long Repeat { get; set; }
+
         [JsonProperty("slicer")]
         public string Slicer { get; set; }
 

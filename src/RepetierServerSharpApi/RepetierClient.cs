@@ -27,7 +27,6 @@ namespace AndreasReitberger.API.Repetier
 {
     public partial class RepetierClient : ObservableObject, IDisposable //, IRestApiClient
     {
-
         #region Variables
         RestClient restClient;
         HttpClient httpClient;
@@ -969,16 +968,17 @@ namespace AndreasReitberger.API.Repetier
                     return;
                 if (e.Message.ToLower().Contains("login"))
                 {
-                    //var login = JsonConvert.DeserializeObject<RepetierLoginRequiredResult>(e.Message);
-                    //var login = JsonConvert.DeserializeObject<RepetierLoginResult>(e.Message);
+                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
+                    //var login = GetObjectFromJson<RepetierLoginResult>(e.Message, JsonSerializerSettings);
                 }
                 if (e.Message.ToLower().Contains("session"))
                 {
-                    Session = JsonConvert.DeserializeObject<EventSession>(e.Message);
+                    //Session = GetObjectFromJson<EventSession>(e.Message, JsonSerializerSettings);
+                    Session = GetObjectFromJson<EventSession>(e.Message);
                 }
                 else if (e.Message.ToLower().Contains("event"))
                 {
-                    RepetierEventContainer repetierEvent = JsonConvert.DeserializeObject<RepetierEventContainer>(e.Message);
+                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
                     if (repetierEvent != null)
                     {
                         foreach (RepetierEventData obj in repetierEvent.Data)
@@ -987,7 +987,8 @@ namespace AndreasReitberger.API.Repetier
                             if (obj.Event == "userCredentials")
                             {
                                 //EventUserCredentialsData eventUserCredentials = JsonConvert.DeserializeObject<EventUserCredentialsData>(jsonString);
-                                var login = JsonConvert.DeserializeObject<RepetierLoginResult>(jsonString);
+                                //var login = JsonConvert.DeserializeObject<RepetierLoginResult>(jsonString, JsonSerializerSettings);
+                                RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonString);
                                 if (login != null)
                                 {
                                     OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
@@ -1002,7 +1003,8 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "temp")
                             {
-                                EventTempData eventTempData = JsonConvert.DeserializeObject<EventTempData>(jsonString);
+                                //EventTempData eventTempData = JsonConvert.DeserializeObject<EventTempData>(jsonString, JsonSerializerSettings);
+                                EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonString);
                                 if (eventTempData != null)
                                     OnTempDataReceived(new RepetierTempDataEventArgs()
                                     {
@@ -1015,13 +1017,14 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "jobStarted")
                             {
-                                EventJobStartedData eventJobStarted = JsonConvert.DeserializeObject<EventJobStartedData>(jsonString);
-
+                                //EventJobStartedData eventJobStarted = JsonConvert.DeserializeObject<EventJobStartedData>(jsonString, JsonSerializerSettings);
+                                EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonString);
                             }
                             else if (obj.Event == "jobsChanged")
                             {
                                 // Gets triggered when a model has been deleted
-                                EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString);
+                                //EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString, JsonSerializerSettings);
+                                EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonString);
                                 if (eventJobsChanged != null)
                                     OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                     {
@@ -1033,7 +1036,8 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "jobFinished")
                             {
-                                EventJobFinishedData eventJobFinished = JsonConvert.DeserializeObject<EventJobFinishedData>(jsonString);
+                                //EventJobFinishedData eventJobFinished = JsonConvert.DeserializeObject<EventJobFinishedData>(jsonString, JsonSerializerSettings);
+                                EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonString);
                                 if (eventJobFinished != null)
                                     OnJobFinished(new RepetierJobFinishedEventArgs()
                                     {
@@ -1045,7 +1049,8 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "messagesChanged")
                             {
-                                EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString);
+                                //EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString, JsonSerializerSettings);
+                                EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonString);
                                 if (eventMessageChanged != null)
                                     OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
                                     {
@@ -1065,11 +1070,12 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "hardwareInfo")
                             {
-                                EventHardwareInfoChangedData eventHardwareInfoChanged = JsonConvert.DeserializeObject<EventHardwareInfoChangedData>(jsonString);
+                                //EventHardwareInfoChangedData eventHardwareInfoChanged = JsonConvert.DeserializeObject<EventHardwareInfoChangedData>(jsonString, JsonSerializerSettings);
+                                EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonString);
                             }
                             else if (obj.Event == "wifiChanged")
                             {
-                                EventWifiChangedData eventWifiChanged = JsonConvert.DeserializeObject<EventWifiChangedData>(jsonString);
+                                EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonString);
                             }
                             else if (obj.Event == "modelGroupListChanged")
                             {
@@ -1081,7 +1087,7 @@ namespace AndreasReitberger.API.Repetier
                             }
                             else if (obj.Event == "gcodeInfoUpdated")
                             {
-                                EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = JsonConvert.DeserializeObject<EventGcodeInfoUpdatedData>(jsonString);
+                                EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonString);
                             }
                             else if (obj.Event == "dispatcherCount")
                             {
@@ -1215,11 +1221,8 @@ namespace AndreasReitberger.API.Repetier
             {
                 if ((string.IsNullOrEmpty(result) || result == "{}") && emptyResultIsValid)
                     return true;
-                RepetierActionResult actionResult = JsonConvert.DeserializeObject<RepetierActionResult>(result);
-                if (actionResult != null)
-                    return actionResult.Ok;
-                else
-                    return false;
+                RepetierActionResult actionResult = GetObjectFromJson<RepetierActionResult>(result);
+                return actionResult?.Ok ?? false;
             }
             catch (JsonException jecx)
             {
@@ -1790,7 +1793,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
 
-                RepetierModelList list = JsonConvert.DeserializeObject<RepetierModelList>(result.Result);
+                RepetierModelList list = GetObjectFromJson<RepetierModelList>(result.Result);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -1827,8 +1830,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
 
-                RepetierModelGroup info = JsonConvert.DeserializeObject<RepetierModelGroup>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierModelGroup>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -1864,8 +1866,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
 
-                RepetierJobListRespone respone = JsonConvert.DeserializeObject<RepetierJobListRespone>(result.Result);
-                return respone;
+                return GetObjectFromJson<RepetierJobListRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -1900,8 +1901,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                     .ConfigureAwait(false);
 
-                RepetierWebCallList script = JsonConvert.DeserializeObject<RepetierWebCallList>(result.Result);
-                return script;
+                return GetObjectFromJson<RepetierWebCallList>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -2662,8 +2662,7 @@ namespace AndreasReitberger.API.Repetier
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "updateAvailable")
                     .ConfigureAwait(false);
-                resultObject = JsonConvert.DeserializeObject<RepetierAvailableUpdateInfo>(result.Result);
-                return resultObject;
+                return GetObjectFromJson<RepetierAvailableUpdateInfo>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -2696,8 +2695,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 if (result != null)
                 {
-                    RepetierLicenseInfo lic = JsonConvert.DeserializeObject<RepetierLicenseInfo>(result.Result);
-                    return lic;
+                    return GetObjectFromJson<RepetierLicenseInfo>(result.Result);
                 }
                 else
                     return null;
@@ -3015,7 +3013,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "freeSpace")
                     .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone space = JsonConvert.DeserializeObject<RepetierFreeSpaceRespone>(result.Result);
+                RepetierFreeSpaceRespone space = GetObjectFromJson<RepetierFreeSpaceRespone>(result.Result);
                 if (space != null)
                 {
                     FreeDiskSpace = space.Free;
@@ -3185,7 +3183,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
 
-                RepetierModelGroup info = JsonConvert.DeserializeObject<RepetierModelGroup>(result.Result);
+                RepetierModelGroup info = GetObjectFromJson<RepetierModelGroup>(result.Result);
                 return info != null && info.GroupNames != null ? new ObservableCollection<string>(info.GroupNames) : resultObject;
             }
             catch (JsonException jecx)
@@ -3475,7 +3473,7 @@ namespace AndreasReitberger.API.Repetier
                 currentPrinter = currentPrinter.Replace(" ", "_");
                 resultString = result.Result.Replace(currentPrinter, "Printer");
 
-                RepetierPrinterStateRespone state = JsonConvert.DeserializeObject<RepetierPrinterStateRespone>(resultString);
+                RepetierPrinterStateRespone state = GetObjectFromJson<RepetierPrinterStateRespone>(resultString);
                 if (state != null && IsPrinterSlugSelected(currentPrinter))
                     State = state.Printer;
                 return state;
@@ -3539,7 +3537,8 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer,
                     RepetierCommandFeature.list)
                     .ConfigureAwait(false);
-                RepetierPrinterListRespone respone = JsonConvert.DeserializeObject<RepetierPrinterListRespone>(result.Result);
+
+                RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
                 if (respone != null)
                 {
                     repetierPrinterList = new ObservableCollection<RepetierPrinter>(respone.Printers);
@@ -3631,7 +3630,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "listPrinter", printerName: currentPrinter)
                     .ConfigureAwait(false);
 
-                RepetierCurrentPrintInfo[] info = JsonConvert.DeserializeObject<RepetierCurrentPrintInfo[]>(result.Result);
+                RepetierCurrentPrintInfo[] info = GetObjectFromJson<RepetierCurrentPrintInfo[]>(result.Result);
                 if (info != null)
                 {
                     resultObject = new ObservableCollection<RepetierCurrentPrintInfo>(info);
@@ -3708,7 +3707,8 @@ namespace AndreasReitberger.API.Repetier
                     command: "getPrinterConfig", jsonData: string.Format("{{\"printer\": \"{0}\"}}", currentPrinter),
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
-                RepetierPrinterConfig config = JsonConvert.DeserializeObject<RepetierPrinterConfig>(result.Result);
+
+                RepetierPrinterConfig config = GetObjectFromJson<RepetierPrinterConfig>(result.Result);
                 if (config != null)
                 {
                     Config = resultObject = config;
@@ -3983,13 +3983,8 @@ namespace AndreasReitberger.API.Repetier
                    command: "listExternalCommands")
                     .ConfigureAwait(false);
 
-                ExternalCommand[] cmds = JsonConvert.DeserializeObject<ExternalCommand[]>(result.Result);
-                if (cmds == null)
-                {
-                    // Avoid exceptions for null values
-                    cmds = new ExternalCommand[] { new ExternalCommand() };
-                }
-                return new ObservableCollection<ExternalCommand>(cmds);
+                ExternalCommand[] cmds = GetObjectFromJson<ExternalCommand[]>(result.Result);
+                return new ObservableCollection<ExternalCommand>(cmds ?? new ExternalCommand[] { new ExternalCommand() });
             }
             catch (JsonException jecx)
             {
@@ -4090,7 +4085,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "messages", printerName: currentPrinter)
                     .ConfigureAwait(false);
-                RepetierMessage[] info = JsonConvert.DeserializeObject<RepetierMessage[]>(result.Result);
+                RepetierMessage[] info = GetObjectFromJson<RepetierMessage[]>(result.Result);
                 if (info != null)
                     resultObject = new ObservableCollection<RepetierMessage>(info);
                 return resultObject;
@@ -4238,8 +4233,8 @@ namespace AndreasReitberger.API.Repetier
                     command: "getScript", jsonData: cmd,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                RepetierGcodeScript script = JsonConvert.DeserializeObject<RepetierGcodeScript>(result.Result);
-                return script;
+
+                return GetObjectFromJson<RepetierGcodeScript>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4505,8 +4500,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "projectsListServer", printerName: printerName)
                     .ConfigureAwait(false);
 
-                RepetierProjectsServerListRespone info = JsonConvert.DeserializeObject<RepetierProjectsServerListRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierProjectsServerListRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4541,8 +4535,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "projectsGetFolder", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
-                RepetierProjectsFolderRespone info = JsonConvert.DeserializeObject<RepetierProjectsFolderRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierProjectsFolderRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4646,8 +4639,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "projectsGetProject", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
-                RepetierProjectsProjectRespone info = JsonConvert.DeserializeObject<RepetierProjectsProjectRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierProjectsProjectRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4803,8 +4795,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                     .ConfigureAwait(false);
 
-                RepetierHistoryListRespone info = JsonConvert.DeserializeObject<RepetierHistoryListRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierHistoryListRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4863,8 +4854,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "historySummary", jsonData: data,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                RepetierHistorySummaryRespone info = JsonConvert.DeserializeObject<RepetierHistorySummaryRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierHistorySummaryRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -4958,8 +4948,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
 
-                RepetierGpioListRespone info = JsonConvert.DeserializeObject<RepetierGpioListRespone>(result.Result);
-                return info;
+                return GetObjectFromJson<RepetierGpioListRespone>(result.Result);
             }
             catch (JsonException jecx)
             {
