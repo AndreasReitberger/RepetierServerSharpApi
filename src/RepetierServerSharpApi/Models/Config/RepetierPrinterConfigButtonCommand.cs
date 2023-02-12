@@ -1,13 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigButtonCommand
+    public partial class RepetierPrinterConfigButtonCommand : ObservableObject
     {
-        [JsonProperty("command", NullValueHandling = NullValueHandling.Ignore)]
-        public string Command { get; set; }
+        #region Properties
+        [ObservableProperty]
+        [JsonProperty("command")]
+        string command;
 
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [ObservableProperty]
+        [JsonProperty("name")]
+        string name;
+
+        #endregion
+
+        #region Overrides
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+        #endregion
     }
 }

@@ -1,72 +1,95 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierCurrentPrintInfo
+    public partial class RepetierCurrentPrintInfo : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        bool active;
 
+        [ObservableProperty]
         [JsonProperty("analysed")]
-        public long Analysed { get; set; }
+        long analysed;
 
+        [ObservableProperty]
         [JsonProperty("done")]
-        public double Done { get; set; }
+        double done;
 
+        [ObservableProperty]
         [JsonProperty("job")]
-        public string Job { get; set; }
+        string job;
 
+        [ObservableProperty]
         [JsonProperty("jobid")]
-        public long Jobid { get; set; }
+        long jobid;
 
+        [ObservableProperty]
+        [JsonProperty("jobstate")]
+        string jobState;
+
+        [ObservableProperty]
         [JsonProperty("linesSend")]
-        public long LinesSend { get; set; }
+        long linesSend;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("ofLayer")]
-        public long OfLayer { get; set; }
+        long ofLayer;
 
+        [ObservableProperty]
         [JsonProperty("online")]
-        public long Online { get; set; }
+        long online;
 
+        [ObservableProperty]
         [JsonProperty("pauseState")]
-        public long PauseState { get; set; }
+        long pauseState;
 
+        [ObservableProperty]
         [JsonProperty("paused")]
-        public bool Paused { get; set; }
+        bool paused;
 
+        [ObservableProperty]
         [JsonProperty("printStart")]
-        public double PrintStart { get; set; }
+        double? printStart;
 
+        [ObservableProperty]
         [JsonProperty("printTime")]
-        public double PrintTime { get; set; }
+        double? printTime;
 
+        [ObservableProperty]
         [JsonProperty("printedTimeComp")]
-        public double PrintedTimeComp { get; set; }
+        double? printedTimeComp;
+
+        [ObservableProperty]
+        [JsonProperty("repeat")]
+        long? repeat;
+
+        [ObservableProperty]
+        [JsonProperty("slug")]
+        string slug;
+
+        [ObservableProperty]
+        [JsonProperty("start")]
+        long? start;
+
+        [ObservableProperty]
+        [JsonProperty("totalLines")]
+        long? totalLines;
+
+        #region JsonIgnore
+
 
         [JsonIgnore]
-        public double RemainingPrintTime
-        {
-            get
-            {
-                if (PrintTime > 0)
-                    return PrintTime - PrintedTimeComp;
-                else
-                    return 0;
-            }
-        }
+        public double? RemainingPrintTime => PrintTime > 0 ? PrintTime - PrintedTimeComp : 0;
 
-        [JsonProperty("slug")]
-        public string Slug { get; set; }
+        #endregion
 
-        [JsonProperty("start")]
-        public long Start { get; set; }
-
-        [JsonProperty("totalLines")]
-        public long TotalLines { get; set; }
         #endregion
 
         #region Overrides

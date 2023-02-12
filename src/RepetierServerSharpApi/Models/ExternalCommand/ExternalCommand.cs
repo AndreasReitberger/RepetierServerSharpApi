@@ -1,42 +1,70 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class ExternalCommand
+    public partial class ExternalCommand : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("confirm")]
-        public string Confirm { get; set; }
+        string confirm;
 
+        [ObservableProperty]
         [JsonProperty("execute")]
-        public string Execute { get; set; }
+        string execute;
 
+        [ObservableProperty]
+        [JsonProperty("icon")]
+        string icon;
+
+        [ObservableProperty]
         [JsonProperty("id")]
-        public long Id { get; set; }
+        long id;
 
+        [ObservableProperty]
+        [JsonProperty("ifAllNotPrinting")]
+        bool ifAllNotPrinting;
+
+        [ObservableProperty]
+        [JsonProperty("ifThisNotPrinting")]
+        bool ifThisNotPrinting;
+
+        [ObservableProperty]
         [JsonProperty("local")]
-        public bool Local { get; set; }
+        bool local;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("permAdd")]
-        public bool PermAdd { get; set; }
+        bool permAdd;
 
+        [ObservableProperty]
         [JsonProperty("permConfig")]
-        public bool PermConfig { get; set; }
+        bool permConfig;
 
+        [ObservableProperty]
         [JsonProperty("permDel")]
-        public bool PermDel { get; set; }
+        bool permDel;
 
+        [ObservableProperty]
         [JsonProperty("permPrint")]
-        public bool PermPrint { get; set; }
+        bool permPrint;
 
+        [ObservableProperty]
         [JsonProperty("remote")]
-        public bool Remote { get; set; }
+        bool remote;
 
+        [ObservableProperty]
         [JsonProperty("slug")]
-        public string Slug { get; set; }
+        string slug;
+
+        [ObservableProperty]
+        [JsonProperty("terminal")]
+        string terminal;
         #endregion
 
         #region Overrides

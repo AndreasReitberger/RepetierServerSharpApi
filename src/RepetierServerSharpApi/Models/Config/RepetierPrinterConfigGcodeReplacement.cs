@@ -1,17 +1,30 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierPrinterConfigGcodeReplacement
     {
-        [JsonProperty("comment", NullValueHandling = NullValueHandling.Ignore)]
-        public string Comment { get; set; }
+        #region Properties
+        [ObservableProperty]
+        [JsonProperty("comment")]
+        string comment;
 
-        [JsonProperty("expression", NullValueHandling = NullValueHandling.Ignore)]
-        public string Expression { get; set; }
+        [ObservableProperty]
+        [JsonProperty("expression")]
+        string expression;
 
-        [JsonProperty("script", NullValueHandling = NullValueHandling.Ignore)]
-        public string Script { get; set; }
+        [ObservableProperty]
+        [JsonProperty("script")]
+        string script;
+        #endregion
+
+        #region Overrides
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+        #endregion
     }
 
 }

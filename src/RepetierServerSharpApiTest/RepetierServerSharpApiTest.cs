@@ -5,6 +5,7 @@ using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -851,11 +852,53 @@ namespace RepetierServerSharpApiTest
                     var printInfo = await _server.GetCurrentPrintInfoAsync();
                     Assert.IsNotNull(printInfo);
 
-                    await _server.GetCurrentPrintInfosAsync();
-                    await _server.GetExternalCommandsAsync();
-                    await _server.GetGPIOListAsync();
-                    await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
+                    var printInfos = await _server.GetCurrentPrintInfosAsync();
+                    Assert.IsNotNull(printInfos);
 
+                    var cmds = await _server.GetExternalCommandsAsync();
+                    Assert.IsNotNull(cmds);
+
+                    var gpios = await _server.GetGPIOListAsync();
+                    Assert.IsNotNull(gpios);
+
+                    var history = await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
+                    Assert.IsNotNull(history);
+
+                    var historyReport = await _server.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
+                    Assert.IsNotNull(historyReport);
+
+                    var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2022, true);
+                    Assert.IsNotNull(historyReport);
+
+                    var jobList = await _server.GetJobListAsync();
+                    Assert.IsNotNull(jobList);
+
+                    var license = await _server.GetLicenseDataAsync();
+                    Assert.IsNotNull(license);
+
+                    var messages = await _server.GetMessagesAsync();
+                    Assert.IsNotNull(messages);
+
+                    var groups = await _server.GetModelGroupsAsync();
+                    Assert.IsNotNull(groups);
+
+                    var files = await _server.GetModelsAsync();
+                    Assert.IsNotNull(files);
+
+                    var config = await _server.GetPrinterConfigAsync();
+                    Assert.IsNotNull(config);
+
+                    var printers = await _server.GetPrintersAsync();
+                    Assert.IsNotNull(printers);
+
+                    var servers = await _server.GetProjectsListServerAsync();
+                    Assert.IsNotNull(servers);
+
+                    var projects = await _server.GetProjectItemsAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    Assert.IsNotNull(projects);
+
+                    var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    Assert.IsNotNull(folders);
 
                     //await _server.RefreshAllAsync();
                     //Assert.IsTrue(_server.InitialDataFetched);

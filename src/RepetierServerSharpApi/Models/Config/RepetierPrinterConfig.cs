@@ -1,58 +1,93 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfig
+    public partial class RepetierPrinterConfig : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierPrinterConfigButtonCommand> ButtonCommands { get; set; } = new();
+        List<RepetierPrinterConfigButtonCommand> buttonCommands = new();
 
+        [ObservableProperty]
         [JsonProperty("connection")]
-        public RepetierPrinterConnection Connection { get; set; }
+        RepetierPrinterConnection connection;
 
+        [ObservableProperty]
         [JsonProperty("extruders")]
-        public List<RepetierPrinterConfigExtruder> Extruders { get; set; } = new();
+        List<RepetierPrinterConfigExtruder> extruders = new();
+        
+        [ObservableProperty]
+        [JsonProperty("fanPresets")]
+        List<RepetierPrinterConfigPreset> fanPresets = new();
 
+        [ObservableProperty]
+        [JsonProperty("flowPresets")]
+        List<RepetierPrinterConfigPreset> flowPresets = new();
+
+        [ObservableProperty]
         [JsonProperty("gcodeReplacements")]
-        public List<RepetierPrinterConfigGcodeReplacement> GcodeReplacements { get; set; } = new();
+        List<RepetierPrinterConfigGcodeReplacement> gcodeReplacements = new();
 
+        [ObservableProperty]
         [JsonProperty("general")]
-        public RepetierPrinterConfigGeneral General { get; set; }
+        RepetierPrinterConfigGeneral general;
 
+        [ObservableProperty]
         [JsonProperty("heatedBeds")]
-        public List<RepetierPrinterConfigHeatedComponent> HeatedBeds { get; set; } = new();
+        List<RepetierPrinterConfigHeatedComponent> heatedBeds = new();
 
+        [ObservableProperty]
         [JsonProperty("heatedChambers")]
-        public List<RepetierPrinterConfigHeatedComponent> HeatedChambers { get; set; } = new();
+        List<RepetierPrinterConfigHeatedComponent> heatedChambers = new();
 
+        [ObservableProperty]
         [JsonProperty("movement")]
-        public RepetierPrinterConfigMovement Movement { get; set; }
+        RepetierPrinterConfigMovement movement;
 
+        [ObservableProperty]
         [JsonProperty("properties")]
-        public RepetierPrinterConfigProperties Properties { get; set; }
+        RepetierPrinterConfigProperties properties;
 
+        [ObservableProperty]
         [JsonProperty("quickCommands")]
-        public List<RepetierQuickGcodeCommand> QuickCommands { get; set; } = new();
+        List<RepetierQuickGcodeCommand> quickCommands = new();
 
+        [ObservableProperty]
         [JsonProperty("recover")]
-        public RepetierPrinterConfigRecover Recover { get; set; }
+        RepetierPrinterConfigRecover recover;
 
+        [ObservableProperty]
         [JsonProperty("responseEvents")]
-        public List<object> ResponseEvents { get; set; } = new();
+        List<object> responseEvents = new();
 
+        [ObservableProperty]
         [JsonProperty("shape")]
-        public RepetierPrinterConfigShape Shape { get; set; }
+        RepetierPrinterConfigShape shape;
+        
+        [ObservableProperty]
+        [JsonProperty("shape")]
+        List<RepetierPrinterConfigPreset> speedPresets = new();
 
+        [ObservableProperty]
         [JsonProperty("webcams")]
-        public List<RepetierPrinterConfigWebcam> Webcams { get; set; } = new();
+        List<RepetierPrinterConfigWebcam> webcams = new();
+
+        [ObservableProperty]
+        [JsonProperty("wizardCommands")]
+        List<object> wizardCommands = new();
+
+        [ObservableProperty]
+        [JsonProperty("wizardTemplates")]
+        List<RepetierPrinterConfigWizardTemplate> wizardTemplates = new();
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

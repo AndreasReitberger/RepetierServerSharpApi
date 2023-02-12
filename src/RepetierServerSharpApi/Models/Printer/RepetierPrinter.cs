@@ -1,158 +1,143 @@
 ﻿using AndreasReitberger.Core.Utilities;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinter : BaseModel
+    public partial class RepetierPrinter : ObservableObject // BaseModel
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("active")]
-        bool _active;
-        [JsonIgnore]
-        public bool Active
-        {
-            get { return _active; }
-            set { SetProperty(ref _active, value); }
-        }
+        bool active;
 
+        [ObservableProperty]
+        [JsonProperty("analysed")]
+        int? analysed;
+
+        [ObservableProperty]
+        [JsonProperty("done")]
+        double? done;
+
+        [ObservableProperty]
         [JsonProperty("job")]
-        string _job = string.Empty;
-        [JsonIgnore]
-        public string Job
-        {
-            get { return _job; }
-            set { SetProperty(ref _job, value); }
-        }
+        string job = string.Empty;
 
+        [ObservableProperty]
+        [JsonProperty("jobid")]
+        int jobId;
+
+        [ObservableProperty]
+        [JsonProperty("jobstate")]
+        string? jobState = string.Empty;
+        
+        [ObservableProperty]
+        [JsonProperty("linesSend")]
+        long? linesSend;
+
+        [ObservableProperty]
         [JsonProperty("name")]
-        string _name = string.Empty;
-        [JsonIgnore]
-        public string Name
-        {
-            get { return _name; }
-            set { SetProperty(ref _name, value); }
-        }
+        string name = string.Empty;
+        
+        [ObservableProperty]
+        [JsonProperty("ofLayer")]
+        long? ofLayer;
 
+        [ObservableProperty]
         [JsonProperty("online")]
-        long _online;
-        [JsonIgnore]
-        public long Online
-        {
-            get { return _online; }
-            set { SetProperty(ref _online, value); }
-        }
+        long online;
 
+        [ObservableProperty]
         [JsonProperty("pauseState")]
-        long _pauseState;
-        [JsonIgnore]
-        public long PauseState
-        {
-            get { return _pauseState; }
-            set { SetProperty(ref _pauseState, value); }
-        }
+        long pauseState;
 
+        [ObservableProperty]
         [JsonProperty("paused")]
-        bool _paused;
-        [JsonIgnore]
-        public bool Paused
-        {
-            get { return _paused; }
-            set { SetProperty(ref _paused, value); }
-        }
+        bool paused;
 
+        [ObservableProperty]
+        [JsonProperty("printStart")]
+        double? printStart;
+
+        [ObservableProperty]
+        [JsonProperty("printTime")]
+        double? printTime;
+
+        [ObservableProperty]
+        [JsonProperty("printedTimeComp")]
+        double? printedTimeComp;
+
+        [ObservableProperty]
+        [JsonProperty("repeat")]
+        int? repeat;
+
+        [ObservableProperty]
         [JsonProperty("slug")]
-        string _slug = string.Empty;
-        [JsonIgnore]
-        public string Slug
-        {
-            get { return _slug; }
-            set { SetProperty(ref _slug, value); }
-        }
+        string slug = string.Empty;
 
-        [JsonIgnore]
-        double? _extruder1 = 0;
-        [JsonIgnore]
-        public double? Extruder1
-        {
-            get { return _extruder1; }
-            set { SetProperty(ref _extruder1, value); }
-        }
+        [ObservableProperty]
+        [JsonProperty("start")]
+        long? start;
 
-        [JsonIgnore]
-        double? _extruder2 = 0;
-        [JsonIgnore]
-        public double? Extruder2
-        {
-            get { return _extruder2; }
-            set { SetProperty(ref _extruder2, value); }
-        }
+        [ObservableProperty]
+        [JsonProperty("totalLines")]
+        long? totalLines;
 
-        [JsonIgnore]
-        double? _heatedBed = 0;
-        [JsonIgnore]
-        public double? HeatedBed
-        {
-            get { return _heatedBed; }
-            set { SetProperty(ref _heatedBed, value); }
-        }
+        #region JsonIgnored
 
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        double? _chamber = 0;
-        [JsonIgnore]
-        public double? Chamber
-        {
-            get { return _chamber; }
-            set { SetProperty(ref _chamber, value); }
-        }
+        double? extruder1 = 0;
 
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        double _progress = 0;
-        [JsonIgnore]
-        public double Progress
-        {
-            get { return _progress; }
-            set { SetProperty(ref _progress, value); }
-        }
+        double? extruder2 = 0;
 
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        double _remainingPrintTime = 0;
-        [JsonIgnore]
-        public double RemainingPrintTime
-        {
-            get { return _remainingPrintTime; }
-            set { SetProperty(ref _remainingPrintTime, value); }
-        }
+        double? heatedBed = 0;
 
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        bool _isPrinting = false;
+        double? chamber = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        public bool IsPrinting
-        {
-            get { return _isPrinting; }
-            set { SetProperty(ref _isPrinting, value); }
-        }
+        double progress = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        bool _isPaused = false;
+        double remainingPrintTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        public bool IsPaused
-        {
-            get { return _isPaused; }
-            set { SetProperty(ref _isPaused, value); }
-        }
+        bool isPrinting = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        bool _isSelected = false;
+        bool isPaused = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
         [JsonIgnore]
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
+        bool isSelected = false;
+
+        #endregion
+
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
         public override bool Equals(object obj)

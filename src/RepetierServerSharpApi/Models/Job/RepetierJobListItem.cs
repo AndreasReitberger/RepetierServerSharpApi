@@ -1,133 +1,176 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierJobListItem
+    public partial class RepetierJobListItem : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("analysed")]
-        public long Analysed { get; set; }
+        long analysed;
 
+        [ObservableProperty]
         [JsonProperty("created")]
-        public long Created { get; set; }
+        long created;
 
+        [ObservableProperty]
         [JsonProperty("extruderUsage")]
-        public List<double> ExtruderUsage { get; set; }
+        List<double> extruderUsage;
 
+        [ObservableProperty]
         [JsonProperty("filamentTotal")]
-        public double FilamentTotal { get; set; }
+        double filamentTotal;
 
+        [ObservableProperty]
         [JsonProperty("fits")]
-        public bool Fits { get; set; }
+        bool fits;
 
+        [ObservableProperty]
         [JsonProperty("gcodePatch")]
-        public string GcodePatch { get; set; }
+        string gcodePatch;
 
+        [ObservableProperty]
         [JsonProperty("group")]
-        public string Group { get; set; }
+        string group;
 
+        [ObservableProperty]
         [JsonProperty("id")]
-        public long Id { get; set; }
+        long id;
 
+        [ObservableProperty]
         [JsonProperty("lastPrintTime")]
-        public double LastPrintTime { get; set; }
+        double lastPrintTime;
 
+        [ObservableProperty]
         [JsonProperty("layer")]
-        public long Layer { get; set; }
+        long layer;
 
+        [ObservableProperty]
         [JsonProperty("length")]
-        public long Length { get; set; }
+        long length;
 
+        [ObservableProperty]
         [JsonProperty("lines")]
-        public long Lines { get; set; }
+        long lines;
 
+        [ObservableProperty]
         [JsonProperty("materials")]
-        public List<string> Materials { get; set; }
+        List<string> materials;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("notes")]
-        public string Notes { get; set; }
+        string notes;
 
+        [ObservableProperty]
         [JsonProperty("printTime")]
-        public double PrintTime { get; set; }
+        double printTime;
 
+        [ObservableProperty]
         [JsonProperty("printed")]
-        public long Printed { get; set; }
+        long printed;
 
+        [ObservableProperty]
         [JsonProperty("printedTimeComp")]
-        public long PrintedTimeComp { get; set; }
+        long printedTimeComp;
 
+        [ObservableProperty]
         [JsonProperty("radius")]
-        public double Radius { get; set; }
+        double radius;
 
+        [ObservableProperty]
         [JsonProperty("radiusMove")]
-        public long RadiusMove { get; set; }
+        long radiusMove;
 
+        [ObservableProperty]
         [JsonProperty("repeat")]
-        public long Repeat { get; set; }
+        long repeat;
 
+        [ObservableProperty]
         [JsonProperty("slicer")]
-        public string Slicer { get; set; }
+        string slicer;
 
+        [ObservableProperty]
         [JsonProperty("state")]
-        public string State { get; set; }
+        string state;
 
+        [ObservableProperty]
         [JsonProperty("version")]
-        public long Version { get; set; }
+        long version;
 
+        [ObservableProperty]
         [JsonProperty("volumeTotal")]
-        public double VolumeTotal { get; set; }
+        double volumeTotal;
 
+        [ObservableProperty]
         [JsonProperty("volumeUsage")]
-        public List<double> VolumeUsage { get; set; }
+        List<double> volumeUsage;
 
+        [ObservableProperty]
         [JsonProperty("volumetric")]
-        public bool Volumetric { get; set; }
+        bool volumetric;
 
+        [ObservableProperty]
         [JsonProperty("xMax")]
-        public double XMax { get; set; }
+        double xMax;
 
+        [ObservableProperty]
         [JsonProperty("xMaxMove")]
-        public double XMaxMove { get; set; }
+        double xMaxMove;
 
+        [ObservableProperty]
         [JsonProperty("xMaxView")]
-        public double XMaxView { get; set; }
+        double xMaxView;
 
+        [ObservableProperty]
         [JsonProperty("xMin")]
-        public long XMin { get; set; }
+        long xMin;
 
+        [ObservableProperty]
         [JsonProperty("xMinMove")]
-        public long XMinMove { get; set; }
+        long xMinMove;
 
+        [ObservableProperty]
         [JsonProperty("xMinView")]
-        public double XMinView { get; set; }
+        double xMinView;
 
+        [ObservableProperty]
         [JsonProperty("yMax")]
-        public double YMax { get; set; }
+        double yMax;
 
+        [ObservableProperty]
         [JsonProperty("yMaxMove")]
-        public long YMaxMove { get; set; }
+        long yMaxMove;
 
+        [ObservableProperty]
         [JsonProperty("yMaxView")]
-        public double YMaxView { get; set; }
+        double yMaxView;
 
+        [ObservableProperty]
         [JsonProperty("yMin")]
-        public long YMin { get; set; }
+        long yMin;
 
+        [ObservableProperty]
         [JsonProperty("yMinMove")]
-        public long YMinMove { get; set; }
+        long yMinMove;
 
+        [ObservableProperty]
         [JsonProperty("yMinView")]
-        public double YMinView { get; set; }
+        double yMinView;
 
+        [ObservableProperty]
         [JsonProperty("zMax")]
-        public double ZMax { get; set; }
+        double zMax;
 
+        [ObservableProperty]
         [JsonProperty("zMin")]
-        public long ZMin { get; set; }
+        long zMin;
+
         #endregion
 
         #region Overrides
