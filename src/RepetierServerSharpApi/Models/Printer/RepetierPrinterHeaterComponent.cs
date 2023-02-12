@@ -5,8 +5,7 @@ using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    [Obsolete("Use the common class `RepetierPrinterHeaterComponent` instead.")]
-    public partial class RepetierPrinterHeatbed : ObservableObject
+    public partial class RepetierPrinterHeaterComponent : ObservableObject
     {
         #region Properties
 
@@ -27,6 +26,7 @@ namespace AndreasReitberger.API.Repetier.Models
         long tempSet;
 
         #region Json Ignore
+
         [JsonIgnore]
         public RepetierToolState State { get => GetCurrentState(); }
         #endregion
@@ -58,5 +58,4 @@ namespace AndreasReitberger.API.Repetier.Models
         }
         #endregion
     }
-
 }

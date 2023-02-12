@@ -4,7 +4,7 @@ using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigWizardTemplate : ObservableObject // BaseModel
+    public partial class RepetierPrinterConfigWizardTemplate : ObservableObject
     {
         #region Properties
         [ObservableProperty]

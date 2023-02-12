@@ -1,32 +1,39 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterInfoRespone
+    public partial class RepetierPrinterInfoRespone : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("printers")]
-        public List<RepetierPrinterInfo> Printers { get; set; } = new();
+        List<RepetierPrinterInfo> printers = new();
 
+        [ObservableProperty]
         [JsonProperty("servername")]
-        public string Servername { get; set; }
+        string servername;
 
+        [ObservableProperty]
         [JsonProperty("serveruuid")]
-        public Guid Serveruuid { get; set; }
+        Guid serveruuid;
 
+        [ObservableProperty]
         [JsonProperty("version")]
-        public string Version { get; set; }
+        string version;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

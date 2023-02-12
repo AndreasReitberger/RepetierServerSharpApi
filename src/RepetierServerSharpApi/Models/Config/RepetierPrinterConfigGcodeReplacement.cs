@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigGcodeReplacement
+    public partial class RepetierPrinterConfigGcodeReplacement : ObservableObject
     {
         #region Properties
         [ObservableProperty]

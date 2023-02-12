@@ -68,7 +68,7 @@ namespace AndreasReitberger.API.Repetier.Models
         RepetierPrinterConfigShape shape;
         
         [ObservableProperty]
-        [JsonProperty("shape")]
+        [JsonProperty("speedPresets")]
         List<RepetierPrinterConfigPreset> speedPresets = new();
 
         [ObservableProperty]

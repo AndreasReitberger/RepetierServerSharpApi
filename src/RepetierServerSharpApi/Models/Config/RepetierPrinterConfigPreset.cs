@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigPreset : ObservableObject // BaseModel
+    public partial class RepetierPrinterConfigPreset : ObservableObject
     {
         #region Properties
         [ObservableProperty]
@@ -11,8 +11,8 @@ namespace AndreasReitberger.API.Repetier.Models
         string name;
 
         [ObservableProperty]
-        [JsonProperty("Value")]
-        int Value;
+        [JsonProperty("value")]
+        int value;
         #endregion
 
         #region Overrides

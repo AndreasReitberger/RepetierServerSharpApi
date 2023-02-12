@@ -35,6 +35,10 @@ namespace AndreasReitberger.API.Repetier.Models
         long inputBufferSize;
 
         [ObservableProperty]
+        [JsonProperty("interceptor")]
+        bool interceptor;
+
+        [ObservableProperty]
         [JsonProperty("malyanHack")]
         bool malyanHack;
 

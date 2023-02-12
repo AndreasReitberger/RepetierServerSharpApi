@@ -1,37 +1,45 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigHeatedComponent
+    public partial class RepetierPrinterConfigHeatedComponent : ObservableObject
     {
         #region Properties
-        [JsonProperty("alias", NullValueHandling = NullValueHandling.Ignore)]
-        public string Alias { get; set; }
+        [ObservableProperty]
+        [JsonProperty("alias")]
+        string alias;
 
-        [JsonProperty("cooldownPerSecond", NullValueHandling = NullValueHandling.Ignore)]
-        public double? CooldownPerSecond { get; set; }
+        [ObservableProperty]
+        [JsonProperty("cooldownPerSecond")]
+        double? cooldownPerSecond;
 
-        [JsonProperty("heatupPerSecond", NullValueHandling = NullValueHandling.Ignore)]
-        public double? HeatupPerSecond { get; set; }
+        [ObservableProperty]
+        [JsonProperty("heatupPerSecond")]
+        double? heatupPerSecond;
 
-        [JsonProperty("lastTemp", NullValueHandling = NullValueHandling.Ignore)]
-        public long? LastTemp { get; set; }
+        [ObservableProperty]
+        [JsonProperty("lastTemp")]
+        long? lastTemp;
 
-        [JsonProperty("maxTemp", NullValueHandling = NullValueHandling.Ignore)]
-        public long? MaxTemp { get; set; }
+        [ObservableProperty]
+        [JsonProperty("maxTemp")]
+        long? maxTemp;
 
-        [JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Offset { get; set; }
+        [ObservableProperty]
+        [JsonProperty("offset")]
+        long? offset;
 
-        [JsonProperty("temperatures", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("temperatures")]
+        List<RepetierPrinterConfigTemperature> temperatures = new();
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

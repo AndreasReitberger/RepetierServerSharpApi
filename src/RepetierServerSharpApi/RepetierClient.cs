@@ -568,15 +568,15 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterExtruder> extruders = new();
+        ObservableCollection<RepetierPrinterHeaterComponent> extruders = new();
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeatbed> heatedBeds = new();
+        ObservableCollection<RepetierPrinterHeaterComponent> heatedBeds = new();
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeatchamber> heatedChambers = new();
+        ObservableCollection<RepetierPrinterHeaterComponent> heatedChambers = new();
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
@@ -1708,13 +1708,13 @@ namespace AndreasReitberger.API.Repetier
                 ActiveExtruder = newState.ActiveExtruder;
                 NumberOfExtruders = newState.NumExtruder;
 
-                Extruders = new ObservableCollection<RepetierPrinterExtruder>(newState.Extruder);
+                Extruders = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.Extruder);
                 IsDualExtruder = Extruders != null && Extruders.Count > 1;
 
-                HeatedBeds = new ObservableCollection<RepetierPrinterHeatbed>(newState.HeatedBeds);
+                HeatedBeds = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedBeds);
                 HasHeatedBed = HeatedBeds != null && HeatedBeds.Count > 0;
 
-                HeatedChambers = new ObservableCollection<RepetierPrinterHeatchamber>(newState.HeatedChambers);
+                HeatedChambers = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedChambers);
                 HasHeatedBed = HeatedChambers != null && HeatedChambers.Count > 0;
 
                 Fans = new ObservableCollection<RepetierPrinterFan>(newState.Fans);

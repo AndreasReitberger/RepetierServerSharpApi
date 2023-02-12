@@ -1,43 +1,53 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
 
-    public partial class RepetierHistorySummaryItem
+    public partial class RepetierHistorySummaryItem : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("aborted")]
-        public long Aborted { get; set; }
+        long aborted;
 
+        [ObservableProperty]
         [JsonProperty("computed")]
-        public double Computed { get; set; }
+        double computed;
 
+        [ObservableProperty]
         [JsonProperty("costs")]
-        public double Costs { get; set; }
+        double costs;
 
+        [ObservableProperty]
         [JsonProperty("filament")]
-        public double Filament { get; set; }
+        double filament;
 
+        [ObservableProperty]
         [JsonProperty("finished")]
-        public long Finished { get; set; }
+        long finished;
 
+        [ObservableProperty]
         [JsonProperty("month")]
-        public long Month { get; set; }
+        long month;
 
+        [ObservableProperty]
         [JsonProperty("num")]
-        public long Num { get; set; }
+        long num;
 
+        [ObservableProperty]
         [JsonProperty("real")]
-        public double Real { get; set; }
+        double real;
 
+        [ObservableProperty]
         [JsonProperty("year")]
-        public long Year { get; set; }
+        long year;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

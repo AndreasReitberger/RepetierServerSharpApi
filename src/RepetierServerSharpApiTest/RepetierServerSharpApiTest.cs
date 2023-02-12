@@ -761,13 +761,13 @@ namespace RepetierServerSharpApiTest
                             RepetierPrinterStateRespone state = await _server.GetStateObjectAsync();
                             if (state != null && state.Printer != null)
                             {
-                                List<RepetierPrinterExtruder> extruders = state.Printer.Extruder;
+                                List<RepetierPrinterHeaterComponent> extruders = state.Printer.Extruder;
                                 if (extruders == null || extruders.Count == 0)
                                 {
                                     Assert.Fail("No extrudes available");
                                     break;
                                 }
-                                RepetierPrinterExtruder extruder = extruders[0];
+                                RepetierPrinterHeaterComponent extruder = extruders[0];
                                 extruderTemp = extruder.TempRead;
                             }
                         }
@@ -899,6 +899,9 @@ namespace RepetierServerSharpApiTest
 
                     var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
                     Assert.IsNotNull(folders);
+
+                    var state = await _server.GetStateObjectAsync();
+                    Assert.IsNotNull(state);
 
                     //await _server.RefreshAllAsync();
                     //Assert.IsTrue(_server.InitialDataFetched);

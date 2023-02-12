@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinter : ObservableObject // BaseModel
+    public partial class RepetierPrinter : ObservableObject
     {
         #region Properties
         [ObservableProperty]

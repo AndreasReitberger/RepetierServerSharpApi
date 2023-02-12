@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }
