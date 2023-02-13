@@ -1,28 +1,35 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierUpdateTeaser
+    public partial class RepetierUpdateTeaser : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("available")]
-        public bool Available { get; set; }
+        bool available;
 
+        [ObservableProperty]
         [JsonProperty("end")]
-        public long End { get; set; }
+        long end;
 
+        [ObservableProperty]
         [JsonProperty("msg")]
-        public string Msg { get; set; }
+        string msg;
 
+        [ObservableProperty]
         [JsonProperty("start")]
-        public long Start { get; set; }
+        long start;
 
+        [ObservableProperty]
         [JsonProperty("updated")]
-        public long Updated { get; set; }
+        long updated;
 
+        [ObservableProperty]
         [JsonProperty("url")]
-        public Uri Url { get; set; }
+        Uri url;
         #endregion
 
         #region Overrides

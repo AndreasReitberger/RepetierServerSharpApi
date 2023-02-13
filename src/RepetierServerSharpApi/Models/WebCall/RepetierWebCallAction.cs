@@ -1,44 +1,56 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierWebCallAction
+    public partial class RepetierWebCallAction : ObservableObject
     {
         #region Properties
 
+        [ObservableProperty]
         [JsonProperty("content_type")]
-        public string ContentType { get; set; }
+        string contentType;
 
+        [ObservableProperty]
         [JsonProperty("icon")]
-        public string Icon { get; set; }
+        string icon;
 
+        [ObservableProperty]
         [JsonProperty("method")]
-        public string Method { get; set; }
+        string method;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("pos")]
-        public long Pos { get; set; }
+        long pos;
 
+        [ObservableProperty]
         [JsonProperty("post")]
-        public string Post { get; set; }
+        string post;
 
+        [ObservableProperty]
         [JsonProperty("question")]
-        public string Question { get; set; }
+        string question;
 
+        [ObservableProperty]
         [JsonProperty("show_in_menu")]
-        public bool ShowInMenu { get; set; }
+        bool showInMenu;
 
+        [ObservableProperty]
         [JsonProperty("show_name")]
-        public string ShowName { get; set; }
+        string showName;
 
+        [ObservableProperty]
         [JsonProperty("slug")]
-        public string Slug { get; set; }
+        string slug;
 
+        [ObservableProperty]
         [JsonProperty("url")]
-        public Uri Url { get; set; }
+        Uri url;
         #endregion
 
         #region Overrides

@@ -1,16 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventPrinterListChanged
+    public partial class EventPrinterListChanged : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("data")]
-        public List<EventPrinterListChangedData> Data { get; set; } = new();
+        List<EventPrinterListChangedData> data = new();
 
+        [ObservableProperty]
         [JsonProperty("event")]
-        public string Event { get; set; }
+        string eventName;
+        //string @event;
         #endregion
 
         #region Overrides

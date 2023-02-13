@@ -984,7 +984,7 @@ namespace AndreasReitberger.API.Repetier
                         foreach (RepetierEventData obj in repetierEvent.Data)
                         {
                             string jsonString = obj.Data.ToString();
-                            if (obj.Event == "userCredentials")
+                            if (obj.EventName == "userCredentials")
                             {
                                 //EventUserCredentialsData eventUserCredentials = JsonConvert.DeserializeObject<EventUserCredentialsData>(jsonString);
                                 //var login = JsonConvert.DeserializeObject<RepetierLoginResult>(jsonString, JsonSerializerSettings);
@@ -1001,7 +1001,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                 }
                             }
-                            else if (obj.Event == "temp")
+                            else if (obj.EventName == "temp")
                             {
                                 //EventTempData eventTempData = JsonConvert.DeserializeObject<EventTempData>(jsonString, JsonSerializerSettings);
                                 EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonString);
@@ -1015,12 +1015,12 @@ namespace AndreasReitberger.API.Repetier
                                     });
 
                             }
-                            else if (obj.Event == "jobStarted")
+                            else if (obj.EventName == "jobStarted")
                             {
                                 //EventJobStartedData eventJobStarted = JsonConvert.DeserializeObject<EventJobStartedData>(jsonString, JsonSerializerSettings);
                                 EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonString);
                             }
-                            else if (obj.Event == "jobsChanged")
+                            else if (obj.EventName == "jobsChanged")
                             {
                                 // Gets triggered when a model has been deleted
                                 //EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString, JsonSerializerSettings);
@@ -1034,7 +1034,7 @@ namespace AndreasReitberger.API.Repetier
                                         Printer = obj.Printer,
                                     });
                             }
-                            else if (obj.Event == "jobFinished")
+                            else if (obj.EventName == "jobFinished")
                             {
                                 //EventJobFinishedData eventJobFinished = JsonConvert.DeserializeObject<EventJobFinishedData>(jsonString, JsonSerializerSettings);
                                 EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonString);
@@ -1047,7 +1047,7 @@ namespace AndreasReitberger.API.Repetier
                                         Printer = obj.Printer,
                                     });
                             }
-                            else if (obj.Event == "messagesChanged")
+                            else if (obj.EventName == "messagesChanged")
                             {
                                 //EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString, JsonSerializerSettings);
                                 EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonString);
@@ -1060,64 +1060,64 @@ namespace AndreasReitberger.API.Repetier
                                         Printer = obj.Printer,
                                     });
                             }
-                            else if (obj.Event == "prepareJob")
+                            else if (obj.EventName == "prepareJob")
                             {
                                 // No information provided in "Data"
                             }
-                            else if (obj.Event == "timer30" || obj.Event == "timer60" || obj.Event == "timer300")
+                            else if (obj.EventName == "timer30" || obj.EventName == "timer60" || obj.EventName == "timer300")
                             {
 
                             }
-                            else if (obj.Event == "hardwareInfo")
+                            else if (obj.EventName == "hardwareInfo")
                             {
                                 //EventHardwareInfoChangedData eventHardwareInfoChanged = JsonConvert.DeserializeObject<EventHardwareInfoChangedData>(jsonString, JsonSerializerSettings);
                                 EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonString);
                             }
-                            else if (obj.Event == "wifiChanged")
+                            else if (obj.EventName == "wifiChanged")
                             {
                                 EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonString);
                             }
-                            else if (obj.Event == "modelGroupListChanged")
+                            else if (obj.EventName == "modelGroupListChanged")
                             {
 
                             }
-                            else if (obj.Event == "modelGroupListChanged")
+                            else if (obj.EventName == "modelGroupListChanged")
                             {
                                 // no data available here
                             }
-                            else if (obj.Event == "gcodeInfoUpdated")
+                            else if (obj.EventName == "gcodeInfoUpdated")
                             {
                                 EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonString);
                             }
-                            else if (obj.Event == "dispatcherCount")
+                            else if (obj.EventName == "dispatcherCount")
                             {
 
                             }
-                            else if (obj.Event == "printerListChanged")
+                            else if (obj.EventName == "printerListChanged")
                             {
                                 // 2
                             }
-                            else if (obj.Event == "recoverChanged")
+                            else if (obj.EventName == "recoverChanged")
                             {
 
                             }
-                            else if (obj.Event == "state")
+                            else if (obj.EventName == "state")
                             {
 
                             }
-                            else if (obj.Event == "printqueueChanged")
+                            else if (obj.EventName == "printqueueChanged")
                             {
                                 // {"slug": "Prusa_i3_MK3S1"}
                             }
-                            else if (obj.Event == "config")
+                            else if (obj.EventName == "config")
                             {
 
                             }
-                            else if (obj.Event == "log")
+                            else if (obj.EventName == "log")
                             {
 
                             }
-                            else if (obj.Event == "workerFinished")
+                            else if (obj.EventName == "workerFinished")
                             {
 
                             }

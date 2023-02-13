@@ -1,18 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventUserCredentialsSettings
+    public partial class EventUserCredentialsSettings : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("gcodeGroup")]
-        public string GcodeGroup { get; set; }
+        string gcodeGroup;
 
+        [ObservableProperty]
         [JsonProperty("gcodeSortBy")]
-        public long GcodeSortBy { get; set; }
+        long gcodeSortBy;
 
+        [ObservableProperty]
         [JsonProperty("gcodeViewMode")]
-        public long GcodeViewMode { get; set; }
+        long gcodeViewMode;
         #endregion
 
         #region Overrides

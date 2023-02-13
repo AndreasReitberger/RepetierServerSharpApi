@@ -1,18 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierLoginRequiredResultData
+    public partial class RepetierLoginRequiredResultData : ObservableObject
     {
         #region Properties
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public RepetierLoginRequiredResultDataItem Data { get; set; }
+        [ObservableProperty]
+        [JsonProperty("data")]
+        RepetierLoginRequiredResultDataItem data;
 
-        [JsonProperty("event", NullValueHandling = NullValueHandling.Ignore)]
-        public string Event { get; set; }
+        [ObservableProperty]
+        [JsonProperty("event")]
+        string eventName;
+        //string @event;
 
-        [JsonProperty("printer", NullValueHandling = NullValueHandling.Ignore)]
-        public string Printer { get; set; }
+        [ObservableProperty]
+        [JsonProperty("printer")]
+        string printer;
 
         #endregion
 

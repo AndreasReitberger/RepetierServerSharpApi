@@ -1,16 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class ProjectsServer
+    public partial class ProjectsServer : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("uuid")]
-        public Guid Uuid { get; set; }
+        Guid uuid;
         #endregion 
 
         #region Overrides

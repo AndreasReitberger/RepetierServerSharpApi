@@ -1,12 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventJobChangedData
+    public partial class EventJobChangedData : ObservableObject
     {
         #region Properties
-        [JsonProperty("slug", NullValueHandling = NullValueHandling.Ignore)]
-        public string Slug { get; set; }
+
+        [ObservableProperty]
+        [JsonProperty("slug")]
+        string slug;
         #endregion
 
         #region Overrides

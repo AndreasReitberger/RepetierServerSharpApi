@@ -29,7 +29,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("jobstate")]
-        string? jobState = string.Empty;
+        string? jobState;
         
         [ObservableProperty]
         [JsonProperty("linesSend")]

@@ -1,60 +1,79 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class ConnectionData
+    public partial class ConnectionData : ObservableObject
     {
         #region Properties
-        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Active { get; set; }
 
-        [JsonProperty("hidden", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Hidden { get; set; }
+        [ObservableProperty]
+        [JsonProperty("active")]
+        bool? active;
 
-        [JsonProperty("ignore", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Ignore { get; set; }
+        [ObservableProperty]
+        [JsonProperty("hidden")]
+        bool? hidden;
 
-        [JsonProperty("ipv4Address", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv4Address { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ignore")]
+        bool? ignore;
 
-        [JsonProperty("ipv4Gateway", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv4Gateway { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv4Address")]
+        string ipv4Address;
 
-        [JsonProperty("ipv4MaskBits", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Ipv4MaskBits { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv4Gateway")]
+        string ipv4Gateway;
 
-        [JsonProperty("ipv4Mode", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv4Mode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv4MaskBits")]
+        long? ipv4MaskBits;
 
-        [JsonProperty("ipv4Nameserver", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv4Nameserver { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv4Mode")]
+        string ipv4Mode;
 
-        [JsonProperty("ipv6Address", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv6Address { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv4Nameserver")]
+        string ipv4Nameserver;
 
-        [JsonProperty("ipv6Gateway", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv6Gateway { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv6Address")]
+        string ipv6Address;
 
-        [JsonProperty("ipv6MaskBits", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Ipv6MaskBits { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv6Gateway")]
+        string ipv6Gateway;
 
-        [JsonProperty("ipv6Mode", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv6Mode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv6MaskBits")]
+        long? ipv6MaskBits;
 
-        [JsonProperty("ipv6Nameserver", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ipv6Nameserver { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv6Mode")]
+        string ipv6Mode;
 
-        [JsonProperty("manualManaged", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ManualManaged { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ipv6Nameserver")]
+        string ipv6Nameserver;
 
-        [JsonProperty("password", NullValueHandling = NullValueHandling.Ignore)]
-        public string Password { get; set; }
+        [ObservableProperty]
+        [JsonProperty("manualManaged")]
+        bool? manualManaged;
 
-        [JsonProperty("passwordMethod", NullValueHandling = NullValueHandling.Ignore)]
-        public string PasswordMethod { get; set; }
+        [ObservableProperty]
+        [JsonProperty("password")]
+        string password;
 
-        [JsonProperty("ssid", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ssid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("passwordMethod")]
+        string passwordMethod;
+
+        [ObservableProperty]
+        [JsonProperty("ssid")]
+        string ssid;
         #endregion
 
         #region Overrides

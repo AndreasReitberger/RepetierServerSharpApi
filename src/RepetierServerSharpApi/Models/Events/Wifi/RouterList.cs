@@ -1,36 +1,46 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RouterList
+    public partial class RouterList : ObservableObject
     {
         #region Properties
-        [JsonProperty("SSID", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ssid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("SSID")]
+        string ssid;
 
-        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Active { get; set; }
+        [ObservableProperty]
+        [JsonProperty("active")]
+        bool? active;
 
-        [JsonProperty("bars", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Bars { get; set; }
+        [ObservableProperty]
+        [JsonProperty("bars")]
+        long? bars;
 
-        [JsonProperty("channel", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Channel { get; set; }
+        [ObservableProperty]
+        [JsonProperty("channel")]
+        long? channel;
 
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public ConnectionData Data { get; set; }
+        [ObservableProperty]
+        [JsonProperty("data")]
+        ConnectionData data;
 
-        [JsonProperty("mode", NullValueHandling = NullValueHandling.Ignore)]
-        public string Mode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("mode")]
+        string mode;
 
-        [JsonProperty("rate", NullValueHandling = NullValueHandling.Ignore)]
-        public string Rate { get; set; }
+        [ObservableProperty]
+        [JsonProperty("rate")]
+        string rate;
 
-        [JsonProperty("secure", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Secure { get; set; }
+        [ObservableProperty]
+        [JsonProperty("secure")]
+        bool? secure;
 
-        [JsonProperty("signal", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Signal { get; set; }
+        [ObservableProperty]
+        [JsonProperty("signal")]
+        long? signal;
         #endregion
 
         #region Overrides

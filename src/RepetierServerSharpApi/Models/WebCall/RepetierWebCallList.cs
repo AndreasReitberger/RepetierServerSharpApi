@@ -1,16 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierWebCallList
+    public partial class RepetierWebCallList : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("list")]
-        public List<RepetierWebCallAction> List { get; set; } = new();
+        List<RepetierWebCallAction> list = new();
 
+        [ObservableProperty]
         [JsonProperty("ok")]
-        public bool Ok { get; set; }
+        bool ok;
         #endregion
 
         #region Overrides

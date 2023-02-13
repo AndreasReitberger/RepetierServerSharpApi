@@ -1,15 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventTimer
+    public partial class EventTimer : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("data")]
-        public object Data { get; set; }
+        object data;
 
+        [ObservableProperty]
         [JsonProperty("event")]
-        public string Event { get; set; }
+        string eventName;
+        //string @event;
         #endregion
 
         #region Overrides

@@ -1,19 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierEventContainer
+    public partial class RepetierEventContainer : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
         [JsonProperty("callback_id")]
-        public long CallbackId { get; set; }
+        long callbackId;
 
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierEventData> Data { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("data")]
+        List<RepetierEventData> data = new();
 
+        [ObservableProperty]
         [JsonProperty("eventList")]
-        public bool EventList { get; set; }
+        bool eventList;
         #endregion
 
         #region Overrides

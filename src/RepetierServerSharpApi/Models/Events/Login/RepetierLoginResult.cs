@@ -1,18 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierLoginResult
+    public partial class RepetierLoginResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("login", NullValueHandling = NullValueHandling.Ignore)]
-        public string Login { get; set; }
+        [JsonProperty("login")]
+        string login;
 
-        [JsonProperty("permissions", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Permissions { get; set; }
+        [JsonProperty("permissions")]
+        long? permissions;
 
-        [JsonProperty("settings", NullValueHandling = NullValueHandling.Ignore)]
-        public RepetierLoginResultSettings Settings { get; set; }
+        [JsonProperty("settings")]
+        RepetierLoginResultSettings settings;
         #endregion
 
         #region Overrides

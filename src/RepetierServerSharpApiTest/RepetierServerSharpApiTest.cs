@@ -400,7 +400,7 @@ namespace RepetierServerSharpApiTest
                     ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
                     Assert.IsTrue(list?.Any());
 
-                    RepetierHistoryListItem historyItem = list.FirstOrDefault();
+                    RepetierHistoryListItem historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
                     byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);

@@ -1,30 +1,38 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventPrinterListChangedData
+    public partial class EventPrinterListChangedData : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        bool active;
 
+        [ObservableProperty]
         [JsonProperty("job")]
-        public string Job { get; set; }
+        string job;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("online")]
-        public long Online { get; set; }
+        long online;
 
+        [ObservableProperty]
         [JsonProperty("pauseState")]
-        public long PauseState { get; set; }
+        long pauseState;
 
+        [ObservableProperty]
         [JsonProperty("paused")]
-        public bool Paused { get; set; }
+        bool paused;
 
+        [ObservableProperty]
         [JsonProperty("slug")]
-        public string Slug { get; set; }
+        string slug;
         #endregion
 
         #region Overrides

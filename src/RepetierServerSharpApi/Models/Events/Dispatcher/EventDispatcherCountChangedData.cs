@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventDispatcherCountChangedData
+    public partial class EventDispatcherCountChangedData : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("count")]
-        public long Count { get; set; }
+        long count;
         #endregion
 
         #region Overrides

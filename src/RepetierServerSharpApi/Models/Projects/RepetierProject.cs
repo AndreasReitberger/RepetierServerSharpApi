@@ -1,25 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierProject
+    public partial class RepetierProject : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("folder")]
-        public long Folder { get; set; }
+        long folder;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("preview")]
-        public string Preview { get; set; }
+        string preview;
 
+        [ObservableProperty]
         [JsonProperty("uuid")]
-        public Guid Uuid { get; set; }
+        Guid uuid;
 
+        [ObservableProperty]
         [JsonProperty("version")]
-        public long Version { get; set; }
+        long version;
         #endregion
 
         #region Overrides

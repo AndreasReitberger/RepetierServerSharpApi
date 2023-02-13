@@ -1,18 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventGcodeInfoUpdatedData
+    public partial class EventGcodeInfoUpdatedData : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("modelId")]
-        public long ModelId { get; set; }
+        long modelId;
 
+        [ObservableProperty]
         [JsonProperty("modelPath")]
-        public string ModelPath { get; set; }
+        string modelPath;
 
+        [ObservableProperty]
         [JsonProperty("slug")]
-        public string Slug { get; set; }
+        string slug;
 
         #endregion
 

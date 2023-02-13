@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventRecoverChangedData
+    public partial class EventRecoverChangedData : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("state")]
-        public long State { get; set; }
+        long state;
         #endregion
 
         #region Overrides

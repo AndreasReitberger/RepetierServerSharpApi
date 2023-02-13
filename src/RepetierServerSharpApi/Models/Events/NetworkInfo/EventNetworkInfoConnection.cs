@@ -1,19 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventNetworkInfoConnection
+    public partial class EventNetworkInfoConnection : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("SSID")]
-        public string Ssid { get; set; }
+        string ssid;
 
+        [ObservableProperty]
         [JsonProperty("device")]
-        public string Device { get; set; }
+        string device;
 
+        [ObservableProperty]
         [JsonProperty("uuid")]
-        public Guid Uuid { get; set; }
+        Guid uuid;
         #endregion
 
         #region Overrides

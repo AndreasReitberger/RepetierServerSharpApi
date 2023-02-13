@@ -1,28 +1,35 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventMessageChangedData
+    public partial class EventMessageChangedData : ObservableObject
     {
         #region Properties
-        [JsonProperty("date", NullValueHandling = NullValueHandling.Ignore)]
-        public DateTimeOffset? Date { get; set; }
+        [ObservableProperty]
+        [JsonProperty("date")]
+        public DateTimeOffset? date;
 
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Id { get; set; }
+        [ObservableProperty]
+        [JsonProperty("id")]
+        public long? id;
 
-        [JsonProperty("link", NullValueHandling = NullValueHandling.Ignore)]
-        public string Link { get; set; }
+        [ObservableProperty]
+        [JsonProperty("link")]
+        public string link;
 
-        [JsonProperty("msg", NullValueHandling = NullValueHandling.Ignore)]
-        public string Msg { get; set; }
+        [ObservableProperty]
+        [JsonProperty("msg")]
+        public string msg;
 
-        [JsonProperty("pause", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Pause { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pause")]
+        public bool? pause;
 
-        [JsonProperty("slug", NullValueHandling = NullValueHandling.Ignore)]
-        public string Slug { get; set; }
+        [ObservableProperty]
+        [JsonProperty("slug")]
+        public string slug;
         #endregion
 
         #region Overrides
