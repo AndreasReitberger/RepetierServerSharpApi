@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.Events;
 using System;
 using System.IO;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
@@ -8,6 +9,13 @@ namespace AndreasReitberger.API.Repetier
     public partial class RepetierClient
     {
         #region EventHandlerss
+        #region Debug
+        public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs> RepetierIgnoredJsonResultsChanged;
+        protected virtual void OnRepetierIgnoredJsonResultsChanged(RepetierIgnoredJsonResultsChangedEventArgs e)
+        {
+            RepetierIgnoredJsonResultsChanged?.Invoke(this, e);
+        }
+        #endregion
 
         #region WebSocket
 

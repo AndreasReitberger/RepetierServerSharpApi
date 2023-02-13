@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Repetier.Enum;
+using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
@@ -19,6 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
@@ -119,6 +121,18 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Properties
+        #region Debug
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, string> ignoredJsonResults = new();
+        partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
+        {
+            OnRepetierIgnoredJsonResultsChanged(new RepetierIgnoredJsonResultsChangedEventArgs()
+            {
+                NewIgnoredJsonResults = value,
+            });
+        }
+        #endregion
 
         #region Connection
 
@@ -981,6 +995,166 @@ namespace AndreasReitberger.API.Repetier
                     RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
                     if (repetierEvent != null)
                     {
+                        string name = string.Empty;
+                        string jsonBody = string.Empty;
+                        foreach (RepetierEventData obj in repetierEvent.Data)
+                        {
+                            name = obj.EventName;
+                            jsonBody = obj.Data?.ToString();
+                            switch (name)
+                            {
+                                case "userCredentials":
+                                    RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
+                                    if (login != null)
+                                    {
+                                        OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
+                                        {
+                                            ResultData = login,
+                                            LoginSucceeded = true,
+                                            CallbackId = PingCounter,
+                                            SessonId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                    }
+                                    break;
+                                case "temp":
+                                    EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
+                                    if (eventTempData != null)
+                                    {
+                                        OnTempDataReceived(new RepetierTempDataEventArgs()
+                                        {
+                                            TemperatureData = eventTempData,
+                                            CallbackId = PingCounter,
+                                            SessonId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                    }
+                                    break;
+                                case "jobStarted":
+                                    EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
+                                    break;
+                                case "jobsChanged":
+                                    EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
+                                    if (eventJobsChanged != null)
+                                    {
+                                        OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
+                                        {
+                                            Data = eventJobsChanged,
+                                            CallbackId = PingCounter,
+                                            SessonId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                    }
+                                    break;
+                                case "jobFinished":
+                                    EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
+                                    if (eventJobFinished != null)
+                                    {
+                                        OnJobFinished(new RepetierJobFinishedEventArgs()
+                                        {
+                                            Job = eventJobFinished,
+                                            CallbackId = PingCounter,
+                                            SessonId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                    }
+                                    break;
+                                case "messagesChanged":
+                                    EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
+                                    if (eventMessageChanged != null)
+                                    {
+                                        OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
+                                        {
+                                            RepetierMessage = eventMessageChanged,
+                                            CallbackId = PingCounter,
+                                            SessonId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                    }
+                                    break;
+                                case "hardwareInfo":
+                                    EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
+                                    break;
+                                case "wifiChanged":
+                                    EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
+                                    break;
+                                case "gcodeInfoUpdated":
+                                    EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
+                                    break;
+                                // For unknown events log the needed information to create a class
+                                case "prepareJob":
+                                case "timer30":
+                                case "timer60":
+                                case "timer300":
+                                case "modelGroupListChanged":
+                                case "dispatcherCount":
+                                case "printerListChanged":
+                                case "recoverChanged":
+                                case "state":
+                                case "config":
+                                case "printqueueChanged":
+                                case "log":
+                                case "workerFinished":
+                                default:
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
+                                    Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+                                    if (!loggedResults.ContainsKey(name))
+                                    {
+                                        // Log unused json results for further releases
+                                        loggedResults.TryAdd(name, jsonBody);
+                                        IgnoredJsonResults = loggedResults;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
+                {
+                    CallbackId = PingCounter,
+                    Message = e.Message,
+                    SessonId = SessionId,
+                });
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new RepetierJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = e.Message,
+                    Message = jecx.Message,
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+
+        [Obsolete]
+        void WebSocket_MessageReceivedOld(object sender, MessageReceivedEventArgs e)
+        {
+            try
+            {
+                if (e.Message == null || string.IsNullOrEmpty(e.Message))
+                    return;
+                if (e.Message.ToLower().Contains("login"))
+                {
+                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
+                    //var login = GetObjectFromJson<RepetierLoginResult>(e.Message, JsonSerializerSettings);
+                }
+                if (e.Message.ToLower().Contains("session"))
+                {
+                    //Session = GetObjectFromJson<EventSession>(e.Message, JsonSerializerSettings);
+                    Session = GetObjectFromJson<EventSession>(e.Message);
+                }
+                else if (e.Message.ToLower().Contains("event"))
+                {
+                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
+                    if (repetierEvent != null)
+                    {
                         foreach (RepetierEventData obj in repetierEvent.Data)
                         {
                             string jsonString = obj.Data.ToString();
@@ -1207,6 +1381,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+
         #endregion
 
         #region Methods
