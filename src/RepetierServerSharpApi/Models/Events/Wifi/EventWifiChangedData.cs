@@ -41,12 +41,20 @@ namespace AndreasReitberger.API.Repetier.Models
         string country;
 
         [ObservableProperty]
+        [JsonProperty("ethernet")]
+        EthernetConnection ethernet;
+
+        [ObservableProperty]
         [JsonProperty("hostname")]
         string hostname;
 
         [ObservableProperty]
         [JsonProperty("manageable")]
         bool? manageable;
+
+        [ObservableProperty]
+        [JsonProperty("manualWifi")]
+        bool manualWifi;
 
         [ObservableProperty]
         [JsonProperty("mode")]

@@ -1103,7 +1103,11 @@ namespace AndreasReitberger.API.Repetier
                                     if (!loggedResults.ContainsKey(name))
                                     {
                                         // Log unused json results for further releases
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                                         loggedResults.TryAdd(name, jsonBody);
+#else
+                                        loggedResults.Add(name, jsonBody);
+#endif
                                         IgnoredJsonResults = loggedResults;
                                     }
                                     break;
@@ -1382,7 +1386,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        #endregion
+#endregion
 
         #region Methods
 

@@ -602,6 +602,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 Dictionary<DateTime, string> websocketMessages = new();
+                Dictionary<string, string> unkownJsonRespones = new();
                 RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.StartListening();
@@ -623,12 +624,18 @@ namespace RepetierServerSharpApiTest
                         Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
-
                 _server.WebSocketError += (o, args) =>
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
-
+                _server.RepetierIgnoredJsonResultsChanged += (o, args) =>
+                {
+                    foreach (var keyPair in args.NewIgnoredJsonResults)
+                    {
+                        if(!unkownJsonRespones.ContainsKey(keyPair.Key))
+                            unkownJsonRespones.Add(keyPair.Key, keyPair.Value);
+                    }
+                };
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 _server.WebSocketDisconnected += (o, args) =>
