@@ -1032,6 +1032,13 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "jobStarted":
                                     EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
+                                    OnJobStarted(new RepetierJobStartedEventArgs()
+                                    {
+                                        Job = eventJobStarted,
+                                        CallbackId = PingCounter,
+                                        SessonId = SessionId,
+                                        Printer = obj.Printer,
+                                    });
                                     break;
                                 case "jobsChanged":
                                     EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
@@ -1074,27 +1081,61 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "hardwareInfo":
                                     EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
+                                    OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
+                                    {
+                                        Info = eventHardwareInfoChanged,
+                                        CallbackId = PingCounter,
+                                        SessonId = SessionId,
+                                        Printer = obj.Printer,
+                                    });
                                     break;
                                 case "wifiChanged":
                                     EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
+                                    OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
+                                    {
+                                        Data = eventWifiChanged,
+                                        CallbackId = PingCounter,
+                                        SessonId = SessionId,
+                                        Printer = obj.Printer,
+                                    });
                                     break;
                                 case "gcodeInfoUpdated":
                                     EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
                                     break;
-                                // For unknown events log the needed information to create a class
-                                case "prepareJob":
+                                case "layerChanged":
+                                    RepetierLayerChangedEvent eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
+                                    break;
+                                case "timelapseChanged":
+                                    break;
+                                case "newRenderImage":
+                                    break;
+                                case "printerListChanged":
+                                    break;
+                                case "printqueueChanged":
+                                    break;
+                                case "workerFinished":
+                                    break;
+                                case "config":
+                                    break;
+                                case "state":
+                                    break;
+                                // Bodyless events, with no additional data
+                                case "addErrorLogLine":
                                 case "timer30":
                                 case "timer60":
                                 case "timer300":
+                                case "timer1800":
+                                case "printJobAdded":
+                                case "prepareJob":
+                                case "prepareJobFinished":
+                                case "lastPrintsChanged":
+                                    break;
+                                // For unknown events log the needed information to create a class
+                                
                                 case "modelGroupListChanged":
                                 case "dispatcherCount":
-                                case "printerListChanged":
                                 case "recoverChanged":
-                                case "state":
-                                case "config":
-                                case "printqueueChanged":
                                 case "log":
-                                case "workerFinished":
                                 default:
 #if DEBUG
                                     Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");

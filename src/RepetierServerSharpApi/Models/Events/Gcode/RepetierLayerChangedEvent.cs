@@ -3,25 +3,16 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventGcodeInfoUpdatedData : ObservableObject
+    public partial class RepetierLayerChangedEvent : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("list")]
-        string list;
+        [JsonProperty("layer")]
+        long layer;
 
         [ObservableProperty]
-        [JsonProperty("modelId")]
-        long modelId;
-
-        [ObservableProperty]
-        [JsonProperty("modelPath")]
-        string modelPath;
-
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        string slug;
-
+        [JsonProperty("maxLayer")]
+        long maxLayer;
         #endregion
 
         #region Overrides

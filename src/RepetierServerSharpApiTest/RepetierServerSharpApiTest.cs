@@ -636,8 +636,8 @@ namespace RepetierServerSharpApiTest
                             unkownJsonRespones.Add(keyPair.Key, keyPair.Value);
                     }
                 };
-                // Wait 10 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                // Wait 30 minutes
+                CancellationTokenSource cts = new(new TimeSpan(0, 30, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)

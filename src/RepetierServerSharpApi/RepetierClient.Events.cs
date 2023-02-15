@@ -154,6 +154,12 @@ namespace AndreasReitberger.API.Repetier
             PrintInfoChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<RepetierJobStartedEventArgs> JobsStarted;
+        protected virtual void OnJobStarted(RepetierJobStartedEventArgs e)
+        {
+            JobsStarted?.Invoke(this, e);
+        }
+
         public event EventHandler<RepetierJobsChangedEventArgs> JobsChanged;
         protected virtual void OnJobsChangedEvent(RepetierJobsChangedEventArgs e)
         {
@@ -170,6 +176,18 @@ namespace AndreasReitberger.API.Repetier
         protected virtual void OnTempDataReceived(RepetierTempDataEventArgs e)
         {
             TempDataReceived?.Invoke(this, e);
+        }
+
+        public event EventHandler<RepetierHardwareInfoChangedEventArgs> HardwareInfoChanged;
+        protected virtual void OnHardwareInfoChangedEvent(RepetierHardwareInfoChangedEventArgs e)
+        {
+            HardwareInfoChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<RepetierWifiChangedEventArgs> WifiChangedEvent;
+        protected virtual void OnWifiChangedEvent(RepetierWifiChangedEventArgs e)
+        {
+            WifiChangedEvent?.Invoke(this, e);
         }
 
         public event EventHandler<RepetierPrinterConfigChangedEventArgs> RepetierPrinterConfigChanged;
