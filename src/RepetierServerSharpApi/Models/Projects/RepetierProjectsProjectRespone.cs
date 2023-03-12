@@ -1,21 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierProjectsProjectRespone
+    public partial class RepetierProjectsProjectRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("ok", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Ok { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ok")]
+        bool? ok;
 
-        [JsonProperty("project", NullValueHandling = NullValueHandling.Ignore)]
-        public RepetierProjectsProject Project { get; set; }
+        [ObservableProperty]
+        [JsonProperty("project")]
+        RepetierProjectsProject project;
         #endregion 
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

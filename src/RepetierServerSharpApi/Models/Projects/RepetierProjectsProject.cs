@@ -1,77 +1,98 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierProjectsProject
+    public partial class RepetierProjectsProject : ObservableObject
     {
         #region Properties
-        [JsonProperty("author", NullValueHandling = NullValueHandling.Ignore)]
-        public string Author { get; set; }
+        [ObservableProperty]
+        [JsonProperty("author")]
+        public string author;
 
-        [JsonProperty("comments", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectsProjectComment> Comments { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("comments")]
+        public List<RepetierProjectsProjectComment> comments = new();
 
-        [JsonProperty("created", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Created { get; set; }
+        [ObservableProperty]
+        [JsonProperty("created")]
+        public long? created;
 
-        [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
-        public string Description { get; set; }
+        [ObservableProperty]
+        [JsonProperty("description")]
+        public string description;
 
-        [JsonProperty("descriptionHtml", NullValueHandling = NullValueHandling.Ignore)]
-        public string DescriptionHtml { get; set; }
+        [ObservableProperty]
+        [JsonProperty("descriptionHtml")]
+        public string descriptionHtml;
 
-        [JsonProperty("images", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectsProjectFile> Images { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("images")]
+        public List<RepetierProjectsProjectFile> images = new();
 
-        [JsonProperty("instructions", NullValueHandling = NullValueHandling.Ignore)]
-        public string Instructions { get; set; }
+        [ObservableProperty]
+        [JsonProperty("instructions")]
+        public string instructions;
 
-        [JsonProperty("instructionsHtml", NullValueHandling = NullValueHandling.Ignore)]
-        public string InstructionsHtml { get; set; }
+        [ObservableProperty]
+        [JsonProperty("instructionsHtml")]
+        public string instructionsHtml;
 
-        [JsonProperty("license", NullValueHandling = NullValueHandling.Ignore)]
-        public string License { get; set; }
+        [ObservableProperty]
+        [JsonProperty("license")]
+        public string license;
 
-        [JsonProperty("licenseFile", NullValueHandling = NullValueHandling.Ignore)]
-        public string LicenseFile { get; set; }
+        [ObservableProperty]
+        [JsonProperty("licenseFile")]
+        public string licenseFile;
 
-        [JsonProperty("licenseHtml", NullValueHandling = NullValueHandling.Ignore)]
-        public string LicenseHtml { get; set; }
+        [ObservableProperty]
+        [JsonProperty("licenseHtml")]
+        public string licenseHtml;
 
-        [JsonProperty("models", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectsProjectFile> Models { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("models")]
+        public List<RepetierProjectsProjectFile> models = new();
 
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [ObservableProperty]
+        [JsonProperty("name")]
+        public string name;
 
-        [JsonProperty("openNewFiles", NullValueHandling = NullValueHandling.Ignore)]
-        public long? OpenNewFiles { get; set; }
+        [ObservableProperty]
+        [JsonProperty("openNewFiles")]
+        public long? openNewFiles;
 
-        [JsonProperty("others", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectsProjectFile> Others { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("others")]
+        public List<RepetierProjectsProjectFile> others = new();
 
-        [JsonProperty("parents", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectsProjectParent> Parents { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("parents")]
+        public List<RepetierProjectsProjectParent> parents = new();
 
-        [JsonProperty("preview", NullValueHandling = NullValueHandling.Ignore)]
-        public string Preview { get; set; }
+        [ObservableProperty]
+        [JsonProperty("preview")]
+        public string preview;
 
-        [JsonProperty("tags", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Tags { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("tags")]
+        public List<string> tags = new();
 
-        [JsonProperty("uuid", NullValueHandling = NullValueHandling.Ignore)]
-        public Guid? Uuid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("uuid")]
+        public Guid? uuid;
 
-        [JsonProperty("version", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Version { get; set; }
+        [ObservableProperty]
+        [JsonProperty("version")]
+        public long? version;
         #endregion 
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

@@ -1,31 +1,40 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventTempData
+    public partial class EventTempData : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("O")]
-        public long O { get; set; }
+        [property: JsonIgnore]
+        long o;
 
+        [ObservableProperty]
         [JsonProperty("S")]
-        public long S { get; set; }
+        [property: JsonIgnore]
+        long s;
 
+        [ObservableProperty]
         [JsonProperty("T")]
-        public double T { get; set; }
+        [property: JsonIgnore]
+        double t;
 
+        [ObservableProperty]
         [JsonProperty("id")]
-        public long Id { get; set; }
+        long id;
 
+        [ObservableProperty]
         [JsonProperty("t")]
-        public long DataT { get; set; }
+        long dataT;
 
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         /*
         public override string ToString()

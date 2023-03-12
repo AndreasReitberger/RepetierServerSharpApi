@@ -1,24 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigTemperature
+    public partial class RepetierPrinterConfigTemperature : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("temp")]
-        public long Temp { get; set; }
+        long temp;
 
+        #region Json Ignore
+        [ObservableProperty]
         [JsonIgnore]
-        public string TargetComponent { get; set; }
+        string targetComponent;
+        #endregion
+
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

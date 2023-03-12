@@ -1,66 +1,85 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventNetworkInfoRouterListData
+    public partial class EventNetworkInfoRouterListData : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        bool active;
 
+        [ObservableProperty]
         [JsonProperty("hidden")]
-        public bool Hidden { get; set; }
+        bool hidden;
 
+        [ObservableProperty]
         [JsonProperty("ignore")]
-        public bool Ignore { get; set; }
+        bool ignore;
 
+        [ObservableProperty]
         [JsonProperty("ipv4Address")]
-        public string Ipv4Address { get; set; }
+        string ipv4Address;
 
+        [ObservableProperty]
         [JsonProperty("ipv4Gateway")]
-        public string Ipv4Gateway { get; set; }
+        string ipv4Gateway;
 
+        [ObservableProperty]
         [JsonProperty("ipv4MaskBits")]
-        public long Ipv4MaskBits { get; set; }
+        long ipv4MaskBits;
 
+        [ObservableProperty]
         [JsonProperty("ipv4Mode")]
-        public string Ipv4Mode { get; set; }
+        string ipv4Mode;
 
+        [ObservableProperty]
         [JsonProperty("ipv4Nameserver")]
-        public string Ipv4Nameserver { get; set; }
+        string ipv4Nameserver;
 
+        [ObservableProperty]
         [JsonProperty("ipv6Address")]
-        public string Ipv6Address { get; set; }
+        string ipv6Address;
 
+        [ObservableProperty]
         [JsonProperty("ipv6Gateway")]
-        public string Ipv6Gateway { get; set; }
+        string ipv6Gateway;
 
+        [ObservableProperty]
         [JsonProperty("ipv6MaskBits")]
-        public long Ipv6MaskBits { get; set; }
+        long ipv6MaskBits;
 
+        [ObservableProperty]
         [JsonProperty("ipv6Mode")]
-        public string Ipv6Mode { get; set; }
+        string ipv6Mode;
 
+        [ObservableProperty]
         [JsonProperty("ipv6Nameserver")]
-        public string Ipv6Nameserver { get; set; }
+        string ipv6Nameserver;
 
+        [ObservableProperty]
         [JsonProperty("manualManaged")]
-        public bool ManualManaged { get; set; }
+        bool manualManaged;
 
+        [ObservableProperty]
         [JsonProperty("password")]
-        public string Password { get; set; }
+        string password;
 
+        [ObservableProperty]
         [JsonProperty("passwordMethod")]
-        public string PasswordMethod { get; set; }
+        string passwordMethod;
 
+        [ObservableProperty]
         [JsonProperty("ssid")]
-        public string Ssid { get; set; }
+        string ssid;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

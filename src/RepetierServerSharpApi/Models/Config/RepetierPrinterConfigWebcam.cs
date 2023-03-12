@@ -1,67 +1,97 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigWebcam
+    public partial class RepetierPrinterConfigWebcam : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
+        [JsonProperty("alias")]
+        string alias;
+
+        [ObservableProperty]
         [JsonProperty("dynamicUrl")]
-        public Uri DynamicUrl { get; set; }
+        Uri dynamicUrl;
 
+        [ObservableProperty]
         [JsonProperty("forceSnapshotPosition")]
-        public bool ForceSnapshotPosition { get; set; }
+        bool forceSnapshotPosition;
 
+        [ObservableProperty]
         [JsonProperty("method")]
-        public long Method { get; set; }
+        long method;
 
+        [ObservableProperty]
         [JsonProperty("orientation")]
-        public long Orientation { get; set; }
+        long orientation;
 
+        [ObservableProperty]
         [JsonProperty("pos")]
-        public long Pos { get; set; }
+        long pos;
 
+        [ObservableProperty]
+        [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore)]
+        long rec;
+
+        [ObservableProperty]
         [JsonProperty("reloadInterval")]
-        public long ReloadInterval { get; set; }
+        long reloadInterval;
 
+        [ObservableProperty]
         [JsonProperty("snapshotDelay")]
-        public long SnapshotDelay { get; set; }
+        long snapshotDelay;
 
+        [ObservableProperty]
+        [JsonProperty("snapshotStabilizeTime")]
+        long snapshotStabilizeTime;
+
+        [ObservableProperty]
         [JsonProperty("snapshotX")]
-        public long SnapshotX { get; set; }
+        long snapshotX;
 
+        [ObservableProperty]
         [JsonProperty("snapshotY")]
-        public long SnapshotY { get; set; }
+        long snapshotY;
 
+        [ObservableProperty]
         [JsonProperty("staticUrl")]
-        public Uri StaticUrl { get; set; }
+        Uri staticUrl;
 
+        [ObservableProperty]
         [JsonProperty("timelapseBitrate")]
-        public long TimelapseBitrate { get; set; }
+        long timelapseBitrate;
 
+        [ObservableProperty]
         [JsonProperty("timelapseFramerate")]
-        public long TimelapseFramerate { get; set; }
+        long timelapseFramerate;
 
+        [ObservableProperty]
         [JsonProperty("timelapseHeight")]
-        public double TimelapseHeight { get; set; }
+        double timelapseHeight;
 
+        [ObservableProperty]
         [JsonProperty("timelapseInterval")]
-        public long TimelapseInterval { get; set; }
+        long timelapseInterval;
 
+        [ObservableProperty]
         [JsonProperty("timelapseLayer")]
-        public long TimelapseLayer { get; set; }
+        long timelapseLayer;
 
+        [ObservableProperty]
         [JsonProperty("timelapseMethod")]
-        public long TimelapseMethod { get; set; }
+        long timelapseMethod;
 
+        [ObservableProperty]
         [JsonProperty("timelapseSelected")]
-        public long TimelapseSelected { get; set; }
+        long timelapseSelected;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
 

@@ -1,21 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class WifiConnection
+    public partial class WifiConnection : ObservableObject
     {
         #region Properties
-        [JsonProperty("SSID", NullValueHandling = NullValueHandling.Ignore)]
-        public string Ssid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("SSID")]
+        string ssid;
 
-        [JsonProperty("device", NullValueHandling = NullValueHandling.Ignore)]
-        public string Device { get; set; }
+        [ObservableProperty]
+        [JsonProperty("device")]
+        string device;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

@@ -1,24 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierFreeSpaceRespone
+    public partial class RepetierFreeSpaceRespone : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("available")]
-        public long Available { get; set; }
+        long available;
 
+        [ObservableProperty]
         [JsonProperty("capacity")]
-        public long Capacity { get; set; }
+        long capacity;
 
+        [ObservableProperty]
         [JsonProperty("free")]
-        public long Free { get; set; }
+        long free;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

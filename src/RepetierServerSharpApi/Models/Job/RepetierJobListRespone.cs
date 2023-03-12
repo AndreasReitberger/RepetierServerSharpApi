@@ -1,17 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierJobListRespone
+    public partial class RepetierJobListRespone : ObservableObject
     {
+        #region Properties
+
+        [ObservableProperty]
         [JsonProperty("data")]
-        public List<RepetierJobListItem> Data { get; set; } = new();
+        List<RepetierJobListItem> data = new();
+
+        #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

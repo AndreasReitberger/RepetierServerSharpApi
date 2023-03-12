@@ -1,42 +1,52 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventNetworkInfoRouterList
+    public partial class EventNetworkInfoRouterList : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("SSID")]
-        public string Ssid { get; set; }
+        public string ssid;
 
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        public bool active;
 
+        [ObservableProperty]
         [JsonProperty("bars")]
-        public long Bars { get; set; }
+        public long bars;
 
+        [ObservableProperty]
         [JsonProperty("channel")]
-        public long Channel { get; set; }
+        public long channel;
 
+        [ObservableProperty]
         [JsonProperty("data")]
-        public EventNetworkInfoRouterListData Data { get; set; }
+        public EventNetworkInfoRouterListData data;
 
+        [ObservableProperty]
         [JsonProperty("mode")]
-        public string Mode { get; set; }
+        public string mode;
 
+        [ObservableProperty]
         [JsonProperty("rate")]
-        public string Rate { get; set; }
+        public string rate;
 
+        [ObservableProperty]
         [JsonProperty("secure")]
-        public bool Secure { get; set; }
+        public bool secure;
 
+        [ObservableProperty]
         [JsonProperty("signal")]
-        public long Signal { get; set; }
+        public long signal;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

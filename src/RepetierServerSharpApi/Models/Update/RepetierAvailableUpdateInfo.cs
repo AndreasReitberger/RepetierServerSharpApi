@@ -1,85 +1,109 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierAvailableUpdateInfo
+    public partial class RepetierAvailableUpdateInfo : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("availableBrandingVersion")]
-        public long AvailableBrandingVersion { get; set; }
+        long availableBrandingVersion;
 
+        [ObservableProperty]
         [JsonProperty("betaActive")]
-        public bool BetaActive { get; set; }
+        bool betaActive;
 
+        [ObservableProperty]
         [JsonProperty("branded")]
-        public bool Branded { get; set; }
+        bool branded;
 
+        [ObservableProperty]
         [JsonProperty("currentBrandingVersion")]
-        public long CurrentBrandingVersion { get; set; }
+        long currentBrandingVersion;
 
+        [ObservableProperty]
         [JsonProperty("currentVersion")]
-        public string CurrentVersion { get; set; }
+        string currentVersion;
 
+        [ObservableProperty]
         [JsonProperty("demo")]
-        public bool Demo { get; set; }
+        bool demo;
 
+        [ObservableProperty]
         [JsonProperty("downloadUrl")]
-        public Uri DownloadUrl { get; set; }
+        Uri downloadUrl;
 
+        [ObservableProperty]
         [JsonProperty("features")]
-        public long Features { get; set; }
+        long features;
 
+        [ObservableProperty]
         [JsonProperty("free")]
-        public bool Free { get; set; }
+        bool free;
 
+        [ObservableProperty]
         [JsonProperty("ignoreVersion")]
-        public string IgnoreVersion { get; set; }
+        string ignoreVersion;
 
+        [ObservableProperty]
         [JsonProperty("installerType")]
-        public long InstallerType { get; set; }
+        long installerType;
 
+        [ObservableProperty]
         [JsonProperty("licensed")]
-        public bool Licensed { get; set; }
+        bool licensed;
 
+        [ObservableProperty]
         [JsonProperty("message")]
-        public string Message { get; set; }
+        string message;
 
+        [ObservableProperty]
         [JsonProperty("messageHtml")]
-        public string MessageHtml { get; set; }
+        string messageHtml;
 
+        [ObservableProperty]
         [JsonProperty("printerFrontendUrl")]
-        public string PrinterFrontendUrl { get; set; }
+        string printerFrontendUrl;
 
+        [ObservableProperty]
         [JsonProperty("showUpdate")]
-        public bool ShowUpdate { get; set; }
+        bool showUpdate;
 
+        [ObservableProperty]
         [JsonProperty("teaser")]
-        public RepetierUpdateTeaser Teaser { get; set; }
+        RepetierUpdateTeaser teaser;
 
+        [ObservableProperty]
         [JsonProperty("testperiodMode")]
-        public long TestperiodMode { get; set; }
+        long testperiodMode;
 
+        [ObservableProperty]
         [JsonProperty("updateAvailable")]
-        public bool UpdateAvailable { get; set; }
+        bool updateAvailable;
 
+        [ObservableProperty]
         [JsonProperty("versionMessage")]
-        public string VersionMessage { get; set; }
+        string versionMessage;
 
+        [ObservableProperty]
         [JsonProperty("versionMessageHtml")]
-        public string VersionMessageHtml { get; set; }
+        string versionMessageHtml;
 
+        [ObservableProperty]
         [JsonProperty("versionName")]
-        public string VersionName { get; set; }
+        string versionName;
 
+        [ObservableProperty]
         [JsonProperty("webFrontendUrl")]
-        public string WebFrontendUrl { get; set; }
+        string webFrontendUrl;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

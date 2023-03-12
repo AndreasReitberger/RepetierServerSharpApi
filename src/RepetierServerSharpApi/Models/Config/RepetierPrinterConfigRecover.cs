@@ -1,42 +1,52 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigRecover
+    public partial class RepetierPrinterConfigRecover : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("delayBeforeReconnect")]
-        public long DelayBeforeReconnect { get; set; }
+        long delayBeforeReconnect;
 
+        [ObservableProperty]
         [JsonProperty("enabled")]
-        public bool Enabled { get; set; }
+        bool enabled;
 
+        [ObservableProperty]
         [JsonProperty("extraZOnFirmwareDetect")]
-        public long ExtraZOnFirmwareDetect { get; set; }
+        long extraZOnFirmwareDetect;
 
+        [ObservableProperty]
         [JsonProperty("firmwarePowerlossSignal")]
-        public string FirmwarePowerlossSignal { get; set; }
+        string firmwarePowerlossSignal;
 
+        [ObservableProperty]
         [JsonProperty("maxTimeForAutocontinue")]
-        public long MaxTimeForAutocontinue { get; set; }
+        long maxTimeForAutocontinue;
 
+        [ObservableProperty]
         [JsonProperty("procedure")]
-        public string Procedure { get; set; }
+        string procedure;
 
+        [ObservableProperty]
         [JsonProperty("reactivateBedOnConnect")]
-        public bool ReactivateBedOnConnect { get; set; }
+        bool reactivateBedOnConnect;
 
+        [ObservableProperty]
         [JsonProperty("replayExtruderSwitches")]
-        public bool ReplayExtruderSwitches { get; set; }
+        bool replayExtruderSwitches;
 
+        [ObservableProperty]
         [JsonProperty("runOnConnect")]
-        public string RunOnConnect { get; set; }
+        string runOnConnect;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

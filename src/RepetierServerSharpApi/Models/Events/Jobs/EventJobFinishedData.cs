@@ -1,27 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventJobFinishedData
+    public partial class EventJobFinishedData : ObservableObject
     {
         #region Properties
-        [JsonProperty("duration", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Duration { get; set; }
 
-        [JsonProperty("end", NullValueHandling = NullValueHandling.Ignore)]
-        public long? End { get; set; }
+        [ObservableProperty]
+        [JsonProperty("duration")]
+        long? duration;
 
-        [JsonProperty("lines", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Lines { get; set; }
+        [ObservableProperty]
+        [JsonProperty("end")]
+        long? end;
 
-        [JsonProperty("start", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Start { get; set; }
+        [ObservableProperty]
+        [JsonProperty("lines")]
+        long? lines;
+
+        [ObservableProperty]
+        [JsonProperty("start")]
+        long? start;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

@@ -1,91 +1,121 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierGpioListItem
+    public partial class RepetierGpioListItem : ObservableObject
     {
         #region Properties
-        [JsonProperty("bias", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Bias { get; set; }
+        [ObservableProperty]
+        [JsonProperty("bias")]
+        long? bias;
 
-        [JsonProperty("chip", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Chip { get; set; }
+        [ObservableProperty]
+        [JsonProperty("chip")]
+        long? chip;
 
-        [JsonProperty("debounceMS", NullValueHandling = NullValueHandling.Ignore)]
-        public long? DebounceMs { get; set; }
+        [ObservableProperty]
+        [JsonProperty("debounceMS")]
+        long? debounceMs;
 
-        [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
-        public string Description { get; set; }
+        [ObservableProperty]
+        [JsonProperty("description")]
+        string description;
 
-        [JsonProperty("direction", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Direction { get; set; }
+        [ObservableProperty]
+        [JsonProperty("direction")]
+        long? direction;
 
-        [JsonProperty("display", NullValueHandling = NullValueHandling.Ignore)]
-        public string Display { get; set; }
+        [ObservableProperty]
+        [JsonProperty("display")]
+        string display;
 
-        [JsonProperty("drive", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Drive { get; set; }
+        [ObservableProperty]
+        [JsonProperty("drive")]
+        long? drive;
 
-        [JsonProperty("edge", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Edge { get; set; }
+        [ObservableProperty]
+        [JsonProperty("edge")]
+        long? edge;
 
-        [JsonProperty("error", NullValueHandling = NullValueHandling.Ignore)]
-        public string Error { get; set; }
+        [ObservableProperty]
+        [JsonProperty("error")]
+        string error;
 
-        [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
-        public string Icon { get; set; }
+        [ObservableProperty]
+        [JsonProperty("icon")]
+        string icon;
 
-        [JsonProperty("iconOff", NullValueHandling = NullValueHandling.Ignore)]
-        public string IconOff { get; set; }
+        [ObservableProperty]
+        [JsonProperty("iconOff")]
+        string iconOff;
 
-        [JsonProperty("initEnabled", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? InitEnabled { get; set; }
+        [ObservableProperty]
+        [JsonProperty("initEnabled")]
+        bool? initEnabled;
 
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [ObservableProperty]
+        [JsonProperty("name")]
+        string name;
 
-        [JsonProperty("operation", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Operation { get; set; }
+        [ObservableProperty]
+        [JsonProperty("operation")]
+        long? operation;
 
-        [JsonProperty("parameter", NullValueHandling = NullValueHandling.Ignore)]
-        public string Parameter { get; set; }
+        [ObservableProperty]
+        [JsonProperty("parameter")]
+        string parameter;
 
-        [JsonProperty("pinNumber", NullValueHandling = NullValueHandling.Ignore)]
-        public long? PinNumber { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pinNumber")]
+        long? pinNumber;
 
-        [JsonProperty("pos", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Pos { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pos")]
+        long? pos;
 
-        [JsonProperty("pwmDutyCycle", NullValueHandling = NullValueHandling.Ignore)]
-        public long? PwmDutyCycle { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pwmDutyCycle")]
+        long? pwmDutyCycle;
 
-        [JsonProperty("pwmFrequency", NullValueHandling = NullValueHandling.Ignore)]
-        public long? PwmFrequency { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pwmFrequency")]
+        long? pwmFrequency;
 
-        [JsonProperty("pwmInitDutyCycle", NullValueHandling = NullValueHandling.Ignore)]
-        public long? PwmInitDutyCycle { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pwmInitDutyCycle")]
+        long? pwmInitDutyCycle;
 
-        [JsonProperty("pwmPolarity", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? PwmPolarity { get; set; }
+        [ObservableProperty]
+        [JsonProperty("pwmPolarity")]
+        bool? pwmPolarity;
 
-        [JsonProperty("showInMenu", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ShowInMenu { get; set; }
+        [ObservableProperty]
+        [JsonProperty("securityQuestion")]
+        bool? securityQuestion;
 
-        [JsonProperty("slug", NullValueHandling = NullValueHandling.Ignore)]
-        public string Slug { get; set; }
+        [ObservableProperty]
+        [JsonProperty("showInMenu")]
+        bool? showInMenu;
 
-        [JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? State { get; set; }
+        [ObservableProperty]
+        [JsonProperty("slug")]
+        string slug;
 
-        [JsonProperty("uuid", NullValueHandling = NullValueHandling.Ignore)]
-        public Guid? Uuid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("state")]
+        bool? state;
+
+        [ObservableProperty]
+        [JsonProperty("uuid")]
+        Guid? uuid;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

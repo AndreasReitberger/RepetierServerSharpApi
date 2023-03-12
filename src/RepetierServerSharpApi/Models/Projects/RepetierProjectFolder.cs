@@ -1,37 +1,45 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierProjectFolder
+    public partial class RepetierProjectFolder : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("empty")]
-        public bool Empty { get; set; }
+        bool empty;
 
-        [JsonProperty("folders", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectSubFolder> Folders { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("folders")]
+        List<RepetierProjectSubFolder> folders = new();
 
+        [ObservableProperty]
         [JsonProperty("idx")]
-        public long Idx { get; set; }
+        long idx;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
-        [JsonProperty("parents", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProjectParentElement> Parents { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("parents")]
+        List<RepetierProjectParentElement> parents = new();
 
-        [JsonProperty("projects", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierProject> Projects { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("projects")]
+        List<RepetierProject> projects = new();
 
+        [ObservableProperty]
         [JsonProperty("version")]
-        public long Version { get; set; }
+        long version;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

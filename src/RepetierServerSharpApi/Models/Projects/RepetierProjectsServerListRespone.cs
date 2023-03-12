@@ -1,22 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierProjectsServerListRespone
+    public partial class RepetierProjectsServerListRespone : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("ok")]
-        public bool Ok { get; set; }
+        bool ok;
 
+        [ObservableProperty]
         [JsonProperty("server")]
-        public List<ProjectsServer> Server { get; set; } = new List<ProjectsServer>();
+        List<ProjectsServer> server = new();
         #endregion 
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

@@ -1,64 +1,90 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventWifiChangedData
+    public partial class EventWifiChangedData : ObservableObject
     {
         #region Properties
-        [JsonProperty("activeRouter", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ActiveRouter { get; set; }
 
-        [JsonProperty("activeSSID", NullValueHandling = NullValueHandling.Ignore)]
-        public string ActiveSsid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("activeRouter")]
+        bool? activeRouter;
 
-        [JsonProperty("apMode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ApMode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("activeSSID")]
+        string activeSsid;
 
-        [JsonProperty("apSSID", NullValueHandling = NullValueHandling.Ignore)]
-        public string ApSsid { get; set; }
+        [ObservableProperty]
+        [JsonProperty("apMode")]
+        long? apMode;
 
-        [JsonProperty("channel", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Channel { get; set; }
+        [ObservableProperty]
+        [JsonProperty("apSSID")]
+        string apSsid;
 
-        [JsonProperty("channels", NullValueHandling = NullValueHandling.Ignore)]
-        public List<long> Channels { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("channel")]
+        long? channel;
 
-        [JsonProperty("connections", NullValueHandling = NullValueHandling.Ignore)]
-        public List<WifiConnection> Connections { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("channels")]
+        List<long> channels = new();
 
-        [JsonProperty("country", NullValueHandling = NullValueHandling.Ignore)]
-        public string Country { get; set; }
+        [ObservableProperty]
+        [JsonProperty("connections")]
+        List<WifiConnection> connections = new();
 
-        [JsonProperty("hostname", NullValueHandling = NullValueHandling.Ignore)]
-        public string Hostname { get; set; }
+        [ObservableProperty]
+        [JsonProperty("country")]
+        string country;
 
-        [JsonProperty("manageable", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Manageable { get; set; }
+        [ObservableProperty]
+        [JsonProperty("ethernet")]
+        EthernetConnection ethernet;
 
-        [JsonProperty("mode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Mode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("hostname")]
+        string hostname;
 
-        [JsonProperty("routerList", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RouterList> RouterList { get; set; } = new();
+        [ObservableProperty]
+        [JsonProperty("manageable")]
+        bool? manageable;
 
-        [JsonProperty("screensaver", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Screensaver { get; set; }
+        [ObservableProperty]
+        [JsonProperty("manualWifi")]
+        bool manualWifi;
 
-        [JsonProperty("supportAP", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? SupportAp { get; set; }
+        [ObservableProperty]
+        [JsonProperty("mode")]
+        long? mode;
 
-        [JsonProperty("timezone", NullValueHandling = NullValueHandling.Ignore)]
-        public string Timezone { get; set; }
+        [ObservableProperty]
+        [JsonProperty("routerList")]
+        List<RouterList> routerList = new();
 
-        [JsonProperty("version", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Version { get; set; }
+        [ObservableProperty]
+        [JsonProperty("screensaver")]
+        bool? screensaver;
+
+        [ObservableProperty]
+        [JsonProperty("supportAP")]
+        bool? supportAp;
+
+        [ObservableProperty]
+        [JsonProperty("timezone")]
+        string timezone;
+
+        [ObservableProperty]
+        [JsonProperty("version")]
+        long? version;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

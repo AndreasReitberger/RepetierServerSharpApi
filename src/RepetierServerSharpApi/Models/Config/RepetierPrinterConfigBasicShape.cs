@@ -1,42 +1,57 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigBasicShape
+    public partial class RepetierPrinterConfigBasicShape : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
+        [JsonProperty("angle")]
+        long angle;
+
+        [ObservableProperty]
         [JsonProperty("color")]
-        public string Color { get; set; }
+        string color;
 
+        [ObservableProperty]
         [JsonProperty("radius")]
-        public long Radius { get; set; }
+        long radius;
 
+        [ObservableProperty]
         [JsonProperty("shape")]
-        public string Shape { get; set; }
+        string shape;
 
+        [ObservableProperty]
         [JsonProperty("x")]
-        public long X { get; set; }
+        long x;
 
+        [ObservableProperty]
         [JsonProperty("xMax")]
-        public long XMax { get; set; }
+        long xMax;
 
+        [ObservableProperty]
         [JsonProperty("xMin")]
-        public long XMin { get; set; }
+        long xMin;
 
+        [ObservableProperty]
         [JsonProperty("y")]
-        public long Y { get; set; }
+        long y;
 
+        [ObservableProperty]
         [JsonProperty("yMax")]
-        public long YMax { get; set; }
+        long yMax;
 
+        [ObservableProperty]
         [JsonProperty("yMin")]
-        public long YMin { get; set; }
+        long yMin;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

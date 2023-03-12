@@ -1,31 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterFan
+    public partial class RepetierPrinterFan : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
         [JsonProperty("on")]
-        public bool On { get; set; }
+        bool on;
 
+        [ObservableProperty]
         [JsonProperty("voltage")]
-        public long Voltage { get; set; }
+        long voltage;
 
+        #region Json Ignore
         [JsonIgnore]
-        public int Speed
-        {
-            get
-            {
-                return Convert.ToInt32(Math.Round((double)(this.Voltage / 255m * 100m), 0));
-            }
-        }
+        public int Speed => Convert.ToInt32(Math.Round((double)(Voltage / 255m * 100m), 0));
+
+        #endregion
+
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

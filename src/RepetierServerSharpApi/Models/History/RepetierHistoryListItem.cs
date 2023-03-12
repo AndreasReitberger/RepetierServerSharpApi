@@ -1,66 +1,84 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierHistoryListItem
+    public partial class RepetierHistoryListItem : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("computedTime")]
-        public double ComputedTime { get; set; }
+        double computedTime;
 
+        [ObservableProperty]
         [JsonProperty("costs")]
-        public double Costs { get; set; }
+        double costs;
 
+        [ObservableProperty]
         [JsonProperty("endTime")]
-        public double EndTime { get; set; }
+        double endTime;
 
+        [ObservableProperty]
         [JsonProperty("filament")]
-        public double Filament { get; set; }
+        double filament;
 
+        [ObservableProperty]
         [JsonProperty("filename")]
-        public string Filename { get; set; }
+        string filename;
 
+        [ObservableProperty]
         [JsonProperty("id")]
-        public long Id { get; set; }
+        long id;
 
+        [ObservableProperty]
         [JsonProperty("month")]
-        public long Month { get; set; }
+        long month;
 
+        [ObservableProperty]
         [JsonProperty("notes")]
-        public string Notes { get; set; }
+        string notes;
 
+        [ObservableProperty]
         [JsonProperty("pauseTime")]
-        public double PauseTime { get; set; }
+        double pauseTime;
 
+        [ObservableProperty]
         [JsonProperty("printerName")]
-        public string PrinterName { get; set; }
+        string printerName;
 
+        [ObservableProperty]
         [JsonProperty("printerSlug")]
-        public string PrinterSlug { get; set; }
+        string printerSlug;
 
+        [ObservableProperty]
         [JsonProperty("printerUUID")]
-        public string PrinterUuid { get; set; }
+        string printerUuid;
 
+        [ObservableProperty]
         [JsonProperty("report")]
-        public string Report { get; set; }
+        string report;
 
+        [ObservableProperty]
         [JsonProperty("startTime")]
-        public double StartTime { get; set; }
+        double startTime;
 
+        [ObservableProperty]
         [JsonProperty("status")]
-        public long Status { get; set; }
+        long status;
 
+        [ObservableProperty]
         [JsonProperty("username")]
-        public string Username { get; set; }
+        string username;
 
+        [ObservableProperty]
         [JsonProperty("year")]
-        public long Year { get; set; }
+        long year;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

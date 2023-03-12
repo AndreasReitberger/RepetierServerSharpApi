@@ -1,19 +1,21 @@
-﻿using Newtonsoft.Json;
-
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventNetworkInfo
+    public partial class EventNetworkInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public EventNetworkInfoData Data { get; set; }
+
+        [ObservableProperty]
+        [JsonProperty("data")]
+        EventNetworkInfoData data;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

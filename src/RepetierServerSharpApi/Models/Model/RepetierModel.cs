@@ -1,135 +1,208 @@
 ﻿using AndreasReitberger.API.Repetier.Enum;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierModel
+    public partial class RepetierModel : ObservableObject
     {
         #region Properties
-        [JsonIgnore]
-        public bool IsVisible { get; set; }
-        [JsonIgnore]
-        public bool IsLoadingImage { get; set; } = false;
-        [JsonIgnore]
-        public byte[] Image { get; set; }
-        [JsonIgnore]
-        public byte[] Thumbnail { get; set; }
-        [JsonIgnore]
-        public RepetierImageType ImageType { get; set; } = RepetierImageType.Thumbnail;
-        [JsonIgnore]
-        public string PrinterName { get; set; } = string.Empty;
-
-
+        
+        [ObservableProperty]
         [JsonProperty("analysed")]
-        public long Analysed { get; set; }
+        long analysed;
 
+        [ObservableProperty]
         [JsonProperty("created")]
-        public long Created { get; set; }
+        long created;
 
+        [ObservableProperty]
         [JsonProperty("extruderUsage")]
-        public double[] ExtruderUsage { get; set; }
+        double[] extruderUsage;
 
+        [ObservableProperty]
         [JsonProperty("filamentTotal")]
-        public double FilamentTotal { get; set; }
+        double filamentTotal;
 
+        [ObservableProperty]
         [JsonProperty("fits")]
-        public bool Fits { get; set; }
+        bool fits;
 
+        [ObservableProperty]
         [JsonProperty("gcodePatch")]
-        public string GcodePatch { get; set; }
+        string gcodePatch;
 
+        [ObservableProperty]
         [JsonProperty("group")]
-        public string Group { get; set; }
+        string group;
 
+        [ObservableProperty]
         [JsonProperty("id")]
-        public long Id { get; set; }
+        long id;
 
+        [ObservableProperty]
         [JsonProperty("lastPrintTime")]
-        public double LastPrintTime { get; set; }
+        double lastPrintTime;
 
+        [ObservableProperty]
         [JsonProperty("layer")]
-        public long Layer { get; set; }
+        long layer;
 
+        [ObservableProperty]
         [JsonProperty("length")]
-        public long Length { get; set; }
+        long length;
 
+        [ObservableProperty]
         [JsonProperty("lines")]
-        public long Lines { get; set; }
+        long lines;
 
+        [ObservableProperty]
         [JsonProperty("materials")]
-        public string[] Materials { get; set; }
+        string[] materials;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("notes")]
-        public string Notes { get; set; }
+        string notes;
 
+        [ObservableProperty]
         [JsonProperty("printTime")]
-        public double PrintTime { get; set; }
+        double printTime;
 
+        [ObservableProperty]
         [JsonProperty("printed")]
-        public long Printed { get; set; }
+        long printed;
 
+        [ObservableProperty]
         [JsonProperty("radius")]
-        public double Radius { get; set; }
+        double radius;
 
+        [ObservableProperty]
         [JsonProperty("radiusMove")]
-        public double RadiusMove { get; set; }
+        double radiusMove;
 
+        [ObservableProperty]
+        [JsonProperty("repeat")]
+        int repeat;
+
+        [ObservableProperty]
         [JsonProperty("slicer")]
-        public string Slicer { get; set; }
+        string slicer;
 
+        [ObservableProperty]
         [JsonProperty("state")]
-        public string State { get; set; }
+        string state;
 
+        [ObservableProperty]
         [JsonProperty("version")]
-        public long Version { get; set; }
+        long version;
 
+        [ObservableProperty]
         [JsonProperty("volumeTotal")]
-        public double VolumeTotal { get; set; }
+        double volumeTotal;
 
+        [ObservableProperty]
         [JsonProperty("volumeUsage")]
-        public double[] VolumeUsage { get; set; }
+        double[] volumeUsage;
 
+        [ObservableProperty]
         [JsonProperty("volumetric")]
-        public bool Volumetric { get; set; }
+        bool volumetric;
 
+        [ObservableProperty]
         [JsonProperty("xMax")]
-        public double XMax { get; set; }
+        double xMax;
 
+        [ObservableProperty]
         [JsonProperty("xMaxMove")]
-        public double XMaxMove { get; set; }
+        double xMaxMove;
 
+        [ObservableProperty]
+        [JsonProperty("xMaxView")]
+        double xMaxView;
+
+        [ObservableProperty]
         [JsonProperty("xMin")]
-        public long XMin { get; set; }
+        long xMin;
 
+        [ObservableProperty]
         [JsonProperty("xMinMove")]
-        public long XMinMove { get; set; }
+        long xMinMove;
 
+        [ObservableProperty]
+        [JsonProperty("xMinView")]
+        long xMinView;
+
+        [ObservableProperty]
         [JsonProperty("yMax")]
-        public double YMax { get; set; }
+        double yMax;
 
+        [ObservableProperty]
         [JsonProperty("yMaxMove")]
-        public double YMaxMove { get; set; }
+        double yMaxMove;
 
+        [ObservableProperty]
+        [JsonProperty("yMaxView")]
+        double yMaxView;
+
+        [ObservableProperty]
         [JsonProperty("yMin")]
-        public long YMin { get; set; }
+        long yMin;
 
+        [ObservableProperty]
         [JsonProperty("yMinMove")]
-        public long YMinMove { get; set; }
+        long yMinMove;
 
+        [ObservableProperty]
+        [JsonProperty("yMinView")]
+        long yMinView;
+
+        [ObservableProperty]
         [JsonProperty("zMax")]
-        public double ZMax { get; set; }
+        double zMax;
 
+        [ObservableProperty]
         [JsonProperty("zMin")]
-        public long ZMin { get; set; }
+        long zMin;
+
+        #region JsonIgnore
+
+        [ObservableProperty]
+        [JsonIgnore]
+        bool isVisible;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        bool isLoadingImage = false;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        byte[] image = Array.Empty<byte>();
+
+        [ObservableProperty]
+        [JsonIgnore]
+        byte[] thumbnail = Array.Empty<byte>();
+
+        [ObservableProperty]
+        [JsonIgnore]
+        RepetierImageType imageType = RepetierImageType.Thumbnail;
+            
+        [ObservableProperty]
+        [JsonIgnore]
+        string printerName = string.Empty;
+
+        #endregion
+
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
 

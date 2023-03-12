@@ -1,42 +1,72 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConnectionSerial
+    public partial class RepetierPrinterConnectionSerial : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("baudrate")]
-        public long Baudrate { get; set; }
+        long baudrate;
 
+        [ObservableProperty]
         [JsonProperty("communicationTimeout")]
-        public long CommunicationTimeout { get; set; }
+        long communicationTimeout;
 
+        [ObservableProperty]
+        [JsonProperty("connectionDelay")]
+        long connectionDelay;
+
+        [ObservableProperty]
         [JsonProperty("device")]
-        public string Device { get; set; }
+        string device;
 
+        [ObservableProperty]
         [JsonProperty("dtr")]
-        public long Dtr { get; set; }
+        long dtr;
 
+        [ObservableProperty]
+        [JsonProperty("emergencySolution")]
+        long emergencySolution;
+
+        [ObservableProperty]
         [JsonProperty("inputBufferSize")]
-        public long InputBufferSize { get; set; }
+        long inputBufferSize;
 
+        [ObservableProperty]
+        [JsonProperty("interceptor")]
+        bool interceptor;
+
+        [ObservableProperty]
         [JsonProperty("malyanHack")]
-        public bool MalyanHack { get; set; }
+        bool malyanHack;
 
+        [ObservableProperty]
+        [JsonProperty("maxParallelCommands")]
+        bool maxParallelCommands;
+
+        [ObservableProperty]
         [JsonProperty("pingPong")]
-        public bool PingPong { get; set; }
+        bool pingPong;
 
+        [ObservableProperty]
         [JsonProperty("rts")]
-        public long Rts { get; set; }
+        long rts;
 
+        [ObservableProperty]
+        [JsonProperty("usbreset")]
+        long usbreset;
+
+        [ObservableProperty]
         [JsonProperty("visibleWithoutRunning")]
-        public bool VisibleWithoutRunning { get; set; }
+        bool visibleWithoutRunning;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

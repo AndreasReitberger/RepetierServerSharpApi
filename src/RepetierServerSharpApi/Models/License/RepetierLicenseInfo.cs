@@ -1,27 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierLicenseInfo
+    public partial class RepetierLicenseInfo : ObservableObject
     {
         #region Properties
+
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        bool active;
 
+        [ObservableProperty]
         [JsonProperty("hasBranding")]
-        public bool HasBranding { get; set; }
+        bool hasBranding;
 
+        [ObservableProperty]
         [JsonProperty("licence")]
-        public string Licence { get; set; }
+        string licence;
 
+        [ObservableProperty]
         [JsonProperty("wantsBranding")]
-        public bool WantsBranding { get; set; }
+        bool wantsBranding;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

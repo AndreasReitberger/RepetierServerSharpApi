@@ -1,42 +1,52 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierLoginResultSettings
+    public partial class RepetierLoginResultSettings : ObservableObject
     {
         #region Properties
-        [JsonProperty("gcodeGroup", NullValueHandling = NullValueHandling.Ignore)]
-        public string GcodeGroup { get; set; }
+        [ObservableProperty]
+        [JsonProperty("gcodeGroup")]
+        string gcodeGroup;
 
-        [JsonProperty("gcodeSortBy", NullValueHandling = NullValueHandling.Ignore)]
-        public long? GcodeSortBy { get; set; }
+        [ObservableProperty]
+        [JsonProperty("gcodeSortBy")]
+        long? gcodeSortBy;
 
-        [JsonProperty("gcodeViewMode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? GcodeViewMode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("gcodeViewMode")]
+        long? gcodeViewMode;
 
-        [JsonProperty("tempDiagActive", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempDiagActive { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempDiagActive")]
+        long? tempDiagActive;
 
-        [JsonProperty("tempDiagAll", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempDiagAll { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempDiagAll")]
+        long? tempDiagAll;
 
-        [JsonProperty("tempDiagBed", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempDiagBed { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempDiagBed")]
+        long? tempDiagBed;
 
-        [JsonProperty("tempDiagChamber", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempDiagChamber { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempDiagChamber")]
+        long? tempDiagChamber;
 
-        [JsonProperty("tempDiagMode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempDiagMode { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempDiagMode")]
+        long? tempDiagMode;
 
-        [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
-        public string Theme { get; set; }
+        [ObservableProperty]
+        [JsonProperty("theme")]
+        string theme;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

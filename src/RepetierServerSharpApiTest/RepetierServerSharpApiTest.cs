@@ -5,6 +5,7 @@ using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -16,7 +17,7 @@ namespace RepetierServerSharpApiTest
 
         private readonly string _host = "192.168.10.112";
         private readonly int _port = 3344;
-        private readonly string _api = "_yourkey";
+        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1"; // _yourkey";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -399,7 +400,7 @@ namespace RepetierServerSharpApiTest
                     ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
                     Assert.IsTrue(list?.Any());
 
-                    RepetierHistoryListItem historyItem = list.FirstOrDefault();
+                    RepetierHistoryListItem historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
                     byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
@@ -601,6 +602,7 @@ namespace RepetierServerSharpApiTest
             try
             {
                 Dictionary<DateTime, string> websocketMessages = new();
+                Dictionary<string, string> unkownJsonRespones = new();
                 RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.StartListening();
@@ -622,14 +624,20 @@ namespace RepetierServerSharpApiTest
                         Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
-
                 _server.WebSocketError += (o, args) =>
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
-
-                // Wait 10 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                _server.RepetierIgnoredJsonResultsChanged += (o, args) =>
+                {
+                    foreach (var keyPair in args.NewIgnoredJsonResults)
+                    {
+                        if(!unkownJsonRespones.ContainsKey(keyPair.Key))
+                            unkownJsonRespones.Add(keyPair.Key, keyPair.Value);
+                    }
+                };
+                // Wait 30 minutes
+                CancellationTokenSource cts = new(new TimeSpan(0, 30, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
@@ -760,13 +768,13 @@ namespace RepetierServerSharpApiTest
                             RepetierPrinterStateRespone state = await _server.GetStateObjectAsync();
                             if (state != null && state.Printer != null)
                             {
-                                List<RepetierPrinterExtruder> extruders = state.Printer.Extruder;
+                                List<RepetierPrinterHeaterComponent> extruders = state.Printer.Extruder;
                                 if (extruders == null || extruders.Count == 0)
                                 {
                                     Assert.Fail("No extrudes available");
                                     break;
                                 }
-                                RepetierPrinterExtruder extruder = extruders[0];
+                                RepetierPrinterHeaterComponent extruder = extruders[0];
                                 extruderTemp = extruder.TempRead;
                             }
                         }
@@ -827,6 +835,91 @@ namespace RepetierServerSharpApiTest
                 .Build();
             await client.CheckOnlineAsync();
             Assert.IsTrue(client?.IsOnline ?? false);
+        }
+
+        [TestMethod]
+        public async Task ServerQueryTests()
+        {
+            try
+            {
+                RepetierClient _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    if (_server.ActivePrinter == null)
+                        await _server.SetPrinterActiveAsync(0, true);
+
+                    var update = await _server.GetAvailableServerUpdateAsync();
+                    Assert.IsNotNull(update);
+
+                    var printInfo = await _server.GetCurrentPrintInfoAsync();
+                    Assert.IsNotNull(printInfo);
+
+                    var printInfos = await _server.GetCurrentPrintInfosAsync();
+                    Assert.IsNotNull(printInfos);
+
+                    var cmds = await _server.GetExternalCommandsAsync();
+                    Assert.IsNotNull(cmds);
+
+                    var gpios = await _server.GetGPIOListAsync();
+                    Assert.IsNotNull(gpios);
+
+                    var history = await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
+                    Assert.IsNotNull(history);
+
+                    var historyReport = await _server.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
+                    Assert.IsNotNull(historyReport);
+
+                    var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2022, true);
+                    Assert.IsNotNull(historyReport);
+
+                    var jobList = await _server.GetJobListAsync();
+                    Assert.IsNotNull(jobList);
+
+                    var license = await _server.GetLicenseDataAsync();
+                    Assert.IsNotNull(license);
+
+                    var messages = await _server.GetMessagesAsync();
+                    Assert.IsNotNull(messages);
+
+                    var groups = await _server.GetModelGroupsAsync();
+                    Assert.IsNotNull(groups);
+
+                    var files = await _server.GetModelsAsync();
+                    Assert.IsNotNull(files);
+
+                    var config = await _server.GetPrinterConfigAsync();
+                    Assert.IsNotNull(config);
+
+                    var printers = await _server.GetPrintersAsync();
+                    Assert.IsNotNull(printers);
+
+                    var servers = await _server.GetProjectsListServerAsync();
+                    Assert.IsNotNull(servers);
+
+                    var projects = await _server.GetProjectItemsAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    Assert.IsNotNull(projects);
+
+                    var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    Assert.IsNotNull(folders);
+
+                    var state = await _server.GetStateObjectAsync();
+                    Assert.IsNotNull(state);
+
+                    //await _server.RefreshAllAsync();
+                    //Assert.IsTrue(_server.InitialDataFetched);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
         }
     }
 }

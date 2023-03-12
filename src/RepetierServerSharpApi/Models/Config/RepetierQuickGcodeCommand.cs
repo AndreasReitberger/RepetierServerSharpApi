@@ -1,27 +1,32 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierQuickGcodeCommand
+    public partial class RepetierQuickGcodeCommand : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("command")]
-        public string Command { get; set; }
+        string command;
 
+        [ObservableProperty]
         [JsonProperty("icon")]
-        public string Icon { get; set; }
+        string icon;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("visibleWhenPrinting")]
-        public bool VisibleWhenPrinting { get; set; }
+        bool visibleWhenPrinting;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

@@ -1,83 +1,106 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigExtruder
+    public partial class RepetierPrinterConfigExtruder : ObservableObject
     {
         #region Properties
-        [JsonProperty("acceleration", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Acceleration { get; set; }
+        [ObservableProperty]
+        [JsonProperty("acceleration")]
+        long? acceleration;
 
-        [JsonProperty("alias", NullValueHandling = NullValueHandling.Ignore)]
-        public string Alias { get; set; }
+        [ObservableProperty]
+        [JsonProperty("alias")]
+        string alias;
 
-        [JsonProperty("changeFastDistance", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ChangeFastDistance { get; set; }
+        [ObservableProperty]
+        [JsonProperty("changeFastDistance")]
+        long? changeFastDistance;
 
-        [JsonProperty("changeSlowDistance", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ChangeSlowDistance { get; set; }
+        [ObservableProperty]
+        [JsonProperty("changeSlowDistance")]
+        long? changeSlowDistance;
 
-        [JsonProperty("cooldownPerSecond", NullValueHandling = NullValueHandling.Ignore)]
-        public double? CooldownPerSecond { get; set; }
+        [ObservableProperty]
+        [JsonProperty("cooldownPerSecond")]
+        double? cooldownPerSecond;
 
-        [JsonProperty("eJerk", NullValueHandling = NullValueHandling.Ignore)]
-        public long? EJerk { get; set; }
+        [ObservableProperty]
+        [JsonProperty("eJerk")]
+        long? eJerk;
 
-        [JsonProperty("extrudeSpeed", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ExtrudeSpeed { get; set; }
+        [ObservableProperty]
+        [JsonProperty("extrudeSpeed")]
+        long? extrudeSpeed;
 
-        [JsonProperty("filamentDiameter", NullValueHandling = NullValueHandling.Ignore)]
-        public double? FilamentDiameter { get; set; }
+        [ObservableProperty]
+        [JsonProperty("filamentDiameter")]
+        double? filamentDiameter;
 
-        [JsonProperty("heatupPerSecond", NullValueHandling = NullValueHandling.Ignore)]
-        public long? HeatupPerSecond { get; set; }
+        [ObservableProperty]
+        [JsonProperty("heatupPerSecond")]
+        long? heatupPerSecond;
 
-        [JsonProperty("lastTemp", NullValueHandling = NullValueHandling.Ignore)]
-        public long? LastTemp { get; set; }
+        [ObservableProperty]
+        [JsonProperty("lastTemp")]
+        long? lastTemp;
 
-        [JsonProperty("maxSpeed", NullValueHandling = NullValueHandling.Ignore)]
-        public long? MaxSpeed { get; set; }
+        [ObservableProperty]
+        [JsonProperty("maxSpeed")]
+        long? maxSpeed;
 
-        [JsonProperty("maxTemp", NullValueHandling = NullValueHandling.Ignore)]
-        public long? MaxTemp { get; set; }
+        [ObservableProperty]
+        [JsonProperty("maxTemp")]
+        long? maxTemp;
 
-        [JsonProperty("num", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Num { get; set; }
+        [ObservableProperty]
+        [JsonProperty("num")]
+        long? num;
 
-        [JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Offset { get; set; }
+        [ObservableProperty]
+        [JsonProperty("offset")]
+        long? offset;
 
-        [JsonProperty("offsetX", NullValueHandling = NullValueHandling.Ignore)]
-        public long? OffsetX { get; set; }
+        [ObservableProperty]
+        [JsonProperty("offsetX")]
+        long? offsetX;
 
-        [JsonProperty("offsetY", NullValueHandling = NullValueHandling.Ignore)]
-        public long? OffsetY { get; set; }
+        [ObservableProperty]
+        [JsonProperty("offsetY")]
+        long? offsetY;
 
-        [JsonProperty("retractSpeed", NullValueHandling = NullValueHandling.Ignore)]
-        public long? RetractSpeed { get; set; }
+        [ObservableProperty]
+        [JsonProperty("retractSpeed")]
+        long? retractSpeed;
 
-        [JsonProperty("supportTemperature", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? SupportTemperature { get; set; }
+        [ObservableProperty]
+        [JsonProperty("supportTemperature")]
+        bool? supportTemperature;
 
-        [JsonProperty("tempMaster", NullValueHandling = NullValueHandling.Ignore)]
-        public long? TempMaster { get; set; }
+        [ObservableProperty]
+        [JsonProperty("tempMaster")]
+        long? tempMaster;
 
-        [JsonProperty("temperatures", NullValueHandling = NullValueHandling.Ignore)]
-        public List<RepetierPrinterConfigTemperature> Temperatures { get; set; }
+        [ObservableProperty]
+        [JsonProperty("temperatures")]
+        List<RepetierPrinterConfigTemperature> temperatures;
 
-        [JsonProperty("toolDiameter", NullValueHandling = NullValueHandling.Ignore)]
-        public double? ToolDiameter { get; set; }
+        [ObservableProperty]
+        [JsonProperty("toolDiameter")]
+        double? toolDiameter;
 
-        [JsonProperty("toolType", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ToolType { get; set; }
+        [ObservableProperty]
+        [JsonProperty("toolType")]
+        long? toolType;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

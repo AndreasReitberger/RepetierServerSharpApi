@@ -1,74 +1,119 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigGeneral
+    public partial class RepetierPrinterConfigGeneral : ObservableObject
     {
-        #region MyRegion
+        #region Properties
 
+        [ObservableProperty]
         [JsonProperty("active")]
-        public bool Active { get; set; }
+        bool active;
 
+        [ObservableProperty]
         [JsonProperty("defaultVolumetric")]
-        public bool DefaultVolumetric { get; set; }
+        bool defaultVolumetric;
 
+        [ObservableProperty]
+        [JsonProperty("deleteJobAfterManualStop")]
+        bool deleteJobAfterManualStop;
+
+        [ObservableProperty]
         [JsonProperty("doorHandling")]
-        public long DoorHandling { get; set; }
+        long doorHandling;
 
+        [ObservableProperty]
         [JsonProperty("eepromType")]
-        public string EepromType { get; set; }
+        string eepromType;
 
+        [ObservableProperty]
+        [JsonProperty("enableQueue")]
+        bool enableQueue;
+
+        [ObservableProperty]
         [JsonProperty("firmwareName")]
-        public string FirmwareName { get; set; }
+        string firmwareName;
 
+        [ObservableProperty]
         [JsonProperty("heatedBed")]
-        public bool HeatedBed { get; set; }
+        bool heatedBed;
 
+        [ObservableProperty]
         [JsonProperty("logHistory")]
-        public bool LogHistory { get; set; }
+        bool logHistory;
 
+        [ObservableProperty]
+        [JsonProperty("manufacturer")]
+        string manufacturer;
+
+        [ObservableProperty]
         [JsonProperty("model")]
-        public string Model { get; set; }
+        string model;
 
+        [ObservableProperty]
         [JsonProperty("name")]
-        public string Name { get; set; }
+        string name;
 
+        [ObservableProperty]
         [JsonProperty("numFans")]
-        public long NumFans { get; set; }
+        long numFans;
 
+        [ObservableProperty]
         [JsonProperty("pauseHandling")]
-        public long PauseHandling { get; set; }
+        long pauseHandling;
 
+        [ObservableProperty]
         [JsonProperty("pauseSeconds")]
-        public long PauseSeconds { get; set; }
+        long pauseSeconds;
 
+        [ObservableProperty]
+        [JsonProperty("printerHomepage")]
+        Uri printerHomepage;
+
+        [ObservableProperty]
+        [JsonProperty("printerManual")]
+        string printerManual;
+
+        [ObservableProperty]
         [JsonProperty("printerVariant")]
-        public string PrinterVariant { get; set; }
+        string printerVariant;
 
+        [ObservableProperty]
         [JsonProperty("sdcard")]
-        public bool Sdcard { get; set; }
+        bool sdcard;
 
+        [ObservableProperty]
         [JsonProperty("slug")]
-        public string Slug { get; set; }
+        string slug;
 
+        [ObservableProperty]
+        [JsonProperty("softwareLight")]
+        bool softwareLight;
+
+        [ObservableProperty]
         [JsonProperty("softwarePower")]
-        public bool SoftwarePower { get; set; }
+        bool softwarePower;
 
+        [ObservableProperty]
         [JsonProperty("tempUpdateEvery")]
-        public long TempUpdateEvery { get; set; }
+        long tempUpdateEvery;
 
+        [ObservableProperty]
         [JsonProperty("useModelFromSlug")]
-        public string UseModelFromSlug { get; set; }
+        string useModelFromSlug;
 
+        [ObservableProperty]
         [JsonProperty("useOwnModelRepository")]
-        public bool UseOwnModelRepository { get; set; }
+        bool useOwnModelRepository;
 
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

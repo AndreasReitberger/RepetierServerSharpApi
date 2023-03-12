@@ -1,24 +1,34 @@
 ﻿using AndreasReitberger.API.Repetier.Enum;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterHeatchamber
+    [Obsolete("Use the common class `RepetierPrinterHeaterComponent` instead.")]
+    public partial class RepetierPrinterHeatchamber : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("error")]
-        public long Error { get; set; }
+        long error;
 
+        [ObservableProperty]
         [JsonProperty("output")]
-        public long Output { get; set; }
+        long output;
 
+        [ObservableProperty]
         [JsonProperty("tempRead")]
-        public double TempRead { get; set; }
+        double tempRead;
 
+        [ObservableProperty]
         [JsonProperty("tempSet")]
-        public long TempSet { get; set; }
+        long tempSet;
+
+        #region Json Ignore
         [JsonIgnore]
         public RepetierToolState State { get => GetCurrentState(); }
+        #endregion
+
         #endregion
 
         #region Methods
@@ -42,7 +52,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

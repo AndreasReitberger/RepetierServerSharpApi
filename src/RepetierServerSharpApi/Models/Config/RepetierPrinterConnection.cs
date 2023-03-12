@@ -1,33 +1,60 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConnection
+    public partial class RepetierPrinterConnection : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
+        [JsonProperty("compressCommunication")]
+        bool compressCommunication;
+
+        [ObservableProperty]
         [JsonProperty("connectionMethod")]
-        public long ConnectionMethod { get; set; }
+        long connectionMethod;
 
+        [ObservableProperty]
+        [JsonProperty("continueAfterFastReconnect")]
+        bool continueAfterFastReconnect;
+
+        [ObservableProperty]
         [JsonProperty("ip")]
-        public RepetierPrinterConnectionIp Ip { get; set; }
+        RepetierPrinterConnectionIp ip;
 
+        [ObservableProperty]
         [JsonProperty("lcdTimeMode")]
-        public long LcdTimeMode { get; set; }
+        long lcdTimeMode;
 
+        [ObservableProperty]
+        [JsonProperty("password")]
+        string password;
+
+        [ObservableProperty]
         [JsonProperty("pipe")]
-        public RepetierPrinterConnectionPipe Pipe { get; set; }
+        RepetierPrinterConnectionPipe pipe;
 
+        [ObservableProperty]
+        [JsonProperty("powerOffIdleMinutes")]
+        long powerOffIdleMinutes;
+
+        [ObservableProperty]
+        [JsonProperty("powerOffMaxTemperature")]
+        long powerOffMaxTemperature;
+
+        [ObservableProperty]
         [JsonProperty("resetScript")]
-        public string ResetScript { get; set; }
+        string resetScript;
 
+        [ObservableProperty]
         [JsonProperty("serial")]
-        public RepetierPrinterConnectionSerial Serial { get; set; }
+        RepetierPrinterConnectionSerial serial;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

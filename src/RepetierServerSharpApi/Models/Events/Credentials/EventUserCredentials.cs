@@ -1,23 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventUserCredentials
+    public partial class EventUserCredentials : ObservableObject
     {
         #region Properties
 
+        [ObservableProperty]
         [JsonProperty("data")]
-        public EventUserCredentialsData Data { get; set; }
+        EventUserCredentialsData data;
 
+        [ObservableProperty]
         [JsonProperty("event")]
-        public string Event { get; set; }
+        string eventName;
 
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

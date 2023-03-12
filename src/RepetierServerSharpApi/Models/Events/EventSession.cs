@@ -1,24 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class EventSession
+    public partial class EventSession : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("callback_id")]
-        public long CallbackId { get; set; }
+        long callbackId;
 
+        [ObservableProperty]
         [JsonProperty("data")]
-        public object Data { get; set; }
+        object data;
 
+        [ObservableProperty]
         [JsonProperty("session")]
-        public string Session { get; set; }
+        string session;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

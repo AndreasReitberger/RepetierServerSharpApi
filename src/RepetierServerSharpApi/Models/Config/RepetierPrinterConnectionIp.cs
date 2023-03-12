@@ -1,21 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConnectionIp
+    public partial class RepetierPrinterConnectionIp : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("address")]
-        public string Address { get; set; }
+        string address;
 
+        [ObservableProperty]
+        [JsonProperty("keepAliveInterval")]
+        long keepAliveInterval;
+
+        [ObservableProperty]
         [JsonProperty("port")]
-        public long Port { get; set; }
+        long port;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }

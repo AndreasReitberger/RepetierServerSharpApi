@@ -1,40 +1,49 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-
-    public partial class HardwareInfo
+    public partial class HardwareInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Icon { get; set; }
 
-        [JsonProperty("msgType", NullValueHandling = NullValueHandling.Ignore)]
-        public long? MsgType { get; set; }
+        [ObservableProperty]
+        [JsonProperty("icon")]
+        public long? icon;
 
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [ObservableProperty]
+        [JsonProperty("msgType")]
+        public long? msgType;
 
-        [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
-        public string Text { get; set; }
+        [ObservableProperty]
+        [JsonProperty("name")]
+        public string name;
 
-        [JsonProperty("unit", NullValueHandling = NullValueHandling.Ignore)]
-        public string Unit { get; set; }
+        [ObservableProperty]
+        [JsonProperty("text")]
+        public string text;
 
-        [JsonProperty("urgency", NullValueHandling = NullValueHandling.Ignore)]
-        public long? Urgency { get; set; }
+        [ObservableProperty]
+        [JsonProperty("unit")]
+        public string unit;
 
-        [JsonProperty("url", NullValueHandling = NullValueHandling.Ignore)]
-        public string Url { get; set; }
+        [ObservableProperty]
+        [JsonProperty("urgency")]
+        public long? urgency;
 
-        [JsonProperty("value", NullValueHandling = NullValueHandling.Ignore)]
-        public double? Value { get; set; }
+        [ObservableProperty]
+        [JsonProperty("url")]
+        public string url;
+
+        [ObservableProperty]
+        [JsonProperty("value")]
+        public double? value;
         #endregion
 
         #region Overrides
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
     }
