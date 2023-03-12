@@ -1053,6 +1053,7 @@ namespace AndreasReitberger.API.Repetier
                                         });
                                     }
                                     break;
+                                case "jobDeactivated":
                                 case "jobFinished":
                                     EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
                                     if (eventJobFinished != null)
@@ -1105,19 +1106,43 @@ namespace AndreasReitberger.API.Repetier
                                 case "layerChanged":
                                     RepetierLayerChangedEvent eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
                                     break;
+                                case "updatePrinterState":
+                                    RepetierPrinterState updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
+                                    break;
                                 case "timelapseChanged":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "newRenderImage":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "printerListChanged":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "printqueueChanged":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "workerFinished":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "config":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 case "state":
+#if DEBUG
+                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
+#endif
                                     break;
                                 // Bodyless events, with no additional data
                                 case "addErrorLogLine":
@@ -1129,10 +1154,10 @@ namespace AndreasReitberger.API.Repetier
                                 case "prepareJob":
                                 case "prepareJobFinished":
                                 case "lastPrintsChanged":
+                                case "modelGroupListChanged":
                                     break;
                                 // For unknown events log the needed information to create a class
                                 
-                                case "modelGroupListChanged":
                                 case "dispatcherCount":
                                 case "recoverChanged":
                                 case "log":
@@ -1628,48 +1653,6 @@ namespace AndreasReitberger.API.Repetier
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
                     apiRsponeResult = ValidateRespone(respone, fullUri);
-                    /*
-                    if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        AuthenticationFailed = false;
-                        apiRsponeResult.Result = respone.Content;
-                        apiRsponeResult.Succeeded = true;
-                        apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
-                        || respone.StatusCode == HttpStatusCode.Forbidden
-                        || respone.StatusCode == HttpStatusCode.Unauthorized
-                        )
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        apiRsponeResult.HasAuthenticationError = true;
-                        apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else
-                    {
-                        OnRestApiError(new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        });
-                        //throw respone.ErrorException;
-                    }
-                    */
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -1742,48 +1725,6 @@ namespace AndreasReitberger.API.Repetier
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
                     apiRsponeResult = ValidateRespone(respone, fullUri);
-                    /*
-                    if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        AuthenticationFailed = false;
-                        apiRsponeResult.Result = respone.Content;
-                        apiRsponeResult.Succeeded = true;
-                        apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
-                        || respone.StatusCode == HttpStatusCode.Forbidden
-                        || respone.StatusCode == HttpStatusCode.Unauthorized
-                        )
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        apiRsponeResult.HasAuthenticationError = true;
-                        apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else
-                    {
-                        OnRestApiError(new RepetierRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        });
-                        //throw respone.ErrorException;
-                    }
-                    */
                 }
                 catch (TaskCanceledException)
                 {
