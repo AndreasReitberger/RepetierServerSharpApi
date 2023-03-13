@@ -233,6 +233,13 @@ namespace AndreasReitberger.API.Repetier
         }
         #endregion
 
+        #region Jobs & Queue
+        public event EventHandler<RepetierCurrentPrintImageChangedEventArgs> RepetierCurrentPrintImageChanged;
+        protected virtual void OnRepetierCurrentPrintImageChanged(RepetierCurrentPrintImageChangedEventArgs e) {
+            RepetierCurrentPrintImageChanged?.Invoke(this, e);
+        }
+        #endregion
+
         #endregion
     }
 }

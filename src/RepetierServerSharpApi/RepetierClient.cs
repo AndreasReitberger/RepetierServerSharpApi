@@ -459,6 +459,18 @@ namespace AndreasReitberger.API.Repetier
 
         #region Jobs
         [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        byte[] currentPrintImage = Array.Empty<byte>();
+        partial void OnCurrentPrintImageChanging(byte[] value) {
+            OnRepetierCurrentPrintImageChanged(new RepetierCurrentPrintImageChangedEventArgs() {
+                NewImage = value,
+                PreviousImage = CurrentPrintImage,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+
+        [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierJobListItem> jobList = new();
         partial void OnJobListChanged(ObservableCollection<RepetierJobListItem> value)
@@ -3821,6 +3833,9 @@ namespace AndreasReitberger.API.Repetier
                 var result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
                 ActivePrintInfos = result ?? new ObservableCollection<RepetierCurrentPrintInfo>();
                 ActivePrintInfo = ActivePrintInfos.FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
+                CurrentPrintImage = ActivePrintInfo?.Jobid > 0
+                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.Jobid, false).ConfigureAwait(false)
+                    : Array.Empty<byte>();
             }
             catch (Exception exc)
             {
