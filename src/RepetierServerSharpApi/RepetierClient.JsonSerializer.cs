@@ -31,6 +31,16 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
+                // Workaround
+                // The HttpClient on net7-android seems to missing the char for the json respone
+                if ((json?.StartsWith("{") ?? false) && (!json?.EndsWith("}") ?? false))
+                {
+                    json += $"}}"; 
+                }
+                else if ((json?.StartsWith("[") ?? false) && (!json?.EndsWith("]") ?? false))
+                {
+                    json += $"]";
+                }
                 return JsonConvert.DeserializeObject<T?>(json, serializerSettings ?? JsonSerializerSettings);
             }
             catch(JsonSerializationException jexc)
