@@ -1,6 +1,6 @@
-﻿using AndreasReitberger.Core.Utilities;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -129,6 +129,11 @@ namespace AndreasReitberger.API.Repetier.Models
         [property: JsonIgnore]
         [JsonIgnore]
         bool isSelected = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [JsonIgnore]
+        byte[] currentPrintImage = Array.Empty<byte>();
 
         #endregion
 
