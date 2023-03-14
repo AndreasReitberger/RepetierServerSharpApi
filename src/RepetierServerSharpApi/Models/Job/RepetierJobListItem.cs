@@ -16,6 +16,10 @@ namespace AndreasReitberger.API.Repetier.Models
         long created;
 
         [ObservableProperty]
+        [JsonProperty("done")]
+        double? done;
+
+        [ObservableProperty]
         [JsonProperty("extruderUsage")]
         List<double> extruderUsage;
 
@@ -78,6 +82,14 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [JsonProperty("printedTimeComp")]
         long printedTimeComp;
+
+        [ObservableProperty]
+        [JsonProperty("printerParam1")]
+        long printerParam1;
+
+        [ObservableProperty]
+        [JsonProperty("printerType")]
+        long printerType;
 
         [ObservableProperty]
         [JsonProperty("radius")]
