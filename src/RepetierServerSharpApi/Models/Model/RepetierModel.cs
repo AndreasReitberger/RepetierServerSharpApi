@@ -78,6 +78,14 @@ namespace AndreasReitberger.API.Repetier.Models
         long printed;
 
         [ObservableProperty]
+        [JsonProperty("printerParam1")]
+        long printerParam1;
+
+        [ObservableProperty]
+        [JsonProperty("printerType")]
+        long printerType;
+
+        [ObservableProperty]
         [JsonProperty("radius")]
         double radius;
 
