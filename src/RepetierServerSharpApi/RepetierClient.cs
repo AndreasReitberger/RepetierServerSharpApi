@@ -3713,8 +3713,25 @@ namespace AndreasReitberger.API.Repetier
 
                 RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
                 if (respone != null)
-                {
+                {                   
                     repetierPrinterList = new ObservableCollection<RepetierPrinter>(respone.Printers);
+                    foreach (RepetierPrinter printer in repetierPrinterList)
+                    {
+                        if (printer?.JobId > 0)
+                        {
+                            RepetierPrinter prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                            // Avoid unnecessary calls if the image or the job hasn't changed
+                            if (prevPrinter?.JobId != printer.JobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                            {
+                                printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
+                            }
+                        }
+                        else printer.CurrentPrintImage = Array.Empty<byte>();
+                    }
                     Printers = repetierPrinterList;
                 }
 
