@@ -27,7 +27,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : ObservableObject, IDisposable //, IRestApiClient
+    public partial class RepetierClient : ObservableObject, IDisposable, ICloneable //, IRestApiClient
     {
         #region Variables
         RestClient restClient;
@@ -5236,6 +5236,14 @@ namespace AndreasReitberger.API.Repetier
                 StopListening();
                 DisconnectWebSocket();
             }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
         #endregion
     }
