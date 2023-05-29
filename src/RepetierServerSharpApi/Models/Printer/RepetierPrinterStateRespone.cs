@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
+    [Obsolete("Don't use this anymore")]
     public partial class RepetierPrinterStateRespone : ObservableObject
     {
         #region Properties
+        
         [ObservableProperty]
         [JsonProperty("printer")]
         RepetierPrinterState printer = new();
@@ -14,9 +16,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [JsonProperty("printer1")]
         RepetierPrinterState printer1 = new();
-        
-        //[ObservableProperty]
-        //Dictionary<string, RepetierPrinterState> printers = new();
+
         #endregion
 
         #region Overrides

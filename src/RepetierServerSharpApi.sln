@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30406.217
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepetierServerSharpApi", "RepetierServerSharpApi\RepetierServerSharpApi.csproj", "{E9C9645B-C3B7-4727-9524-2870A4A01E5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepetierServerSharpApiTest", "RepetierServerSharpApiTest\RepetierServerSharpApiTest.csproj", "{141A5CFD-0D86-47B8-908C-718F585A3DAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocket4Net", "..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj", "{D446ED44-4055-40CE-8FA4-827826A6FB4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D446ED44-4055-40CE-8FA4-827826A6FB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D446ED44-4055-40CE-8FA4-827826A6FB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D446ED44-4055-40CE-8FA4-827826A6FB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D446ED44-4055-40CE-8FA4-827826A6FB4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
