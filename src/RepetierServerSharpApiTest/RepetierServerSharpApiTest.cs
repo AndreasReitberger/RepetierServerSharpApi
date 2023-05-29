@@ -15,9 +15,9 @@ namespace RepetierServerSharpApiTest
     public class RepetierServerSharpApiTest
     {
 
-        private readonly string _host = "10.1.33.38";
+        private readonly string _host = "192.168.10.112";
         private readonly int _port = 3344;
-        private readonly string _api = "6f2f37d9-88b4-4238-837b-7028a31aacc9"; // _yourkey";
+        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1"; // _yourkey";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -604,6 +604,7 @@ namespace RepetierServerSharpApiTest
                 Dictionary<DateTime, string> websocketMessages = new();
                 Dictionary<string, string> unkownJsonRespones = new();
                 RepetierClient _server = new(_host, _api, _port, _ssl);
+                await _server.CheckOnlineAsync();
                 await _server.SetPrinterActiveAsync(1);
                 _server.StartListening();
 
@@ -617,6 +618,15 @@ namespace RepetierServerSharpApiTest
                 };
 
                 _server.WebSocketDataReceived += (o, args) =>
+                {
+                    if (!string.IsNullOrEmpty(args.Message))
+                    {
+                        websocketMessages.Add(DateTime.Now, args.Message);
+                        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                    }
+                };
+
+                _server.WebSocketMessageReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {
@@ -684,10 +694,10 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (temp < 23)
                         {
-                            var state = await _server.GetStateObjectAsync();
-                            if (state != null && state.Printer != null)
+                            var state = await _server.GetStatesAsync();
+                            if (state != null && state?.Count > 0)
                             {
-                                var beds = state.Printer.HeatedBeds;
+                                var beds = state.FirstOrDefault().Value.HeatedBeds;
                                 if (beds == null || beds.Count == 0)
                                 {
                                     Assert.Fail("No heated bed found");
@@ -707,10 +717,10 @@ namespace RepetierServerSharpApiTest
 
                             while (temp > 23)
                             {
-                                var state = await _server.GetStateObjectAsync();
-                                if (state != null && state.Printer != null)
+                                var state = await _server.GetStatesAsync();
+                                if (state != null && state?.Count > 0)
                                 {
-                                    var beds = state.Printer.HeatedBeds;
+                                    var beds = state.FirstOrDefault().Value.HeatedBeds;
                                     if (beds == null || beds.Count == 0)
                                     {
                                         Assert.Fail("No heated bed found");
@@ -765,10 +775,10 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (extruderTemp < 28)
                         {
-                            RepetierPrinterStateRespone state = await _server.GetStateObjectAsync();
-                            if (state != null && state.Printer != null)
+                            var state = await _server.GetStatesAsync();
+                            if (state != null && state?.Count > 0)
                             {
-                                List<RepetierPrinterHeaterComponent> extruders = state.Printer.Extruder;
+                                List<RepetierPrinterHeaterComponent> extruders = state.FirstOrDefault().Value.Extruder;
                                 if (extruders == null || extruders.Count == 0)
                                 {
                                     Assert.Fail("No extrudes available");
@@ -788,10 +798,10 @@ namespace RepetierServerSharpApiTest
 
                             while (extruderTemp > 28)
                             {
-                                var state = await _server.GetStateObjectAsync();
-                                if (state != null && state.Printer != null)
+                                var state = await _server.GetStatesAsync();
+                                if (state != null && state?.Count > 0)
                                 {
-                                    var extruders = state.Printer.Extruder;
+                                    var extruders = state.FirstOrDefault().Value.Extruder;
                                     if (extruders == null || extruders.Count == 0)
                                     {
                                         Assert.Fail("No extrudes available");

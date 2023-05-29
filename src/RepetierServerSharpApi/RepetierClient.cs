@@ -120,6 +120,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Properties
+
         #region Debug
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -3618,6 +3619,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region PrinterState
+        [Obsolete("Switch to `GetStatesAsync`instead.")]
         public async Task<RepetierPrinterStateRespone> GetStateObjectAsync(string printerName = "")
         {
             RepetierApiRequestRespone result;
@@ -3645,9 +3647,11 @@ namespace AndreasReitberger.API.Repetier
                 currentPrinter = currentPrinter.Replace(" ", "_");
                 resultString = result.Result.Replace(currentPrinter, "Printer");
 
-                RepetierPrinterStateRespone state = GetObjectFromJson<RepetierPrinterStateRespone>(resultString);
+                RepetierPrinterStateRespone state = GetObjectFromJson<RepetierPrinterStateRespone>(result.Result);
                 if (state != null && IsPrinterSlugSelected(currentPrinter))
+                {
                     State = state.Printer;
+                }
                 return state;
             }
             catch (JsonException jecx)
@@ -3666,6 +3670,57 @@ namespace AndreasReitberger.API.Repetier
                 return new RepetierPrinterStateRespone();
             }
         }
+        public async Task<Dictionary<string, RepetierPrinterState>> GetStatesAsync(string printerName = "")
+        {
+            RepetierApiRequestRespone result;
+            string resultString = string.Empty;
+            Dictionary<string, RepetierPrinterState> resultObject = new();
+
+            string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
+            if (string.IsNullOrEmpty(currentPrinter))
+            {
+                return resultObject;
+            }
+
+            try
+            {
+                if (!IsReady)
+                {
+                    return new Dictionary<string, RepetierPrinterState>();
+                }
+
+                result = await SendRestApiRequestAsync(
+                    RepetierCommandBase.printer, RepetierCommandFeature.api,
+                    command: "stateList", printerName: currentPrinter)
+                    .ConfigureAwait(false);
+
+                //currentPrinter = currentPrinter.Replace(" ", "_");
+                //resultString = result.Result.Replace(currentPrinter, "Printer");
+
+                Dictionary<string, RepetierPrinterState> state = GetObjectFromJson<Dictionary<string, RepetierPrinterState>>(result.Result);
+                if (state != null && IsPrinterSlugSelected(currentPrinter))
+                {
+                    //State = state.Printer;
+                    State = state.FirstOrDefault().Value;
+                }
+                return state;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new RepetierJsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = resultString,
+                    Message = jecx.Message,
+                });
+                return new Dictionary<string, RepetierPrinterState>();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new Dictionary<string, RepetierPrinterState>();
+            }
+        }
         public async Task RefreshPrinterStateAsync()
         {
             try
@@ -3674,12 +3729,11 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return;
                 }
-                var result = await GetStateObjectAsync().ConfigureAwait(false);
-                if (result != null && result.Printer != null)
+                Dictionary<string, RepetierPrinterState> result = await GetStatesAsync().ConfigureAwait(false);              
+                if (result != null && result?.Count > 0)
                 {
-                    State = result.Printer;
+                    State = result.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? result.FirstOrDefault().Value;
                 }
-
             }
             catch (Exception exc)
             {
@@ -3687,6 +3741,12 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
+        public async Task<RepetierPrinterState> GetStateForPrinterAsync(string printerName)
+        {
+            Dictionary<string, RepetierPrinterState> states = await GetStatesAsync().ConfigureAwait(false);
+            return states?.FirstOrDefault(keypair => keypair.Key == printerName).Value;
+        }
+        [Obsolete("Use `GetStateForPrinterAsync` instead")]
         public async Task<RepetierPrinterStateRespone> GetStateObjectForPrinterAsync(string printerName)
         {
             return await GetStateObjectAsync(printerName).ConfigureAwait(false);
@@ -4022,7 +4082,7 @@ namespace AndreasReitberger.API.Repetier
                 if (Config == null)
                     await GetPrinterConfigAsync().ConfigureAwait(false);
                 if (State == null)
-                    await GetStateObjectAsync().ConfigureAwait(false);
+                    await RefreshPrinterStateAsync().ConfigureAwait(false);
 
                 var shape = Config.Movement;
                 var newX = MathHelper.Clamp(relative ? State.X + x : x, shape.XMin, shape.XMax);
