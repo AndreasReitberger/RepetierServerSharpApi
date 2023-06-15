@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.Generic;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
