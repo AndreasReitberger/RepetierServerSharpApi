@@ -1,3 +1,4 @@
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
@@ -242,7 +243,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<RepetierPrinter> printers = await _server.GetPrintersAsync();
+                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.IsTrue(printers != null && printers.Count > 0);
                 }
                 else
@@ -272,11 +273,11 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync();
                     }
 
-                    ObservableCollection<string> modelgroups = await _server.GetModelGroupsAsync();
+                    ObservableCollection<IGcodeGroup> modelgroups = await _server.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
 
                     await _server.RefreshModelGroupsAsync();
-                    Assert.IsTrue(_server.ModelGroups?.Count > 0);
+                    Assert.IsTrue(_server.Groups?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -303,12 +304,12 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
+                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
                     Assert.IsTrue(models?.Count > 0);
 
                     // Try to fetch models from a second printer, which is not set active at the moment
                     string secondPrinter = "Prusa_i3_MK3S1";
-                    ObservableCollection<RepetierModel> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
+                    ObservableCollection<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
                     Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
                 }
                 else
@@ -360,7 +361,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
+                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
                     if (models?.Count > 0)
                     {
                         bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: true);
@@ -917,7 +918,7 @@ namespace RepetierServerSharpApiTest
                     var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
                     Assert.IsNotNull(folders);
 
-                    var state = await _server.GetStateObjectAsync();
+                    var state = await _server.GetStatesAsync();
                     Assert.IsNotNull(state);
 
                     //await _server.RefreshAllAsync();

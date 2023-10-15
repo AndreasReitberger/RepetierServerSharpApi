@@ -3204,7 +3204,7 @@ namespace AndreasReitberger.API.Repetier
                 Files = new ObservableCollection<IGcode>();
             }
         }
-        public async Task<bool> CopyModelToPrintQueueAsync(RepetierModel model, bool startPrintIfPossible = true)
+        public async Task<bool> CopyModelToPrintQueueAsync(IGcode model, bool startPrintIfPossible = true)
         {
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter))
@@ -3217,7 +3217,7 @@ namespace AndreasReitberger.API.Repetier
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "copyModel", jsonData: $"{{\"id\":{model.Id}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}",
+                        command: "copyModel", jsonData: $"{{\"id\":{model.Identifier}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}",
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
                 await RefreshJobListAsync().ConfigureAwait(false);
@@ -3394,10 +3394,10 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<ObservableCollection<string>> GetModelGroupsAsync()
+        public async Task<ObservableCollection<IGcodeGroup>> GetModelGroupsAsync()
         {
             RepetierApiRequestRespone result = new();
-            ObservableCollection<string> resultObject = new();
+            ObservableCollection<IGcodeGroup> resultObject = new();
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -3412,7 +3412,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
 
                 RepetierModelGroups info = GetObjectFromJson<RepetierModelGroups>(result.Result);
-                return info != null && info.GroupNames != null ? new ObservableCollection<string>(info.GroupNames) : resultObject;
+                return info != null && info.GroupNames != null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g})) : resultObject;
             }
             catch (JsonException jecx)
             {
@@ -3423,7 +3423,7 @@ namespace AndreasReitberger.API.Repetier
                     TargetType = nameof(String),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<string>();
+                return new ObservableCollection<IGcodeGroup>();
             }
             catch (Exception exc)
             {
