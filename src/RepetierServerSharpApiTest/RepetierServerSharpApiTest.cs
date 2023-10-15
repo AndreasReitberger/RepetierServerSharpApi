@@ -16,9 +16,9 @@ namespace RepetierServerSharpApiTest
     public class RepetierServerSharpApiTest
     {
 
-        private readonly string _host = "10.1.33.38";
+        private readonly string _host = "192.168.10.42";
         private readonly int _port = 3344;
-        private readonly string _api = "6f2f37d9-88b4-4238-837b-7028a31aacc9"; // _yourkey";
+        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1"; // _yourkey";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -337,7 +337,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<RepetierJobListItem> jobs = await _server.GetJobListAsync();
+                    ObservableCollection<IPrint3dJob> jobs = await _server.GetJobListAsync();
                     Assert.IsTrue(jobs != null);
                 }
                 else

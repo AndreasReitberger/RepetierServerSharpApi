@@ -3462,9 +3462,10 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Jobs
-        public async Task<ObservableCollection<RepetierJobListItem>> GetJobListAsync()
+        //public async Task<ObservableCollection<RepetierJobListItem>> GetJobListAsync()
+        public async Task<ObservableCollection<IPrint3dJob>> GetJobListAsync()
         {
-            ObservableCollection<RepetierJobListItem> resultObject = new();
+            ObservableCollection<IPrint3dJob> resultObject = new();
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -3473,7 +3474,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 RepetierJobListRespone info = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
                 if (info != null && info.Data != null)
-                    return new ObservableCollection<RepetierJobListItem>(info.Data);
+                    return new ObservableCollection<IPrint3dJob>(info.Data);
                 else
                     return resultObject;
             }
@@ -3819,13 +3820,14 @@ namespace AndreasReitberger.API.Repetier
                 if (respone != null)
                 {                   
                     repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
-                    foreach (RepetierPrinter printer in repetierPrinterList)
+                    foreach (RepetierPrinter printer in repetierPrinterList.Cast<RepetierPrinter>())
                     {
                         if (printer?.JobId > 0)
                         {
                             IPrinter3d prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                            if (prevPrinter is null) continue;
                             // Avoid unnecessary calls if the image or the job hasn't changed
-                            if (prevPrinter?.ActiveJobId != printer.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                            if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
                             {
                                 printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
                             }
