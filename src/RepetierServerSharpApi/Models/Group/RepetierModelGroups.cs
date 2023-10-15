@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierModelGroup : ObservableObject
+    public partial class RepetierModelGroups : ObservableObject
     {
         #region Properties
         [ObservableProperty]

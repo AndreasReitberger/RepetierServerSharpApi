@@ -1,4 +1,6 @@
-﻿using AndreasReitberger.API.Repetier.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Enums;
@@ -7,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -26,7 +29,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : ObservableObject, IDisposable, ICloneable //, IRestApiClient
+    public partial class RepetierClient : ObservableObject, IPrint3dServerClient, IDisposable, ICloneable //, IRestApiClient
     {
         #region Variables
         RestClient restClient;
@@ -34,7 +37,10 @@ namespace AndreasReitberger.API.Repetier
         int _retries = 0;
         #endregion
 
-        #region Id
+        #region Basic
+        [ObservableProperty]
+        Print3dServerTarget target = Print3dServerTarget.RepetierServer;
+
         [ObservableProperty]
         Guid id = Guid.Empty;
 
@@ -49,8 +55,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 lock (Lock)
                 {
-                    if (_instance == null)
-                        _instance = new RepetierClient();
+                    _instance ??= new RepetierClient();
                 }
                 return _instance;
             }
@@ -124,8 +129,8 @@ namespace AndreasReitberger.API.Repetier
         #region Debug
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        Dictionary<string, string> ignoredJsonResults = new();
-        partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
+        ConcurrentDictionary<string, string> ignoredJsonResults = new();
+        partial void OnIgnoredJsonResultsChanged(ConcurrentDictionary<string, string> value)
         {
             OnRepetierIgnoredJsonResultsChanged(new RepetierIgnoredJsonResultsChangedEventArgs()
             {
@@ -178,6 +183,9 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         string apiKey = string.Empty;
+
+        [ObservableProperty]
+        string apiVersion = string.Empty;
 
         [ObservableProperty]
         int port = 3344;
@@ -261,8 +269,8 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        bool proxyUseDefaultCredentials = true;
-        partial void OnProxyUseDefaultCredentialsChanged(bool value)
+        bool proxyUserUsesDefaultCredentials = true;
+        partial void OnProxyUserUsesDefaultCredentialsChanged(bool value)
         {
             UpdateRestClientInstance();
         }
@@ -306,9 +314,13 @@ namespace AndreasReitberger.API.Repetier
         #region DiskSpace
         [ObservableProperty]
         long freeDiskSpace = 0;
-        [JsonIgnore, XmlIgnore]
 
         [ObservableProperty]
+        long usedDiskSpace = 0;
+
+        [JsonIgnore, XmlIgnore]
+        [ObservableProperty, Obsolete("Use UsedDiskSpace instead")]
+        [property: Obsolete("Use UsedDiskSpace instead")]
         long availableDiskSpace = 0;
 
         [ObservableProperty]
@@ -322,11 +334,21 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        long _activeExtruder = 0;
+        [property: Obsolete("Use ActiveToolHead instead")]
+        long activeExtruder = 0;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
+        long activeToolHead = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        [property: Obsolete("Use NumberOfToolHeads instead")]
         long numberOfExtruders = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        long numberOfToolHeads = 0;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
@@ -346,7 +368,7 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        bool _hasWebCam = false;
+        bool hasWebCam = false;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
@@ -387,6 +409,22 @@ namespace AndreasReitberger.API.Repetier
         [property: JsonIgnore, XmlIgnore]
         double temperatureHeatedChamberMain = 0;
 
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double speedFactor = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double speedFactorTarget = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double flowFactor = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double flowFactorTarget = 0;
+
         #endregion
 
         #region Fans
@@ -401,8 +439,8 @@ namespace AndreasReitberger.API.Repetier
         #region Printers
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        RepetierPrinter activePrinter;
-        partial void OnActivePrinterChanging(RepetierPrinter value)
+        IPrinter3d activePrinter;
+        partial void OnActivePrinterChanging(IPrinter3d value)
         {
             OnActivePrinterChangedEvent(new RepetierActivePrinterChangedEventArgs()
             {
@@ -415,8 +453,8 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinter> printers = new();
-        partial void OnPrintersChanged(ObservableCollection<RepetierPrinter> value)
+        ObservableCollection<IPrinter3d> printers = new();
+        partial void OnPrintersChanged(ObservableCollection<IPrinter3d> value)
         {
             if (value?.Count > 0 && ActivePrinter == null)
             {
@@ -429,8 +467,8 @@ namespace AndreasReitberger.API.Repetier
         #region Models
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<string> modelGroups = new();
-        partial void OnModelGroupsChanged(ObservableCollection<string> value)
+        ObservableCollection<IGcodeGroup> groups = new();
+        partial void OnGroupsChanged(ObservableCollection<IGcodeGroup> value)
         {
             OnRepetierModelGroupsChangedEvent(new RepetierModelGroupsChangedEventArgs()
             {
@@ -443,8 +481,8 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierModel> models = new();
-        partial void OnModelsChanged(ObservableCollection<RepetierModel> value)
+        ObservableCollection<IGcode> files = new();
+        partial void OnFilesChanged(ObservableCollection<IGcode> value)
         {
             OnRepetierModelsChangedEvent(new RepetierModelsChangedEventArgs()
             {
@@ -472,8 +510,8 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierJobListItem> jobList = new();
-        partial void OnJobListChanged(ObservableCollection<RepetierJobListItem> value)
+        ObservableCollection<IPrint3dJob> jobs = new();
+        partial void OnJobsChanged(ObservableCollection<IPrint3dJob> value)
         {
             OnRepetierJobListChangedEvent(new RepetierJobListChangedEventArgs()
             {
@@ -483,6 +521,10 @@ namespace AndreasReitberger.API.Repetier
                 Printer = GetActivePrinterSlug(),
             });
         }
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        IPrint3dJobStatus jobStatus;
 
         #endregion
 
@@ -621,15 +663,38 @@ namespace AndreasReitberger.API.Repetier
         #region Position
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
+        [property: Obsolete("Use X instead")]
         long curX = 0;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
+        [property: Obsolete("Use Y instead")]
         long curY = 0;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
+        [property: Obsolete("Use Z instead")]
         long curZ = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double x = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double y = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double z = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int layer = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int layers = 0;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
@@ -1177,7 +1242,7 @@ namespace AndreasReitberger.API.Repetier
 #if DEBUG
                                     Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
-                                    Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+                                    ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
                                     if (!loggedResults.ContainsKey(name))
                                     {
                                         // Log unused json results for further releases
@@ -1991,7 +2056,7 @@ namespace AndreasReitberger.API.Repetier
 #endregion
 
         #region ModelGroups
-        async Task<RepetierModelGroup> GetModelGroupsAsync(string printerName)
+        async Task<RepetierModelGroups> GetModelGroupsAsync(string printerName)
         {
             RepetierApiRequestRespone result = new();
             try
@@ -2003,7 +2068,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
 
-                return GetObjectFromJson<RepetierModelGroup>(result.Result);
+                return GetObjectFromJson<RepetierModelGroups>(result.Result);
             }
             catch (JsonException jecx)
             {
@@ -2011,15 +2076,15 @@ namespace AndreasReitberger.API.Repetier
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
-                    TargetType = nameof(RepetierModelGroup),
+                    TargetType = nameof(RepetierModelGroups),
                     Message = jecx.Message,
                 });
-                return new RepetierModelGroup();
+                return new RepetierModelGroups();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelGroup();
+                return new RepetierModelGroups();
             }
         }
 
@@ -2096,26 +2161,23 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Proxy
-        Uri GetProxyUri()
-        {
-            return ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
-        }
-
+        Uri GetProxyUri() => ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
+        
         WebProxy GetCurrentProxy()
         {
             WebProxy proxy = new()
             {
                 Address = GetProxyUri(),
                 BypassProxyOnLocal = false,
-                UseDefaultCredentials = ProxyUseDefaultCredentials,
+                UseDefaultCredentials = ProxyUserUsesDefaultCredentials,
             };
-            if (ProxyUseDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
+            if (ProxyUserUsesDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
             {
                 proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
             }
             else
             {
-                proxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
+                proxy.UseDefaultCredentials = ProxyUserUsesDefaultCredentials;
             }
             return proxy;
         }
@@ -2193,7 +2255,7 @@ namespace AndreasReitberger.API.Repetier
         public void SetProxy(bool secure, string address, int port, bool enable = true)
         {
             EnableProxy = enable;
-            ProxyUseDefaultCredentials = true;
+            ProxyUserUsesDefaultCredentials = true;
             ProxyAddress = address;
             ProxyPort = port;
             ProxyUser = string.Empty;
@@ -2204,7 +2266,7 @@ namespace AndreasReitberger.API.Repetier
         public void SetProxy(bool secure, string address, int port, string user = "", SecureString password = null, bool enable = true)
         {
             EnableProxy = enable;
-            ProxyUseDefaultCredentials = false;
+            ProxyUserUsesDefaultCredentials = false;
             ProxyAddress = address;
             ProxyPort = port;
             ProxyUser = user;
@@ -2319,7 +2381,7 @@ namespace AndreasReitberger.API.Repetier
             IsListening = false;
         }
 #endif
-        public async Task RefreshAllAsync(RepetierImageType imageType = RepetierImageType.Thumbnail)
+        public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             try
             {
@@ -2470,7 +2532,7 @@ namespace AndreasReitberger.API.Repetier
                 else
                 {
                     // If no index is provided, or it's out of bound, the first online printer is used
-                    ActivePrinter = Printers.FirstOrDefault(printer => printer.Online == 1);
+                    ActivePrinter = Printers.FirstOrDefault(printer => printer.IsOnline);
                     // If no online printers is found, however there is at least one printer configured, use this one
                     if (ActivePrinter == null && Printers.Count > 0)
                     {
@@ -2489,7 +2551,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (refreshPrinterList)
                     await RefreshPrinterListAsync().ConfigureAwait(false);
-                RepetierPrinter printer = Printers.FirstOrDefault(prt => prt.Slug == slug);
+                IPrinter3d printer = Printers.FirstOrDefault(prt => prt.Slug == slug);
                 if (printer != null)
                     ActivePrinter = printer;
             }
@@ -2960,13 +3022,12 @@ namespace AndreasReitberger.API.Repetier
                 {
                     if (group != "#")
                     {
-                        ObservableCollection<RepetierModel> res = await GetModelsAsync(printerName).ConfigureAwait(false);
-                        List<RepetierModel> list = new(res);
+                        ObservableCollection<IGcode> res = await GetModelsAsync(printerName).ConfigureAwait(false);
+                        List<IGcode> list = new(res);
 
                         string fileName = info.Name.Replace(Path.GetExtension(filePath), string.Empty);
-                        RepetierModel model = list.FirstOrDefault(m => m.Name == fileName);
-
-                        bool result = await MoveModelToGroupAsync(printerName, group, model.Id).ConfigureAwait(false);
+                        IGcode model = list.FirstOrDefault(m => m.FileName == fileName);
+                        bool result = await MoveModelToGroupAsync(printerName, group, model.Identifier).ConfigureAwait(false);
                     }
                     return RepetierErrorCodes.SUCCESS;
                 }
@@ -2983,14 +3044,14 @@ namespace AndreasReitberger.API.Repetier
 
         #region Models
 
-        public async Task<ObservableCollection<RepetierModel>> GetModelsAsync(
+        public async Task<ObservableCollection<IGcode>> GetModelsAsync(
             string PrinterName = "",
-            RepetierImageType ImageType = RepetierImageType.Thumbnail,
+            GcodeImageType ImageType = GcodeImageType.Thumbnail,
             IProgress<int> Prog = null)
         {
             try
             {
-                ObservableCollection<RepetierModel> modelDatas = new();
+                ObservableCollection<IGcode> modelDatas = new();
                 if (!IsReady)
                     return modelDatas;
 
@@ -3008,40 +3069,34 @@ namespace AndreasReitberger.API.Repetier
                     List<RepetierModel> modelList = models.Data;
                     if (modelList != null)
                     {
-                        ObservableCollection<RepetierModel> Models = new(modelList);
-                        if (ImageType != RepetierImageType.None)
+                        ObservableCollection<IGcode> Models = new(modelList);
+                        if (ImageType != GcodeImageType.None)
                         {
                             int total = Models.Count;
                             for (int i = 0; i < total; i++)
                             {
-                                RepetierModel model = Models[i];
-                                //model.IsLoadingImage = true;
+                                IGcode model = Models[i];
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
                                 // Load image depending on settings
                                 switch (ImageType)
                                 {
                                     // Blocks thread, however async download leads to bad requestes
-                                    case RepetierImageType.Thumbnail:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                        //model.Thumbnail = GetDynamicRenderImageAsync(model.Id, true).Result;
+                                    case GcodeImageType.Thumbnail:
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
                                         break;
-                                    case RepetierImageType.Image:
-                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                                        //model.Image = GetDynamicRenderImageAsync(model.Id, false).Result;
+                                    case GcodeImageType.Image:
+                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                                         break;
                                     default:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                        //model.Thumbnail = GetDynamicRenderImageAsync(model.Id, true).Result;
-                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                                        //model.Image = GetDynamicRenderImageAsync(model.Id, false).Result;
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
+                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                                         break;
                                 }
 
                                 if (Prog != null)
                                 {
                                     float progress = ((float)i / total) * 100f;
-                                    //int progressInt = Convert.ToInt32(progress);
                                     if (i < total - 1)
                                     {
                                         Prog.Report(Convert.ToInt32(progress));
@@ -3072,7 +3127,7 @@ namespace AndreasReitberger.API.Repetier
                     Prog.Report(100);
 
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<RepetierModel>();
+                return new ObservableCollection<IGcode>();
             }
         }
         public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<RepetierModel> models, RepetierImageType imageType = RepetierImageType.Thumbnail)
@@ -3092,16 +3147,16 @@ namespace AndreasReitberger.API.Repetier
                     switch (imageType)
                     {
                         case RepetierImageType.Thumbnail:
-                            image = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                            image = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
                             break;
                         case RepetierImageType.Image:
-                            image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                            image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                             break;
                         default:
                             throw new NotSupportedException($"The image type '{imageType}' is not supported here.");
                             //break;
                     }
-                    result.Add(model.Id, image);
+                    result.Add(model.Identifier, image);
                 }
                 return result;
             }
@@ -3131,22 +3186,22 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task RefreshModelsAsync(RepetierImageType imageType = RepetierImageType.Thumbnail, IProgress<int> prog = null)
+        public async Task RefreshModelsAsync(GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int> prog = null)
         {
             try
             {
-                ObservableCollection<RepetierModel> modelDatas = new();
+                ObservableCollection<IGcode> modelDatas = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    Models = modelDatas;
+                    Files = modelDatas;
                     return;
                 }
-                Models = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
+                Files = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Models = new ObservableCollection<RepetierModel>();
+                Files = new ObservableCollection<IGcode>();
             }
         }
         public async Task<bool> CopyModelToPrintQueueAsync(RepetierModel model, bool startPrintIfPossible = true)
@@ -3356,7 +3411,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
 
-                RepetierModelGroup info = GetObjectFromJson<RepetierModelGroup>(result.Result);
+                RepetierModelGroups info = GetObjectFromJson<RepetierModelGroups>(result.Result);
                 return info != null && info.GroupNames != null ? new ObservableCollection<string>(info.GroupNames) : resultObject;
             }
             catch (JsonException jecx)
@@ -3380,28 +3435,28 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<string> groups = new();
+                ObservableCollection<IGcodeGroup> groups = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    ModelGroups = groups;
+                    Groups = groups;
                     return;
                 }
 
                 string currentPrinter = ActivePrinter.Slug;
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
-                RepetierModelGroup result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
+                RepetierModelGroups result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
                 if (result != null)
                 {
-                    ModelGroups = new ObservableCollection<string>(result.GroupNames);
+                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames?.Select(g => new RepetierModelGroup() { Name = g }));
                 }
-                else ModelGroups = groups;
+                else Groups = groups;
 
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ModelGroups = new ObservableCollection<string>();
+                Groups = new ObservableCollection<IGcodeGroup>();
             }
         }
         #endregion
@@ -3432,10 +3487,10 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierJobListItem> jobList = new();
+                ObservableCollection<IPrint3dJob> jobList = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    JobList = jobList;
+                    Jobs = jobList;
                     return;
                 }
 
@@ -3443,13 +3498,13 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierJobListRespone result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
-                JobList = result != null ? new(result.Data) : jobList;
+                Jobs = result != null ? new(result.Data) : jobList;
 
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                JobList = new();
+                Jobs = new();
             }
         }
 
@@ -3478,16 +3533,10 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<bool> StartJobAsync(RepetierModel model)
-        {
-            return await StartJobAsync(model.Id).ConfigureAwait(false);
-        }
-
-        public async Task<bool> StartJobAsync(RepetierJobListItem jobItem)
-        {
-            return await StartJobAsync(jobItem.Id).ConfigureAwait(false);
-        }
-
+        public Task<bool> StartJobAsync(RepetierModel model) => StartJobAsync(model.Identifier);
+        
+        public Task<bool> StartJobAsync(RepetierJobListItem jobItem) => StartJobAsync(jobItem.Identifier);
+        
         public async Task<bool> RemoveJobAsync(long jobId)
         {
             try
@@ -3513,15 +3562,10 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public async Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job)
-        {
-            return await RemoveJobAsync(job.Jobid).ConfigureAwait(false);
-        }
-        public async Task<bool> RemoveJobAsync(RepetierJobListItem job)
-        {
-            return await RemoveJobAsync(job.Id).ConfigureAwait(false);
-        }
+        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.Jobid);
 
+        public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
+        
         public async Task<bool> ContinueJobAsync(string printerName = "")
         {
             try
@@ -3620,7 +3664,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region PrinterState
         [Obsolete("Switch to `GetStatesAsync`instead.")]
-        public async Task<RepetierPrinterStateRespone> GetStateObjectAsync(string printerName = "")
+        internal async Task<RepetierPrinterStateRespone> GetStateObjectAsync(string printerName = "")
         {
             RepetierApiRequestRespone result;
             string resultString = string.Empty;
@@ -3701,7 +3745,8 @@ namespace AndreasReitberger.API.Repetier
                 if (state != null && IsPrinterSlugSelected(currentPrinter))
                 {
                     //State = state.Printer;
-                    State = state.FirstOrDefault().Value;
+                    //State = state.FirstOrDefault().Value;
+                    State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
                 }
                 return state;
             }
@@ -3756,12 +3801,12 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Printers
-        public async Task<ObservableCollection<RepetierPrinter>> GetPrintersAsync()
+        public async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
         {
             RepetierApiRequestRespone result = new();
             try
             {
-                ObservableCollection<RepetierPrinter> repetierPrinterList = new();
+                ObservableCollection<IPrinter3d> repetierPrinterList = new();
                 if (!IsReady)
                     return repetierPrinterList;
 
@@ -3773,14 +3818,14 @@ namespace AndreasReitberger.API.Repetier
                 RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
                 if (respone != null)
                 {                   
-                    repetierPrinterList = new ObservableCollection<RepetierPrinter>(respone.Printers);
+                    repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
                     foreach (RepetierPrinter printer in repetierPrinterList)
                     {
                         if (printer?.JobId > 0)
                         {
-                            RepetierPrinter prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                            IPrinter3d prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
                             // Avoid unnecessary calls if the image or the job hasn't changed
-                            if (prevPrinter?.JobId != printer.JobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                            if (prevPrinter?.ActiveJobId != printer.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
                             {
                                 printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
                             }
@@ -3805,26 +3850,26 @@ namespace AndreasReitberger.API.Repetier
                     TargetType = nameof(RepetierPrinter),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<RepetierPrinter>();
+                return new ObservableCollection<IPrinter3d>();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<RepetierPrinter>();
+                return new ObservableCollection<IPrinter3d>();
             }
         }
         public async Task RefreshPrinterListAsync()
         {
             try
             {
-                ObservableCollection<RepetierPrinter> printers = new();
+                ObservableCollection<IPrinter3d> printers = new();
                 if (!IsReady)
                 {
                     Printers = printers;
                     return;
                 }
 
-                ObservableCollection<RepetierPrinter> result = await GetPrintersAsync().ConfigureAwait(false);
+                ObservableCollection<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
                 if (result != null)
                 {
                     Printers = result;
@@ -3837,7 +3882,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Printers = new ObservableCollection<RepetierPrinter>();
+                Printers = new ObservableCollection<IPrinter3d>();
             }
         }
         #endregion

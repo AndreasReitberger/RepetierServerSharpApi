@@ -1,13 +1,17 @@
-﻿using AndreasReitberger.API.Repetier.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Repetier.Enum;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterHeaterComponent : ObservableObject
+    public partial class RepetierPrinterHeaterComponent : ObservableObject, IHeaterComponent
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
 
         [ObservableProperty]
         [JsonProperty("error")]
@@ -23,7 +27,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("tempSet")]
-        long tempSet;
+        double tempSet;
+
+        #region Interface, unsused
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string name;
+        #endregion
 
         #region Json Ignore
 

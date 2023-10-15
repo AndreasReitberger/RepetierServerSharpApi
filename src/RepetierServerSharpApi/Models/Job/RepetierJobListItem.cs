@@ -1,12 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierJobListItem : ObservableObject
+    public partial class RepetierJobListItem : ObservableObject, IPrint3dJob
     {
         #region Properties
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [ObservableProperty]
         [JsonProperty("analysed")]
         long analysed;
@@ -41,7 +48,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("id")]
-        long id;
+        long identifier;
+        partial void OnIdentifierChanged(long value)
+        {
+            jobId = value.ToString();
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string jobId;
 
         [ObservableProperty]
         [JsonProperty("lastPrintTime")]
@@ -65,7 +80,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("name")]
-        string name;
+        string fileName;
 
         [ObservableProperty]
         [JsonProperty("notes")]
@@ -182,6 +197,17 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [JsonProperty("zMin")]
         long zMin;
+
+        #region Interface, unused
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? timeAdded = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? timeInQueue = 0;
+        #endregion
 
         #endregion
 
