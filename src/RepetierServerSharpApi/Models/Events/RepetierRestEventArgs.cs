@@ -1,8 +1,10 @@
-﻿using System;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierRestEventArgs : EventArgs
+    [Obsolete("Replace with RestEventArgs")]
+    public class RepetierRestEventArgs : EventArgs, IRestEventArgs
     {
         #region Properties
         public string Message { get; set; }
