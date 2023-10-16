@@ -1,3 +1,4 @@
+using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
@@ -404,7 +405,8 @@ namespace RepetierServerSharpApiTest
                     RepetierHistoryListItem historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
-                    byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
+                    byte[] report = await ((RepetierClient)Print3dServerClient.Instance).GetHistoryReportAsync(historyItem.Id);
+                    report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
                     Assert.IsTrue(report.Length > 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);

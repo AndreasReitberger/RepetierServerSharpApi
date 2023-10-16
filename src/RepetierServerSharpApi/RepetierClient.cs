@@ -19,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -27,7 +26,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
@@ -43,10 +41,10 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Instance
-        /*
+        /**/
         static RepetierClient _instance = null;
         static readonly object Lock = new();
-        public static RepetierClient Instance
+        public new static RepetierClient Instance
         {
             get
             {
@@ -67,7 +65,7 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-        */
+        
 
         [ObservableProperty]
         bool isActive = false;
@@ -1498,11 +1496,14 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        void WebSocket_Opened(object sender, EventArgs e)
+        new void WebSocket_Opened(object sender, EventArgs e)
         {
             try
             {
                 // Trigger ping to get session id
+                PingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
+                base.WebSocket_Opened(sender, e);
+                /*
                 string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
                 WebSocket?.Send(pingCommand);
 
@@ -1514,6 +1515,7 @@ namespace AndreasReitberger.API.Repetier
                     Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
                     Printer = GetActivePrinterSlug(),
                 });
+                */
             }
             catch (Exception exc)
             {
@@ -2309,7 +2311,7 @@ namespace AndreasReitberger.API.Repetier
         #region Public
 
         #region Proxy
-        public void SetProxy(bool secure, string address, int port, bool enable = true)
+        public void SetProxyOld(bool secure, string address, int port, bool enable = true)
         {
             EnableProxy = enable;
             ProxyUserUsesDefaultCredentials = true;
@@ -2321,7 +2323,7 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
         
-        public void SetProxy(bool secure, string address, int port, string user = "", SecureString password = null, bool enable = true)
+        public void SetProxOldy(bool secure, string address, int port, string user = "", SecureString password = null, bool enable = true)
         {
             EnableProxy = enable;
             ProxyUserUsesDefaultCredentials = false;
