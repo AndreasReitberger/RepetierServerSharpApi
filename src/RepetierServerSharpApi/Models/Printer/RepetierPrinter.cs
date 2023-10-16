@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -191,12 +192,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #endregion
 
-        #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        #region Methods
 
+        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client?.HomeAsync(x, y, z);
+
+        #endregion
+
+        #region Overrides
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         public override bool Equals(object obj)
         {
             if (obj is not RepetierPrinter item)
@@ -208,6 +212,35 @@ namespace AndreasReitberger.API.Repetier.Models
         {
             return Slug.GetHashCode();
         }
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
     }
 }

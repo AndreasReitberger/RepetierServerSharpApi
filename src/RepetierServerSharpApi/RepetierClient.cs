@@ -1,4 +1,5 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+﻿using AndreasReitberger.API.Print3dServer.Core;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Events;
@@ -29,7 +30,7 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : ObservableObject, IPrint3dServerClient, IDisposable, ICloneable //, IRestApiClient
+    public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient, IDisposable, ICloneable //, IRestApiClient
     {
         #region Variables
         RestClient restClient;
@@ -142,6 +143,9 @@ namespace AndreasReitberger.API.Repetier
         #region Connection
 
         [ObservableProperty]
+        Dictionary<string, IAuthenticationHeader> authHeaders = new();
+
+        [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
         EventSession session;
         partial void OnSessionChanged(EventSession value)
@@ -159,9 +163,11 @@ namespace AndreasReitberger.API.Repetier
         [property: JsonIgnore, XmlIgnore]
         string sessionId = string.Empty;
 
-
         [ObservableProperty]
         string serverName = string.Empty;
+
+        [ObservableProperty]
+        string checkOnlineTargetUri = string.Empty;
 
         [ObservableProperty]
         string serverAddress = string.Empty;
@@ -183,6 +189,9 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         string apiKey = string.Empty;
+
+        [ObservableProperty]
+        string apiKeyRegexPattern = string.Empty;
 
         [ObservableProperty]
         string apiVersion = string.Empty;
@@ -751,6 +760,12 @@ namespace AndreasReitberger.API.Repetier
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
         int refreshCounter = 0;
+
+        [ObservableProperty]
+        string pingCommand;
+
+        [ObservableProperty]
+        string webSocketTargetUri;
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
@@ -3534,11 +3549,62 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public Task<bool> StartJobAsync(RepetierModel model) => StartJobAsync(model.Identifier);
+        public async Task<bool> StartJobAsync(string id)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter))
+                {
+                    return false;
+                }
+
+                RepetierApiRequestRespone result =
+                    await SendRestApiRequestAsync(
+                        RepetierCommandBase.printer, RepetierCommandFeature.api,
+                        command: "startJob", jsonData: string.Format("{{\"id\":{0}}}", id),
+                        printerName: currentPrinter)
+                    .ConfigureAwait(false);
+                return GetQueryResult(result.Result, true);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
+        }
+
+        public Task<bool> StartJobAsync(IGcode model) => StartJobAsync(model.Identifier);
         
         public Task<bool> StartJobAsync(RepetierJobListItem jobItem) => StartJobAsync(jobItem.Identifier);
+        public Task<bool> StartJobAsync(IPrint3dJob jobItem) => StartJobAsync(jobItem.JobId);
         
         public async Task<bool> RemoveJobAsync(long jobId)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter))
+                {
+                    return false;
+                }
+
+                RepetierApiRequestRespone result =
+                    await SendRestApiRequestAsync(
+                        RepetierCommandBase.printer, RepetierCommandFeature.api,
+                        command: "removeJob", jsonData: string.Format("{{\"id\":{0}}}", jobId),
+                        printerName: currentPrinter)
+                    .ConfigureAwait(false);
+                await RefreshJobListAsync().ConfigureAwait(false);
+                return GetQueryResult(result.Result);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
+        }
+        public async Task<bool> RemoveJobAsync(string jobId)
         {
             try
             {
@@ -3566,6 +3632,7 @@ namespace AndreasReitberger.API.Repetier
         public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.Jobid);
 
         public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
+        public Task<bool> RemoveJobAsync(IPrint3dJob job) => RemoveJobAsync(job.JobId);
         
         public async Task<bool> ContinueJobAsync(string printerName = "")
         {
@@ -4093,24 +4160,27 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Movement
-        public async Task HomeAxesAsync(bool x, bool y, bool z)
+        public async Task<bool> HomeAsync(bool x, bool y, bool z)
         {
             try
             {
+                bool result;
                 if (x && y && z)
                 {
-                    _ = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
+                    result = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
                 }
                 else
                 {
                     string cmd = string.Format("G28{0}{1}{2}", x ? " X0 " : "", y ? " Y0 " : "", z ? " Z0 " : "");
-                    _ = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                    result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
                 }
+                return result;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
+            return false;
         }
 
         public async Task MoveAxesAsync(

@@ -4,6 +4,7 @@ using AndreasReitberger.API.Repetier.Enum;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -236,11 +237,53 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #endregion
 
-        #region Overrides
-        public override string ToString()
+        #region Methods
+        public Task MoveToAsync(IPrint3dServerClient client, string targetPath, bool copy = false)
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            throw new NotImplementedException();
         }
+
+        public Task MoveToQueueAsync(IPrint3dServerClient client, bool printIfReady = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PrintAsync(IPrint3dServerClient client)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Overrides
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
+        #endregion
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
 
     }

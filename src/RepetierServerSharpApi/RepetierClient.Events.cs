@@ -9,6 +9,7 @@ namespace AndreasReitberger.API.Repetier
     public partial class RepetierClient
     {
         #region EventHandlerss
+
         #region Debug
         public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs> RepetierIgnoredJsonResultsChanged;
         protected virtual void OnRepetierIgnoredJsonResultsChanged(RepetierIgnoredJsonResultsChangedEventArgs e)
