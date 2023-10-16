@@ -95,11 +95,10 @@ namespace RepetierServerSharpApiTest
                 {
                     RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                     {
-                        ActiveExtruder = 1,
-                        AvailableDiskSpace = 1523152132,
+                        ActiveToolHead = 1,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
-                        IsDualExtruder = true,
+                        IsMultiExtruder = true,
                     };
                     RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 

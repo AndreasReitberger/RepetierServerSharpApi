@@ -34,12 +34,6 @@ namespace AndreasReitberger.API.Repetier
 {
     public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient, IDisposable, ICloneable //, IRestApiClient
     {
-        #region Variables
-        RestClient restClient;
-        HttpClient httpClient;
-        int _retries = 0;
-        #endregion
-
         #region Instance
         /**/
         static RepetierClient _instance = null;
@@ -65,75 +59,10 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-        
-
-        [ObservableProperty]
-        bool isActive = false;
-
-        [ObservableProperty]
-        bool updateInstance = false;
-        partial void OnUpdateInstanceChanged(bool value)
-        {
-            if (value)
-            {
-                InitInstance(ServerAddress, Port, ApiKey, IsSecure);
-            }
-        }
-
-        [ObservableProperty]
-        bool isInitialized = false;
-
-        #endregion
-
-        #region RefreshTimer
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        Timer timer;
-
-
-        [ObservableProperty]
-        int refreshInterval = 3;
-        partial void OnRefreshIntervalChanged(int value)
-        {
-            if (IsListening)
-            {
-                StartListening(stopActiveListening: true);
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isListening = false;
-        partial void OnIsListeningChanged(bool value)
-        {
-            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = value,
-                IsListeningToWebSocket = IsListeningToWebsocket,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool initialDataFetched = false;
-
+       
         #endregion
 
         #region Properties
-
-        #region Debug
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, string> ignoredJsonResults = new();
-        partial void OnIgnoredJsonResultsChanged(ConcurrentDictionary<string, string> value)
-        {
-            OnRepetierIgnoredJsonResultsChanged(new RepetierIgnoredJsonResultsChangedEventArgs()
-            {
-                NewIgnoredJsonResults = value,
-            });
-        }
-        #endregion
 
         #region Connection
 
@@ -261,134 +190,13 @@ namespace AndreasReitberger.API.Repetier
 
         #endregion
 
-        #region Proxy
-        [ObservableProperty]
-        bool enableProxy = false;
-        partial void OnEnableProxyChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        bool proxyUserUsesDefaultCredentials = true;
-        partial void OnProxyUserUsesDefaultCredentialsChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        bool secureProxyConnection = true;
-        partial void OnSecureProxyConnectionChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string proxyAddress = string.Empty;
-        partial void OnProxyAddressChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        int proxyPort = 443;
-        partial void OnProxyPortChanged(int value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string proxyUser = string.Empty;
-        partial void OnProxyUserChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        SecureString proxyPassword;
-        partial void OnProxyPasswordChanged(SecureString value)
-        {
-            UpdateRestClientInstance();
-        }
-        #endregion
-
-        #region DiskSpace
-        [ObservableProperty]
-        long freeDiskSpace = 0;
-
-        [ObservableProperty]
-        long usedDiskSpace = 0;
-
-        [JsonIgnore, XmlIgnore]
-        [ObservableProperty, Obsolete("Use UsedDiskSpace instead")]
-        [property: Obsolete("Use UsedDiskSpace instead")]
-        long availableDiskSpace = 0;
-
-        [ObservableProperty]
-        long totalDiskSpace = 0;
-
-        #endregion
-
         #region PrinterStateInformation
 
         #region ConfigurationInfo
 
         [ObservableProperty]
         [property: JsonIgnore, XmlIgnore]
-        [property: Obsolete("Use ActiveToolHead instead")]
-        long activeExtruder = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long activeToolHead = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        [property: Obsolete("Use NumberOfToolHeads instead")]
-        long numberOfExtruders = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long numberOfToolHeads = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isDualExtruder = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasHeatedBed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasHeatedChamber = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasFan = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasWebCam = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
         RepetierPrinterConfigWebcam selectedWebCam;
-
-        #endregion
-
-        #region PrinterState
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isPrinting = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isPaused = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isConnectedPrinterOnline = false;
 
         #endregion
 
@@ -434,98 +242,6 @@ namespace AndreasReitberger.API.Repetier
         int speedFanMain = 0;
 
         #endregion
-
-        #endregion
-
-        #region Printers
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        IPrinter3d activePrinter;
-        partial void OnActivePrinterChanging(IPrinter3d value)
-        {
-            OnActivePrinterChangedEvent(new RepetierActivePrinterChangedEventArgs()
-            {
-                SessonId = SessionId,
-                NewPrinter = value,
-                OldPrinter = ActivePrinter,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<IPrinter3d> printers = new();
-        partial void OnPrintersChanged(ObservableCollection<IPrinter3d> value)
-        {
-            if (value?.Count > 0 && ActivePrinter == null)
-            {
-                ActivePrinter = value.FirstOrDefault();
-            }
-        }
-
-        #endregion
-
-        #region Models
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<IGcodeGroup> groups = new();
-        partial void OnGroupsChanged(ObservableCollection<IGcodeGroup> value)
-        {
-            OnRepetierModelGroupsChangedEvent(new RepetierModelGroupsChangedEventArgs()
-            {
-                NewModelGroups = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<IGcode> files = new();
-        partial void OnFilesChanged(ObservableCollection<IGcode> value)
-        {
-            OnRepetierModelsChangedEvent(new RepetierModelsChangedEventArgs()
-            {
-                NewModels = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        #endregion
-
-        #region Jobs
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        byte[] currentPrintImage = Array.Empty<byte>();
-        partial void OnCurrentPrintImageChanging(byte[] value) {
-            OnRepetierCurrentPrintImageChanged(new RepetierCurrentPrintImageChangedEventArgs() {
-                NewImage = value,
-                PreviousImage = CurrentPrintImage,
-                SessonId = SessionId,
-                CallbackId = -1,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<IPrint3dJob> jobs = new();
-        partial void OnJobsChanged(ObservableCollection<IPrint3dJob> value)
-        {
-            OnRepetierJobListChangedEvent(new RepetierJobListChangedEventArgs()
-            {
-                NewJobList = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        IPrint3dJobStatus jobStatus;
 
         #endregion
 
@@ -661,59 +377,7 @@ namespace AndreasReitberger.API.Repetier
 
         #endregion
 
-        #region Position
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        [property: Obsolete("Use X instead")]
-        long curX = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        [property: Obsolete("Use Y instead")]
-        long curY = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        [property: Obsolete("Use Z instead")]
-        long curZ = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double x = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double y = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double z = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int layer = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int layers = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool yHomed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool zHomed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool xHomed = false;
-
-        #endregion
-
         #region ReadOnly
-
-        public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
 
         public bool IsReady
         {
@@ -736,43 +400,6 @@ namespace AndreasReitberger.API.Repetier
 
         #endregion
 
-        #region WebSocket
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        WebSocket webSocket;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        Timer pingTimer;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int pingCounter = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int refreshCounter = 0;
-
-        [ObservableProperty]
-        string pingCommand;
-
-        [ObservableProperty]
-        string webSocketTargetUri;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isListeningToWebsocket = false;
-        partial void OnIsListeningToWebsocketChanged(bool value)
-        {
-            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = IsListening,
-                IsListeningToWebSocket = value,
-            });
-        }
-        #endregion
-
         #region Constructor
         public RepetierClient()
         {
@@ -780,14 +407,14 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) : base(serverAddress, api, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) : base(serverAddress, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, "", isSecure);
@@ -810,27 +437,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Init
-        public void InitInstance()
-        {
-            try
-            {
-                // https://www.repetier-server.com/manuals/programming/API/index.html
-                Instance = this;
-                if (Instance != null)
-                {
-                    Instance.UpdateInstance = false;
-                    Instance.IsInitialized = true;
-                }
-                UpdateInstance = false;
-                IsInitialized = true;
-            }
-            catch (Exception exc)
-            {
-                //UpdateInstance = true;
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                IsInitialized = false;
-            }
-        }
+
         public static void UpdateSingleInstance(RepetierClient Inst)
         {
             try
@@ -888,7 +495,7 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-
+        [Obsolete("Use async methods instead")]
         public void ConnectWebSocket()
         {
             try
@@ -937,6 +544,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        [Obsolete("Use async methods instead")]
         public void DisconnectWebSocket()
         {
             try
@@ -968,102 +576,17 @@ namespace AndreasReitberger.API.Repetier
         }
 
 #if NET5_0_OR_GREATER || NETSTANDARD
-        public async Task ConnectWebSocketAsync()
-        {
-            try
-            {
-                //if (!IsReady) return;
-                if (!string.IsNullOrEmpty(FullWebAddress) && (
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
-                {
-                    return;
-                }
-                //if (!IsReady || IsListeningToWebsocket) return;
-                await DisconnectWebSocketAsync();
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}";
-                WebSocket = new WebSocket(target)
-                {
-                    EnableAutoSendPing = false,
-
-                };
-
-                if (IsSecure)
-                {
-                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
-                    //Avoid TlsHandshakeFailure
-                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
-                    {
-                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
-                    }
-                }
-
-                WebSocket.MessageReceived += WebSocket_MessageReceived;
-                //WebSocket.DataReceived += WebSocket_DataReceived;
-                WebSocket.Opened += WebSocket_Opened;
-                WebSocket.Closed += WebSocket_Closed;
-                WebSocket.Error += WebSocket_Error;
-
-                await WebSocket.OpenAsync();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        public async Task DisconnectWebSocketAsync()
-        {
-            try
-            {
-                if (WebSocket != null)
-                {
-                    if (WebSocket.State == WebSocketState.Open)
-                        await WebSocket.CloseAsync();
-                    StopPingTimer();
-
-                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    //WebSocket.DataReceived -= WebSocket_DataReceived;
-                    WebSocket.Opened -= WebSocket_Opened;
-                    WebSocket.Closed -= WebSocket_Closed;
-                    WebSocket.Error -= WebSocket_Error;
-
-                    WebSocket = null;
-                }
-                //WebSocket = null;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
+        public Task ConnectWebSocketAsync() => ConnectWebSocketAsync(target: $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}");      
 #endif
 
-        void WebSocket_Error(object sender, ErrorEventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                OnWebSocketError(e);
-                OnError(e);
-            }
-            catch(Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            finally
-            {
-                DisconnectWebSocket();
-            }
-        }
-
-        void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
+        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             try
             {
                 if (e.Message == null || string.IsNullOrEmpty(e.Message))
                     return;
+                base.WebSocket_MessageReceived(sender, e);
+
                 if (e.Message.ToLower().Contains("login"))
                 {
                     //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
@@ -1265,12 +788,14 @@ namespace AndreasReitberger.API.Repetier
                         }
                     }
                 }
+                /* Done in base method already
                 OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
                     Message = e.Message,
                     SessonId = SessionId,
                 });
+                */
             }
             catch (JsonException jecx)
             {
@@ -1279,215 +804,6 @@ namespace AndreasReitberger.API.Repetier
                     Exception = jecx,
                     OriginalString = e.Message,
                     Message = jecx.Message,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        [Obsolete]
-        void WebSocket_MessageReceivedOld(object sender, MessageReceivedEventArgs e)
-        {
-            try
-            {
-                if (e.Message == null || string.IsNullOrEmpty(e.Message))
-                    return;
-                if (e.Message.ToLower().Contains("login"))
-                {
-                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
-                    //var login = GetObjectFromJson<RepetierLoginResult>(e.Message, JsonSerializerSettings);
-                }
-                if (e.Message.ToLower().Contains("session"))
-                {
-                    //Session = GetObjectFromJson<EventSession>(e.Message, JsonSerializerSettings);
-                    Session = GetObjectFromJson<EventSession>(e.Message);
-                }
-                else if (e.Message.ToLower().Contains("event"))
-                {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
-                    if (repetierEvent != null)
-                    {
-                        foreach (RepetierEventData obj in repetierEvent.Data)
-                        {
-                            string jsonString = obj.Data.ToString();
-                            if (obj.EventName == "userCredentials")
-                            {
-                                //EventUserCredentialsData eventUserCredentials = JsonConvert.DeserializeObject<EventUserCredentialsData>(jsonString);
-                                //var login = JsonConvert.DeserializeObject<RepetierLoginResult>(jsonString, JsonSerializerSettings);
-                                RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonString);
-                                if (login != null)
-                                {
-                                    OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
-                                    {
-                                        ResultData = login,
-                                        LoginSucceeded = true,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                                }
-                            }
-                            else if (obj.EventName == "temp")
-                            {
-                                //EventTempData eventTempData = JsonConvert.DeserializeObject<EventTempData>(jsonString, JsonSerializerSettings);
-                                EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonString);
-                                if (eventTempData != null)
-                                    OnTempDataReceived(new RepetierTempDataEventArgs()
-                                    {
-                                        TemperatureData = eventTempData,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-
-                            }
-                            else if (obj.EventName == "jobStarted")
-                            {
-                                //EventJobStartedData eventJobStarted = JsonConvert.DeserializeObject<EventJobStartedData>(jsonString, JsonSerializerSettings);
-                                EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonString);
-                            }
-                            else if (obj.EventName == "jobsChanged")
-                            {
-                                // Gets triggered when a model has been deleted
-                                //EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString, JsonSerializerSettings);
-                                EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonString);
-                                if (eventJobsChanged != null)
-                                    OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
-                                    {
-                                        Data = eventJobsChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "jobFinished")
-                            {
-                                //EventJobFinishedData eventJobFinished = JsonConvert.DeserializeObject<EventJobFinishedData>(jsonString, JsonSerializerSettings);
-                                EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonString);
-                                if (eventJobFinished != null)
-                                    OnJobFinished(new RepetierJobFinishedEventArgs()
-                                    {
-                                        Job = eventJobFinished,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "messagesChanged")
-                            {
-                                //EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString, JsonSerializerSettings);
-                                EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonString);
-                                if (eventMessageChanged != null)
-                                    OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
-                                    {
-                                        RepetierMessage = eventMessageChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "prepareJob")
-                            {
-                                // No information provided in "Data"
-                            }
-                            else if (obj.EventName == "timer30" || obj.EventName == "timer60" || obj.EventName == "timer300")
-                            {
-
-                            }
-                            else if (obj.EventName == "hardwareInfo")
-                            {
-                                //EventHardwareInfoChangedData eventHardwareInfoChanged = JsonConvert.DeserializeObject<EventHardwareInfoChangedData>(jsonString, JsonSerializerSettings);
-                                EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonString);
-                            }
-                            else if (obj.EventName == "wifiChanged")
-                            {
-                                EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonString);
-                            }
-                            else if (obj.EventName == "modelGroupListChanged")
-                            {
-
-                            }
-                            else if (obj.EventName == "modelGroupListChanged")
-                            {
-                                // no data available here
-                            }
-                            else if (obj.EventName == "gcodeInfoUpdated")
-                            {
-                                EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonString);
-                            }
-                            else if (obj.EventName == "dispatcherCount")
-                            {
-
-                            }
-                            else if (obj.EventName == "printerListChanged")
-                            {
-                                // 2
-                            }
-                            else if (obj.EventName == "recoverChanged")
-                            {
-
-                            }
-                            else if (obj.EventName == "state")
-                            {
-
-                            }
-                            else if (obj.EventName == "printqueueChanged")
-                            {
-                                // {"slug": "Prusa_i3_MK3S1"}
-                            }
-                            else if (obj.EventName == "config")
-                            {
-
-                            }
-                            else if (obj.EventName == "log")
-                            {
-
-                            }
-                            else if (obj.EventName == "workerFinished")
-                            {
-
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                    }
-                }
-                OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Message = e.Message,
-                    SessonId = SessionId,
-                });
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = e.Message,
-                    Message = jecx.Message,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                StopPingTimer();
-                OnWebSocketDisconnected(new RepetierEventArgs()
-                {
-                    Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
-                    Printer = GetActivePrinterSlug(),
                 });
             }
             catch (Exception exc)
@@ -1523,327 +839,11 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            try
-            {
-                OnWebSocketDataReceived(new RepetierWebsocketEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Data = e.Data,
-                    SessonId = SessionId,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
         #endregion
 
         #region Methods
 
         #region Private
-
-        #region ValidateResult
-
-        [Obsolete("Replaced by basis class method, delete later")]
-        bool GetQueryResultOld(string result, bool emptyResultIsValid = false)
-        {
-            try
-            {
-                if ((string.IsNullOrEmpty(result) || result == "{}") && emptyResultIsValid)
-                    return true;
-                RepetierActionResult actionResult = GetObjectFromJson<RepetierActionResult>(result);
-                return actionResult?.Ok ?? false;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result,
-                    Message = jecx.Message,
-                });
-                return false;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        [Obsolete("Replaced by basis class method, delete later")]
-        RepetierApiRequestRespone ValidateResponeOld(RestResponse respone, Uri targetUri)
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
-            try
-            {
-                if ((
-                    respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
-                    respone.ResponseStatus == ResponseStatus.Completed)
-                {
-                    apiRsponeResult.IsOnline = true;
-                    AuthenticationFailed = false;
-                    apiRsponeResult.Result = respone.Content;
-                    apiRsponeResult.Succeeded = true;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
-                    || respone.StatusCode == HttpStatusCode.Forbidden
-                    || respone.StatusCode == HttpStatusCode.Unauthorized
-                    )
-                {
-                    apiRsponeResult.IsOnline = true;
-                    apiRsponeResult.HasAuthenticationError = true;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else if (respone.StatusCode == HttpStatusCode.Conflict)
-                {
-                    apiRsponeResult.IsOnline = true;
-                    apiRsponeResult.HasAuthenticationError = false;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else
-                {
-                    OnRestApiError(new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    });
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-        #endregion
-
-        #region ValidateActivePrinter
-
-        [Obsolete("Replaced by basis class method, delete later")]
-        string GetActivePrinterSlugOld()
-        {
-            try
-            {
-                if (!IsReady || ActivePrinter == null)
-                {
-                    return string.Empty;
-                }
-                return ActivePrinter.Slug;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return string.Empty;
-            }
-        }
-        [Obsolete("Replaced by basis class method, delete later")]
-        bool IsPrinterSlugSelectedOld(string PrinterSlug)
-        {
-            try
-            {
-                return PrinterSlug == GetActivePrinterSlug();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        #endregion
-
-        #region RestApi
-
-        // New web api: https://prgdoc.repetier-server.com/v1/docs/index.html#/en/web-api/direct?id=gcode
-
-        [Obsolete("Replaced by basis class method, delete later")]
-        async Task<RepetierApiRequestRespone> SendRestApiRequestAsyncOld(
-            RepetierCommandBase commandBase,
-            RepetierCommandFeature commandFeature,
-            string command = "",
-            //string jsonDataString = "",
-            object jsonData = null,
-            string printerName = "",
-            CancellationTokenSource cts = default,
-            string requestTargetUri = "")
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
-            if (!IsOnline) return apiRsponeResult;
-            try
-            {
-                if (string.IsNullOrEmpty(printerName))
-                {
-                    printerName = "";
-                }
-                if (cts == default)
-                {
-                    cts = new(DefaultTimeout);
-                }
-                if (restClient == null)
-                {
-                    UpdateRestClientInstance();
-                }
-                RestRequest request = new(
-                    string.IsNullOrEmpty(requestTargetUri) ?
-                    !string.IsNullOrEmpty(printerName) ? $"{commandBase}/{commandFeature}/{{slug}}" : $"{commandBase}/{commandFeature}" :
-                    requestTargetUri)
-                {
-                    RequestFormat = DataFormat.Json,
-                    Method = Method.Post
-                };
-
-                if (!string.IsNullOrEmpty(printerName))
-                {
-                    request.AddUrlSegment("slug", printerName);
-                }
-                request.AddParameter("a", command, ParameterType.QueryString);
-
-                string jsonDataString = "";
-                if(jsonData is string jsonString)
-                {
-                    jsonDataString = jsonString;
-                }
-                else if(jsonData is object jsonObject)
-                {
-                    jsonDataString = JsonConvert.SerializeObject(jsonObject);
-                }
-                
-                request.AddParameter("data", jsonDataString, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(ApiKey))
-                {
-                    request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    request.AddParameter("sess", SessionId, ParameterType.QueryString);
-                }
-
-                Uri fullUri = restClient.BuildUri(request);
-                try
-                {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateResponeOld(respone, fullUri);
-                }
-                catch (TaskCanceledException texp)
-                {
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(texp, false));
-                    }
-                    // Throws exception on timeout, not actually an error but indicates if the server is reachable.
-                }
-                catch (HttpRequestException hexp)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(hexp, false));
-                    }
-                }
-                catch (TimeoutException toexp)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(toexp, false));
-                    }
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-
-
-        [Obsolete("Replaced by basis class method, delete later")]
-        async Task<RepetierApiRequestRespone> SendOnlineCheckRestApiRequestAsyncOld(
-            RepetierCommandBase commandBase,
-            RepetierCommandFeature commandFeature,
-            CancellationTokenSource cts,
-            string command,
-            string requestTargetUri = ""
-            )
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = false };
-            try
-            {
-                if (restClient == null)
-                {
-                    UpdateRestClientInstance();
-                }
-                RestRequest request = new(
-                    string.IsNullOrEmpty(requestTargetUri) ?
-                    $"{commandBase}/{commandFeature}" :
-                    requestTargetUri)
-                {
-                    RequestFormat = DataFormat.Json,
-                    Method = Method.Post
-                };
-                _ = request.AddParameter("a", command, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(ApiKey))
-                {
-                    _ = request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    _ = request.AddParameter("sess", SessionId, ParameterType.QueryString);
-                }
-
-                Uri fullUri = restClient.BuildUri(request);
-                try
-                {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateResponeOld(respone, fullUri);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-                catch (HttpRequestException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-                catch (TimeoutException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-
-        #endregion
 
         #region Download
         public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000)
@@ -1966,7 +966,7 @@ namespace AndreasReitberger.API.Repetier
                 NumberOfToolHeads = newState.NumExtruder;
 
                 Extruders = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.Extruder);
-                IsDualExtruder = Extruders != null && Extruders.Count > 1;
+                IsMultiExtruder = Extruders != null && Extruders.Count > 1;
 
                 HeatedBeds = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedBeds);
                 HasHeatedBed = HeatedBeds != null && HeatedBeds.Count > 0;
@@ -2082,7 +1082,7 @@ namespace AndreasReitberger.API.Repetier
                 return new RepetierModelList();
             }
         }
-#endregion
+        #endregion
 
         #region ModelGroups
         async Task<RepetierModelGroups> GetModelGroupsAsync(string printerName)
