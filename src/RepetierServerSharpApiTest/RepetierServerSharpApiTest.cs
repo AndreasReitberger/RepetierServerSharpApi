@@ -7,7 +7,6 @@ using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -17,9 +16,9 @@ namespace RepetierServerSharpApiTest
     public class RepetierServerSharpApiTest
     {
 
-        private readonly string _host = "192.168.10.42";
+        private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 3344;
-        private readonly string _api = "1437e240-0314-4bfe-a7ed-f4f58c341ff1"; // _yourkey";
+        private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -61,7 +60,6 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-
                 RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                 {
                     FreeDiskSpace = 1523165212,
@@ -69,7 +67,7 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance);
+                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented);
                 var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
@@ -148,8 +146,8 @@ namespace RepetierServerSharpApiTest
                     },
                     Webcams = new()
                     {
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 0, Orientation = 90 },
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 1, Orientation = 180 },
+                        new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 0, Orientation = 90 },
+                        new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 1, Orientation = 180 },
                     }
 
                 }.ToString();
@@ -308,7 +306,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsTrue(models?.Count > 0);
 
                     // Try to fetch models from a second printer, which is not set active at the moment
-                    string secondPrinter = "Prusa_i3_MK3S1";
+                    string secondPrinter = "Prusa_i3_MK3S";
                     ObservableCollection<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
                     Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
                 }

@@ -32,10 +32,10 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient, IDisposable, ICloneable //, IRestApiClient
+    public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient
     {
         #region Instance
-        /**/
+
         static RepetierClient _instance = null;
         static readonly object Lock = new();
         public new static RepetierClient Instance
@@ -67,7 +67,7 @@ namespace AndreasReitberger.API.Repetier
         #region Connection
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         EventSession session;
         partial void OnSessionChanged(EventSession value)
         {
@@ -80,181 +80,26 @@ namespace AndreasReitberger.API.Repetier
             });           
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        string sessionId = string.Empty;
-
-        [ObservableProperty]
-        string serverName = string.Empty;
-
-        [ObservableProperty]
-        string checkOnlineTargetUri = string.Empty;
-
-        [ObservableProperty]
-        string serverAddress = string.Empty;
-        partial void OnServerAddressChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-
-        [ObservableProperty]
-        bool loginRequired = false;
-
-        [ObservableProperty]
-        bool isSecure = false;
-        partial void OnIsSecureChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string apiKey = string.Empty;
-
-        [ObservableProperty]
-        string apiKeyRegexPattern = string.Empty;
-
-        [ObservableProperty]
-        string apiVersion = string.Empty;
-
-        [ObservableProperty]
-        int port = 3344;
-        partial void OnPortChanged(int value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        int defaultTimeout = 10000;
-
-        [ObservableProperty]
-        bool overrideValidationRules = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isOnline = false;
-        partial void OnIsOnlineChanged(bool value)
-        {
-            if (value)
-            {
-                OnServerWentOnline(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-            else
-            {
-                OnServerWentOffline(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isConnecting = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool authenticationFailed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isRefreshing = false;
-
-        [ObservableProperty]
-        //[property: JsonIgnore, XmlIgnore]
-        int retriesWhenOffline = 2;
-
         #endregion
 
         #region General
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool updateAvailable = false;
-        partial void OnUpdateAvailableChanged(bool value)
-        {
-            if (value)
-            {
-                OnServerUpdateAvailable(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-        }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierAvailableUpdateInfo update;
-
-        #endregion
-
-        #region PrinterStateInformation
-
-        #region ConfigurationInfo
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        RepetierPrinterConfigWebcam selectedWebCam;
-
-        #endregion
-
-        #region Temperatures
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureExtruderMain = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureExtruderSecondary = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureHeatedBedMain = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureHeatedChamberMain = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double speedFactor = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double speedFactorTarget = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double flowFactor = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double flowFactorTarget = 0;
-
-        #endregion
-
-        #region Fans
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int speedFanMain = 0;
-
-        #endregion
 
         #endregion
 
         #region ExternalCommands
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<ExternalCommand> externalCommands = new();
 
         #endregion
 
         #region Messages
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierMessage> messages = new();
         partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
         {
@@ -271,7 +116,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebCalls
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierWebCallAction> webCallActions = new();
         partial void OnWebCallActionsChanged(ObservableCollection<RepetierWebCallAction> value)
         {
@@ -288,14 +133,14 @@ namespace AndreasReitberger.API.Repetier
 
         #region GPIO
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierGpioListItem> gPIOList = new();
 
         #endregion
 
         #region State & Config
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierPrinterConfig config;
         partial void OnConfigChanged(RepetierPrinterConfig value)
         {
@@ -310,7 +155,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierPrinterState state;
         partial void OnStateChanged(RepetierPrinterState value)
         {
@@ -325,7 +170,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierCurrentPrintInfo activePrintInfo;
         partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo value)
         {
@@ -339,7 +184,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierCurrentPrintInfo> activePrintInfos = new();
         partial void OnActivePrintInfosChanged(ObservableCollection<RepetierCurrentPrintInfo> value)
         {
@@ -351,51 +196,24 @@ namespace AndreasReitberger.API.Repetier
             });
         }
 
+        /*
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> extruders = new();
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> heatedBeds = new();
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> heatedChambers = new();
+        */
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterFan> fans = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterConfigWebcam> webCams = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         bool shutdownAfterPrint = false;
 
-        #endregion
-
-        #region ReadOnly
-
-        public bool IsReady
-        {
-            get
-            {
-                return 
-                    !string.IsNullOrEmpty(ServerAddress) && Port > 0 && //  !string.IsNullOrEmpty(API)) &&
-                    (
-                        // Address
-                        (Regex.IsMatch(ServerAddress, RegexHelper.IPv4AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.IPv6AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.Fqdn)) &&
-                        // API-Key (also allow empty key if the user performs a login instead
-                        (string.IsNullOrEmpty(ApiKey) ? true : Regex.IsMatch(ApiKey, RegexHelper.RepetierServerProApiKey))
-                    ||
-                        // Or validation rules are overriden
-                        OverrideValidationRules
-                    );
-            }
-        }
         #endregion
 
         #endregion
@@ -404,19 +222,25 @@ namespace AndreasReitberger.API.Repetier
         public RepetierClient()
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) : base(serverAddress, api, port = 3344, isSecure = false)
+        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) //: base(serverAddress, api, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) : base(serverAddress, port = 3344, isSecure = false)
+        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) //: base(serverAddress, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, "", isSecure);
             UpdateRestClientInstance();
         }
@@ -449,7 +273,7 @@ namespace AndreasReitberger.API.Repetier
                 //OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
+        public new void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
         {
             try
             {
@@ -965,17 +789,17 @@ namespace AndreasReitberger.API.Repetier
                 ActiveToolHead = newState.ActiveExtruder;
                 NumberOfToolHeads = newState.NumExtruder;
 
-                Extruders = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.Extruder);
-                IsMultiExtruder = Extruders != null && Extruders.Count > 1;
+                Toolheads = new ObservableCollection<IHeaterComponent>(newState.Extruder);
+                IsMultiExtruder = Toolheads?.Count > 1;
 
-                HeatedBeds = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedBeds);
-                HasHeatedBed = HeatedBeds != null && HeatedBeds.Count > 0;
+                HeatedBeds = new ObservableCollection<IHeaterComponent>(newState.HeatedBeds);
+                HasHeatedBed = HeatedBeds?.Count > 0;
 
-                HeatedChambers = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedChambers);
-                HasHeatedBed = HeatedChambers != null && HeatedChambers.Count > 0;
+                HeatedChambers = new ObservableCollection<IHeaterComponent>(newState.HeatedChambers);
+                HasHeatedBed = HeatedChambers?.Count > 0;
 
-                Fans = new ObservableCollection<RepetierPrinterFan>(newState.Fans);
-                HasFan = Fans != null && Fans.Count > 0;
+                Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
+                HasFan = Fans?.Count > 0;
 
                 X = newState.X;
                 Y = newState.Y;
@@ -1000,7 +824,7 @@ namespace AndreasReitberger.API.Repetier
                 if (newConfig == null) return;
                 if (newConfig.Webcams != null)
                 {
-                    WebCams = new ObservableCollection<RepetierPrinterConfigWebcam>(newConfig.Webcams);
+                    WebCams = new ObservableCollection<IWebCamConfig>(newConfig.Webcams);
                     HasWebCam = WebCams != null && WebCams.Count > 0;
                     if (HasWebCam)
                         SelectedWebCam = WebCams[0];
@@ -1043,7 +867,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
@@ -1090,7 +914,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
@@ -1136,7 +960,7 @@ namespace AndreasReitberger.API.Repetier
             RepetierJobListRespone resultObject = null; //new();
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
@@ -1180,7 +1004,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
@@ -1531,7 +1355,7 @@ namespace AndreasReitberger.API.Repetier
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
             //_ = await SendRestApiRequestAsync("", "logout").ConfigureAwait(false);
 
-            string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+            string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
             _ = await SendRestApiRequestAsync(
                requestTargetUri: targetUri,
                method: Method.Post,
@@ -1684,7 +1508,7 @@ namespace AndreasReitberger.API.Repetier
                 return "";
             }
         }
-        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
+        public async Task<IWebCamConfig> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
         {
             try
             {
@@ -1696,7 +1520,7 @@ namespace AndreasReitberger.API.Repetier
                     await RefreshPrinterConfigAsync();
                 }
                 
-                return WebCams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+                return WebCams?.FirstOrDefault(webCam => webCam.Position == camIndex);
             }
             catch (Exception exc)
             {
@@ -1704,12 +1528,12 @@ namespace AndreasReitberger.API.Repetier
                 return null;
             }
         }
-        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(string slug, int camIndex = 0)
+        public async Task<IWebCamConfig> GetWebCamConfigAsync(string slug, int camIndex = 0)
         {
             try
             {
                 RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);             
-                return config?.Webcams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+                return config?.Webcams?.FirstOrDefault(webCam => webCam.Position == camIndex);
             }
             catch (Exception exc)
             {
@@ -1731,7 +1555,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     // Send an empty command to check the respone
                     string pingCommand = "{}";
-                    string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Ping}";
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Ping}/{GetActivePrinterSlug()}";
                     IRestApiRequestRespone result = await SendRestApiRequestAsync(
                            requestTargetUri: targetUri,
                            method: Method.Post,
@@ -1781,7 +1605,7 @@ namespace AndreasReitberger.API.Repetier
                 try
                 {
                     // Send a blank api request in order to check if the server is reachable
-                    string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";                  
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";                  
                     IRestApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        command: "{}",
@@ -1832,7 +1656,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     // Send an empty command to check the respone
                     string pingCommand = "{}";
-                    string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                     var respone = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -1899,7 +1723,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -1945,7 +1769,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -1992,7 +1816,7 @@ namespace AndreasReitberger.API.Repetier
             RepetierAvailableUpdateInfo resultObject = new();
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2034,7 +1858,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2290,7 +2114,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2342,7 +2166,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2374,7 +2198,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{(ActivePrinter is null ? "" : $"{ActivePrinter?.Slug}/")}{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
@@ -2421,7 +2245,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
                     groupName = groupName,
@@ -2454,7 +2278,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 object data = new
                 {
                     groupName = groupName,
@@ -2491,7 +2315,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
                     groupName = groupName,
@@ -2524,7 +2348,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 object data = new
                 {
                     groupName = groupName,
@@ -2561,7 +2385,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
                     groupName = groupName,
@@ -2596,7 +2420,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2633,7 +2457,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2756,7 +2580,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2781,7 +2605,6 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-
         public async Task<bool> StartJobAsync(string id)
         {
             try
@@ -2791,7 +2614,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2830,7 +2653,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2865,7 +2688,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2908,7 +2731,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2960,7 +2783,7 @@ namespace AndreasReitberger.API.Repetier
                     return false;
                 }
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -2995,7 +2818,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3041,7 +2864,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return new Dictionary<string, RepetierPrinterState>();
                 }
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3238,7 +3061,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3327,7 +3150,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3393,7 +3216,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3494,7 +3317,7 @@ namespace AndreasReitberger.API.Repetier
                     (double.IsInfinity(e) ? "" : $",\"e\":{e}") +
                     $"}}";
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3528,7 +3351,9 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetExtruderTemperatureAsync("setExtruderTemperature", new { temperature, extruder }, targetUri).ConfigureAwait(false);
+                /*
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3537,6 +3362,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
+                */
                 /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3545,7 +3371,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result, true);
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -3560,7 +3386,9 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetBedTemperatureAsync("setBedTemperature", new { temperature, bedId }, targetUri).ConfigureAwait(false);
+                /*
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3569,6 +3397,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
+                */
                 /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3577,7 +3406,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result, true);
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -3592,7 +3421,9 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetChamberTemperatureAsync("setChamberTemperature", new { temperature, chamberId }, targetUri).ConfigureAwait(false);
+                /*
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3601,6 +3432,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
+                */
                 /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3609,7 +3441,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result, true);
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -3643,7 +3475,9 @@ namespace AndreasReitberger.API.Repetier
                     SetSpeed = Convert.ToInt32(((float)speed) * 255f / 100f);
                 }
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetFanSpeedAsync("setFanSpeed", new { speed, fanId }, targetUri).ConfigureAwait(false);
+                /*
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3652,6 +3486,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
+                */
                 /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3660,7 +3495,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                //return GetQueryResult(result.Result);
             }
             catch (Exception exc)
             {
@@ -3681,7 +3516,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3721,7 +3556,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3782,7 +3617,7 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3817,7 +3652,7 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3883,7 +3718,7 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3915,7 +3750,7 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3947,7 +3782,7 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -3982,7 +3817,7 @@ namespace AndreasReitberger.API.Repetier
                 if (!string.IsNullOrEmpty(printerName)) currentPrinter = printerName; // Override current selected printer, if needed
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4020,7 +3855,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
                 object cmd = new { name = scriptName };
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4063,7 +3898,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
                 object cmd = new { name = scriptName, script = script };
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4096,7 +3931,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
                 object cmd = new { script = scriptName };
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4156,7 +3991,7 @@ namespace AndreasReitberger.API.Repetier
                 string cmd = string.Format("{{\"name\":\"{0}\",\"params\":{1}}}", action.Name, JsonConvert.SerializeObject(new string[] { action.Question }));
                 CancellationTokenSource cts = new(timeout);
                 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4193,7 +4028,7 @@ namespace AndreasReitberger.API.Repetier
                     printer = action.Slug,
                 };
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4330,7 +4165,7 @@ namespace AndreasReitberger.API.Repetier
             IRestApiRequestRespone result = null;
             try
             {
-                string targetUri = $"{RepetierCommands.Base}/{GetActivePrinterSlug()}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4374,7 +4209,7 @@ namespace AndreasReitberger.API.Repetier
                     idx = index,
                 };
 
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4488,7 +4323,7 @@ namespace AndreasReitberger.API.Repetier
                     serveruuid = serverUuid,
                     uuid = projectUuid,
                 };
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4534,7 +4369,7 @@ namespace AndreasReitberger.API.Repetier
                     serveruuid = serverUuid,
                     project = project,
                 };
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4597,7 +4432,7 @@ namespace AndreasReitberger.API.Repetier
                     name = file.Name,
                 };
 
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4634,7 +4469,7 @@ namespace AndreasReitberger.API.Repetier
                     username = comment.User,
                     comment = comment.Comment,
                 };
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4681,7 +4516,7 @@ namespace AndreasReitberger.API.Repetier
                     uuid = serverUuid,
                 };
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4754,7 +4589,7 @@ namespace AndreasReitberger.API.Repetier
                     year = year,
                 };
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4832,7 +4667,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     id = item.Id,
                 };
-                string targetUri = $"{RepetierCommands.Base}/{printerName}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 IRestApiRequestRespone result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
@@ -4867,7 +4702,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 string currentPrinter = GetActivePrinterSlug();
 
-                string targetUri = $"{RepetierCommands.Base}/{currentPrinter}/{RepetierCommands.Api}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,

@@ -1,8 +1,10 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -40,6 +42,9 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [JsonIgnore]
         public RepetierToolState State { get => GetCurrentState(); }
+
+        [ObservableProperty]
+        Printer3dHeaterType type = Printer3dHeaterType.Other;
         #endregion
 
         #endregion
@@ -60,13 +65,13 @@ namespace AndreasReitberger.API.Repetier.Models
                     return RepetierToolState.Ready;
             }
         }
+
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         #endregion
     }
 }
