@@ -1,18 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierEventSessionChangedEventArgs : RepetierEventArgs
+    public class RepetierEventSessionChangedEventArgs : SessionChangedEventArgs
     {
         #region Properties
         public EventSession Sesson { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         #endregion
     }
 }

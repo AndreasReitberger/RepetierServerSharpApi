@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Websocket.Client;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
@@ -196,23 +197,6 @@ namespace AndreasReitberger.API.Repetier
             });
         }
 
-        /*
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeaterComponent> extruders = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeaterComponent> heatedBeds = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterHeaterComponent> heatedChambers = new();
-        */
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool shutdownAfterPrint = false;
 
         #endregion
 
@@ -281,6 +265,7 @@ namespace AndreasReitberger.API.Repetier
                 ApiKey = api;
                 Port = port;
                 IsSecure = isSecure;
+                //WebSocketTargetUri = GetWebSocketTargetUri();
 
                 Instance = this;
 
@@ -302,6 +287,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region WebSocket
+        /*
         void PingServer()
         {
             try
@@ -319,111 +305,34 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-        [Obsolete("Use async methods instead")]
-        public void ConnectWebSocket()
-        {
-            try
-            {
-                //if (!IsReady) return;
-                if (!string.IsNullOrEmpty(FullWebAddress) && (
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn))) return;
-                //if (!IsReady || IsListeningToWebsocket) return;
+        */
+        //public Task ConnectWebSocketAsync() => ConnectWebSocketAsync(target: $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}");      
 
-                DisconnectWebSocket();
-
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}";
-                WebSocket = new WebSocket(target)
-                {
-                    EnableAutoSendPing = false
-                };
-
-                if (IsSecure)
-                {
-                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
-                    //Avoid TlsHandshakeFailure
-                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
-                    {
-                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
-                    }
-                }
-
-                WebSocket.MessageReceived += WebSocket_MessageReceived;
-                //WebSocket.DataReceived += WebSocket_DataReceived;
-                WebSocket.Opened += WebSocket_Opened;
-                WebSocket.Closed += WebSocket_Closed;
-                WebSocket.Error += WebSocket_Error;
-
-#if NETSTANDARD
-                WebSocket.OpenAsync();
+#if NET_WS
+        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs msg)
 #else
-                WebSocket.Open();
+        new void WebSocket_MessageReceived(ResponseMessage? msg)
 #endif
-
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        [Obsolete("Use async methods instead")]
-        public void DisconnectWebSocket()
         {
             try
             {
-                if (WebSocket != null)
-                {
-                    if (WebSocket.State == WebSocketState.Open)
-                    {
-#if NETSTANDARD
-                        WebSocket.CloseAsync();
-#else
-                        WebSocket.Close();
-#endif
-                    }
-                    StopPingTimer();
-
-                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    WebSocket.Opened -= WebSocket_Opened;
-                    WebSocket.Closed -= WebSocket_Closed;
-                    WebSocket.Error -= WebSocket_Error;
-
-                    WebSocket = null;
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-#if NET5_0_OR_GREATER || NETSTANDARD
-        public Task ConnectWebSocketAsync() => ConnectWebSocketAsync(target: $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}");      
-#endif
-
-        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            try
-            {
-                if (e.Message == null || string.IsNullOrEmpty(e.Message))
+                if (msg.Text == null || string.IsNullOrEmpty(msg.Text))
                     return;
-                base.WebSocket_MessageReceived(sender, e);
-
-                if (e.Message.ToLower().Contains("login"))
+                base.WebSocket_MessageReceived(msg);
+                string text = msg.Text;
+                if (text.ToLower().Contains("login"))
                 {
-                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
-                    //var login = GetObjectFromJson<RepetierLoginResult>(e.Message, JsonSerializerSettings);
+                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(text, JsonSerializerSettings);
+                    //var login = GetObjectFromJson<RepetierLoginResult>(text, JsonSerializerSettings);
                 }
-                if (e.Message.ToLower().Contains("session"))
+                if (text.ToLower().Contains("session"))
                 {
-                    //Session = GetObjectFromJson<EventSession>(e.Message, JsonSerializerSettings);
-                    Session = GetObjectFromJson<EventSession>(e.Message);
+                    //Session = GetObjectFromJson<EventSession>(text, JsonSerializerSettings);
+                    Session = GetObjectFromJson<EventSession>(text);
                 }
-                else if (e.Message.ToLower().Contains("event"))
+                else if (text.ToLower().Contains("event"))
                 {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
+                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, JsonSerializerSettings);
                     if (repetierEvent != null)
                     {
                         string name = string.Empty;
@@ -616,17 +525,17 @@ namespace AndreasReitberger.API.Repetier
                 OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
-                    Message = e.Message,
+                    Message = text,
                     SessonId = SessionId,
                 });
                 */
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = e.Message,
+                    OriginalString = msg.Text,
                     Message = jecx.Message,
                 });
             }
@@ -635,35 +544,23 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-
-        new void WebSocket_Opened(object sender, EventArgs e)
+        /*
+        new void WebSocket_Opened(object? sender, EventArgs e)
         {
             try
             {
                 // Trigger ping to get session id
                 PingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
                 base.WebSocket_Opened(sender, e);
-                /*
-                string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
-                WebSocket?.Send(pingCommand);
-
-                PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
-
-                IsListeningToWebsocket = true;
-                OnWebSocketConnected(new RepetierEventArgs()
-                {
-                    Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
-                    Printer = GetActivePrinterSlug(),
-                });
-                */
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        */
 
-        #endregion
+#endregion
 
         #region Methods
 
@@ -891,7 +788,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -935,7 +832,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -981,7 +878,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1026,7 +923,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1161,59 +1058,14 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public void StartListening(bool stopActiveListening = false)
+        public Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
         {
-            if (IsListening)// avoid multiple sessions
-            {
-                if (stopActiveListening)
-                {
-                    StopListening();
-                }
-                else
-                {
-                    return; // StopListening();
-                }
-            }
-            ConnectWebSocket();
-            Timer = new Timer(async (action) =>
-            {
-                // Do not check the online state ever tick
-                if (RefreshCounter > 5)
-                {
-                    RefreshCounter = 0;
-                    await CheckOnlineAsync(3500).ConfigureAwait(false);
-                }
-                else RefreshCounter++;
-                if (IsOnline)
-                {
-                    List<Task> tasks = new()
-                    {
-                        //CheckServerOnlineAsync(),
-                        RefreshPrinterStateAsync(),
-                        RefreshCurrentPrintInfosAsync(),
-                    };
-                    await Task.WhenAll(tasks).ConfigureAwait(false);
-                }
-                else if (IsListening)
-                {
-                    StopListening();
-                }
-            }, null, 0, RefreshInterval * 1000);
-            IsListening = true;
-        }
-        public void StopListening()
-        {
-            CancelCurrentRequests();
-            StopPingTimer();
-            StopTimer();
+            RefreshPrinterStateAsync(),
+            RefreshCurrentPrintInfosAsync(),
+        });
 
-            if (IsListeningToWebsocket)
-                DisconnectWebSocket();
-            IsListening = false;
-        }
-
-#if NET5_0_OR_GREATER || NETSTANDARD
-        public async Task StartListeningAsync(bool stopActiveListening = false)
+        [Obsolete("Remove later")]
+        public async Task StartListeningAsyncOld(bool stopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
             {
@@ -1226,7 +1078,7 @@ namespace AndreasReitberger.API.Repetier
                     return; // StopListening();
                 }
             }
-            await ConnectWebSocketAsync().ConfigureAwait(false);
+            await ConnectWebSocketAsync(WebSocketTargetUri).ConfigureAwait(false);
             Timer = new Timer(async (action) =>
             {
                 // Do not check the online state ever tick
@@ -1252,19 +1104,7 @@ namespace AndreasReitberger.API.Repetier
             }, null, 0, RefreshInterval * 1000);
             IsListening = true;
         }
-        public async Task StopListeningAsync()
-        {
-            CancelCurrentRequests();
-            StopPingTimer();
-            StopTimer();
 
-            if (IsListeningToWebsocket)
-            {
-                await DisconnectWebSocketAsync().ConfigureAwait(false);
-            }
-            IsListening = false;
-        }
-#endif
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             try
@@ -1705,17 +1545,19 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 //string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
+                /*
                 if (WebSocket?.State == WebSocketState.Open)
                 {
                     WebSocket.Send(command);
                 }
+                */
             }
             catch (Exception exc)
             {
                 OnWebSocketError(new ErrorEventArgs(exc));
             }
         }
-#endregion
+        #endregion
 
         #region Updates
         public async Task CheckForServerUpdateAsync()
@@ -1751,7 +1593,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1798,7 +1640,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1834,7 +1676,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1881,7 +1723,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -1924,11 +1766,11 @@ namespace AndreasReitberger.API.Repetier
 
         #region GCode
 
-        public async Task<RepetierErrorCodes> SendGcodeAsync(string printerName, string filePath)
+        public async Task<RepetierErrorCodes> SendGcodeFileAsync(string printerName, string filePath)
         {
             try
             {
-                return await SendAndMoveGcodeAsync(printerName, filePath).ConfigureAwait(false);
+                return await SendAndMoveGcodeFileAsync(printerName, filePath).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
@@ -1937,7 +1779,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<RepetierErrorCodes> SendAndMoveGcodeAsync(string printerName, string filePath, string group = "#", int timeout = 25000)
+        public async Task<RepetierErrorCodes> SendAndMoveGcodeFileAsync(string printerName, string filePath, string group = "#", int timeout = 25000)
         {
             // https://www.repetier-server.com/using-simplify-3d-repetier-server/
             try
@@ -2003,10 +1845,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return modelDatas;
 
                 // Reporting
-                if (Prog != null)
-                {
-                    Prog.Report(0);
-                }
+                Prog?.Report(0);
                 RepetierModelList models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
                 if (models != null)
                 {
@@ -2052,9 +1891,9 @@ namespace AndreasReitberger.API.Repetier
                                 }
                             }
                         }
-                        else if (Prog != null)
+                        else
                         {
-                            Prog.Report(100);
+                            Prog?.Report(100);
                         }
                         return Models;
                     }
@@ -2073,7 +1912,8 @@ namespace AndreasReitberger.API.Repetier
                 return new ObservableCollection<IGcode>();
             }
         }
-        public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<RepetierModel> models, RepetierImageType imageType = RepetierImageType.Thumbnail)
+        
+        public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return null;
@@ -2083,20 +1923,14 @@ namespace AndreasReitberger.API.Repetier
             {
                 for (int i = 0; i < models.Count; i++)
                 {
-                    RepetierModel model = models[i];
+                    IGcode model = models[i];
                     byte[] image = new byte[0];
-                    switch (imageType)
+                    image = imageType switch
                     {
-                        case RepetierImageType.Thumbnail:
-                            image = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
-                            break;
-                        case RepetierImageType.Image:
-                            image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
-                            break;
-                        default:
-                            throw new NotSupportedException($"The image type '{imageType}' is not supported here.");
-                            //break;
-                    }
+                        GcodeImageType.Thumbnail => await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false),
+                        GcodeImageType.Image => await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false),
+                        _ => throw new NotSupportedException($"The image type '{imageType}' is not supported here."),
+                    };
                     result.Add(model.Identifier, image);
                 }
                 return result;
@@ -2107,7 +1941,7 @@ namespace AndreasReitberger.API.Repetier
                 return null;
             }
         }
-        public async Task<bool> DeleteModelFromServerAsync(RepetierModel model)
+        public async Task<bool> DeleteModelFromServerAsync(IGcode model)
         {
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return false;
@@ -2119,16 +1953,10 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeModel",
-                       jsonObject: new { id = model.Id },
+                       jsonObject: new { id = model.Identifier },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "removeModel", jsonData: string.Format("{{\"id\":{0}}}", model.Id), printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -2217,7 +2045,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -2235,9 +2063,11 @@ namespace AndreasReitberger.API.Repetier
             await UpdateFreeSpaceAsync().ConfigureAwait(false);
         }
 
-#endregion
+        #endregion
 
         #region ModelGroups
+        public async Task<bool> AddModelGroupAsync(IGcodeGroup group) => await AddModelGroupAsync(group?.Name);
+
         public async Task<bool> AddModelGroupAsync(string groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -2274,6 +2104,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
+        public async Task<bool> AddModelGroupAsync(string printerName, IGcodeGroup group) => await AddModelGroupAsync(printerName, group.Name);
         public async Task<bool> AddModelGroupAsync(string printerName, string groupName)
         {
             try
@@ -2308,6 +2139,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
+        public async Task<bool> RemoveModelGroupAsync(IGcodeGroup group) => await RemoveModelGroupAsync(group.Name);
         public async Task<bool> RemoveModelGroupAsync(string groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -2344,6 +2176,8 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
+        
+        public async Task<bool> RemoveModelGroupAsync(string printerName, IGcodeGroup group) => await RemoveModelGroupAsync(printerName, group.Name);
         public async Task<bool> RemoveModelGroupAsync(string printerName, string groupName)
         {
             try
@@ -2378,6 +2212,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
+        public async Task<bool> MoveModelToGroupAsync(string groupName, IGcode file) => await MoveModelToGroupAsync(groupName, file.Identifier);
         public async Task<bool> MoveModelToGroupAsync(string groupName, long id)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -2416,6 +2251,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
+        public async Task<bool> MoveModelToGroupAsync(string printerName, IGcodeGroup group, IGcode file) => await MoveModelToGroupAsync(printerName, group.Name, file.Identifier);  
         public async Task<bool> MoveModelToGroupAsync(string printerName, string groupName, long id)
         {
             try
@@ -2479,7 +2315,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -2759,7 +2595,8 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                bool result = await SendGcodeCommandAsync("@pause", printerName).ConfigureAwait(false);
+                //bool result = await SendGcodeCommandAsync("@pause", printerName).ConfigureAwait(false);
+                bool result = await SendGcodeAsync("@pause", printerName).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -2888,7 +2725,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = resultString,
@@ -2984,7 +2821,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -3084,7 +2921,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -3175,7 +3012,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -3537,7 +3374,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -3674,7 +3511,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -3875,7 +3712,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4183,7 +4020,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4229,7 +4066,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4343,7 +4180,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4539,7 +4376,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4609,7 +4446,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4724,7 +4561,7 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (JsonException jecx)
             {
-                OnError(new RepetierJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = result?.Result,
@@ -4795,34 +4632,6 @@ namespace AndreasReitberger.API.Repetier
         public override int GetHashCode()
         {
             return Id.GetHashCode();
-        }
-        #endregion
-
-        #region Dispose
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected void Dispose(bool disposing)
-        {
-            // Ordinarily, we release unmanaged resources here;
-            // but all are wrapped by safe handles.
-
-            // Release disposable objects.
-            if (disposing)
-            {
-                StopListening();
-                DisconnectWebSocket();
-            }
-        }
-        #endregion
-
-        #region Clone
-
-        public object Clone()
-        {
-            return MemberwiseClone();
         }
         #endregion
     }

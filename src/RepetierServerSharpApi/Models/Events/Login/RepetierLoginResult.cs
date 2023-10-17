@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierLoginResult : ObservableObject
+    public partial class RepetierLoginResult : ObservableObject//, IPrint3dLoginData
     {
         #region Properties
         [ObservableProperty]
