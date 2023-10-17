@@ -10,7 +10,8 @@ namespace AndreasReitberger.API.Repetier
         public static JsonSerializerSettings JsonSerializerSettings = new()
         {
             // Detect if the json respone has more or less properties than the target class
-            MissingMemberHandling = MissingMemberHandling.Error,
+            //MissingMemberHandling = MissingMemberHandling.Error,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
             NullValueHandling = NullValueHandling.Include,
         };
         #endregion

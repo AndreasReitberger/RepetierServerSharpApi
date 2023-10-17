@@ -1,12 +1,18 @@
-﻿using AndreasReitberger.API.Repetier.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Events;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -26,31 +32,19 @@ using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
-    public partial class RepetierClient : ObservableObject, IDisposable, ICloneable //, IRestApiClient
+    public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient
     {
-        #region Variables
-        RestClient restClient;
-        HttpClient httpClient;
-        int _retries = 0;
-        #endregion
-
-        #region Id
-        [ObservableProperty]
-        Guid id = Guid.Empty;
-
-        #endregion
-
         #region Instance
+
         static RepetierClient _instance = null;
         static readonly object Lock = new();
-        public static RepetierClient Instance
+        public new static RepetierClient Instance
         {
             get
             {
                 lock (Lock)
                 {
-                    if (_instance == null)
-                        _instance = new RepetierClient();
+                    _instance ??= new RepetierClient();
                 }
                 return _instance;
             }
@@ -65,79 +59,15 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-
-        [ObservableProperty]
-        bool isActive = false;
-
-        [ObservableProperty]
-        bool updateInstance = false;
-        partial void OnUpdateInstanceChanged(bool value)
-        {
-            if (value)
-            {
-                InitInstance(ServerAddress, Port, ApiKey, IsSecure);
-            }
-        }
-
-        [ObservableProperty]
-        bool isInitialized = false;
-
-        #endregion
-
-        #region RefreshTimer
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        Timer timer;
-
-
-        [ObservableProperty]
-        int refreshInterval = 3;
-        partial void OnRefreshIntervalChanged(int value)
-        {
-            if (IsListening)
-            {
-                StartListening(stopActiveListening: true);
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isListening = false;
-        partial void OnIsListeningChanged(bool value)
-        {
-            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = value,
-                IsListeningToWebSocket = IsListeningToWebsocket,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool initialDataFetched = false;
-
+       
         #endregion
 
         #region Properties
 
-        #region Debug
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        Dictionary<string, string> ignoredJsonResults = new();
-        partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
-        {
-            OnRepetierIgnoredJsonResultsChanged(new RepetierIgnoredJsonResultsChangedEventArgs()
-            {
-                NewIgnoredJsonResults = value,
-            });
-        }
-        #endregion
-
         #region Connection
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         EventSession session;
         partial void OnSessionChanged(EventSession value)
         {
@@ -150,352 +80,26 @@ namespace AndreasReitberger.API.Repetier
             });           
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        string sessionId = string.Empty;
-
-
-        [ObservableProperty]
-        string serverName = string.Empty;
-
-        [ObservableProperty]
-        string serverAddress = string.Empty;
-        partial void OnServerAddressChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-
-        [ObservableProperty]
-        bool loginRequired = false;
-
-        [ObservableProperty]
-        bool isSecure = false;
-        partial void OnIsSecureChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string apiKey = string.Empty;
-
-        [ObservableProperty]
-        int port = 3344;
-        partial void OnPortChanged(int value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        int defaultTimeout = 10000;
-
-        [ObservableProperty]
-        bool overrideValidationRules = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isOnline = false;
-        partial void OnIsOnlineChanged(bool value)
-        {
-            if (value)
-            {
-                OnServerWentOnline(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-            else
-            {
-                OnServerWentOffline(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isConnecting = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool authenticationFailed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isRefreshing = false;
-
-        [ObservableProperty]
-        //[property: JsonIgnore, XmlIgnore]
-        int retriesWhenOffline = 2;
-
         #endregion
 
         #region General
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool updateAvailable = false;
-        partial void OnUpdateAvailableChanged(bool value)
-        {
-            if (value)
-            {
-                OnServerUpdateAvailable(new RepetierEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-        }
 
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        RepetierAvailableUpdateInfo update;
-
-        #endregion
-
-        #region Proxy
-        [ObservableProperty]
-        bool enableProxy = false;
-        partial void OnEnableProxyChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        bool proxyUseDefaultCredentials = true;
-        partial void OnProxyUseDefaultCredentialsChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        bool secureProxyConnection = true;
-        partial void OnSecureProxyConnectionChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string proxyAddress = string.Empty;
-        partial void OnProxyAddressChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        int proxyPort = 443;
-        partial void OnProxyPortChanged(int value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string proxyUser = string.Empty;
-        partial void OnProxyUserChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        SecureString proxyPassword;
-        partial void OnProxyPasswordChanged(SecureString value)
-        {
-            UpdateRestClientInstance();
-        }
-        #endregion
-
-        #region DiskSpace
-        [ObservableProperty]
-        long freeDiskSpace = 0;
-        [JsonIgnore, XmlIgnore]
-
-        [ObservableProperty]
-        long availableDiskSpace = 0;
-
-        [ObservableProperty]
-        long totalDiskSpace = 0;
-
-        #endregion
-
-        #region PrinterStateInformation
-
-        #region ConfigurationInfo
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long _activeExtruder = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long numberOfExtruders = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isDualExtruder = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasHeatedBed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasHeatedChamber = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool hasFan = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool _hasWebCam = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        RepetierPrinterConfigWebcam selectedWebCam;
-
-        #endregion
-
-        #region PrinterState
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isPrinting = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isPaused = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isConnectedPrinterOnline = false;
-
-        #endregion
-
-        #region Temperatures
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureExtruderMain = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureExtruderSecondary = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureHeatedBedMain = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double temperatureHeatedChamberMain = 0;
-
-        #endregion
-
-        #region Fans
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int speedFanMain = 0;
-
-        #endregion
-
-        #endregion
-
-        #region Printers
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        RepetierPrinter activePrinter;
-        partial void OnActivePrinterChanging(RepetierPrinter value)
-        {
-            OnActivePrinterChangedEvent(new RepetierActivePrinterChangedEventArgs()
-            {
-                SessonId = SessionId,
-                NewPrinter = value,
-                OldPrinter = ActivePrinter,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinter> printers = new();
-        partial void OnPrintersChanged(ObservableCollection<RepetierPrinter> value)
-        {
-            if (value?.Count > 0 && ActivePrinter == null)
-            {
-                ActivePrinter = value.FirstOrDefault();
-            }
-        }
-
-        #endregion
-
-        #region Models
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<string> modelGroups = new();
-        partial void OnModelGroupsChanged(ObservableCollection<string> value)
-        {
-            OnRepetierModelGroupsChangedEvent(new RepetierModelGroupsChangedEventArgs()
-            {
-                NewModelGroups = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierModel> models = new();
-        partial void OnModelsChanged(ObservableCollection<RepetierModel> value)
-        {
-            OnRepetierModelsChangedEvent(new RepetierModelsChangedEventArgs()
-            {
-                NewModels = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
-
-        #endregion
-
-        #region Jobs
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        byte[] currentPrintImage = Array.Empty<byte>();
-        partial void OnCurrentPrintImageChanging(byte[] value) {
-            OnRepetierCurrentPrintImageChanged(new RepetierCurrentPrintImageChangedEventArgs() {
-                NewImage = value,
-                PreviousImage = CurrentPrintImage,
-                SessonId = SessionId,
-                CallbackId = -1,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierJobListItem> jobList = new();
-        partial void OnJobListChanged(ObservableCollection<RepetierJobListItem> value)
-        {
-            OnRepetierJobListChangedEvent(new RepetierJobListChangedEventArgs()
-            {
-                NewJobList = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Printer = GetActivePrinterSlug(),
-            });
-        }
+        RepetierAvailableUpdateInfo update;
 
         #endregion
 
         #region ExternalCommands
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<ExternalCommand> externalCommands = new();
 
         #endregion
 
         #region Messages
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierMessage> messages = new();
         partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
         {
@@ -512,7 +116,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebCalls
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierWebCallAction> webCallActions = new();
         partial void OnWebCallActionsChanged(ObservableCollection<RepetierWebCallAction> value)
         {
@@ -529,14 +133,14 @@ namespace AndreasReitberger.API.Repetier
 
         #region GPIO
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierGpioListItem> gPIOList = new();
 
         #endregion
 
         #region State & Config
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierPrinterConfig config;
         partial void OnConfigChanged(RepetierPrinterConfig value)
         {
@@ -551,7 +155,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierPrinterState state;
         partial void OnStateChanged(RepetierPrinterState value)
         {
@@ -566,7 +170,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierCurrentPrintInfo activePrintInfo;
         partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo value)
         {
@@ -580,7 +184,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierCurrentPrintInfo> activePrintInfos = new();
         partial void OnActivePrintInfosChanged(ObservableCollection<RepetierCurrentPrintInfo> value)
         {
@@ -592,132 +196,51 @@ namespace AndreasReitberger.API.Repetier
             });
         }
 
+        /*
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> extruders = new();
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> heatedBeds = new();
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierPrinterHeaterComponent> heatedChambers = new();
+        */
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterFan> fans = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        ObservableCollection<RepetierPrinterConfigWebcam> webCams = new();
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         bool shutdownAfterPrint = false;
 
         #endregion
 
-        #region Position
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long curX = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long curY = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        long curZ = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool yHomed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool zHomed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool xHomed = false;
-
-        #endregion
-
-        #region ReadOnly
-
-        public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
-
-        public bool IsReady
-        {
-            get
-            {
-                return 
-                    !string.IsNullOrEmpty(ServerAddress) && Port > 0 && //  !string.IsNullOrEmpty(API)) &&
-                    (
-                        // Address
-                        (Regex.IsMatch(ServerAddress, RegexHelper.IPv4AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.IPv6AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.Fqdn)) &&
-                        // API-Key (also allow empty key if the user performs a login instead
-                        (string.IsNullOrEmpty(ApiKey) ? true : Regex.IsMatch(ApiKey, RegexHelper.RepetierServerProApiKey))
-                    ||
-                        // Or validation rules are overriden
-                        OverrideValidationRules
-                    );
-            }
-        }
-        #endregion
-
-        #endregion
-
-        #region WebSocket
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        WebSocket webSocket;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        Timer pingTimer;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int pingCounter = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int refreshCounter = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool isListeningToWebsocket = false;
-        partial void OnIsListeningToWebsocketChanged(bool value)
-        {
-            OnListeningChangedEvent(new RepetierEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = IsListening,
-                IsListeningToWebSocket = value,
-            });
-        }
         #endregion
 
         #region Constructor
         public RepetierClient()
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) //: base(serverAddress, api, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false)
+        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) //: base(serverAddress, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, "", isSecure);
             UpdateRestClientInstance();
         }
@@ -738,27 +261,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Init
-        public void InitInstance()
-        {
-            try
-            {
-                // https://www.repetier-server.com/manuals/programming/API/index.html
-                Instance = this;
-                if (Instance != null)
-                {
-                    Instance.UpdateInstance = false;
-                    Instance.IsInitialized = true;
-                }
-                UpdateInstance = false;
-                IsInitialized = true;
-            }
-            catch (Exception exc)
-            {
-                //UpdateInstance = true;
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                IsInitialized = false;
-            }
-        }
+
         public static void UpdateSingleInstance(RepetierClient Inst)
         {
             try
@@ -770,7 +273,7 @@ namespace AndreasReitberger.API.Repetier
                 //OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
+        public new void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
         {
             try
             {
@@ -816,7 +319,7 @@ namespace AndreasReitberger.API.Repetier
             }
 
         }
-
+        [Obsolete("Use async methods instead")]
         public void ConnectWebSocket()
         {
             try
@@ -865,6 +368,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        [Obsolete("Use async methods instead")]
         public void DisconnectWebSocket()
         {
             try
@@ -896,102 +400,17 @@ namespace AndreasReitberger.API.Repetier
         }
 
 #if NET5_0_OR_GREATER || NETSTANDARD
-        public async Task ConnectWebSocketAsync()
-        {
-            try
-            {
-                //if (!IsReady) return;
-                if (!string.IsNullOrEmpty(FullWebAddress) && (
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
-                {
-                    return;
-                }
-                //if (!IsReady || IsListeningToWebsocket) return;
-                await DisconnectWebSocketAsync();
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}";
-                WebSocket = new WebSocket(target)
-                {
-                    EnableAutoSendPing = false,
-
-                };
-
-                if (IsSecure)
-                {
-                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
-                    //Avoid TlsHandshakeFailure
-                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
-                    {
-                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
-                    }
-                }
-
-                WebSocket.MessageReceived += WebSocket_MessageReceived;
-                //WebSocket.DataReceived += WebSocket_DataReceived;
-                WebSocket.Opened += WebSocket_Opened;
-                WebSocket.Closed += WebSocket_Closed;
-                WebSocket.Error += WebSocket_Error;
-
-                await WebSocket.OpenAsync();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        public async Task DisconnectWebSocketAsync()
-        {
-            try
-            {
-                if (WebSocket != null)
-                {
-                    if (WebSocket.State == WebSocketState.Open)
-                        await WebSocket.CloseAsync();
-                    StopPingTimer();
-
-                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    //WebSocket.DataReceived -= WebSocket_DataReceived;
-                    WebSocket.Opened -= WebSocket_Opened;
-                    WebSocket.Closed -= WebSocket_Closed;
-                    WebSocket.Error -= WebSocket_Error;
-
-                    WebSocket = null;
-                }
-                //WebSocket = null;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
+        public Task ConnectWebSocketAsync() => ConnectWebSocketAsync(target: $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}");      
 #endif
 
-        void WebSocket_Error(object sender, ErrorEventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                OnWebSocketError(e);
-                OnError(e);
-            }
-            catch(Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            finally
-            {
-                DisconnectWebSocket();
-            }
-        }
-
-        void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
+        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             try
             {
                 if (e.Message == null || string.IsNullOrEmpty(e.Message))
                     return;
+                base.WebSocket_MessageReceived(sender, e);
+
                 if (e.Message.ToLower().Contains("login"))
                 {
                     //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
@@ -1177,7 +596,7 @@ namespace AndreasReitberger.API.Repetier
 #if DEBUG
                                     Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
-                                    Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+                                    ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
                                     if (!loggedResults.ContainsKey(name))
                                     {
                                         // Log unused json results for further releases
@@ -1193,12 +612,14 @@ namespace AndreasReitberger.API.Repetier
                         }
                     }
                 }
+                /* Done in base method already
                 OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
                     Message = e.Message,
                     SessonId = SessionId,
                 });
+                */
             }
             catch (JsonException jecx)
             {
@@ -1215,220 +636,14 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        [Obsolete]
-        void WebSocket_MessageReceivedOld(object sender, MessageReceivedEventArgs e)
-        {
-            try
-            {
-                if (e.Message == null || string.IsNullOrEmpty(e.Message))
-                    return;
-                if (e.Message.ToLower().Contains("login"))
-                {
-                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(e.Message, JsonSerializerSettings);
-                    //var login = GetObjectFromJson<RepetierLoginResult>(e.Message, JsonSerializerSettings);
-                }
-                if (e.Message.ToLower().Contains("session"))
-                {
-                    //Session = GetObjectFromJson<EventSession>(e.Message, JsonSerializerSettings);
-                    Session = GetObjectFromJson<EventSession>(e.Message);
-                }
-                else if (e.Message.ToLower().Contains("event"))
-                {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(e.Message, JsonSerializerSettings);
-                    if (repetierEvent != null)
-                    {
-                        foreach (RepetierEventData obj in repetierEvent.Data)
-                        {
-                            string jsonString = obj.Data.ToString();
-                            if (obj.EventName == "userCredentials")
-                            {
-                                //EventUserCredentialsData eventUserCredentials = JsonConvert.DeserializeObject<EventUserCredentialsData>(jsonString);
-                                //var login = JsonConvert.DeserializeObject<RepetierLoginResult>(jsonString, JsonSerializerSettings);
-                                RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonString);
-                                if (login != null)
-                                {
-                                    OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
-                                    {
-                                        ResultData = login,
-                                        LoginSucceeded = true,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                                }
-                            }
-                            else if (obj.EventName == "temp")
-                            {
-                                //EventTempData eventTempData = JsonConvert.DeserializeObject<EventTempData>(jsonString, JsonSerializerSettings);
-                                EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonString);
-                                if (eventTempData != null)
-                                    OnTempDataReceived(new RepetierTempDataEventArgs()
-                                    {
-                                        TemperatureData = eventTempData,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-
-                            }
-                            else if (obj.EventName == "jobStarted")
-                            {
-                                //EventJobStartedData eventJobStarted = JsonConvert.DeserializeObject<EventJobStartedData>(jsonString, JsonSerializerSettings);
-                                EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonString);
-                            }
-                            else if (obj.EventName == "jobsChanged")
-                            {
-                                // Gets triggered when a model has been deleted
-                                //EventJobChangedData eventJobsChanged = JsonConvert.DeserializeObject<EventJobChangedData>(jsonString, JsonSerializerSettings);
-                                EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonString);
-                                if (eventJobsChanged != null)
-                                    OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
-                                    {
-                                        Data = eventJobsChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "jobFinished")
-                            {
-                                //EventJobFinishedData eventJobFinished = JsonConvert.DeserializeObject<EventJobFinishedData>(jsonString, JsonSerializerSettings);
-                                EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonString);
-                                if (eventJobFinished != null)
-                                    OnJobFinished(new RepetierJobFinishedEventArgs()
-                                    {
-                                        Job = eventJobFinished,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "messagesChanged")
-                            {
-                                //EventMessageChangedData eventMessageChanged = JsonConvert.DeserializeObject<EventMessageChangedData>(jsonString, JsonSerializerSettings);
-                                EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonString);
-                                if (eventMessageChanged != null)
-                                    OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
-                                    {
-                                        RepetierMessage = eventMessageChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                            }
-                            else if (obj.EventName == "prepareJob")
-                            {
-                                // No information provided in "Data"
-                            }
-                            else if (obj.EventName == "timer30" || obj.EventName == "timer60" || obj.EventName == "timer300")
-                            {
-
-                            }
-                            else if (obj.EventName == "hardwareInfo")
-                            {
-                                //EventHardwareInfoChangedData eventHardwareInfoChanged = JsonConvert.DeserializeObject<EventHardwareInfoChangedData>(jsonString, JsonSerializerSettings);
-                                EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonString);
-                            }
-                            else if (obj.EventName == "wifiChanged")
-                            {
-                                EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonString);
-                            }
-                            else if (obj.EventName == "modelGroupListChanged")
-                            {
-
-                            }
-                            else if (obj.EventName == "modelGroupListChanged")
-                            {
-                                // no data available here
-                            }
-                            else if (obj.EventName == "gcodeInfoUpdated")
-                            {
-                                EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonString);
-                            }
-                            else if (obj.EventName == "dispatcherCount")
-                            {
-
-                            }
-                            else if (obj.EventName == "printerListChanged")
-                            {
-                                // 2
-                            }
-                            else if (obj.EventName == "recoverChanged")
-                            {
-
-                            }
-                            else if (obj.EventName == "state")
-                            {
-
-                            }
-                            else if (obj.EventName == "printqueueChanged")
-                            {
-                                // {"slug": "Prusa_i3_MK3S1"}
-                            }
-                            else if (obj.EventName == "config")
-                            {
-
-                            }
-                            else if (obj.EventName == "log")
-                            {
-
-                            }
-                            else if (obj.EventName == "workerFinished")
-                            {
-
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                    }
-                }
-                OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Message = e.Message,
-                    SessonId = SessionId,
-                });
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = e.Message,
-                    Message = jecx.Message,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                StopPingTimer();
-                OnWebSocketDisconnected(new RepetierEventArgs()
-                {
-                    Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
-                    Printer = GetActivePrinterSlug(),
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Opened(object sender, EventArgs e)
+        new void WebSocket_Opened(object sender, EventArgs e)
         {
             try
             {
                 // Trigger ping to get session id
+                PingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
+                base.WebSocket_Opened(sender, e);
+                /*
                 string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
                 WebSocket?.Send(pingCommand);
 
@@ -1440,6 +655,7 @@ namespace AndreasReitberger.API.Repetier
                     Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
                     Printer = GetActivePrinterSlug(),
                 });
+                */
             }
             catch (Exception exc)
             {
@@ -1447,319 +663,11 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            try
-            {
-                OnWebSocketDataReceived(new RepetierWebsocketEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Data = e.Data,
-                    SessonId = SessionId,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-#endregion
+        #endregion
 
         #region Methods
 
         #region Private
-
-        #region ValidateResult
-
-        bool GetQueryResult(string result, bool emptyResultIsValid = false)
-        {
-            try
-            {
-                if ((string.IsNullOrEmpty(result) || result == "{}") && emptyResultIsValid)
-                    return true;
-                RepetierActionResult actionResult = GetObjectFromJson<RepetierActionResult>(result);
-                return actionResult?.Ok ?? false;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result,
-                    Message = jecx.Message,
-                });
-                return false;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        RepetierApiRequestRespone ValidateRespone(RestResponse respone, Uri targetUri)
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
-            try
-            {
-                if ((
-                    respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
-                    respone.ResponseStatus == ResponseStatus.Completed)
-                {
-                    apiRsponeResult.IsOnline = true;
-                    AuthenticationFailed = false;
-                    apiRsponeResult.Result = respone.Content;
-                    apiRsponeResult.Succeeded = true;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
-                    || respone.StatusCode == HttpStatusCode.Forbidden
-                    || respone.StatusCode == HttpStatusCode.Unauthorized
-                    )
-                {
-                    apiRsponeResult.IsOnline = true;
-                    apiRsponeResult.HasAuthenticationError = true;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else if (respone.StatusCode == HttpStatusCode.Conflict)
-                {
-                    apiRsponeResult.IsOnline = true;
-                    apiRsponeResult.HasAuthenticationError = false;
-                    apiRsponeResult.EventArgs = new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    };
-                }
-                else
-                {
-                    OnRestApiError(new RepetierRestEventArgs()
-                    {
-                        Status = respone.ResponseStatus.ToString(),
-                        Exception = respone.ErrorException,
-                        Message = respone.ErrorMessage,
-                        Uri = targetUri,
-                    });
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-        #endregion
-
-        #region ValidateActivePrinter
-        string GetActivePrinterSlug()
-        {
-            try
-            {
-                if (!IsReady || ActivePrinter == null)
-                {
-                    return string.Empty;
-                }
-                return ActivePrinter.Slug;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return string.Empty;
-            }
-        }
-        bool IsPrinterSlugSelected(string PrinterSlug)
-        {
-            try
-            {
-                return PrinterSlug == GetActivePrinterSlug();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        #endregion
-
-        #region RestApi
-        
-        // New web api: https://prgdoc.repetier-server.com/v1/docs/index.html#/en/web-api/direct?id=gcode
-        async Task<RepetierApiRequestRespone> SendRestApiRequestAsync(
-            RepetierCommandBase commandBase,
-            RepetierCommandFeature commandFeature,
-            string command = "",
-            //string jsonDataString = "",
-            object jsonData = null,
-            string printerName = "",
-            CancellationTokenSource cts = default,
-            string requestTargetUri = "")
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
-            if (!IsOnline) return apiRsponeResult;
-            try
-            {
-                if (string.IsNullOrEmpty(printerName))
-                {
-                    printerName = "";
-                }
-                if (cts == default)
-                {
-                    cts = new(DefaultTimeout);
-                }
-                if (restClient == null)
-                {
-                    UpdateRestClientInstance();
-                }
-                RestRequest request = new(
-                    string.IsNullOrEmpty(requestTargetUri) ?
-                    !string.IsNullOrEmpty(printerName) ? $"{commandBase}/{commandFeature}/{{slug}}" : $"{commandBase}/{commandFeature}" :
-                    requestTargetUri)
-                {
-                    RequestFormat = DataFormat.Json,
-                    Method = Method.Post
-                };
-
-                if (!string.IsNullOrEmpty(printerName))
-                {
-                    request.AddUrlSegment("slug", printerName);
-                }
-                request.AddParameter("a", command, ParameterType.QueryString);
-
-                string jsonDataString = "";
-                if(jsonData is string jsonString)
-                {
-                    jsonDataString = jsonString;
-                }
-                else if(jsonData is object jsonObject)
-                {
-                    jsonDataString = JsonConvert.SerializeObject(jsonObject);
-                }
-                
-                request.AddParameter("data", jsonDataString, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(ApiKey))
-                {
-                    request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    request.AddParameter("sess", SessionId, ParameterType.QueryString);
-                }
-
-                Uri fullUri = restClient.BuildUri(request);
-                try
-                {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateRespone(respone, fullUri);
-                }
-                catch (TaskCanceledException texp)
-                {
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(texp, false));
-                    }
-                    // Throws exception on timeout, not actually an error but indicates if the server is reachable.
-                }
-                catch (HttpRequestException hexp)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(hexp, false));
-                    }
-                }
-                catch (TimeoutException toexp)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                    if (!IsOnline)
-                    {
-                        OnError(new UnhandledExceptionEventArgs(toexp, false));
-                    }
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-
-
-        async Task<RepetierApiRequestRespone> SendOnlineCheckRestApiRequestAsync(
-            RepetierCommandBase commandBase,
-            RepetierCommandFeature commandFeature,
-            CancellationTokenSource cts,
-            string command,
-            string requestTargetUri = ""
-            )
-        {
-            RepetierApiRequestRespone apiRsponeResult = new() { IsOnline = false };
-            try
-            {
-                if (restClient == null)
-                {
-                    UpdateRestClientInstance();
-                }
-                RestRequest request = new(
-                    string.IsNullOrEmpty(requestTargetUri) ?
-                    $"{commandBase}/{commandFeature}" :
-                    requestTargetUri)
-                {
-                    RequestFormat = DataFormat.Json,
-                    Method = Method.Post
-                };
-                _ = request.AddParameter("a", command, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(ApiKey))
-                {
-                    _ = request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    _ = request.AddParameter("sess", SessionId, ParameterType.QueryString);
-                }
-
-                Uri fullUri = restClient.BuildUri(request);
-                try
-                {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateRespone(respone, fullUri);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-                catch (HttpRequestException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-                catch (TimeoutException)
-                {
-                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
-                }
-
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            return apiRsponeResult;
-        }
-
-        #endregion
 
         #region Download
         public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000)
@@ -1878,24 +786,24 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (newState == null) return;
 
-                ActiveExtruder = newState.ActiveExtruder;
-                NumberOfExtruders = newState.NumExtruder;
+                ActiveToolHead = newState.ActiveExtruder;
+                NumberOfToolHeads = newState.NumExtruder;
 
-                Extruders = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.Extruder);
-                IsDualExtruder = Extruders != null && Extruders.Count > 1;
+                Toolheads = new ObservableCollection<IHeaterComponent>(newState.Extruder);
+                IsMultiExtruder = Toolheads?.Count > 1;
 
-                HeatedBeds = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedBeds);
-                HasHeatedBed = HeatedBeds != null && HeatedBeds.Count > 0;
+                HeatedBeds = new ObservableCollection<IHeaterComponent>(newState.HeatedBeds);
+                HasHeatedBed = HeatedBeds?.Count > 0;
 
-                HeatedChambers = new ObservableCollection<RepetierPrinterHeaterComponent>(newState.HeatedChambers);
-                HasHeatedBed = HeatedChambers != null && HeatedChambers.Count > 0;
+                HeatedChambers = new ObservableCollection<IHeaterComponent>(newState.HeatedChambers);
+                HasHeatedBed = HeatedChambers?.Count > 0;
 
-                Fans = new ObservableCollection<RepetierPrinterFan>(newState.Fans);
-                HasFan = Fans != null && Fans.Count > 0;
+                Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
+                HasFan = Fans?.Count > 0;
 
-                CurX = newState.X;
-                CurY = newState.Y;
-                CurZ = newState.Z;
+                X = newState.X;
+                Y = newState.Y;
+                Z = newState.Z;
 
                 XHomed = newState.HasXHome;
                 YHomed = newState.HasYHome;
@@ -1916,7 +824,7 @@ namespace AndreasReitberger.API.Repetier
                 if (newConfig == null) return;
                 if (newConfig.Webcams != null)
                 {
-                    WebCams = new ObservableCollection<RepetierPrinterConfigWebcam>(newConfig.Webcams);
+                    WebCams = new ObservableCollection<IWebCamConfig>(newConfig.Webcams);
                     HasWebCam = WebCams != null && WebCams.Count > 0;
                     if (HasWebCam)
                         SelectedWebCam = WebCams[0];
@@ -1956,17 +864,27 @@ namespace AndreasReitberger.API.Repetier
         #region Models
         async Task<RepetierModelList> GetModelListInfoResponeAsync(string printerName)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "listModels",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
                    command: "listModels",
                    printerName: printerName)
                     .ConfigureAwait(false);
-
-                RepetierModelList list = GetObjectFromJson<RepetierModelList>(result.Result);
+                */
+                RepetierModelList list = GetObjectFromJson<RepetierModelList>(result?.Result);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -1976,7 +894,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierModelList),
                     Message = jecx.Message,
                 });
@@ -1988,38 +906,48 @@ namespace AndreasReitberger.API.Repetier
                 return new RepetierModelList();
             }
         }
-#endregion
+        #endregion
 
         #region ModelGroups
-        async Task<RepetierModelGroup> GetModelGroupsAsync(string printerName)
+        async Task<RepetierModelGroups> GetModelGroupsAsync(string printerName)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "listModelGroups",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
                    command: "listModelGroups",
                    printerName: printerName)
                     .ConfigureAwait(false);
-
-                return GetObjectFromJson<RepetierModelGroup>(result.Result);
+                */
+                return GetObjectFromJson<RepetierModelGroups>(result.Result);
             }
             catch (JsonException jecx)
             {
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
-                    TargetType = nameof(RepetierModelGroup),
+                    OriginalString = result?.Result,
+                    TargetType = nameof(RepetierModelGroups),
                     Message = jecx.Message,
                 });
-                return new RepetierModelGroup();
+                return new RepetierModelGroups();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelGroup();
+                return new RepetierModelGroups();
             }
         }
 
@@ -2028,25 +956,35 @@ namespace AndreasReitberger.API.Repetier
         #region Jobs
         async Task<RepetierJobListRespone> GetJobListResponeAsync(string printerName)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             RepetierJobListRespone resultObject = null; //new();
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "listJobs",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
                    command: "listJobs",
                    printerName: printerName)
                     .ConfigureAwait(false);
-
-                return GetObjectFromJson<RepetierJobListRespone>(result.Result);
+                */
+                return GetObjectFromJson<RepetierJobListRespone>(result?.Result);
             }
             catch (JsonException jecx)
             {
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierJobListRespone),
                     Message = jecx.Message,
                 });
@@ -2063,9 +1001,19 @@ namespace AndreasReitberger.API.Repetier
         #region WebCallActions
         async Task<RepetierWebCallList> GetWebCallListAsync(string printerName)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "webCallsList",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
@@ -2073,15 +1021,15 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName
                    )
                     .ConfigureAwait(false);
-
-                return GetObjectFromJson<RepetierWebCallList>(result.Result);
+                */
+                return GetObjectFromJson<RepetierWebCallList>(result?.Result);
             }
             catch (JsonException jecx)
             {
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierWebCallList),
                     Message = jecx.Message,
                 });
@@ -2096,26 +1044,23 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Proxy
-        Uri GetProxyUri()
-        {
-            return ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
-        }
-
+        Uri GetProxyUri() => ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
+        
         WebProxy GetCurrentProxy()
         {
             WebProxy proxy = new()
             {
                 Address = GetProxyUri(),
                 BypassProxyOnLocal = false,
-                UseDefaultCredentials = ProxyUseDefaultCredentials,
+                UseDefaultCredentials = ProxyUserUsesDefaultCredentials,
             };
-            if (ProxyUseDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
+            if (ProxyUserUsesDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
             {
                 proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
             }
             else
             {
-                proxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
+                proxy.UseDefaultCredentials = ProxyUserUsesDefaultCredentials;
             }
             return proxy;
         }
@@ -2190,10 +1135,10 @@ namespace AndreasReitberger.API.Repetier
         #region Public
 
         #region Proxy
-        public void SetProxy(bool secure, string address, int port, bool enable = true)
+        public void SetProxyOld(bool secure, string address, int port, bool enable = true)
         {
             EnableProxy = enable;
-            ProxyUseDefaultCredentials = true;
+            ProxyUserUsesDefaultCredentials = true;
             ProxyAddress = address;
             ProxyPort = port;
             ProxyUser = string.Empty;
@@ -2201,10 +1146,11 @@ namespace AndreasReitberger.API.Repetier
             SecureProxyConnection = secure;
             UpdateRestClientInstance();
         }
-        public void SetProxy(bool secure, string address, int port, string user = "", SecureString password = null, bool enable = true)
+        
+        public void SetProxOldy(bool secure, string address, int port, string user = "", SecureString password = null, bool enable = true)
         {
             EnableProxy = enable;
-            ProxyUseDefaultCredentials = false;
+            ProxyUserUsesDefaultCredentials = false;
             ProxyAddress = address;
             ProxyPort = port;
             ProxyUser = user;
@@ -2319,7 +1265,7 @@ namespace AndreasReitberger.API.Repetier
             IsListening = false;
         }
 #endif
-        public async Task RefreshAllAsync(RepetierImageType imageType = RepetierImageType.Thumbnail)
+        public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             try
             {
@@ -2408,8 +1354,20 @@ namespace AndreasReitberger.API.Repetier
             if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
             //_ = await SendRestApiRequestAsync("", "logout").ConfigureAwait(false);
+
+            string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+            _ = await SendRestApiRequestAsync(
+               requestTargetUri: targetUri,
+               method: Method.Post,
+               command: "logout",
+               jsonObject: null,
+               authHeaders: AuthHeaders
+               )
+            .ConfigureAwait(false);
+            /*
             _ = await SendRestApiRequestAsync(RepetierCommandBase.printer, RepetierCommandFeature.api, command: "logout")
                 .ConfigureAwait(false);
+            */
         }
 
         public void Logout()
@@ -2470,7 +1428,7 @@ namespace AndreasReitberger.API.Repetier
                 else
                 {
                     // If no index is provided, or it's out of bound, the first online printer is used
-                    ActivePrinter = Printers.FirstOrDefault(printer => printer.Online == 1);
+                    ActivePrinter = Printers.FirstOrDefault(printer => printer.IsOnline);
                     // If no online printers is found, however there is at least one printer configured, use this one
                     if (ActivePrinter == null && Printers.Count > 0)
                     {
@@ -2489,7 +1447,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (refreshPrinterList)
                     await RefreshPrinterListAsync().ConfigureAwait(false);
-                RepetierPrinter printer = Printers.FirstOrDefault(prt => prt.Slug == slug);
+                IPrinter3d printer = Printers.FirstOrDefault(prt => prt.Slug == slug);
                 if (printer != null)
                     ActivePrinter = printer;
             }
@@ -2543,18 +1501,6 @@ namespace AndreasReitberger.API.Repetier
 
                 await RefreshPrinterConfigAsync();
                 return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
-                /*
-                RepetierPrinterConfigWebcam webcamConfig = WebCams?.FirstOrDefault(config => config.Pos == camIndex);
-                if(webcamConfig != null)
-                {
-                    Uri webcamUri = type == RepetierWebcamType.Dynamic ? webcamConfig.DynamicUrl : webcamConfig.StaticUrl;
-                    return $"{FullWebAddress}/printer/camjpg/{currentPrinter}?cam={camIndex}&apikey={API}";
-                }
-                else
-                {
-                    return $"{FullWebAddress}/printer/cammjpg/{currentPrinter}?cam={camIndex}&apikey={API}";
-                }
-                */
             }
             catch (Exception exc)
             {
@@ -2562,7 +1508,7 @@ namespace AndreasReitberger.API.Repetier
                 return "";
             }
         }
-        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
+        public async Task<IWebCamConfig> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
         {
             try
             {
@@ -2574,7 +1520,7 @@ namespace AndreasReitberger.API.Repetier
                     await RefreshPrinterConfigAsync();
                 }
                 
-                return WebCams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+                return WebCams?.FirstOrDefault(webCam => webCam.Position == camIndex);
             }
             catch (Exception exc)
             {
@@ -2582,12 +1528,12 @@ namespace AndreasReitberger.API.Repetier
                 return null;
             }
         }
-        public async Task<RepetierPrinterConfigWebcam> GetWebCamConfigAsync(string slug, int camIndex = 0)
+        public async Task<IWebCamConfig> GetWebCamConfigAsync(string slug, int camIndex = 0)
         {
             try
             {
                 RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);             
-                return config?.Webcams?.FirstOrDefault(webCam => webCam.Pos == camIndex);
+                return config?.Webcams?.FirstOrDefault(webCam => webCam.Position == camIndex);
             }
             catch (Exception exc)
             {
@@ -2609,7 +1555,16 @@ namespace AndreasReitberger.API.Repetier
                 {
                     // Send an empty command to check the respone
                     string pingCommand = "{}";
-
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Ping}/{GetActivePrinterSlug()}";
+                    IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                           requestTargetUri: targetUri,
+                           method: Method.Post,
+                           command: pingCommand,
+                           jsonObject: null,
+                           authHeaders: AuthHeaders
+                           )
+                        .ConfigureAwait(false);
+                    /*
                     RepetierApiRequestRespone respone = await SendRestApiRequestAsync(
                        commandBase: RepetierCommandBase.printer,
                        commandFeature: RepetierCommandFeature.ping,
@@ -2617,9 +1572,10 @@ namespace AndreasReitberger.API.Repetier
                        cts: new(timeout)
                        )
                     .ConfigureAwait(false);
-                    if (respone != null)
+                    */
+                    if (result != null)
                     {
-                        isReachable = respone.IsOnline;
+                        isReachable = result.IsOnline;
                     }
                 }
             }
@@ -2649,13 +1605,13 @@ namespace AndreasReitberger.API.Repetier
                 try
                 {
                     // Send a blank api request in order to check if the server is reachable
-                    RepetierApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(
-                       commandBase: RepetierCommandBase.printer,
-                       commandFeature: RepetierCommandFeature.ping,
-                       cts: cts,
-                       command: "{}")
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";                  
+                    IRestApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       command: "{}",
+                       authHeaders: AuthHeaders,
+                       cts: cts)
                     .ConfigureAwait(false);
-
                     isReachable = respone?.IsOnline == true;
                 }
                 catch (InvalidOperationException iexc)
@@ -2700,19 +1656,30 @@ namespace AndreasReitberger.API.Repetier
                 {
                     // Send an empty command to check the respone
                     string pingCommand = "{}";
+                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                    var respone = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "ping",
+                       jsonObject: pingCommand,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                    /*
                     var respone = await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api, command: "ping", jsonData: pingCommand,
                         cts: new(timeout))
                         .ConfigureAwait(false);
+                    */
                     if (respone.HasAuthenticationError)
                     {
                         AuthenticationFailed = true;
-                        OnRestApiAuthenticationError(respone.EventArgs);
+                        OnRestApiAuthenticationError(respone.EventArgs as RestEventArgs);
                     }
                     else
                     {
                         AuthenticationFailed = false;
-                        OnRestApiAuthenticationSucceeded(respone.EventArgs);
+                        OnRestApiAuthenticationSucceeded(respone.EventArgs as RestEventArgs);
                     }
                     return AuthenticationFailed;
                 }
@@ -2724,11 +1691,6 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return false;
             }
-        }
-
-        Task SendRestApiRequestAsync(string v1, string v2, string pingCommand, int timeout)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task CheckServerIfApiIsValidAsync(int timeout = 10000)
@@ -2758,11 +1720,22 @@ namespace AndreasReitberger.API.Repetier
         #region Updates
         public async Task CheckForServerUpdateAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "checkForUpdates",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "checkForUpdates").ConfigureAwait(false);
+                */
                 if (result != null)
                 {
                     if (GetQueryResult(result.Result))
@@ -2781,7 +1754,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
             }
@@ -2793,12 +1766,23 @@ namespace AndreasReitberger.API.Repetier
         }
         public async Task AutoUpdateAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "autoupdate",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "autoupdate")
                     .ConfigureAwait(false);
+                */
                 if (result != null)
                 {
                     if (GetQueryResult(result.Result))
@@ -2817,7 +1801,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
             }
@@ -2828,13 +1812,24 @@ namespace AndreasReitberger.API.Repetier
         }
         public async Task<RepetierAvailableUpdateInfo> GetAvailableServerUpdateAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             RepetierAvailableUpdateInfo resultObject = new();
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "updateAvailable",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "updateAvailable")
                     .ConfigureAwait(false);
+                */
                 return GetObjectFromJson<RepetierAvailableUpdateInfo>(result.Result);
             }
             catch (JsonException jecx)
@@ -2842,7 +1837,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -2860,12 +1855,23 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task<RepetierLicenseInfo> GetLicenseDataAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "getLicenceData",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "getLicenceData")
                     .ConfigureAwait(false);
+                */
                 if (result != null)
                 {
                     return GetObjectFromJson<RepetierLicenseInfo>(result.Result);
@@ -2878,7 +1884,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return null;
@@ -2960,13 +1966,12 @@ namespace AndreasReitberger.API.Repetier
                 {
                     if (group != "#")
                     {
-                        ObservableCollection<RepetierModel> res = await GetModelsAsync(printerName).ConfigureAwait(false);
-                        List<RepetierModel> list = new(res);
+                        ObservableCollection<IGcode> res = await GetModelsAsync(printerName).ConfigureAwait(false);
+                        List<IGcode> list = new(res);
 
                         string fileName = info.Name.Replace(Path.GetExtension(filePath), string.Empty);
-                        RepetierModel model = list.FirstOrDefault(m => m.Name == fileName);
-
-                        bool result = await MoveModelToGroupAsync(printerName, group, model.Id).ConfigureAwait(false);
+                        IGcode model = list.FirstOrDefault(m => m.FileName == fileName);
+                        bool result = await MoveModelToGroupAsync(printerName, group, model.Identifier).ConfigureAwait(false);
                     }
                     return RepetierErrorCodes.SUCCESS;
                 }
@@ -2983,14 +1988,14 @@ namespace AndreasReitberger.API.Repetier
 
         #region Models
 
-        public async Task<ObservableCollection<RepetierModel>> GetModelsAsync(
+        public async Task<ObservableCollection<IGcode>> GetModelsAsync(
             string PrinterName = "",
-            RepetierImageType ImageType = RepetierImageType.Thumbnail,
+            GcodeImageType ImageType = GcodeImageType.Thumbnail,
             IProgress<int> Prog = null)
         {
             try
             {
-                ObservableCollection<RepetierModel> modelDatas = new();
+                ObservableCollection<IGcode> modelDatas = new();
                 if (!IsReady)
                     return modelDatas;
 
@@ -3008,40 +2013,34 @@ namespace AndreasReitberger.API.Repetier
                     List<RepetierModel> modelList = models.Data;
                     if (modelList != null)
                     {
-                        ObservableCollection<RepetierModel> Models = new(modelList);
-                        if (ImageType != RepetierImageType.None)
+                        ObservableCollection<IGcode> Models = new(modelList);
+                        if (ImageType != GcodeImageType.None)
                         {
                             int total = Models.Count;
                             for (int i = 0; i < total; i++)
                             {
-                                RepetierModel model = Models[i];
-                                //model.IsLoadingImage = true;
+                                IGcode model = Models[i];
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
                                 // Load image depending on settings
                                 switch (ImageType)
                                 {
                                     // Blocks thread, however async download leads to bad requestes
-                                    case RepetierImageType.Thumbnail:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                        //model.Thumbnail = GetDynamicRenderImageAsync(model.Id, true).Result;
+                                    case GcodeImageType.Thumbnail:
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
                                         break;
-                                    case RepetierImageType.Image:
-                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                                        //model.Image = GetDynamicRenderImageAsync(model.Id, false).Result;
+                                    case GcodeImageType.Image:
+                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                                         break;
                                     default:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
-                                        //model.Thumbnail = GetDynamicRenderImageAsync(model.Id, true).Result;
-                                        model.Image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
-                                        //model.Image = GetDynamicRenderImageAsync(model.Id, false).Result;
+                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
+                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                                         break;
                                 }
 
                                 if (Prog != null)
                                 {
                                     float progress = ((float)i / total) * 100f;
-                                    //int progressInt = Convert.ToInt32(progress);
                                     if (i < total - 1)
                                     {
                                         Prog.Report(Convert.ToInt32(progress));
@@ -3061,8 +2060,7 @@ namespace AndreasReitberger.API.Repetier
                     }
                 }
 
-                if (Prog != null)
-                    Prog.Report(100);
+                Prog?.Report(100);
 
                 return modelDatas;
             }
@@ -3072,7 +2070,7 @@ namespace AndreasReitberger.API.Repetier
                     Prog.Report(100);
 
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<RepetierModel>();
+                return new ObservableCollection<IGcode>();
             }
         }
         public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<RepetierModel> models, RepetierImageType imageType = RepetierImageType.Thumbnail)
@@ -3083,8 +2081,6 @@ namespace AndreasReitberger.API.Repetier
             Dictionary<long, byte[]> result = new();
             try
             {
-
-                //foreach (RepetierModel model in Models)
                 for (int i = 0; i < models.Count; i++)
                 {
                     RepetierModel model = models[i];
@@ -3092,16 +2088,16 @@ namespace AndreasReitberger.API.Repetier
                     switch (imageType)
                     {
                         case RepetierImageType.Thumbnail:
-                            image = await GetDynamicRenderImageAsync(model.Id, true).ConfigureAwait(false);
+                            image = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
                             break;
                         case RepetierImageType.Image:
-                            image = await GetDynamicRenderImageAsync(model.Id, false).ConfigureAwait(false);
+                            image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                             break;
                         default:
                             throw new NotSupportedException($"The image type '{imageType}' is not supported here.");
                             //break;
                     }
-                    result.Add(model.Id, image);
+                    result.Add(model.Identifier, image);
                 }
                 return result;
             }
@@ -3118,10 +2114,21 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "removeModel",
+                       jsonObject: new { id = model.Id },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "removeModel", jsonData: string.Format("{{\"id\":{0}}}", model.Id), printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3131,25 +2138,25 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task RefreshModelsAsync(RepetierImageType imageType = RepetierImageType.Thumbnail, IProgress<int> prog = null)
+        public async Task RefreshModelsAsync(GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int> prog = null)
         {
             try
             {
-                ObservableCollection<RepetierModel> modelDatas = new();
+                ObservableCollection<IGcode> modelDatas = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    Models = modelDatas;
+                    Files = modelDatas;
                     return;
                 }
-                Models = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
+                Files = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Models = new ObservableCollection<RepetierModel>();
+                Files = new ObservableCollection<IGcode>();
             }
         }
-        public async Task<bool> CopyModelToPrintQueueAsync(RepetierModel model, bool startPrintIfPossible = true)
+        public async Task<bool> CopyModelToPrintQueueAsync(IGcode model, bool startPrintIfPossible = true)
         {
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter))
@@ -3159,12 +2166,23 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "removeModel",
+                       jsonObject: new { id = model.Identifier, autostart = (startPrintIfPossible ? "true" : "false")},
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "copyModel", jsonData: $"{{\"id\":{model.Id}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}",
+                        command: "copyModel", jsonData: $"{{\"id\":{model.Identifier}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}",
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 await RefreshJobListAsync().ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
             }
@@ -3177,21 +2195,24 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task UpdateFreeSpaceAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "freeSpace")
-                    .ConfigureAwait(false);
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "freeSpace",
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
 
                 RepetierFreeSpaceRespone space = GetObjectFromJson<RepetierFreeSpaceRespone>(result.Result);
                 if (space != null)
                 {
                     FreeDiskSpace = space.Free;
                     TotalDiskSpace = space.Capacity;
-                    AvailableDiskSpace = space.Available;
+                    UsedDiskSpace = TotalDiskSpace - space.Available;
                 }
             }
             catch (JsonException jecx)
@@ -3199,7 +2220,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierFreeSpaceRespone),
                     Message = jecx.Message,
                 });
@@ -3224,12 +2245,27 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                object data = new
+                {
+                    groupName = groupName,
+                };
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "addModelGroup",
+                   jsonObject: data,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3242,12 +2278,27 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                object data = new
+                {
+                    groupName = groupName,
+                };
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "addModelGroup",
+                   jsonObject: data,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
                         printerName: printerName)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3264,12 +2315,27 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                object data = new
+                {
+                    groupName = groupName,
+                };
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "delModelGroup",
+                   jsonObject: data,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3282,12 +2348,27 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                object data = new
+                {
+                    groupName = groupName,
+                };
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "delModelGroup",
+                   jsonObject: data,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
                         printerName: printerName)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3304,6 +2385,21 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                object data = new
+                {
+                    groupName = groupName,
+                    id = id,
+                };
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "moveModelFileToGroup",
+                   jsonObject: data,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3311,6 +2407,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: currentPrinter
                         )
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3323,6 +2420,16 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                        command: "removeModel",
+                       jsonObject: new { groupName = groupName, id = id },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
@@ -3330,6 +2437,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: printerName
                         )
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -3339,36 +2447,46 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<ObservableCollection<string>> GetModelGroupsAsync()
+        public async Task<ObservableCollection<IGcodeGroup>> GetModelGroupsAsync()
         {
-            RepetierApiRequestRespone result = new();
-            ObservableCollection<string> resultObject = new();
+            IRestApiRequestRespone result = null;
+            ObservableCollection<IGcodeGroup> resultObject = new();
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "listModelGroups",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api, 
                    command: "listModelGroups", 
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
-
-                RepetierModelGroup info = GetObjectFromJson<RepetierModelGroup>(result.Result);
-                return info != null && info.GroupNames != null ? new ObservableCollection<string>(info.GroupNames) : resultObject;
+                */
+                RepetierModelGroups info = GetObjectFromJson<RepetierModelGroups>(result.Result);
+                return info != null && info.GroupNames != null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g})) : resultObject;
             }
             catch (JsonException jecx)
             {
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(String),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<string>();
+                return new ObservableCollection<IGcodeGroup>();
             }
             catch (Exception exc)
             {
@@ -3380,36 +2498,36 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<string> groups = new();
+                ObservableCollection<IGcodeGroup> groups = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    ModelGroups = groups;
+                    Groups = groups;
                     return;
                 }
 
                 string currentPrinter = ActivePrinter.Slug;
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
-                RepetierModelGroup result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
+                RepetierModelGroups result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
                 if (result != null)
                 {
-                    ModelGroups = new ObservableCollection<string>(result.GroupNames);
+                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames?.Select(g => new RepetierModelGroup() { Name = g }));
                 }
-                else ModelGroups = groups;
+                else Groups = groups;
 
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ModelGroups = new ObservableCollection<string>();
+                Groups = new ObservableCollection<IGcodeGroup>();
             }
         }
         #endregion
 
         #region Jobs
-        public async Task<ObservableCollection<RepetierJobListItem>> GetJobListAsync()
+        public async Task<ObservableCollection<IPrint3dJob>> GetJobListAsync()
         {
-            ObservableCollection<RepetierJobListItem> resultObject = new();
+            ObservableCollection<IPrint3dJob> resultObject = new();
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -3418,7 +2536,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 RepetierJobListRespone info = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
                 if (info != null && info.Data != null)
-                    return new ObservableCollection<RepetierJobListItem>(info.Data);
+                    return new ObservableCollection<IPrint3dJob>(info.Data);
                 else
                     return resultObject;
             }
@@ -3432,10 +2550,10 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierJobListItem> jobList = new();
+                ObservableCollection<IPrint3dJob> jobList = new();
                 if (!IsReady || ActivePrinter == null)
                 {
-                    JobList = jobList;
+                    Jobs = jobList;
                     return;
                 }
 
@@ -3443,13 +2561,13 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierJobListRespone result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
-                JobList = result != null ? new(result.Data) : jobList;
+                Jobs = result != null ? new(result.Data) : jobList;
 
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                JobList = new();
+                Jobs = new();
             }
         }
 
@@ -3462,13 +2580,57 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "startJob",
+                       jsonObject: new { id = id },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "startJob", jsonData: string.Format("{{\"id\":{0}}}", id),
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
+                return GetQueryResult(result.Result, true);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
+        }
+        public async Task<bool> StartJobAsync(string id)
+        {
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter))
+                {
+                    return false;
+                }
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "startJob",
+                       jsonObject: new { id = id },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
+                RepetierApiRequestRespone result =
+                    await SendRestApiRequestAsync(
+                        RepetierCommandBase.printer, RepetierCommandFeature.api,
+                        command: "startJob", jsonData: string.Format("{{\"id\":{0}}}", id),
+                        printerName: currentPrinter)
+                    .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
@@ -3478,16 +2640,10 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<bool> StartJobAsync(RepetierModel model)
-        {
-            return await StartJobAsync(model.Id).ConfigureAwait(false);
-        }
-
-        public async Task<bool> StartJobAsync(RepetierJobListItem jobItem)
-        {
-            return await StartJobAsync(jobItem.Id).ConfigureAwait(false);
-        }
-
+        public Task<bool> StartJobAsync(IGcode model) => StartJobAsync(model.Identifier);   
+        public Task<bool> StartJobAsync(RepetierJobListItem jobItem) => StartJobAsync(jobItem.Identifier);
+        public Task<bool> StartJobAsync(IPrint3dJob jobItem) => StartJobAsync(jobItem.JobId);
+        
         public async Task<bool> RemoveJobAsync(long jobId)
         {
             try
@@ -3497,13 +2653,23 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "removeJob",
+                       jsonObject: new { id = jobId },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "removeJob", jsonData: string.Format("{{\"id\":{0}}}", jobId),
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 await RefreshJobListAsync().ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -3513,15 +2679,45 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public async Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job)
+        public async Task<bool> RemoveJobAsync(string jobId)
         {
-            return await RemoveJobAsync(job.Jobid).ConfigureAwait(false);
+            try
+            {
+                string currentPrinter = GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(currentPrinter))
+                {
+                    return false;
+                }
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "removeJob",
+                       jsonObject: new { id = jobId },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
+                RepetierApiRequestRespone result =
+                    await SendRestApiRequestAsync(
+                        RepetierCommandBase.printer, RepetierCommandFeature.api,
+                        command: "removeJob", jsonData: string.Format("{{\"id\":{0}}}", jobId),
+                        printerName: currentPrinter)
+                    .ConfigureAwait(false);
+                */
+                await RefreshJobListAsync().ConfigureAwait(false);
+                return GetQueryResult(result.Result);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
         }
-        public async Task<bool> RemoveJobAsync(RepetierJobListItem job)
-        {
-            return await RemoveJobAsync(job.Id).ConfigureAwait(false);
-        }
-
+        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.Jobid);
+        public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
+        public Task<bool> RemoveJobAsync(IPrint3dJob job) => RemoveJobAsync(job.JobId);
+        
         public async Task<bool> ContinueJobAsync(string printerName = "")
         {
             try
@@ -3535,11 +2731,22 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "continueJob",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(RepetierCommandBase.printer, RepetierCommandFeature.api, command: "continueJob", printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result, true);
+                
             }
             catch (Exception exc)
             {
@@ -3576,12 +2783,22 @@ namespace AndreasReitberger.API.Repetier
                     return false;
                 }
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "stopJob",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "stopJob", printerName: currentPrinter)
                     .ConfigureAwait(false);
-
+                */
                 await RefreshJobListAsync().ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
             }
@@ -3601,13 +2818,23 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return false;
                 }
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setShutdownAfterPrint",
+                       jsonObject: new { shutdown = shutdown ? "true" : "false"},
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result =
                     await SendRestApiRequestAsync(
                         RepetierCommandBase.printer, RepetierCommandFeature.api,
                         command: "setShutdownAfterPrint", jsonData: $"{{\"shutdown\":{(shutdown ? "true" : "false")}}}",
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
@@ -3619,60 +2846,9 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region PrinterState
-        [Obsolete("Switch to `GetStatesAsync`instead.")]
-        public async Task<RepetierPrinterStateRespone> GetStateObjectAsync(string printerName = "")
-        {
-            RepetierApiRequestRespone result;
-            string resultString = string.Empty;
-            RepetierPrinterStateRespone resultObject = null;
-
-            string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
-            if (string.IsNullOrEmpty(currentPrinter))
-            {
-                return resultObject;
-            }
-
-            try
-            {
-                if (!IsReady)
-                {
-                    return new RepetierPrinterStateRespone();
-                }
-
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "stateList", printerName: currentPrinter)
-                    .ConfigureAwait(false);
-
-                currentPrinter = currentPrinter.Replace(" ", "_");
-                resultString = result.Result.Replace(currentPrinter, "Printer");
-
-                RepetierPrinterStateRespone state = GetObjectFromJson<RepetierPrinterStateRespone>(result.Result);
-                if (state != null && IsPrinterSlugSelected(currentPrinter))
-                {
-                    State = state.Printer;
-                }
-                return state;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new RepetierJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = resultString,
-                    Message = jecx.Message,
-                });
-                return new RepetierPrinterStateRespone();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierPrinterStateRespone();
-            }
-        }
         public async Task<Dictionary<string, RepetierPrinterState>> GetStatesAsync(string printerName = "")
         {
-            RepetierApiRequestRespone result;
+            IRestApiRequestRespone result = null;
             string resultString = string.Empty;
             Dictionary<string, RepetierPrinterState> resultObject = new();
 
@@ -3688,20 +2864,25 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return new Dictionary<string, RepetierPrinterState>();
                 }
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "stateList",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "stateList", printerName: currentPrinter)
                     .ConfigureAwait(false);
-
-                //currentPrinter = currentPrinter.Replace(" ", "_");
-                //resultString = result.Result.Replace(currentPrinter, "Printer");
-
+                */
                 Dictionary<string, RepetierPrinterState> state = GetObjectFromJson<Dictionary<string, RepetierPrinterState>>(result.Result);
                 if (state != null && IsPrinterSlugSelected(currentPrinter))
                 {
-                    //State = state.Printer;
-                    State = state.FirstOrDefault().Value;
+                    State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
                 }
                 return state;
             }
@@ -3746,41 +2927,46 @@ namespace AndreasReitberger.API.Repetier
             Dictionary<string, RepetierPrinterState> states = await GetStatesAsync().ConfigureAwait(false);
             return states?.FirstOrDefault(keypair => keypair.Key == printerName).Value;
         }
-        [Obsolete("Use `GetStateForPrinterAsync` instead")]
-        public async Task<RepetierPrinterStateRespone> GetStateObjectForPrinterAsync(string printerName)
-        {
-            return await GetStateObjectAsync(printerName).ConfigureAwait(false);
-        }
-
 
         #endregion
 
         #region Printers
-        public async Task<ObservableCollection<RepetierPrinter>> GetPrintersAsync()
+        public async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
-                ObservableCollection<RepetierPrinter> repetierPrinterList = new();
+                ObservableCollection<IPrinter3d> repetierPrinterList = new();
                 if (!IsReady)
                     return repetierPrinterList;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.List}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer,
                     RepetierCommandFeature.list)
                     .ConfigureAwait(false);
-
+                */
                 RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
                 if (respone != null)
                 {                   
-                    repetierPrinterList = new ObservableCollection<RepetierPrinter>(respone.Printers);
-                    foreach (RepetierPrinter printer in repetierPrinterList)
+                    repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
+                    foreach (RepetierPrinter printer in repetierPrinterList.Cast<RepetierPrinter>())
                     {
                         if (printer?.JobId > 0)
                         {
-                            RepetierPrinter prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                            IPrinter3d prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                            if (prevPrinter is null) continue;
                             // Avoid unnecessary calls if the image or the job hasn't changed
-                            if (prevPrinter?.JobId != printer.JobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                            if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
                             {
                                 printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
                             }
@@ -3801,30 +2987,30 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierPrinter),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<RepetierPrinter>();
+                return new ObservableCollection<IPrinter3d>();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<RepetierPrinter>();
+                return new ObservableCollection<IPrinter3d>();
             }
         }
         public async Task RefreshPrinterListAsync()
         {
             try
             {
-                ObservableCollection<RepetierPrinter> printers = new();
+                ObservableCollection<IPrinter3d> printers = new();
                 if (!IsReady)
                 {
                     Printers = printers;
                     return;
                 }
 
-                ObservableCollection<RepetierPrinter> result = await GetPrintersAsync().ConfigureAwait(false);
+                ObservableCollection<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
                 if (result != null)
                 {
                     Printers = result;
@@ -3837,7 +3023,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Printers = new ObservableCollection<RepetierPrinter>();
+                Printers = new ObservableCollection<IPrinter3d>();
             }
         }
         #endregion
@@ -3872,13 +3058,23 @@ namespace AndreasReitberger.API.Repetier
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "listPrinter",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "listPrinter", printerName: currentPrinter)
                     .ConfigureAwait(false);
-
+                */
                 RepetierCurrentPrintInfo[] info = GetObjectFromJson<RepetierCurrentPrintInfo[]>(result.Result);
                 if (info != null)
                 {
@@ -3891,7 +3087,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -3951,15 +3147,25 @@ namespace AndreasReitberger.API.Repetier
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "getPrinterConfig",
+                       jsonObject: new { printer = currentPrinter},
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "getPrinterConfig", jsonData: string.Format("{{\"printer\": \"{0}\"}}", currentPrinter),
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
-
+                */
                 RepetierPrinterConfig config = GetObjectFromJson<RepetierPrinterConfig>(result.Result);
                 if (config != null)
                 {
@@ -3972,7 +3178,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4007,14 +3213,25 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
 
-            RepetierApiRequestRespone result;
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setPrinterConfig",
+                       jsonObject: newConfig,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setPrinterConfig", jsonData: newConfig,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result?.Result, true);
             }
             catch (Exception exc)
@@ -4046,24 +3263,27 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Movement
-        public async Task HomeAxesAsync(bool x, bool y, bool z)
+        public async Task<bool> HomeAsync(bool x, bool y, bool z)
         {
             try
             {
+                bool result;
                 if (x && y && z)
                 {
-                    _ = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
+                    result = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
                 }
                 else
                 {
                     string cmd = string.Format("G28{0}{1}{2}", x ? " X0 " : "", y ? " Y0 " : "", z ? " Z0 " : "");
-                    _ = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                    result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
                 }
+                return result;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
+            return false;
         }
 
         public async Task MoveAxesAsync(
@@ -4097,11 +3317,22 @@ namespace AndreasReitberger.API.Repetier
                     (double.IsInfinity(e) ? "" : $",\"e\":{e}") +
                     $"}}";
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "move",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "move", jsonData: data,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
             }
             catch (Exception exc)
             {
@@ -4120,13 +3351,27 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetExtruderTemperatureAsync("setExtruderTemperature", new { temperature, extruder }, targetUri).ConfigureAwait(false);
+                /*
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setExtruderTemperature",
+                       jsonObject: new { temperature, extruder },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                */
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setExtruderTemperature",
                     jsonData: string.Format("{{\"temperature\":{0}, \"extruder\":{1}}}", temperature, extruder),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                return GetQueryResult(result.Result, true);
+                */
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -4141,13 +3386,27 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetBedTemperatureAsync("setBedTemperature", new { temperature, bedId }, targetUri).ConfigureAwait(false);
+                /*
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setBedTemperature",
+                       jsonObject: new { temperature, bedId },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                */
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setBedTemperature",
                     jsonData: string.Format("{{\"temperature\":{0}, \"bedId\":{1}}}", temperature, bedId),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                return GetQueryResult(result.Result, true);
+                */
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -4162,13 +3421,27 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetChamberTemperatureAsync("setChamberTemperature", new { temperature, chamberId }, targetUri).ConfigureAwait(false);
+                /*
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setChamberTemperature",
+                       jsonObject: new { temperature, chamberId },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                */
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setChamberTemperature",
                     jsonData: string.Format("{{\"temperature\":{0}, \"chamberId\":{1}}}", temperature, chamberId),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                return GetQueryResult(result.Result, true);
+                */
+                //return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
             {
@@ -4202,13 +3475,27 @@ namespace AndreasReitberger.API.Repetier
                     SetSpeed = Convert.ToInt32(((float)speed) * 255f / 100f);
                 }
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                return await SetFanSpeedAsync("setFanSpeed", new { speed, fanId }, targetUri).ConfigureAwait(false);
+                /*
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setFanSpeed",
+                       jsonObject: new { speed, fanId },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                */
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setFanSpeed",
                     jsonData: string.Format("{{\"speed\":{0}, \"fanid\":{1}}}", SetSpeed, fanId),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-                return GetQueryResult(result.Result);
+                */
+                //return GetQueryResult(result.Result);
             }
             catch (Exception exc)
             {
@@ -4224,17 +3511,27 @@ namespace AndreasReitberger.API.Repetier
         #region External Commands
         public async Task<ObservableCollection<ExternalCommand>> GetExternalCommandsAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             ObservableCollection<ExternalCommand> resultObject = new();
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "listExternalCommands",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
                    command: "listExternalCommands")
                     .ConfigureAwait(false);
-
+                */
                 ExternalCommand[] cmds = GetObjectFromJson<ExternalCommand[]>(result.Result);
                 return new ObservableCollection<ExternalCommand>(cmds ?? new ExternalCommand[] { new ExternalCommand() });
             }
@@ -4243,7 +3540,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(ExternalCommand),
                     Message = jecx.Message,
                 });
@@ -4259,12 +3556,23 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "runExternalCommand",
+                       jsonObject: new { id = command.Id },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "runExternalCommand", 
                     jsonData: string.Format("{{\"id\":{0}}}", command.Id)
                     )
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4309,12 +3617,23 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "removeMessage",
+                       jsonObject: new { id = message.Id, a = unPause ? "unpause" : "" },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "removeMessage",
                     jsonData: string.Format("{{\"id\":{0}, \"a\":\"{1}\"}}", message.Id, unPause ? "unpause" : ""),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4325,7 +3644,7 @@ namespace AndreasReitberger.API.Repetier
         }
         public async Task<ObservableCollection<RepetierMessage>> GetMessagesAsync(string printerName = "")
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             ObservableCollection<RepetierMessage> resultObject = new();
 
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
@@ -4333,10 +3652,21 @@ namespace AndreasReitberger.API.Repetier
 
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "messages",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "messages", printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 RepetierMessage[] info = GetObjectFromJson<RepetierMessage[]>(result.Result);
                 if (info != null)
                     resultObject = new ObservableCollection<RepetierMessage>(info);
@@ -4347,7 +3677,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4388,11 +3718,22 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setFlowMultiply",
+                       jsonObject: new { speed = multiplier},
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setFlowMultiply", jsonData: string.Format("{{\"speed\":{0}}}", multiplier),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4409,11 +3750,22 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setSpeedMultiply",
+                       jsonObject: new { speed },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setSpeedMultiply", jsonData: string.Format("{{\"speed\":{0}}}", speed),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4430,9 +3782,20 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "emergencyStop",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "emergencyStop", printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4445,6 +3808,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Gcode Commands
+        [Obsolete("Use SendGcodeAsync")]
         public async Task<bool> SendGcodeCommandAsync(string command, string printerName = "")
         {
             try
@@ -4453,12 +3817,23 @@ namespace AndreasReitberger.API.Repetier
                 if (!string.IsNullOrEmpty(printerName)) currentPrinter = printerName; // Override current selected printer, if needed
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                //object cmd = new { cmd = command };
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "send",
+                       jsonObject: new { cmd = command },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "send", jsonData: string.Format("{{\"cmd\":\"{0}\"}}", command),
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result, true);
             }
             catch (Exception exc)
@@ -4472,7 +3847,7 @@ namespace AndreasReitberger.API.Repetier
         #region Gcode Scripts
         public async Task<RepetierGcodeScript> GetGcodeScriptAsync(string scriptName)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             RepetierGcodeScript resultObject = null;
             try
             {
@@ -4480,12 +3855,22 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
                 object cmd = new { name = scriptName };
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "getScript",
+                       jsonObject: cmd,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "getScript", jsonData: cmd,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
-
+                */
                 return GetObjectFromJson<RepetierGcodeScript>(result.Result);
             }
             catch (JsonException jecx)
@@ -4493,7 +3878,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4504,19 +3889,7 @@ namespace AndreasReitberger.API.Repetier
                 return resultObject;
             }
         }
-        public async Task<bool> SetGcodeScriptAsync(RepetierGcodeScript script)
-        {
-            try
-            {
-                bool result = await SetGcodeScriptAsync(script.Name, script.Script).ConfigureAwait(false);
-                return result;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
+        public Task<bool> SetGcodeScriptAsync(RepetierGcodeScript script) => SetGcodeScriptAsync(script.Name, script.Script);
         public async Task<bool> SetGcodeScriptAsync(string scriptName, string script)
         {
             try
@@ -4525,11 +3898,22 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
                 object cmd = new { name = scriptName, script = script };
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "setScript",
+                       jsonObject: cmd,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "setScript", jsonData: cmd,
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4547,11 +3931,22 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
                 object cmd = new { script = scriptName };
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "runScript",
+                       jsonObject: cmd,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "runScript", jsonData: cmd,
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4596,11 +3991,22 @@ namespace AndreasReitberger.API.Repetier
                 string cmd = string.Format("{{\"name\":\"{0}\",\"params\":{1}}}", action.Name, JsonConvert.SerializeObject(new string[] { action.Question }));
                 CancellationTokenSource cts = new(timeout);
                 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "webCallExecute",
+                       jsonObject: new { name = action.Name, @params = new string[] { action.Question } },
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "webCallExecute", jsonData: cmd, cts: cts,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4622,11 +4028,22 @@ namespace AndreasReitberger.API.Repetier
                     printer = action.Slug,
                 };
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "webCallRemove",
+                       jsonObject: cmd,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "webCallRemove", jsonData: cmd,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4745,13 +4162,23 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task<RepetierProjectsServerListRespone> GetProjectsListServerAsync(string printerName = "")
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectsListServer",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "projectsListServer", printerName: printerName)
                     .ConfigureAwait(false);
-
+                */
                 return GetObjectFromJson<RepetierProjectsServerListRespone>(result.Result);
             }
             catch (JsonException jecx)
@@ -4759,7 +4186,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return new RepetierProjectsServerListRespone();
@@ -4773,7 +4200,7 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task<RepetierProjectsFolderRespone> GetProjectsGetFolderAsync(Guid serverUuid, int index = 1, string printerName = "")
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
                 object data = new
@@ -4782,11 +4209,22 @@ namespace AndreasReitberger.API.Repetier
                     idx = index,
                 };
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectsGetFolder",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "projectsGetFolder", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetObjectFromJson<RepetierProjectsFolderRespone>(result.Result);
             }
             catch (JsonException jecx)
@@ -4794,7 +4232,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return new RepetierProjectsFolderRespone();
@@ -4877,7 +4315,7 @@ namespace AndreasReitberger.API.Repetier
         
         public async Task<RepetierProjectsProjectRespone> GetProjectsGetProjectAsync(Guid serverUuid, Guid projectUuid, string printerName = "")
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
                 object data = new
@@ -4885,12 +4323,22 @@ namespace AndreasReitberger.API.Repetier
                     serveruuid = serverUuid,
                     uuid = projectUuid,
                 };
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectsGetFolder",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "projectsGetProject", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetObjectFromJson<RepetierProjectsProjectRespone>(result.Result);
             }
             catch (JsonException jecx)
@@ -4898,7 +4346,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return new RepetierProjectsProjectRespone();
@@ -4921,12 +4369,22 @@ namespace AndreasReitberger.API.Repetier
                     serveruuid = serverUuid,
                     project = project,
                 };
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectsUpdateProject",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "projectsUpdateProject", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -4974,11 +4432,22 @@ namespace AndreasReitberger.API.Repetier
                     name = file.Name,
                 };
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectsDeleteFile",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "projectsDeleteFile", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
 
@@ -5000,12 +4469,22 @@ namespace AndreasReitberger.API.Repetier
                     username = comment.User,
                     comment = comment.Comment,
                 };
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "projectDelComment",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "projectDelComment", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
 
@@ -5022,7 +4501,7 @@ namespace AndreasReitberger.API.Repetier
         async Task<RepetierHistoryListRespone> GetHistoryListResponeAsync(
             string printerNameForHistory, string serverUuid = "", int limit = 50, int page = 0, int start = 0, bool allPrinter = false)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
@@ -5037,7 +4516,16 @@ namespace AndreasReitberger.API.Repetier
                     uuid = serverUuid,
                 };
 
-                //string dataString = $"{{\"allPrinter\":\"{(AllPrinter ? "true" : "false")}\",\"limit\":{Limit},\"page\":{Page},\"slug\":\"{PrinterNameForHistory}\",\"start\":{Start},\"uuid\":\"{ServerUuid}\"}}";
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "historyList",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
@@ -5046,7 +4534,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: currentPrinter
                    )
                     .ConfigureAwait(false);
-
+                */
                 return GetObjectFromJson<RepetierHistoryListRespone>(result.Result);
             }
             catch (JsonException jecx)
@@ -5054,7 +4542,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return new RepetierHistoryListRespone();
@@ -5089,7 +4577,7 @@ namespace AndreasReitberger.API.Repetier
 
         async Task<RepetierHistorySummaryRespone> GetHistorySummaryAsync(string printerNameForHistory, int year, bool allPrinter = false)
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
@@ -5101,11 +4589,22 @@ namespace AndreasReitberger.API.Repetier
                     year = year,
                 };
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "historySummary",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "historySummary", jsonData: data,
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
+                */
                 return GetObjectFromJson<RepetierHistorySummaryRespone>(result.Result);
             }
             catch (JsonException jecx)
@@ -5113,7 +4612,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     Message = jecx.Message,
                 });
                 return new RepetierHistorySummaryRespone();
@@ -5168,12 +4667,22 @@ namespace AndreasReitberger.API.Repetier
                 {
                     id = item.Id,
                 };
-
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "historyDeleteEntry",
+                       jsonObject: data,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 RepetierApiRequestRespone result = await SendRestApiRequestAsync(
                     RepetierCommandBase.printer, RepetierCommandFeature.api,
                     command: "historyDeleteEntry", jsonData: data,
                     printerName: printerName
                     ).ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
 
@@ -5188,17 +4697,28 @@ namespace AndreasReitberger.API.Repetier
         #region GPIO 
         async Task<RepetierGpioListRespone> GetGPIOListResponeAsync()
         {
-            RepetierApiRequestRespone result = new();
+            IRestApiRequestRespone result = null;
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
 
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "GPIOGetList",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(
                    commandBase: RepetierCommandBase.printer,
                    commandFeature: RepetierCommandFeature.api,
                    command: "GPIOGetList",
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
+                */
 
                 return GetObjectFromJson<RepetierGpioListRespone>(result.Result);
             }
@@ -5207,7 +4727,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new RepetierJsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = result.Result,
+                    OriginalString = result?.Result,
                     TargetType = nameof(RepetierGpioListRespone),
                     Message = jecx.Message,
                 });

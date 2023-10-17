@@ -1,12 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierJobListItem : ObservableObject
+    public partial class RepetierJobListItem : ObservableObject, IPrint3dJob
     {
         #region Properties
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [ObservableProperty]
         [JsonProperty("analysed")]
         long analysed;
@@ -41,7 +49,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("id")]
-        long id;
+        long identifier;
+        partial void OnIdentifierChanged(long value)
+        {
+            JobId = value.ToString();
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string jobId;
 
         [ObservableProperty]
         [JsonProperty("lastPrintTime")]
@@ -65,7 +81,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("name")]
-        string name;
+        string fileName;
 
         [ObservableProperty]
         [JsonProperty("notes")]
@@ -183,6 +199,28 @@ namespace AndreasReitberger.API.Repetier.Models
         [JsonProperty("zMin")]
         long zMin;
 
+        #region Interface, unused
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? timeAdded = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? timeInQueue = 0;
+        #endregion
+
+        #endregion
+
+        #region Methods
+        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StartJobAsync(this, command, data);
+
+        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client?.PauseJobAsync(command, data);
+
+        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StopJobAsync(command, data);
+
+        public Task<bool> RemoveFromQueueAsync(IPrint3dServerClient client, string command, object? data) => client.RemoveJobAsync(this, command, data);
+
         #endregion
 
         #region Overrides
@@ -190,6 +228,34 @@ namespace AndreasReitberger.API.Repetier.Models
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+      
         #endregion
     }
 }

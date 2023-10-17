@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net6</TargetFrameworks>
@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj" />
     <ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj" />
   </ItemGroup>
 

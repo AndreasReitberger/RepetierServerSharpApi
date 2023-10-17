@@ -1,13 +1,23 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Repetier.Enum;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierJobListChangedEventArgs : RepetierEventArgs
+    public partial class RepetierModelGroup : ObservableObject, IGcodeGroup
     {
         #region Properties
-        public ObservableCollection<IPrint3dJob> NewJobList { get; set; } = new();
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
+        [JsonProperty("name")]
+        string name;
+
         #endregion
 
         #region Overrides
@@ -16,5 +26,6 @@ namespace AndreasReitberger.API.Repetier.Models
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
         #endregion
+
     }
 }

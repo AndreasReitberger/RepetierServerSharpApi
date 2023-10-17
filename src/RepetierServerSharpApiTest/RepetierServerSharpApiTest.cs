@@ -1,3 +1,5 @@
+using AndreasReitberger.API.Print3dServer.Core;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
@@ -5,7 +7,6 @@ using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -15,9 +16,9 @@ namespace RepetierServerSharpApiTest
     public class RepetierServerSharpApiTest
     {
 
-        private readonly string _host = "10.1.33.38";
+        private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 3344;
-        private readonly string _api = "6f2f37d9-88b4-4238-837b-7028a31aacc9"; // _yourkey";
+        private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipPrinterActionTests = true;
@@ -59,7 +60,6 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-
                 RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                 {
                     FreeDiskSpace = 1523165212,
@@ -67,7 +67,7 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance);
+                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented);
                 var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
@@ -93,11 +93,10 @@ namespace RepetierServerSharpApiTest
                 {
                     RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                     {
-                        ActiveExtruder = 1,
-                        AvailableDiskSpace = 1523152132,
+                        ActiveToolHead = 1,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
-                        IsDualExtruder = true,
+                        IsMultiExtruder = true,
                     };
                     RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
@@ -147,8 +146,8 @@ namespace RepetierServerSharpApiTest
                     },
                     Webcams = new()
                     {
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 0, Orientation = 90 },
-                        new() { DynamicUrl = new("https://some.url.de/"), Pos = 1, Orientation = 180 },
+                        new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 0, Orientation = 90 },
+                        new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 1, Orientation = 180 },
                     }
 
                 }.ToString();
@@ -242,7 +241,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<RepetierPrinter> printers = await _server.GetPrintersAsync();
+                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.IsTrue(printers != null && printers.Count > 0);
                 }
                 else
@@ -272,11 +271,11 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync();
                     }
 
-                    ObservableCollection<string> modelgroups = await _server.GetModelGroupsAsync();
+                    ObservableCollection<IGcodeGroup> modelgroups = await _server.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
 
                     await _server.RefreshModelGroupsAsync();
-                    Assert.IsTrue(_server.ModelGroups?.Count > 0);
+                    Assert.IsTrue(_server.Groups?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -303,12 +302,12 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
+                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
                     Assert.IsTrue(models?.Count > 0);
 
                     // Try to fetch models from a second printer, which is not set active at the moment
-                    string secondPrinter = "Prusa_i3_MK3S1";
-                    ObservableCollection<RepetierModel> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
+                    string secondPrinter = "Prusa_i3_MK3S";
+                    ObservableCollection<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
                     Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
                 }
                 else
@@ -336,7 +335,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<RepetierJobListItem> jobs = await _server.GetJobListAsync();
+                    ObservableCollection<IPrint3dJob> jobs = await _server.GetJobListAsync();
                     Assert.IsTrue(jobs != null);
                 }
                 else
@@ -360,7 +359,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<RepetierModel> models = await _server.GetModelsAsync();
+                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
                     if (models?.Count > 0)
                     {
                         bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: true);
@@ -403,7 +402,8 @@ namespace RepetierServerSharpApiTest
                     RepetierHistoryListItem historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
-                    byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
+                    byte[] report = await ((RepetierClient)Print3dServerClient.Instance).GetHistoryReportAsync(historyItem.Id);
+                    report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
                     Assert.IsTrue(report.Length > 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
@@ -917,7 +917,7 @@ namespace RepetierServerSharpApiTest
                     var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
                     Assert.IsNotNull(folders);
 
-                    var state = await _server.GetStateObjectAsync();
+                    var state = await _server.GetStatesAsync();
                     Assert.IsNotNull(state);
 
                     //await _server.RefreshAllAsync();

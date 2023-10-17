@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterConfigWebcam : ObservableObject
+    public partial class RepetierPrinterConfigWebcam : ObservableObject, IWebCamConfig
     {
         #region Properties
         [ObservableProperty]
@@ -13,7 +14,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("dynamicUrl")]
-        Uri dynamicUrl;
+        Uri? webCamUrlDynamic;
 
         [ObservableProperty]
         [JsonProperty("forceSnapshotPosition")]
@@ -29,7 +30,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("pos")]
-        long pos;
+        long position;
 
         [ObservableProperty]
         [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore)]
@@ -57,7 +58,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("staticUrl")]
-        Uri staticUrl;
+        Uri? webCamUrlStatic;
 
         [ObservableProperty]
         [JsonProperty("timelapseBitrate")]
@@ -86,6 +87,10 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [JsonProperty("timelapseSelected")]
         long timelapseSelected;
+        #endregion
+
+        #region Interface, unused
+
         #endregion
 
         #region Overrides

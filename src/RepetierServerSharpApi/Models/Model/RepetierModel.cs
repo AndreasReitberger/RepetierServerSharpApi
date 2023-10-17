@@ -1,14 +1,21 @@
-﻿using AndreasReitberger.API.Repetier.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Repetier.Enum;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierModel : ObservableObject
+    public partial class RepetierModel : ObservableObject, IGcode
     {
         #region Properties
-        
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [ObservableProperty]
         [JsonProperty("analysed")]
         long analysed;
@@ -23,7 +30,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("filamentTotal")]
-        double filamentTotal;
+        double filament;
 
         [ObservableProperty]
         [JsonProperty("fits")]
@@ -39,7 +46,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("id")]
-        long id;
+        long identifier;
 
         [ObservableProperty]
         [JsonProperty("lastPrintTime")]
@@ -63,7 +70,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("name")]
-        string name;
+        string fileName;
 
         [ObservableProperty]
         [JsonProperty("notes")]
@@ -111,7 +118,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("volumeTotal")]
-        double volumeTotal;
+        double volume;
 
         [ObservableProperty]
         [JsonProperty("volumeUsage")]
@@ -177,6 +184,29 @@ namespace AndreasReitberger.API.Repetier.Models
         [JsonProperty("zMin")]
         long zMin;
 
+        #region Interface, unused
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double modified;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string filePath;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string permissions;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        long size;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        IGcodeMeta meta;
+        #endregion
+
         #region JsonIgnore
 
         [ObservableProperty]
@@ -197,7 +227,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonIgnore]
-        RepetierImageType imageType = RepetierImageType.Thumbnail;
+        GcodeImageType imageType = GcodeImageType.Thumbnail;
             
         [ObservableProperty]
         [JsonIgnore]
@@ -207,11 +237,53 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #endregion
 
-        #region Overrides
-        public override string ToString()
+        #region Methods
+        public Task MoveToAsync(IPrint3dServerClient client, string targetPath, bool copy = false)
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            throw new NotImplementedException();
         }
+
+        public Task MoveToQueueAsync(IPrint3dServerClient client, bool printIfReady = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PrintAsync(IPrint3dServerClient client)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Overrides
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
+        #endregion
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
 
     }

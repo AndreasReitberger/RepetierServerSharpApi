@@ -1,15 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinter : ObservableObject
+    public partial class RepetierPrinter : ObservableObject, IPrinter3d
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [ObservableProperty]
         [JsonProperty("active")]
-        bool active;
+        bool isActive;
 
         [ObservableProperty]
         [JsonProperty("analysed")]
@@ -21,19 +27,27 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("job")]
-        string job = string.Empty;
+        string activeJobName = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("jobid")]
-        int jobId;
+        int jobId = -1;
+        partial void OnJobIdChanged(int value)
+        {
+            ActiveJobId = value.ToString();
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string activeJobId;
 
         [ObservableProperty]
         [JsonProperty("jobstate")]
-        string? jobState;
+        string? activeJobState;
         
         [ObservableProperty]
         [JsonProperty("linesSend")]
-        long? linesSend;
+        long? lineSent;
 
         [ObservableProperty]
         [JsonProperty("name")]
@@ -41,15 +55,23 @@ namespace AndreasReitberger.API.Repetier.Models
         
         [ObservableProperty]
         [JsonProperty("ofLayer")]
-        long? ofLayer;
+        long? layers;
 
         [ObservableProperty]
         [JsonProperty("online")]
         long online;
+        partial void OnOnlineChanged(long value)
+        {
+            IsOnline = value > 0;
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        bool isOnline = false;
 
         [ObservableProperty]
         [JsonProperty("pauseState")]
-        long pauseState;
+        long? pauseState;
 
         [ObservableProperty]
         [JsonProperty("paused")]
@@ -78,6 +100,22 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [JsonProperty("start")]
         long? start;
+        partial void OnStartChanged(long? value)
+        {
+            PrintStarted = value;
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? printStarted = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? printDuration = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? printDurationEstimated = 0;
 
         [ObservableProperty]
         [JsonProperty("totalLines")]
@@ -88,32 +126,47 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double? extruder1 = 0;
+        double? extruder1Temperature = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double? extruder2 = 0;
+        double? extruder2Temperature = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double? heatedBed = 0;
+        double? extruder3Temperature = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double? chamber = 0;
+        double? extruder4Temperature = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double progress = 0;
+        double? extruder5Temperature = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        double remainingPrintTime = 0;
+        double? heatedBedTemperature = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [JsonIgnore]
+        double? heatedChamberTemperature = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [JsonIgnore]
+        double? printProgress = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [JsonIgnore]
+        double? remainingPrintDuration = 0;
 
         [ObservableProperty]
         [property: JsonIgnore]
@@ -139,12 +192,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #endregion
 
-        #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        #region Methods
 
+        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client?.HomeAsync(x, y, z);
+
+        #endregion
+
+        #region Overrides
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         public override bool Equals(object obj)
         {
             if (obj is not RepetierPrinter item)
@@ -156,6 +212,35 @@ namespace AndreasReitberger.API.Repetier.Models
         {
             return Slug.GetHashCode();
         }
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
     }
 }
