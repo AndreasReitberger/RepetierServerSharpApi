@@ -1,8 +1,6 @@
-﻿using AndreasReitberger.API.Repetier.Models;
-using AndreasReitberger.API.Repetier.Events;
+﻿using AndreasReitberger.API.Repetier.Events;
+using AndreasReitberger.API.Repetier.Models;
 using System;
-using System.IO;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Repetier
 {
