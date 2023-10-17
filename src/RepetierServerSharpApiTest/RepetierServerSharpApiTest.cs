@@ -200,7 +200,7 @@ namespace RepetierServerSharpApiTest
                         succeed = true;
                         cts.Cancel();
                     });
-                    _server.StartListening();
+                    await _server.StartListeningAsync();
                     // Wait till session is esstablished
                     while (_server.Session == null && !cts.IsCancellationRequested)
                     {
@@ -605,8 +605,9 @@ namespace RepetierServerSharpApiTest
                 Dictionary<string, string> unkownJsonRespones = new();
                 RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
-                await _server.SetPrinterActiveAsync(1);
-                _server.StartListening();
+                await _server.SetPrinterActiveAsync();
+                DateTime start = DateTime.Now;
+                await _server.StartListeningAsync();
 
                 _server.Error += (o, args) =>
                 {
@@ -622,7 +623,7 @@ namespace RepetierServerSharpApiTest
                     if (!string.IsNullOrEmpty(args.Message))
                     {
                         websocketMessages.Add(DateTime.Now, args.Message);
-                        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                        Console.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
 
@@ -631,7 +632,7 @@ namespace RepetierServerSharpApiTest
                     if (!string.IsNullOrEmpty(args.Message))
                     {
                         websocketMessages.Add(DateTime.Now, args.Message);
-                        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                        Console.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
                 _server.WebSocketError += (o, args) =>
@@ -650,6 +651,8 @@ namespace RepetierServerSharpApiTest
                 CancellationTokenSource cts = new(new TimeSpan(0, 30, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
+                    var duraton = DateTime.Now - start;
+                    var messages = websocketMessages;
                     if (!cts.IsCancellationRequested)
                         Assert.Fail($"Websocket unexpectly closed: {args}");
                 };
@@ -659,7 +662,7 @@ namespace RepetierServerSharpApiTest
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
-                _server.StopListening();
+                await _server.StopListeningAsync();
 
 
                 Assert.IsTrue(cts.IsCancellationRequested);

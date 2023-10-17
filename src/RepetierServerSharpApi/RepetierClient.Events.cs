@@ -20,6 +20,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebSocket
 
+        /*
         public event EventHandler<RepetierEventArgs> WebSocketConnected;
         protected virtual void OnWebSocketConnected(RepetierEventArgs e)
         {
@@ -55,11 +56,11 @@ namespace AndreasReitberger.API.Repetier
         {
             LoginResultReceived?.Invoke(this, e);
         }
-
+        */
         #endregion
 
         #region ServerConnectionState
-
+        /*
         public event EventHandler<RepetierEventArgs> ServerWentOffline;
         protected virtual void OnServerWentOffline(RepetierEventArgs e)
         {
@@ -77,10 +78,11 @@ namespace AndreasReitberger.API.Repetier
         {
             ServerUpdateAvailable?.Invoke(this, e);
         }
+        */
         #endregion
 
         #region Errors
-
+        /*
         public event EventHandler Error;
         protected virtual void OnError()
         {
@@ -120,23 +122,24 @@ namespace AndreasReitberger.API.Repetier
         {
             RestJsonConvertError?.Invoke(this, e);
         }
-
+        */
         #endregion
 
         #region ServerStateChanges
 
+        /*
         public event EventHandler<RepetierEventListeningChangedEventArgs> ListeningChanged;
         protected virtual void OnListeningChangedEvent(RepetierEventListeningChangedEventArgs e)
         {
             ListeningChanged?.Invoke(this, e);
         }
-
-        public event EventHandler<RepetierEventSessionChangedEventArgs> SessionChanged;
+        */
+        public new event EventHandler<RepetierEventSessionChangedEventArgs> SessionChanged;
         protected virtual void OnSessionChangedEvent(RepetierEventSessionChangedEventArgs e)
         {
             SessionChanged?.Invoke(this, e);
         }
-
+        
         public event EventHandler<RepetierMessagesChangedEventArgs> MessagesChanged;
         protected virtual void OnMessagesChangedEvent(RepetierMessagesChangedEventArgs e)
         {
@@ -154,25 +157,27 @@ namespace AndreasReitberger.API.Repetier
         {
             PrintInfoChanged?.Invoke(this, e);
         }
-
-        public event EventHandler<RepetierJobStartedEventArgs> JobsStarted;
+        /**/
+        public new event EventHandler<RepetierJobStartedEventArgs> JobsStarted;
         protected virtual void OnJobStarted(RepetierJobStartedEventArgs e)
         {
             JobsStarted?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierJobsChangedEventArgs> JobsChanged;
+        public new event EventHandler<RepetierJobsChangedEventArgs> JobsChanged;
         protected virtual void OnJobsChangedEvent(RepetierJobsChangedEventArgs e)
         {
             JobsChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierJobFinishedEventArgs> JobFinished;
+        public new event EventHandler<RepetierJobFinishedEventArgs> JobFinished;
         protected virtual void OnJobFinished(RepetierJobFinishedEventArgs e)
         {
             JobFinished?.Invoke(this, e);
         }
+        
 
+        [Obsolete("Use TemperatureDataReceived event")]
         public event EventHandler<RepetierTempDataEventArgs> TempDataReceived;
         protected virtual void OnTempDataReceived(RepetierTempDataEventArgs e)
         {
@@ -220,12 +225,13 @@ namespace AndreasReitberger.API.Repetier
         {
             RepetierJobListChanged?.Invoke(this, e);
         }
-
+        /*
         public event EventHandler<RepetierActivePrinterChangedEventArgs> ActivePrinterChanged;
         protected virtual void OnActivePrinterChangedEvent(RepetierActivePrinterChangedEventArgs e)
         {
             ActivePrinterChanged?.Invoke(this, e);
         }
+        */
 
         public event EventHandler<RepetierWebCallActionsChangedEventArgs> WebCallActionsChanged;
         protected virtual void OnWebCallActionsChangedEvent(RepetierWebCallActionsChangedEventArgs e)
