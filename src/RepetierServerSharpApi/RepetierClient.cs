@@ -1399,7 +1399,8 @@ namespace AndreasReitberger.API.Repetier
                            method: Method.Post,
                            command: pingCommand,
                            jsonObject: null,
-                           authHeaders: AuthHeaders
+                           authHeaders: AuthHeaders,
+                           cts: new(timeout)
                            )
                         .ConfigureAwait(false);
                     /*

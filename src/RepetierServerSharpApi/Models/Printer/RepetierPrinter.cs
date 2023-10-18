@@ -236,11 +236,8 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Clone
 
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-
+        public object Clone() => MemberwiseClone();
+        
         #endregion
     }
 }
