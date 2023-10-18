@@ -1354,9 +1354,11 @@ namespace AndreasReitberger.API.Repetier
         {
             CancellationTokenSource cts = new(timeout);
             await CheckOnlineAsync(cts).ConfigureAwait(false);
+            cts?.Dispose();
         }
 
-        public async Task CheckOnlineAsync(CancellationTokenSource cts)
+        public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", cts);
+        /*
         {
             if (IsConnecting) return; // Avoid multiple calls
             IsConnecting = true;
@@ -1409,8 +1411,10 @@ namespace AndreasReitberger.API.Repetier
                 await CheckOnlineAsync(cts).ConfigureAwait(false);
             }
         }
+        */
 
-        public async Task<bool> CheckIfApiIsValidAsync(int timeout = 10000)
+        public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", timeout);
+        /*
         {
             try
             {
@@ -1427,12 +1431,6 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                    /*
-                    var respone = await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api, command: "ping", jsonData: pingCommand,
-                        cts: new(timeout))
-                        .ConfigureAwait(false);
-                    */
                     if (respone.HasAuthenticationError)
                     {
                         AuthenticationFailed = true;
@@ -1454,11 +1452,10 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
+        */
 
-        public async Task CheckServerIfApiIsValidAsync(int timeout = 10000)
-        {
-            await CheckIfApiIsValidAsync(timeout).ConfigureAwait(false);
-        }
+        public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
+        
         #endregion
 
         #region WebSocket
