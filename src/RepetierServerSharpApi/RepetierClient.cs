@@ -285,27 +285,6 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region WebSocket
-        /*
-        void PingServer()
-        {
-            try
-            {
-                if (WebSocket != null)
-                    if (WebSocket.State == WebSocketState.Open)
-                    {
-                        string pingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
-                        WebSocket.Send(pingCommand);
-                    }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-
-        }
-        */
-        //public Task ConnectWebSocketAsync() => ConnectWebSocketAsync(target: $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/socket/{(!string.IsNullOrEmpty(ApiKey) ? $"?apikey={ApiKey}" : "")}");      
-
 #if NET_WS
         new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs msg)
 #else
@@ -542,22 +521,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        /*
-        new void WebSocket_Opened(object? sender, EventArgs e)
-        {
-            try
-            {
-                // Trigger ping to get session id
-                PingCommand = $"{{\"action\":\"ping\",\"data\":{{\"source\":\"{"App"}\"}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter}}}";
-                base.WebSocket_Opened(sender, e);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        */
-
+       
 #endregion
 
         #region Methods
@@ -1061,47 +1025,6 @@ namespace AndreasReitberger.API.Repetier
             RefreshPrinterStateAsync(),
             RefreshCurrentPrintInfosAsync(),
         });
-
-        [Obsolete("Remove later")]
-        public async Task StartListeningAsyncOld(bool stopActiveListening = false)
-        {
-            if (IsListening)// avoid multiple sessions
-            {
-                if (stopActiveListening)
-                {
-                    await StopListeningAsync();
-                }
-                else
-                {
-                    return; // StopListening();
-                }
-            }
-            await ConnectWebSocketAsync(WebSocketTargetUri).ConfigureAwait(false);
-            Timer = new Timer(async (action) =>
-            {
-                // Do not check the online state ever tick
-                if (RefreshCounter > 5)
-                {
-                    RefreshCounter = 0;
-                    await CheckOnlineAsync(3500).ConfigureAwait(false);
-                }
-                else RefreshCounter++;
-                if (IsOnline)
-                {
-                    List<Task> tasks = new()
-                    {
-                        RefreshPrinterStateAsync(),
-                        RefreshCurrentPrintInfosAsync(),
-                    };
-                    await Task.WhenAll(tasks).ConfigureAwait(false);               
-                }
-                else if (IsListening)
-                {
-                    await StopListeningAsync(); // StopListening();
-                }
-            }, null, 0, RefreshInterval * 1000);
-            IsListening = true;
-        }
 
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
