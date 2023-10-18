@@ -1,4 +1,3 @@
-using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
@@ -6,7 +5,6 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
 
