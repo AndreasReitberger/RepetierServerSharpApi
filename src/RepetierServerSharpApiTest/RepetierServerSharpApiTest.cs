@@ -40,8 +40,8 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance, new JsonSerializerOptions());
-                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString);
+                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
+                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
@@ -67,9 +67,9 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.JsonSerializerSettings);
+                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
-                var serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.JsonSerializerSettings);
+                var serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
@@ -649,7 +649,7 @@ namespace RepetierServerSharpApiTest
                     }
                 };
                 // Wait 30 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     var duraton = DateTime.Now - start;

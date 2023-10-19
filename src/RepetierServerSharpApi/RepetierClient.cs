@@ -75,7 +75,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 CallbackId = Session?.CallbackId ?? -1,
                 Sesson = value,
-                SessonId = value?.Session
+                SessionId = value?.Session
             });           
         }
 
@@ -206,6 +206,7 @@ namespace AndreasReitberger.API.Repetier
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
 
@@ -215,6 +216,7 @@ namespace AndreasReitberger.API.Repetier
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, api, isSecure);
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
 
@@ -224,6 +226,7 @@ namespace AndreasReitberger.API.Repetier
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             InitInstance(serverAddress, port, "", isSecure);
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
         #endregion
@@ -239,6 +242,7 @@ namespace AndreasReitberger.API.Repetier
                 WebSocket = null;
                 */
             }
+            WebSocketMessageReceived -= Client_WebSocketMessageReceived;
         }
         #endregion
 
@@ -283,246 +287,6 @@ namespace AndreasReitberger.API.Repetier
             }
         }
         #endregion
-
-        #region WebSocket
-#if NET_WS
-        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs msg)
-#else
-        new void WebSocket_MessageReceived(ResponseMessage? msg)
-#endif
-        {
-            try
-            {
-                if (msg.Text == null || string.IsNullOrEmpty(msg.Text))
-                    return;
-                base.WebSocket_MessageReceived(msg);
-                string text = msg.Text;
-                if (text.ToLower().Contains("login"))
-                {
-                    //var login = GetObjectFromJson<RepetierLoginRequiredResult>(text, JsonSerializerSettings);
-                    //var login = GetObjectFromJson<RepetierLoginResult>(text, JsonSerializerSettings);
-                }
-                if (text.ToLower().Contains("session"))
-                {
-                    //Session = GetObjectFromJson<EventSession>(text, JsonSerializerSettings);
-                    Session = GetObjectFromJson<EventSession>(text);
-                }
-                else if (text.ToLower().Contains("event"))
-                {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, JsonSerializerSettings);
-                    if (repetierEvent != null)
-                    {
-                        string name = string.Empty;
-                        string jsonBody = string.Empty;
-                        foreach (RepetierEventData obj in repetierEvent.Data)
-                        {
-                            name = obj.EventName;
-                            jsonBody = obj.Data?.ToString();
-                            switch (name)
-                            {
-                                case "userCredentials":
-                                    RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
-                                    if (login != null)
-                                    {
-                                        OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
-                                        {
-                                            ResultData = login,
-                                            LoginSucceeded = true,
-                                            CallbackId = PingCounter,
-                                            SessonId = SessionId,
-                                            Printer = obj.Printer,
-                                        });
-                                    }
-                                    break;
-                                case "temp":
-                                    EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
-                                    if (eventTempData != null)
-                                    {
-                                        OnTempDataReceived(new RepetierTempDataEventArgs()
-                                        {
-                                            TemperatureData = eventTempData,
-                                            CallbackId = PingCounter,
-                                            SessonId = SessionId,
-                                            Printer = obj.Printer,
-                                        });
-                                    }
-                                    break;
-                                case "jobStarted":
-                                    EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
-                                    OnJobStarted(new RepetierJobStartedEventArgs()
-                                    {
-                                        Job = eventJobStarted,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                                    break;
-                                case "jobsChanged":
-                                    EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
-                                    if (eventJobsChanged != null)
-                                    {
-                                        OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
-                                        {
-                                            Data = eventJobsChanged,
-                                            CallbackId = PingCounter,
-                                            SessonId = SessionId,
-                                            Printer = obj.Printer,
-                                        });
-                                    }
-                                    break;
-                                case "jobDeactivated":
-                                case "jobFinished":
-                                    EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
-                                    if (eventJobFinished != null)
-                                    {
-                                        OnJobFinished(new RepetierJobFinishedEventArgs()
-                                        {
-                                            Job = eventJobFinished,
-                                            CallbackId = PingCounter,
-                                            SessonId = SessionId,
-                                            Printer = obj.Printer,
-                                        });
-                                    }
-                                    break;
-                                case "messagesChanged":
-                                    EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
-                                    if (eventMessageChanged != null)
-                                    {
-                                        OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
-                                        {
-                                            RepetierMessage = eventMessageChanged,
-                                            CallbackId = PingCounter,
-                                            SessonId = SessionId,
-                                            Printer = obj.Printer,
-                                        });
-                                    }
-                                    break;
-                                case "hardwareInfo":
-                                    EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
-                                    OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
-                                    {
-                                        Info = eventHardwareInfoChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                                    break;
-                                case "wifiChanged":
-                                    EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
-                                    OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
-                                    {
-                                        Data = eventWifiChanged,
-                                        CallbackId = PingCounter,
-                                        SessonId = SessionId,
-                                        Printer = obj.Printer,
-                                    });
-                                    break;
-                                case "gcodeInfoUpdated":
-                                    EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
-                                    break;
-                                case "layerChanged":
-                                    RepetierLayerChangedEvent eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
-                                    break;
-                                case "updatePrinterState":
-                                    RepetierPrinterState updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
-                                    break;
-                                case "timelapseChanged":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "newRenderImage":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "printerListChanged":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "printqueueChanged":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "workerFinished":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "config":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                case "state":
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    break;
-                                // Bodyless events, with no additional data
-                                case "addErrorLogLine":
-                                case "timer30":
-                                case "timer60":
-                                case "timer300":
-                                case "timer1800":
-                                case "printJobAdded":
-                                case "prepareJob":
-                                case "prepareJobFinished":
-                                case "lastPrintsChanged":
-                                case "modelGroupListChanged":
-                                    break;
-                                // For unknown events log the needed information to create a class
-                                
-                                case "dispatcherCount":
-                                case "recoverChanged":
-                                case "log":
-                                default:
-#if DEBUG
-                                    Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
-#endif
-                                    ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
-                                    if (!loggedResults.ContainsKey(name))
-                                    {
-                                        // Log unused json results for further releases
-#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                                        loggedResults.TryAdd(name, jsonBody);
-#else
-                                        loggedResults.Add(name, jsonBody);
-#endif
-                                        IgnoredJsonResults = loggedResults;
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                }
-                /* Done in base method already
-                OnWebSocketMessageReceived(new RepetierWebsocketEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Message = text,
-                    SessonId = SessionId,
-                });
-                */
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = msg.Text,
-                    Message = jecx.Message,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-       
-#endregion
 
         #region Methods
 
@@ -1107,7 +871,20 @@ namespace AndreasReitberger.API.Repetier
             string encryptedPassword = EncryptPassword(userName, password, sessionId);
             string command =
                 $"{{\"action\":\"login\",\"data\":{{\"login\":\"{userName}\",\"password\":\"{encryptedPassword}\",\"rememberMe\":{(remember ? "true" : "false")}}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{99}}}";
-            SendWebSocketCommand(command);
+            _ = SendWebSocketCommandAsync(command);
+        }
+
+        public async Task LoginAsync(string userName, SecureString password, string sessionId, bool remember = true)
+        {
+            if (string.IsNullOrEmpty(sessionId)) sessionId = this.SessionId;
+            if (string.IsNullOrEmpty(sessionId) || !IsListeningToWebsocket)
+                throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
+
+            // Password is MD5(sessionId + MD5(login + password))
+            string encryptedPassword = EncryptPassword(userName, password, sessionId);
+            string command =
+                $"{{\"action\":\"login\",\"data\":{{\"login\":\"{userName}\",\"password\":\"{encryptedPassword}\",\"rememberMe\":{(remember ? "true" : "false")}}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{99}}}";
+            await SendWebSocketCommandAsync(command);
         }
 
         public async Task LogoutAsync()
@@ -1138,7 +915,17 @@ namespace AndreasReitberger.API.Repetier
 
             string command =
                 $"{{\"action\":\"logout\",\"data\":{{}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter++}}}";
-            SendWebSocketCommand(command);
+            _ = SendWebSocketCommandAsync(command);
+        }
+
+        public async Task LogoutViaWebSocketCommandAsync()
+        {
+            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
+                throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
+
+            string command =
+                $"{{\"action\":\"logout\",\"data\":{{}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter++}}}";
+            await SendWebSocketCommandAsync(command);
         }
 
 
@@ -1456,26 +1243,6 @@ namespace AndreasReitberger.API.Repetier
 
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
         
-        #endregion
-
-        #region WebSocket
-        public void SendWebSocketCommand(string command)
-        {
-            try
-            {
-                //string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-                /*
-                if (WebSocket?.State == WebSocketState.Open)
-                {
-                    WebSocket.Send(command);
-                }
-                */
-            }
-            catch (Exception exc)
-            {
-                OnWebSocketError(new ErrorEventArgs(exc));
-            }
-        }
         #endregion
 
         #region Updates
