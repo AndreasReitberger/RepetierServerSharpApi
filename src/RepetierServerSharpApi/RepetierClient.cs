@@ -1006,24 +1006,6 @@ namespace AndreasReitberger.API.Repetier
         }
         #endregion
 
-        #region Cancel
-        public void CancelCurrentRequests()
-        {
-            try
-            {
-                if (httpClient != null)
-                {
-                    httpClient.CancelPendingRequests();
-                    UpdateRestClientInstance();
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        #endregion
-
         #region WebCam
         public string GetWebCamUri(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
         {
