@@ -1,7 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Repetier.Enum;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -258,6 +256,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         
         #endregion
+        
         #region Dispose
         public void Dispose()
         {
@@ -279,11 +278,8 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Clone
 
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-
+        public object Clone() =>  MemberwiseClone();
+        
         #endregion
 
     }

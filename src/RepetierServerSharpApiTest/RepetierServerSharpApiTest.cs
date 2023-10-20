@@ -1,4 +1,3 @@
-using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
@@ -6,7 +5,6 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -17,6 +15,8 @@ namespace RepetierServerSharpApiTest
     {
 
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
+        private readonly string _user = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").User ?? "";
+        private readonly string _pw = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Password ?? "";
         private readonly int _port = 3344;
         private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
@@ -40,8 +40,8 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance);
-                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString);
+                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
+                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
@@ -67,8 +67,9 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented);
-                var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
+                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
+                var serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
@@ -192,14 +193,15 @@ namespace RepetierServerSharpApiTest
                 if (_server.IsOnline)
                 {
                     bool succeed = false;
-                    // Wait 5 minutes
-                    CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
+                    // Wait 1 minutes
+                    CancellationTokenSource cts = new(new TimeSpan(0, 1, 0));
                     _server.LoginResultReceived += ((sender, args) =>
                     {
                         Assert.IsTrue(args.LoginSucceeded);
                         succeed = true;
                         cts.Cancel();
                     });
+                    await _server.SetPrinterActiveAsync();
                     await _server.StartListeningAsync();
                     // Wait till session is esstablished
                     while (_server.Session == null && !cts.IsCancellationRequested)
@@ -208,7 +210,7 @@ namespace RepetierServerSharpApiTest
                     }
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
-                    _server.Login("testuser", SecureStringHelper.ConvertToSecureString("testpassword"), _server.SessionId);
+                    _server.Login(_user, SecureStringHelper.ConvertToSecureString(_pw), _server.SessionId);
                     while (!cts.IsCancellationRequested && !succeed)
                     {
                         await Task.Delay(100);
@@ -348,10 +350,11 @@ namespace RepetierServerSharpApiTest
         }
 
         [TestMethod]
-        public async Task PrintModelest()
+        public async Task PrintModelTest()
         {
             try
             {
+                if (_skipPrinterActionTests) return;
                 RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -362,7 +365,7 @@ namespace RepetierServerSharpApiTest
                     ObservableCollection<IGcode> models = await _server.GetModelsAsync();
                     if (models?.Count > 0)
                     {
-                        bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: true);
+                        bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: false);
                         Assert.IsTrue(printed);
                     }
                     else
@@ -393,7 +396,7 @@ namespace RepetierServerSharpApiTest
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync();
-                    ObservableCollection<RepetierHistorySummaryItem> history = await _server.GetHistorySummaryItemsAsync("", 2021, true);
+                    ObservableCollection<RepetierHistorySummaryItem> history = await _server.GetHistorySummaryItemsAsync("", 2022, true);
                     Assert.IsTrue(history?.Any());
 
                     ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
@@ -402,8 +405,7 @@ namespace RepetierServerSharpApiTest
                     RepetierHistoryListItem historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
-                    byte[] report = await ((RepetierClient)Print3dServerClient.Instance).GetHistoryReportAsync(historyItem.Id);
-                    report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
+                    byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
                     Assert.IsTrue(report.Length > 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
@@ -530,8 +532,7 @@ namespace RepetierServerSharpApiTest
             //if (_skipOnlineTests) return;
             try
             {
-                var host = "192.168.10.112";
-                RepetierClient _server = new(host, _api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.SetPrinterActiveAsync(1);
                 _server.Error += (o, args) =>
                 {
@@ -648,7 +649,7 @@ namespace RepetierServerSharpApiTest
                     }
                 };
                 // Wait 30 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 30, 0));
+                CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     var duraton = DateTime.Now - start;
@@ -665,7 +666,7 @@ namespace RepetierServerSharpApiTest
                 await _server.StopListeningAsync();
 
 
-                Assert.IsTrue(cts.IsCancellationRequested);
+                Assert.IsTrue(cts.IsCancellationRequested && websocketMessages?.Count > 50);
             }
             catch (Exception exc)
             {
@@ -839,12 +840,9 @@ namespace RepetierServerSharpApiTest
         [TestMethod]
         public async Task ConnectionBuilderTest()
         {
-            string host = "192.168.10.112";
-            string api = "_yourkey";
-
             using RepetierClient client = new RepetierClient.RepetierConnectionBuilder()
-                .WithServerAddress(host, 3344, false)
-                .WithApiKey(api)
+                .WithServerAddress(_host, _port, false)
+                .WithApiKey(_api)
                 .Build();
             await client.CheckOnlineAsync();
             Assert.IsTrue(client?.IsOnline ?? false);
