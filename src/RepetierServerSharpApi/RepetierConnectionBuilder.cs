@@ -12,6 +12,7 @@
 
             public RepetierClient Build()
             {
+                _client.Target = Print3dServer.Core.Enums.Print3dServerTarget.RepetierServer;
                 return _client;
             }
 
@@ -26,6 +27,12 @@
             public RepetierConnectionBuilder WithApiKey(string apiKey)
             {
                 _client.ApiKey = apiKey;
+                return this;
+            }
+
+            public RepetierConnectionBuilder WithName(string name)
+            {
+                _client.ServerName = name;
                 return this;
             }
 
