@@ -15,6 +15,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -206,6 +207,7 @@ namespace AndreasReitberger.API.Repetier
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            WebSocketTarget = "/socket/";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
@@ -215,8 +217,9 @@ namespace AndreasReitberger.API.Repetier
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            InitInstance(serverAddress, port, api, isSecure);
+            WebSocketTarget = "/socket/";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
 
@@ -225,8 +228,9 @@ namespace AndreasReitberger.API.Repetier
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            InitInstance(serverAddress, port, "", isSecure);
+            WebSocketTarget = "/socket/";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            InitInstance(serverAddress, port, "", isSecure);
             UpdateRestClientInstance();
         }
         #endregion
@@ -784,16 +788,17 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
         {
             RefreshPrinterStateAsync(),
             RefreshCurrentPrintInfosAsync(),
         });
-
+        public new Task RefreshAllAsync() => RefreshAllAsync(GcodeImageType.Thumbnail);
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             try
             {
+                await base.RefreshAllAsync().ConfigureAwait(false);
                 // Avoid multiple calls
                 if (IsRefreshing) return;
                 IsRefreshing = true;
@@ -960,7 +965,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region ActivePrinter
-        public async Task SetPrinterActiveAsync(int index = -1, bool refreshPrinterList = true)
+        public new async Task SetPrinterActiveAsync(int index = -1, bool refreshPrinterList = true)
         {
             try
             {
@@ -989,7 +994,8 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)
+        
+        public new async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)     
         {
             try
             {
@@ -1004,6 +1010,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        
         #endregion
 
         #region WebCam
@@ -1119,7 +1126,7 @@ namespace AndreasReitberger.API.Repetier
             return isReachable;
         }
 
-        public async Task CheckOnlineAsync(int timeout = 10000)
+        public new async Task CheckOnlineAsync(int timeout = 10000)
         {
             CancellationTokenSource cts = new(timeout);
             await CheckOnlineAsync(cts).ConfigureAwait(false);
@@ -1127,102 +1134,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", cts);
-        /*
-        {
-            if (IsConnecting) return; // Avoid multiple calls
-            IsConnecting = true;
-            bool isReachable = false;
-            try
-            {
-                string uriString = FullWebAddress;
-                try
-                {
-                    // Send a blank api request in order to check if the server is reachable
-                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";                  
-                    IRestApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       command: "{}",
-                       authHeaders: AuthHeaders,
-                       cts: cts)
-                    .ConfigureAwait(false);
-                    isReachable = respone?.IsOnline == true;
-                }
-                catch (InvalidOperationException iexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(iexc, false));
-                }
-                catch (HttpRequestException rexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(rexc, false));
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws an exception on timeout, not actually an error
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            IsConnecting = false;
-            // Avoid offline message for short connection loss
-            if (!IsOnline || isReachable || _retries > RetriesWhenOffline)
-            {
-                // Do not check if the previous state was already offline
-                _retries = 0;
-                IsOnline = isReachable;
-            }
-            else
-            {
-                // Retry with shorter timeout to see if the connection loss is real
-                _retries++;
-                cts = new(3500);
-                await CheckOnlineAsync(cts).ConfigureAwait(false);
-            }
-        }
-        */
-
         public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", timeout);
-        /*
-        {
-            try
-            {
-                if (IsOnline)
-                {
-                    // Send an empty command to check the respone
-                    string pingCommand = "{}";
-                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
-                    var respone = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "ping",
-                       jsonObject: pingCommand,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                    if (respone.HasAuthenticationError)
-                    {
-                        AuthenticationFailed = true;
-                        OnRestApiAuthenticationError(respone.EventArgs as RestEventArgs);
-                    }
-                    else
-                    {
-                        AuthenticationFailed = false;
-                        OnRestApiAuthenticationSucceeded(respone.EventArgs as RestEventArgs);
-                    }
-                    return AuthenticationFailed;
-                }
-                else
-                    return false;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        */
-
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
         
         #endregion
@@ -1497,6 +1409,8 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Models
+
+        public new Task GetFilesAsync() => GetModelsAsync(GetActivePrinterSlug(), GcodeImageType.Thumbnail, null);
 
         public async Task<ObservableCollection<IGcode>> GetModelsAsync(
             string PrinterName = "",
@@ -2436,7 +2350,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Printers
-        public async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
+        public new async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
         {
             IRestApiRequestRespone result = null;
             try
