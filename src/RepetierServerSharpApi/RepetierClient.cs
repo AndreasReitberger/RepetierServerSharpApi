@@ -3,32 +3,22 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
-using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
-using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Websocket.Client;
 
 namespace AndreasReitberger.API.Repetier
 {
@@ -666,58 +656,6 @@ namespace AndreasReitberger.API.Repetier
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return null;
-            }
-        }
-        #endregion
-
-        #region Proxy
-        Uri GetProxyUri() => ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
-        
-        WebProxy GetCurrentProxy()
-        {
-            WebProxy proxy = new()
-            {
-                Address = GetProxyUri(),
-                BypassProxyOnLocal = false,
-                UseDefaultCredentials = ProxyUserUsesDefaultCredentials,
-            };
-            if (ProxyUserUsesDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
-            {
-                proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
-            }
-            else
-            {
-                proxy.UseDefaultCredentials = ProxyUserUsesDefaultCredentials;
-            }
-            return proxy;
-        }
-        void UpdateRestClientInstance()
-        {
-            if (string.IsNullOrEmpty(ServerAddress))
-            {
-                return;
-            }
-            if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
-            {
-                RestClientOptions options = new(FullWebAddress)
-                {
-                    ThrowOnAnyError = true,
-                    MaxTimeout = 10000,
-                };
-                HttpClientHandler httpHandler = new()
-                {
-                    UseProxy = true,
-                    Proxy = GetCurrentProxy(),
-                    AllowAutoRedirect = true,
-                };
-
-                httpClient = new(handler: httpHandler, disposeHandler: true);
-                restClient = new(httpClient: httpClient, options: options);
-            }
-            else
-            {
-                httpClient = null;
-                restClient = new(baseUrl: FullWebAddress);
             }
         }
         #endregion
