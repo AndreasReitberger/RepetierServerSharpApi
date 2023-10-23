@@ -149,8 +149,9 @@ namespace AndreasReitberger.API.Repetier
         {
             PrintInfosChanged?.Invoke(this, e);
         }
-
+        [Obsolete("Use OnActiveJobChanged instead")]
         public event EventHandler<RepetierActivePrintInfoChangedEventArgs> PrintInfoChanged;
+        [Obsolete("Use OnActiveJobChanged instead")]
         protected virtual void OnPrintInfoChangedEvent(RepetierActivePrintInfoChangedEventArgs e)
         {
             PrintInfoChanged?.Invoke(this, e);

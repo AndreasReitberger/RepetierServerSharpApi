@@ -30,6 +30,8 @@ namespace AndreasReitberger.API.Repetier
                 new AbstractConverter<RepetierModel, IGcode>(),
                 new AbstractConverter<RepetierModelGroup, IGcodeGroup>(),
                 new AbstractConverter<RepetierJobListItem, IPrint3dJob>(),
+                new AbstractConverter<RepetierPrinterToolhead, IToolhead>(),
+                new AbstractConverter<RepetierPrinterHeaterComponent, IHeaterComponent>(),
             }
         };
         #endregion
@@ -48,6 +50,8 @@ namespace AndreasReitberger.API.Repetier
                 new AbstractConverter<KlipperGcodeThumbnail, IGcodeImage>(),
                 new AbstractConverter<KlipperJobQueueItem, IPrint3dJob>(),
                 new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
+                new AbstractConverter<RepetierPrinterToolhead, IToolhead>(),
+                new AbstractConverter<RepetierPrinterHeaterComponent, IHeaterComponent>(),
             }
         };
         #endregion

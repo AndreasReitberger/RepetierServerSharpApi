@@ -30,6 +30,8 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IGcode, RepetierModel>(),
                 new TypeMappingConverter<IGcodeGroup, RepetierModelGroup>(),
                 new TypeMappingConverter<IPrint3dJob, RepetierJobListItem>(),
+                new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
+                new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
             }
         };
         #endregion
@@ -46,6 +48,8 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IGcode, RepetierModel>(),
                 new TypeMappingConverter<IGcodeGroup, RepetierModelGroup>(),
                 new TypeMappingConverter<IPrint3dJob, RepetierJobListItem>(),
+                new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
+                new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
             }
         };
         #endregion

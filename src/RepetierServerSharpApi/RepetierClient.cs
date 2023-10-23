@@ -13,7 +13,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
@@ -159,7 +158,7 @@ namespace AndreasReitberger.API.Repetier
             UpdatePrinterState(value);
         }
 
-        [ObservableProperty]
+        [ObservableProperty, Obsolete("Use ActiveJob instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierCurrentPrintInfo activePrintInfo;
         partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo value)
@@ -406,16 +405,28 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (newState == null) return;
 
-                ActiveToolHead = newState.ActiveExtruder;
-                NumberOfToolHeads = newState.NumExtruder;
+                ActiveToolheadIndex = (int)newState.ActiveExtruder;
+                NumberOfToolHeads = (int)newState.NumExtruder;
 
-                Toolheads = new ObservableCollection<IHeaterComponent>(newState.Extruder);
+                Toolheads ??= new();
+                foreach(var ext in newState.Extruder.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    Toolheads.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 IsMultiExtruder = Toolheads?.Count > 1;
 
-                HeatedBeds = new ObservableCollection<IHeaterComponent>(newState.HeatedBeds);
+                HeatedBeds = new();
+                foreach (var ext in newState.HeatedBeds.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    HeatedBeds.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 HasHeatedBed = HeatedBeds?.Count > 0;
 
-                HeatedChambers = new ObservableCollection<IHeaterComponent>(newState.HeatedChambers);
+                HeatedChambers = new();
+                foreach (var ext in newState.HeatedChambers.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    HeatedChambers.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 HasHeatedBed = HeatedChambers?.Count > 0;
 
                 Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
@@ -456,15 +467,19 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        void UpdateActivePrintInfo(RepetierCurrentPrintInfo newPrintInfo)
+        //void UpdateActivePrintInfo(RepetierCurrentPrintInfo newPrintInfo)
+        void UpdateActivePrintInfo(IPrint3dJobStatus newPrintInfo)
         {
             try
             {
                 if (newPrintInfo != null)
                 {
-                    IsConnectedPrinterOnline = newPrintInfo.Online > 0;
-                    IsPrinting = newPrintInfo.Jobid > 0;
-                    IsPaused = newPrintInfo.Paused;
+                    if (newPrintInfo is RepetierCurrentPrintInfo info)
+                    {
+                        IsConnectedPrinterOnline = info.Online > 0;
+                    }
+                    IsPrinting = !string.IsNullOrEmpty(newPrintInfo.JobId);
+                    IsPaused = newPrintInfo.State == Print3dJobState.Paused;
                 }
                 else
                 {
@@ -2093,7 +2108,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.Jobid);
+        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.JobIdLong);
         public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
         public Task<bool> RemoveJobAsync(IPrint3dJob job) => RemoveJobAsync(job.JobId);
         
@@ -2482,25 +2497,35 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                var result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                ObservableCollection<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+
+                ActiveJobs = new(result);
+                ActiveJob = ActiveJobs
+                    .Cast<RepetierCurrentPrintInfo>()
+                    .FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
+                CurrentPrintImage = !string.IsNullOrEmpty(ActiveJob?.JobId)
+                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
+                    : Array.Empty<byte>();
+                UpdateActivePrintInfo(ActiveJob);
+                /*
                 ActivePrintInfos = result ?? new ObservableCollection<RepetierCurrentPrintInfo>();
                 ActivePrintInfo = ActivePrintInfos.FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
-                CurrentPrintImage = ActivePrintInfo?.Jobid > 0
-                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.Jobid, false).ConfigureAwait(false)
+                CurrentPrintImage = ActivePrintInfo?.JobIdLong > 0
+                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
                     : Array.Empty<byte>();
+                */
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
+                ActiveJobs = new();
+                //ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
             }
-
         }
 
         public async Task<RepetierCurrentPrintInfo> GetCurrentPrintInfoForPrinterAsync(string printerName)
         {
             RepetierCurrentPrintInfo resultObject = null;
-
             try
             {
                 ObservableCollection<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);

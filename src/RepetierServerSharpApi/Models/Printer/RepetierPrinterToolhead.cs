@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public partial class RepetierPrinterHeaterComponent : ObservableObject, IHeaterComponent
+    public partial class RepetierPrinterToolhead : ObservableObject, IToolhead
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
@@ -35,6 +35,17 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         string name;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double x = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double y = 0;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double z = 0;
         #endregion
 
         #region Json Ignore
@@ -65,7 +76,7 @@ namespace AndreasReitberger.API.Repetier.Models
             }
         }
 
-        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetExtruderTemperatureAsync(command, data);
         #endregion
 
         #region Overrides
