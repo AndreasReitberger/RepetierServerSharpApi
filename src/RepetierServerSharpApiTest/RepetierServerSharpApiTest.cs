@@ -570,10 +570,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                string host = "192.168.10.113";
-                string api = "_yourkey";
-
-                RepetierClient _server = new(host, api, _port, _ssl);
+                RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 Assert.IsTrue(_server.IsOnline);
 
@@ -586,10 +583,23 @@ namespace RepetierServerSharpApiTest
 
                 RepetierWebcamType type = RepetierWebcamType.Dynamic;
                 string webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
-                
+                Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+
                 type = RepetierWebcamType.Static;              
                 webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
+                Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
+                type = RepetierWebcamType.Dynamic;
+                var webCams = await _server.GetWebCamConfigsAsync();
+                Assert.IsTrue(webCams?.Count > 0);
+                foreach(var cam in webCams)
+                {
+                    webcamUriDynamic = await _server.GetWebCamUriAsync((int)cam.Position, type);
+                    Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+
+                    webcamUriDynamic = _server.GetWebCamUri(cam);
+                    Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+                }
             }
             catch (Exception exc)
             {

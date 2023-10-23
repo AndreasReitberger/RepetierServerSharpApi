@@ -195,20 +195,14 @@ namespace AndreasReitberger.API.Repetier
         public RepetierClient()
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            WebSocketTarget = "/socket/";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            LoadDefaults();
             UpdateRestClientInstance();
         }
 
         public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) //: base(serverAddress, api, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            WebSocketTarget = "/socket/";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            LoadDefaults();
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
@@ -216,10 +210,7 @@ namespace AndreasReitberger.API.Repetier
         public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) //: base(serverAddress, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            WebSocketTarget = "/socket/";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            LoadDefaults();
             InitInstance(serverAddress, port, "", isSecure);
             UpdateRestClientInstance();
         }
@@ -285,6 +276,18 @@ namespace AndreasReitberger.API.Repetier
         #region Methods
 
         #region Private
+
+        #region Misc
+        void LoadDefaults()
+        {
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            WebSocketTarget = "/socket/";
+            WebCamTarget = "/printer/cammjpg/";
+            WebSocketMessageReceived -= Client_WebSocketMessageReceived;
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+        }
+        #endregion
 
         #region Download
         public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000)
@@ -726,11 +729,15 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async() =>
         {
-            RefreshPrinterStateAsync(),
-            RefreshCurrentPrintInfosAsync(),
-        });
+            List<Task> tasks = new()
+            {
+                RefreshPrinterStateAsync(),
+                RefreshCurrentPrintInfosAsync(),
+            };
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }));
         public new Task RefreshAllAsync() => RefreshAllAsync(GcodeImageType.Thumbnail);
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
@@ -996,6 +1003,22 @@ namespace AndreasReitberger.API.Repetier
                 }
                 
                 return WebCams?.FirstOrDefault(webCam => webCam.Position == camIndex);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
+        }
+
+        public new Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync() => GetWebCamConfigsAsync(GetActivePrinterSlug());
+
+        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync(string slug)
+        {
+            try
+            {
+                RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);             
+                return new(config?.Webcams ?? new());
             }
             catch (Exception exc)
             {
