@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
@@ -9,28 +8,33 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierCurrentPrintInfo : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         Guid id;
 
         [ObservableProperty]
         [JsonProperty("active")]
+        [property: JsonIgnore]
         bool active;
 
         [ObservableProperty]
         [JsonProperty("analysed")]
+        [property: JsonIgnore]
         long analysed;
 
         [ObservableProperty]
         [JsonProperty("done")]
-        double done;
+        [property: JsonIgnore]
+        double? done;
 
         [ObservableProperty]
         [JsonProperty("job")]
-        string job;
+        [property: JsonIgnore]
+        string fileName;
 
-        [ObservableProperty]
-        [JsonProperty("jobid")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(JobId))]
+        [property: JsonProperty("jobid")]
         long jobIdLong;
         partial void OnJobIdLongChanged(long value)
         {
@@ -38,93 +42,111 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+        //[property: JsonIgnore]
         string jobId;
 
-        [ObservableProperty]
-        [JsonProperty("jobstate")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(State))]
+        [property: JsonProperty("jobstate")]
         string jobState;
+        partial void OnJobStateChanged(string value)
+        {
+            State = value == "running" ? Print3dJobState.InProgress : Print3dJobState.Completed;
+        }
 
         [ObservableProperty]
         [JsonProperty("linesSend")]
+        [property: JsonIgnore]
         long linesSend;
 
         [ObservableProperty]
         [JsonProperty("name")]
-        string fileName;
+        [property: JsonIgnore]
+        string printerName;
 
         [ObservableProperty]
         [JsonProperty("ofLayer")]
+        [property: JsonIgnore]
         long ofLayer;
 
         [ObservableProperty]
         [JsonProperty("online")]
+        [property: JsonIgnore]
         long online;
 
         [ObservableProperty]
         [JsonProperty("pauseState")]
+        [property: JsonIgnore]
         long pauseState;
 
-        [ObservableProperty]
-        [JsonProperty("paused")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(State))]
+        [property: JsonProperty("paused")]
         bool paused;
         partial void OnPausedChanged(bool value)
         {
-            //State = value ? Print3dJobState.InProgress;
+            State = value ? Print3dJobState.Paused : Print3dJobState.InProgress;
         }
 
         [ObservableProperty]
         [JsonProperty("printStart")]
+        [property: JsonIgnore]
         double? startTime;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         double? endTime;
 
         [ObservableProperty]
         [JsonProperty("printTime")]
+        [property: JsonIgnore]
         double? printDuration;
 
         [ObservableProperty]
         [JsonProperty("printedTimeComp")]
+        [property: JsonIgnore]
         double? printDurationTimeComp;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         double? totalPrintDuration;
 
         [ObservableProperty]
         [JsonProperty("repeat")]
+        [property: JsonIgnore]
         long? repeat;
 
         [ObservableProperty]
         [JsonProperty("slug")]
+        [property: JsonIgnore]
         string slug;
 
         [ObservableProperty]
         [JsonProperty("start")]
+        [property: JsonIgnore]
         long? start;
 
         [ObservableProperty]
         [JsonProperty("totalLines")]
+        [property: JsonIgnore]
         long? totalLines;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         double? filamentUsed;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         bool fileExists;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         Print3dJobState state;
         
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
         [property: JsonIgnore]
         IGcodeMeta meta;
-
+        
         #region JsonIgnore
 
         [JsonIgnore]

@@ -414,6 +414,7 @@ namespace AndreasReitberger.API.Repetier
                     Toolheads.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
                 }
                 IsMultiExtruder = Toolheads?.Count > 1;
+                ActiveToolhead = Toolheads?[ActiveToolheadIndex];
 
                 HeatedBeds = new();
                 foreach (var ext in newState.HeatedBeds.Select((x, i) => new { Value = x, Index = i }))
@@ -421,6 +422,7 @@ namespace AndreasReitberger.API.Repetier
                     HeatedBeds.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
                 }
                 HasHeatedBed = HeatedBeds?.Count > 0;
+                ActiveHeatedBed = HeatedBeds?.FirstOrDefault().Value;
 
                 HeatedChambers = new();
                 foreach (var ext in newState.HeatedChambers.Select((x, i) => new { Value = x, Index = i }))
@@ -428,6 +430,7 @@ namespace AndreasReitberger.API.Repetier
                     HeatedChambers.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
                 }
                 HasHeatedBed = HeatedChambers?.Count > 0;
+                ActiveHeatedChamber = HeatedChambers?.FirstOrDefault().Value;
 
                 Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
                 HasFan = Fans?.Count > 0;
@@ -1748,14 +1751,33 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 ObservableCollection<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
-
                 ActiveJobs = new(result);
-                ActiveJob = ActiveJobs
+
+                RepetierCurrentPrintInfo job = ActiveJobs
                     .Cast<RepetierCurrentPrintInfo>()
                     .FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
-                CurrentPrintImage = !string.IsNullOrEmpty(ActiveJob?.JobId)
-                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
-                    : Array.Empty<byte>();
+                bool updatePrintImage = false;
+                if (job?.JobId != ActiveJob?.JobId)
+                {
+                    updatePrintImage = true;
+                }
+                else
+                {
+                    if(CurrentPrintImage is null || CurrentPrintImage.Length == 0)
+                    {
+                        updatePrintImage = true;
+                    }
+                }
+                ActiveJob = job;
+                if (updatePrintImage)
+                {
+                    if (ActiveJob is RepetierCurrentPrintInfo info)
+                    {
+                        CurrentPrintImage = info?.JobIdLong > 0
+                            ? await GetDynamicRenderImageByJobIdAsync(info.JobIdLong, false).ConfigureAwait(false)
+                            : Array.Empty<byte>();
+                    }
+                }
                 UpdateActivePrintInfo(ActiveJob);
                 /*
                 ActivePrintInfos = result ?? new ObservableCollection<RepetierCurrentPrintInfo>();
