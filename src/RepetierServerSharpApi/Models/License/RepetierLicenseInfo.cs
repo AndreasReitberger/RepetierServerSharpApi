@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier
 {
@@ -9,26 +8,27 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [JsonProperty("active")]
+        [property: JsonIgnore]
         bool active;
 
         [ObservableProperty]
         [JsonProperty("hasBranding")]
+        [property: JsonIgnore]
         bool hasBranding;
 
         [ObservableProperty]
         [JsonProperty("licence")]
+        [property: JsonIgnore]
         string licence;
 
         [ObservableProperty]
         [JsonProperty("wantsBranding")]
+        [property: JsonIgnore]
         bool wantsBranding;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 

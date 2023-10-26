@@ -9,22 +9,22 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("SSID")]
+        [property: JsonIgnore]
         string ssid;
 
         [ObservableProperty]
         [JsonProperty("device")]
+        [property: JsonIgnore]
         string device;
 
         [ObservableProperty]
         [JsonProperty("uuid")]
+        [property: JsonIgnore]
         Guid uuid;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

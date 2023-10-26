@@ -16,18 +16,22 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("error")]
+        [property: JsonIgnore]
         long error;
 
         [ObservableProperty]
         [JsonProperty("output")]
+        [property: JsonIgnore]
         long output;
 
         [ObservableProperty]
         [JsonProperty("tempRead")]
+        [property: JsonIgnore]
         double? tempRead;
 
         [ObservableProperty]
         [JsonProperty("tempSet")]
+        [property: JsonIgnore]
         double? tempSet;
 
         #region Interface, unsused
