@@ -1,5 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -202,12 +202,32 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Interface, unused
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
         [property: JsonIgnore]
         double? timeAdded = 0;
+        partial void OnTimeAddedChanged(double? value)
+        {
+            if (value is not null)
+                TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
+        DateTime? timeAddedGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
+        [property: JsonIgnore]
         double? timeInQueue = 0;
+        partial void OnTimeInQueueChanged(double? value)
+        {
+            if (value is not null)
+                TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        DateTime? timeInQueueGeneralized;
         #endregion
 
         #endregion
