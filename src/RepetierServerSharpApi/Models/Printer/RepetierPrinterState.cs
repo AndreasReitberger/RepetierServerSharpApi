@@ -35,7 +35,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("extruder")]
-        List<RepetierPrinterHeaterComponent> extruder = new();
+        List<RepetierPrinterToolhead> extruder = new();
 
         [ObservableProperty]
         [JsonProperty("f")]

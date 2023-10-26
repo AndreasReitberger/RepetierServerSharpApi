@@ -9,6 +9,10 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
+        [JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("alias")]
         string alias;
 
@@ -90,7 +94,17 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Interface, unused
+        [ObservableProperty]
+        [JsonIgnore]
+        bool enabled = true;
 
+        [ObservableProperty]
+        [JsonIgnore]
+        bool flipX = false;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        bool flipY = false;
         #endregion
 
         #region Overrides

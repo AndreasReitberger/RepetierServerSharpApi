@@ -3,31 +3,21 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
-using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
-using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Security;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Websocket.Client;
 
 namespace AndreasReitberger.API.Repetier
 {
@@ -168,7 +158,7 @@ namespace AndreasReitberger.API.Repetier
             UpdatePrinterState(value);
         }
 
-        [ObservableProperty]
+        [ObservableProperty, Obsolete("Use ActiveJob instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         RepetierCurrentPrintInfo activePrintInfo;
         partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo value)
@@ -204,29 +194,23 @@ namespace AndreasReitberger.API.Repetier
         public RepetierClient()
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            LoadDefaults();
             UpdateRestClientInstance();
         }
 
         public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) //: base(serverAddress, api, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            LoadDefaults();
             InitInstance(serverAddress, port, api, isSecure);
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
 
         public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) //: base(serverAddress, port = 3344, isSecure = false)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.RepetierServer;
-            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            LoadDefaults();
             InitInstance(serverAddress, port, "", isSecure);
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
         #endregion
@@ -291,6 +275,18 @@ namespace AndreasReitberger.API.Repetier
         #region Methods
 
         #region Private
+
+        #region Misc
+        void LoadDefaults()
+        {
+            Target = Print3dServerTarget.RepetierServer;
+            ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
+            WebSocketTarget = "/socket/";
+            WebCamTarget = "/printer/cammjpg/";
+            WebSocketMessageReceived -= Client_WebSocketMessageReceived;
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+        }
+        #endregion
 
         #region Download
         public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000)
@@ -409,17 +405,32 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (newState == null) return;
 
-                ActiveToolHead = newState.ActiveExtruder;
-                NumberOfToolHeads = newState.NumExtruder;
+                ActiveToolheadIndex = (int)newState.ActiveExtruder;
+                NumberOfToolHeads = (int)newState.NumExtruder;
 
-                Toolheads = new ObservableCollection<IHeaterComponent>(newState.Extruder);
+                Toolheads ??= new();
+                foreach(var ext in newState.Extruder.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    Toolheads.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 IsMultiExtruder = Toolheads?.Count > 1;
+                ActiveToolhead = Toolheads?[ActiveToolheadIndex];
 
-                HeatedBeds = new ObservableCollection<IHeaterComponent>(newState.HeatedBeds);
+                HeatedBeds = new();
+                foreach (var ext in newState.HeatedBeds.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    HeatedBeds.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 HasHeatedBed = HeatedBeds?.Count > 0;
+                ActiveHeatedBed = HeatedBeds?.FirstOrDefault().Value;
 
-                HeatedChambers = new ObservableCollection<IHeaterComponent>(newState.HeatedChambers);
+                HeatedChambers = new();
+                foreach (var ext in newState.HeatedChambers.Select((x, i) => new { Value = x, Index = i }))
+                {
+                    HeatedChambers.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
+                }
                 HasHeatedBed = HeatedChambers?.Count > 0;
+                ActiveHeatedChamber = HeatedChambers?.FirstOrDefault().Value;
 
                 Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
                 HasFan = Fans?.Count > 0;
@@ -459,15 +470,19 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        void UpdateActivePrintInfo(RepetierCurrentPrintInfo newPrintInfo)
+        //void UpdateActivePrintInfo(RepetierCurrentPrintInfo newPrintInfo)
+        void UpdateActivePrintInfo(IPrint3dJobStatus newPrintInfo)
         {
             try
             {
                 if (newPrintInfo != null)
                 {
-                    IsConnectedPrinterOnline = newPrintInfo.Online > 0;
-                    IsPrinting = newPrintInfo.Jobid > 0;
-                    IsPaused = newPrintInfo.Paused;
+                    if (newPrintInfo is RepetierCurrentPrintInfo info)
+                    {
+                        IsConnectedPrinterOnline = info.Online > 0;
+                    }
+                    IsPrinting = !string.IsNullOrEmpty(newPrintInfo.JobId);
+                    IsPaused = newPrintInfo.State == Print3dJobState.Paused;
                 }
                 else
                 {
@@ -666,93 +681,6 @@ namespace AndreasReitberger.API.Repetier
         }
         #endregion
 
-        #region Proxy
-        Uri GetProxyUri() => ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
-        
-        WebProxy GetCurrentProxy()
-        {
-            WebProxy proxy = new()
-            {
-                Address = GetProxyUri(),
-                BypassProxyOnLocal = false,
-                UseDefaultCredentials = ProxyUserUsesDefaultCredentials,
-            };
-            if (ProxyUserUsesDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
-            {
-                proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
-            }
-            else
-            {
-                proxy.UseDefaultCredentials = ProxyUserUsesDefaultCredentials;
-            }
-            return proxy;
-        }
-        void UpdateRestClientInstance()
-        {
-            if (string.IsNullOrEmpty(ServerAddress))
-            {
-                return;
-            }
-            if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
-            {
-                RestClientOptions options = new(FullWebAddress)
-                {
-                    ThrowOnAnyError = true,
-                    MaxTimeout = 10000,
-                };
-                HttpClientHandler httpHandler = new()
-                {
-                    UseProxy = true,
-                    Proxy = GetCurrentProxy(),
-                    AllowAutoRedirect = true,
-                };
-
-                httpClient = new(handler: httpHandler, disposeHandler: true);
-                restClient = new(httpClient: httpClient, options: options);
-            }
-            else
-            {
-                httpClient = null;
-                restClient = new(baseUrl: FullWebAddress);
-            }
-        }
-        #endregion
-
-        #region Timers
-        void StopPingTimer()
-        {
-            if (PingTimer != null)
-            {
-                try
-                {
-                    PingTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-                    PingTimer = null;
-                    IsListeningToWebsocket = false;
-                }
-                catch (ObjectDisposedException)
-                {
-                    //PingTimer = null;
-                }
-            }
-        }
-        void StopTimer()
-        {
-            if (Timer != null)
-            {
-                try
-                {
-                    Timer?.Change(Timeout.Infinite, Timeout.Infinite);
-                    Timer = null;
-                    IsListening = false;
-                }
-                catch (ObjectDisposedException)
-                {
-                    //PingTimer = null;
-                }
-            }
-        }
-        #endregion
-
         #endregion
 
         #region Public
@@ -784,16 +712,21 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async() =>
         {
-            RefreshPrinterStateAsync(),
-            RefreshCurrentPrintInfosAsync(),
-        });
-
+            List<Task> tasks = new()
+            {
+                RefreshPrinterStateAsync(),
+                RefreshCurrentPrintInfosAsync(),
+            };
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }));
+        public new Task RefreshAllAsync() => RefreshAllAsync(GcodeImageType.Thumbnail);
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             try
             {
+                await base.RefreshAllAsync().ConfigureAwait(false);
                 // Avoid multiple calls
                 if (IsRefreshing) return;
                 IsRefreshing = true;
@@ -960,7 +893,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region ActivePrinter
-        public async Task SetPrinterActiveAsync(int index = -1, bool refreshPrinterList = true)
+        public override async Task SetPrinterActiveAsync(int index = -1, bool refreshPrinterList = true)
         {
             try
             {
@@ -989,7 +922,8 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)
+        
+        public override async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)     
         {
             try
             {
@@ -1004,73 +938,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        #endregion
 
-        #region WebCam
-        public string GetWebCamUri(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
-        {
-            try
-            {
-                string currentPrinter = GetActivePrinterSlug();
-                if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
-
-                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return "";
-            }
-        }
-        public async Task<string> GetWebCamUriAsync(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
-        {
-            try
-            {
-                string currentPrinter = GetActivePrinterSlug();
-                if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
-
-                await RefreshPrinterConfigAsync();
-                return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return "";
-            }
-        }
-        public async Task<IWebCamConfig> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
-        {
-            try
-            {
-                string currentPrinter = GetActivePrinterSlug();
-                if (string.IsNullOrEmpty(currentPrinter)) return null;
-
-                if (refreshConfigs)
-                {
-                    await RefreshPrinterConfigAsync();
-                }
-                
-                return WebCams?.FirstOrDefault(webCam => webCam.Position == camIndex);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return null;
-            }
-        }
-        public async Task<IWebCamConfig> GetWebCamConfigAsync(string slug, int camIndex = 0)
-        {
-            try
-            {
-                RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);             
-                return config?.Webcams?.FirstOrDefault(webCam => webCam.Position == camIndex);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return null;
-            }
-        }
         #endregion
 
         #region CheckOnline
@@ -1119,7 +987,7 @@ namespace AndreasReitberger.API.Repetier
             return isReachable;
         }
 
-        public async Task CheckOnlineAsync(int timeout = 10000)
+        public new async Task CheckOnlineAsync(int timeout = 10000)
         {
             CancellationTokenSource cts = new(timeout);
             await CheckOnlineAsync(cts).ConfigureAwait(false);
@@ -1127,102 +995,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", cts);
-        /*
-        {
-            if (IsConnecting) return; // Avoid multiple calls
-            IsConnecting = true;
-            bool isReachable = false;
-            try
-            {
-                string uriString = FullWebAddress;
-                try
-                {
-                    // Send a blank api request in order to check if the server is reachable
-                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";                  
-                    IRestApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       command: "{}",
-                       authHeaders: AuthHeaders,
-                       cts: cts)
-                    .ConfigureAwait(false);
-                    isReachable = respone?.IsOnline == true;
-                }
-                catch (InvalidOperationException iexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(iexc, false));
-                }
-                catch (HttpRequestException rexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(rexc, false));
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws an exception on timeout, not actually an error
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            IsConnecting = false;
-            // Avoid offline message for short connection loss
-            if (!IsOnline || isReachable || _retries > RetriesWhenOffline)
-            {
-                // Do not check if the previous state was already offline
-                _retries = 0;
-                IsOnline = isReachable;
-            }
-            else
-            {
-                // Retry with shorter timeout to see if the connection loss is real
-                _retries++;
-                cts = new(3500);
-                await CheckOnlineAsync(cts).ConfigureAwait(false);
-            }
-        }
-        */
-
         public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", timeout);
-        /*
-        {
-            try
-            {
-                if (IsOnline)
-                {
-                    // Send an empty command to check the respone
-                    string pingCommand = "{}";
-                    string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
-                    var respone = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "ping",
-                       jsonObject: pingCommand,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                    if (respone.HasAuthenticationError)
-                    {
-                        AuthenticationFailed = true;
-                        OnRestApiAuthenticationError(respone.EventArgs as RestEventArgs);
-                    }
-                    else
-                    {
-                        AuthenticationFailed = false;
-                        OnRestApiAuthenticationSucceeded(respone.EventArgs as RestEventArgs);
-                    }
-                    return AuthenticationFailed;
-                }
-                else
-                    return false;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        */
-
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
         
         #endregion
@@ -1496,538 +1269,6 @@ namespace AndreasReitberger.API.Repetier
 
         #endregion
 
-        #region Models
-
-        public async Task<ObservableCollection<IGcode>> GetModelsAsync(
-            string PrinterName = "",
-            GcodeImageType ImageType = GcodeImageType.Thumbnail,
-            IProgress<int> Prog = null)
-        {
-            try
-            {
-                ObservableCollection<IGcode> modelDatas = new();
-                if (!IsReady)
-                    return modelDatas;
-
-                string currentPrinter = string.IsNullOrEmpty(PrinterName) ? GetActivePrinterSlug() : PrinterName;
-                if (string.IsNullOrEmpty(currentPrinter)) return modelDatas;
-
-                // Reporting
-                Prog?.Report(0);
-                RepetierModelList models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
-                if (models != null)
-                {
-                    List<RepetierModel> modelList = models.Data;
-                    if (modelList != null)
-                    {
-                        ObservableCollection<IGcode> Models = new(modelList);
-                        if (ImageType != GcodeImageType.None)
-                        {
-                            int total = Models.Count;
-                            for (int i = 0; i < total; i++)
-                            {
-                                IGcode model = Models[i];
-                                model.PrinterName = currentPrinter;
-                                model.ImageType = ImageType;
-                                // Load image depending on settings
-                                switch (ImageType)
-                                {
-                                    // Blocks thread, however async download leads to bad requestes
-                                    case GcodeImageType.Thumbnail:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
-                                        break;
-                                    case GcodeImageType.Image:
-                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
-                                        break;
-                                    default:
-                                        model.Thumbnail = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
-                                        model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
-                                        break;
-                                }
-
-                                if (Prog != null)
-                                {
-                                    float progress = ((float)i / total) * 100f;
-                                    if (i < total - 1)
-                                    {
-                                        Prog.Report(Convert.ToInt32(progress));
-                                    }
-                                    else
-                                    {
-                                        Prog.Report(100);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Prog?.Report(100);
-                        }
-                        return Models;
-                    }
-                }
-
-                Prog?.Report(100);
-
-                return modelDatas;
-            }
-            catch (Exception exc)
-            {
-                if (Prog != null)
-                    Prog.Report(100);
-
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<IGcode>();
-            }
-        }
-        
-        public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return null;
-
-            Dictionary<long, byte[]> result = new();
-            try
-            {
-                for (int i = 0; i < models.Count; i++)
-                {
-                    IGcode model = models[i];
-                    byte[] image = new byte[0];
-                    image = imageType switch
-                    {
-                        GcodeImageType.Thumbnail => await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false),
-                        GcodeImageType.Image => await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false),
-                        _ => throw new NotSupportedException($"The image type '{imageType}' is not supported here."),
-                    };
-                    result.Add(model.Identifier, image);
-                }
-                return result;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return null;
-            }
-        }
-        public async Task<bool> DeleteModelFromServerAsync(IGcode model)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return false;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "removeModel",
-                       jsonObject: new { id = model.Identifier },
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        public async Task RefreshModelsAsync(GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int> prog = null)
-        {
-            try
-            {
-                ObservableCollection<IGcode> modelDatas = new();
-                if (!IsReady || ActivePrinter == null)
-                {
-                    Files = modelDatas;
-                    return;
-                }
-                Files = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                Files = new ObservableCollection<IGcode>();
-            }
-        }
-        public async Task<bool> CopyModelToPrintQueueAsync(IGcode model, bool startPrintIfPossible = true)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter))
-            {
-                return false;
-            }
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "removeModel",
-                       jsonObject: new { id = model.Identifier, autostart = (startPrintIfPossible ? "true" : "false")},
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "copyModel", jsonData: $"{{\"id\":{model.Identifier}, \"autostart\":{(startPrintIfPossible ? "true" : "false")}}}",
-                        printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                await RefreshJobListAsync().ConfigureAwait(false);
-                return GetQueryResult(result.Result, true);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        public async Task UpdateFreeSpaceAsync()
-        {
-            IRestApiRequestRespone result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
-                result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "freeSpace",
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-
-                RepetierFreeSpaceRespone space = GetObjectFromJson<RepetierFreeSpaceRespone>(result.Result);
-                if (space != null)
-                {
-                    FreeDiskSpace = space.Free;
-                    TotalDiskSpace = space.Capacity;
-                    UsedDiskSpace = TotalDiskSpace - space.Available;
-                }
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierFreeSpaceRespone),
-                    Message = jecx.Message,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        public async Task RefreshDiskSpaceAsync()
-        {
-            await UpdateFreeSpaceAsync().ConfigureAwait(false);
-        }
-
-        #endregion
-
-        #region ModelGroups
-        public async Task<bool> AddModelGroupAsync(IGcodeGroup group) => await AddModelGroupAsync(group?.Name);
-
-        public async Task<bool> AddModelGroupAsync(string groupName)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return false;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                object data = new
-                {
-                    groupName = groupName,
-                };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "addModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        public async Task<bool> AddModelGroupAsync(string printerName, IGcodeGroup group) => await AddModelGroupAsync(printerName, group.Name);
-        public async Task<bool> AddModelGroupAsync(string printerName, string groupName)
-        {
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                object data = new
-                {
-                    groupName = groupName,
-                };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "addModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        public async Task<bool> RemoveModelGroupAsync(IGcodeGroup group) => await RemoveModelGroupAsync(group.Name);
-        public async Task<bool> RemoveModelGroupAsync(string groupName)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return false;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                object data = new
-                {
-                    groupName = groupName,
-                };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "delModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        
-        public async Task<bool> RemoveModelGroupAsync(string printerName, IGcodeGroup group) => await RemoveModelGroupAsync(printerName, group.Name);
-        public async Task<bool> RemoveModelGroupAsync(string printerName, string groupName)
-        {
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                object data = new
-                {
-                    groupName = groupName,
-                };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "delModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        public async Task<bool> MoveModelToGroupAsync(string groupName, IGcode file) => await MoveModelToGroupAsync(groupName, file.Identifier);
-        public async Task<bool> MoveModelToGroupAsync(string groupName, long id)
-        {
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return false;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                object data = new
-                {
-                    groupName = groupName,
-                    id = id,
-                };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "moveModelFileToGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "moveModelFileToGroup", jsonData: string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", groupName, id),
-                        printerName: currentPrinter
-                        )
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        public async Task<bool> MoveModelToGroupAsync(string printerName, IGcodeGroup group, IGcode file) => await MoveModelToGroupAsync(printerName, group.Name, file.Identifier);  
-        public async Task<bool> MoveModelToGroupAsync(string printerName, string groupName, long id)
-        {
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                        command: "removeModel",
-                       jsonObject: new { groupName = groupName, id = id },
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "moveModelFileToGroup", jsonData: string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", groupName, id),
-                        printerName: printerName
-                        )
-                    .ConfigureAwait(false);
-                */
-                return GetQueryResult(result.Result);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-
-        public async Task<ObservableCollection<IGcodeGroup>> GetModelGroupsAsync()
-        {
-            IRestApiRequestRespone result = null;
-            ObservableCollection<IGcodeGroup> resultObject = new();
-
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "listModelGroups",
-                       jsonObject: null,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api, 
-                   command: "listModelGroups", 
-                   printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                RepetierModelGroups info = GetObjectFromJson<RepetierModelGroups>(result.Result);
-                return info != null && info.GroupNames != null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g})) : resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(String),
-                    Message = jecx.Message,
-                });
-                return new ObservableCollection<IGcodeGroup>();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
-            }
-        }
-        public async Task RefreshModelGroupsAsync()
-        {
-            try
-            {
-                ObservableCollection<IGcodeGroup> groups = new();
-                if (!IsReady || ActivePrinter == null)
-                {
-                    Groups = groups;
-                    return;
-                }
-
-                string currentPrinter = ActivePrinter.Slug;
-                if (string.IsNullOrEmpty(currentPrinter)) return;
-
-                RepetierModelGroups result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
-                if (result != null)
-                {
-                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames?.Select(g => new RepetierModelGroup() { Name = g }));
-                }
-                else Groups = groups;
-
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                Groups = new ObservableCollection<IGcodeGroup>();
-            }
-        }
-        #endregion
-
         #region Jobs
         public async Task<ObservableCollection<IPrint3dJob>> GetJobListAsync()
         {
@@ -2218,7 +1459,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.Jobid);
+        public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.JobIdLong);
         public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
         public Task<bool> RemoveJobAsync(IPrint3dJob job) => RemoveJobAsync(job.JobId);
         
@@ -2435,104 +1676,6 @@ namespace AndreasReitberger.API.Repetier
 
         #endregion
 
-        #region Printers
-        public async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
-        {
-            IRestApiRequestRespone result = null;
-            try
-            {
-                ObservableCollection<IPrinter3d> repetierPrinterList = new();
-                if (!IsReady)
-                    return repetierPrinterList;
-
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.List}";
-                result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "",
-                       jsonObject: null,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer,
-                    RepetierCommandFeature.list)
-                    .ConfigureAwait(false);
-                */
-                RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
-                if (respone != null)
-                {                   
-                    repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
-                    foreach (RepetierPrinter printer in repetierPrinterList.Cast<RepetierPrinter>())
-                    {
-                        if (printer?.JobId > 0)
-                        {
-                            IPrinter3d prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
-                            if (prevPrinter is null) continue;
-                            // Avoid unnecessary calls if the image or the job hasn't changed
-                            if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
-                            {
-                                printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
-                            }
-                        }
-                        else printer.CurrentPrintImage = Array.Empty<byte>();
-                    }
-                    Printers = repetierPrinterList;
-                }
-
-                return repetierPrinterList;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierPrinter),
-                    Message = jecx.Message,
-                });
-                return new ObservableCollection<IPrinter3d>();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<IPrinter3d>();
-            }
-        }
-        public async Task RefreshPrinterListAsync()
-        {
-            try
-            {
-                ObservableCollection<IPrinter3d> printers = new();
-                if (!IsReady)
-                {
-                    Printers = printers;
-                    return;
-                }
-
-                ObservableCollection<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
-                if (result != null)
-                {
-                    Printers = result;
-                }
-                else
-                {
-                    Printers = printers;
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                Printers = new ObservableCollection<IPrinter3d>();
-            }
-        }
-        #endregion
-
         #region CurrentPrintInfo
         public async Task<RepetierCurrentPrintInfo> GetCurrentPrintInfoAsync()
         {
@@ -2607,25 +1750,54 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                var result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                ObservableCollection<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                ActiveJobs = new(result);
+
+                RepetierCurrentPrintInfo job = ActiveJobs
+                    .Cast<RepetierCurrentPrintInfo>()
+                    .FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
+                bool updatePrintImage = false;
+                if (job?.JobId != ActiveJob?.JobId)
+                {
+                    updatePrintImage = true;
+                }
+                else
+                {
+                    if(CurrentPrintImage is null || CurrentPrintImage.Length == 0)
+                    {
+                        updatePrintImage = true;
+                    }
+                }
+                ActiveJob = job;
+                if (updatePrintImage)
+                {
+                    if (ActiveJob is RepetierCurrentPrintInfo info)
+                    {
+                        CurrentPrintImage = info?.JobIdLong > 0
+                            ? await GetDynamicRenderImageByJobIdAsync(info.JobIdLong, false).ConfigureAwait(false)
+                            : Array.Empty<byte>();
+                    }
+                }
+                UpdateActivePrintInfo(ActiveJob);
+                /*
                 ActivePrintInfos = result ?? new ObservableCollection<RepetierCurrentPrintInfo>();
                 ActivePrintInfo = ActivePrintInfos.FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
-                CurrentPrintImage = ActivePrintInfo?.Jobid > 0
-                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.Jobid, false).ConfigureAwait(false)
+                CurrentPrintImage = ActivePrintInfo?.JobIdLong > 0
+                    ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
                     : Array.Empty<byte>();
+                */
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
+                ActiveJobs = new();
+                //ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
             }
-
         }
 
         public async Task<RepetierCurrentPrintInfo> GetCurrentPrintInfoForPrinterAsync(string printerName)
         {
             RepetierCurrentPrintInfo resultObject = null;
-
             try
             {
                 ObservableCollection<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
@@ -2642,109 +1814,6 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        #endregion
-
-        #region PrinterConfiguration
-        public async Task<RepetierPrinterConfig> GetPrinterConfigAsync(string printerName = "")
-        {
-            RepetierPrinterConfig resultObject = null;
-
-            string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
-            if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
-
-            IRestApiRequestRespone result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "getPrinterConfig",
-                       jsonObject: new { printer = currentPrinter},
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "getPrinterConfig", jsonData: string.Format("{{\"printer\": \"{0}\"}}", currentPrinter),
-                    printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                RepetierPrinterConfig config = GetObjectFromJson<RepetierPrinterConfig>(result.Result);
-                if (config != null)
-                {
-                    Config = resultObject = config;
-                }
-                return resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    Message = jecx.Message,
-                });
-                return resultObject;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
-            }
-        }
-        public async Task RefreshPrinterConfigAsync()
-        {
-            try
-            {
-                RepetierPrinterConfig result = await GetPrinterConfigAsync().ConfigureAwait(false);
-                if (result != null)
-                {
-                    Config = result;
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        public async Task<bool> SetPrinterConfigAsync(RepetierPrinterConfig newConfig, string printerName = "")
-        {
-            string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
-            if (string.IsNullOrEmpty(currentPrinter))
-            {
-                return false;
-            }
-
-            IRestApiRequestRespone result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "setPrinterConfig",
-                       jsonObject: newConfig,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "setPrinterConfig", jsonData: newConfig,
-                    printerName: currentPrinter
-                    ).ConfigureAwait(false);
-                */
-                return GetQueryResult(result?.Result, true);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
         #endregion
 
         #region Control Commands
