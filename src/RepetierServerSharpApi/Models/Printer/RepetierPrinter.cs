@@ -137,6 +137,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("totalLines")]
+        [property: JsonIgnore]
         long? totalLines;
 
         #region JsonIgnored
