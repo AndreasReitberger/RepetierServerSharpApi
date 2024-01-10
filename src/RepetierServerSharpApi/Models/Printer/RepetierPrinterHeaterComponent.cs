@@ -15,18 +15,22 @@ namespace AndreasReitberger.API.Repetier.Models
         Guid id;
 
         [ObservableProperty]
+        [property: JsonIgnore]
         [JsonProperty("error")]
         long error;
 
         [ObservableProperty]
+        [property: JsonIgnore]
         [JsonProperty("output")]
         long output;
 
         [ObservableProperty]
+        [property: JsonIgnore]
         [JsonProperty("tempRead")]
         double? tempRead;
 
         [ObservableProperty]
+        [property: JsonIgnore]
         [JsonProperty("tempSet")]
         double? tempSet;
 

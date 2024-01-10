@@ -15,22 +15,27 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("active")]
+        [property: JsonIgnore]
         bool isActive;
 
         [ObservableProperty]
         [JsonProperty("analysed")]
+        [property: JsonIgnore]
         int? analysed;
 
         [ObservableProperty]
         [JsonProperty("done")]
+        [property: JsonIgnore]
         double? done;
 
         [ObservableProperty]
         [JsonProperty("job")]
+        [property: JsonIgnore]
         string activeJobName = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("jobid")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(ActiveJobId))]
+        [property: JsonProperty("jobid")]
         int jobId = -1;
         partial void OnJobIdChanged(int value)
         {
@@ -43,22 +48,27 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("jobstate")]
+        [property: JsonIgnore]
         string? activeJobState;
         
         [ObservableProperty]
         [JsonProperty("linesSend")]
+        [property: JsonIgnore]
         long? lineSent;
 
         [ObservableProperty]
         [JsonProperty("name")]
+        [property: JsonIgnore]
         string name = string.Empty;
         
         [ObservableProperty]
         [JsonProperty("ofLayer")]
+        [property: JsonIgnore]
         long? layers;
 
-        [ObservableProperty]
-        [JsonProperty("online")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(IsOnline))]
+        [property: JsonProperty("online")]
         long online;
         partial void OnOnlineChanged(long value)
         {
@@ -71,34 +81,42 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("pauseState")]
+        [property: JsonIgnore]
         long? pauseState;
 
         [ObservableProperty]
         [JsonProperty("paused")]
+        [property: JsonIgnore]
         bool paused;
 
         [ObservableProperty]
         [JsonProperty("printStart")]
+        [property: JsonIgnore]
         double? printStart;
 
         [ObservableProperty]
         [JsonProperty("printTime")]
+        [property: JsonIgnore]
         double? printTime;
 
         [ObservableProperty]
         [JsonProperty("printedTimeComp")]
+        [property: JsonIgnore]
         double? printedTimeComp;
 
         [ObservableProperty]
         [JsonProperty("repeat")]
+        [property: JsonIgnore]
         int? repeat;
 
         [ObservableProperty]
         [JsonProperty("slug")]
+        [property: JsonIgnore]
         string slug = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("start")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintStarted))]
+        [property: JsonProperty("start")]
         long? start;
         partial void OnStartChanged(long? value)
         {
@@ -119,6 +137,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("totalLines")]
+        [property: JsonIgnore]
         long? totalLines;
 
         #region JsonIgnored

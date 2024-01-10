@@ -264,26 +264,32 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         bool isVisible;
 
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         bool isLoadingImage = false;
 
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         byte[] image = Array.Empty<byte>();
 
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         byte[] thumbnail = Array.Empty<byte>();
 
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         GcodeImageType imageType = GcodeImageType.Thumbnail;
             
         [ObservableProperty]
         [JsonIgnore]
+        [property: JsonIgnore]
         string printerName = string.Empty;
 
         #endregion

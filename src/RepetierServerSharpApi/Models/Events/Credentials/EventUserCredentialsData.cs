@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,23 +7,23 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("login")]
+        [property: JsonIgnore]
         string login;
 
         [ObservableProperty]
         [JsonProperty("permissions")]
+        [property: JsonIgnore]
         long permissions;
 
         [ObservableProperty]
         [JsonProperty("settings")]
+        [property: JsonIgnore]
         EventUserCredentialsSettings settings;
 
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

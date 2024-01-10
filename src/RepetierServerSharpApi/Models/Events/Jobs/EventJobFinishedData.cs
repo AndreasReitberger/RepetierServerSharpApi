@@ -9,26 +9,27 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("duration")]
+        [property: JsonIgnore]
         long? duration;
 
         [ObservableProperty]
         [JsonProperty("end")]
+        [property: JsonIgnore]
         long? end;
 
         [ObservableProperty]
         [JsonProperty("lines")]
+        [property: JsonIgnore]
         long? lines;
 
         [ObservableProperty]
         [JsonProperty("start")]
+        [property: JsonIgnore]
         long? start;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

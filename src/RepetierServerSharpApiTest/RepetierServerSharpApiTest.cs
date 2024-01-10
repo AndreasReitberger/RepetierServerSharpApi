@@ -4,6 +4,7 @@ using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Xml.Serialization;
@@ -40,8 +41,8 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
-                var serializedObject = JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
+                var serializedString = System.Text.Json.JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
+                var serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
                 Assert.IsTrue(serializedObject is RepetierClient server && server != null);
 
             }
@@ -94,7 +95,7 @@ namespace RepetierServerSharpApiTest
                 {
                     RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
                     {
-                        ActiveToolHead = 1,
+                        ActiveToolheadIndex = 1,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
                         IsMultiExtruder = true,
@@ -704,7 +705,7 @@ namespace RepetierServerSharpApiTest
 
                     if (result)
                     {
-                        double temp = 0;
+                        double? temp = 0;
                         // Wait till temp rises
                         while (temp < 23)
                         {
@@ -785,20 +786,20 @@ namespace RepetierServerSharpApiTest
 
                     if (result)
                     {
-                        double extruderTemp = 0;
+                        double? extruderTemp = 0;
                         // Wait till temp rises
                         while (extruderTemp < 28)
                         {
                             var state = await _server.GetStatesAsync();
                             if (state != null && state?.Count > 0)
                             {
-                                List<RepetierPrinterHeaterComponent> extruders = state.FirstOrDefault().Value.Extruder;
+                                List<RepetierPrinterToolhead> extruders = state.FirstOrDefault().Value.Extruder;
                                 if (extruders == null || extruders.Count == 0)
                                 {
                                     Assert.Fail("No extrudes available");
                                     break;
                                 }
-                                RepetierPrinterHeaterComponent extruder = extruders[0];
+                                RepetierPrinterToolhead extruder = extruders[0];
                                 extruderTemp = extruder.TempRead;
                             }
                         }
@@ -874,62 +875,81 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    var update = await _server.GetAvailableServerUpdateAsync();
+                    RepetierAvailableUpdateInfo update = await _server.GetAvailableServerUpdateAsync();
                     Assert.IsNotNull(update);
+                    string json = JsonConvert.SerializeObject(update, Formatting.Indented);
 
-                    var printInfo = await _server.GetCurrentPrintInfoAsync();
+                    RepetierCurrentPrintInfo printInfo = await _server.GetCurrentPrintInfoAsync();
                     Assert.IsNotNull(printInfo);
+                    json = JsonConvert.SerializeObject(printInfo, Formatting.Indented);
 
                     var printInfos = await _server.GetCurrentPrintInfosAsync();
                     Assert.IsNotNull(printInfos);
+                    json = JsonConvert.SerializeObject(printInfos, Formatting.Indented);
 
                     var cmds = await _server.GetExternalCommandsAsync();
                     Assert.IsNotNull(cmds);
+                    json = JsonConvert.SerializeObject(cmds, Formatting.Indented);
 
                     var gpios = await _server.GetGPIOListAsync();
                     Assert.IsNotNull(gpios);
+                    json = JsonConvert.SerializeObject(gpios, Formatting.Indented);
 
                     var history = await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
                     Assert.IsNotNull(history);
+                    json = JsonConvert.SerializeObject(history, Formatting.Indented);
 
                     var historyReport = await _server.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
                     Assert.IsNotNull(historyReport);
+                    json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
 
-                    var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2022, true);
-                    Assert.IsNotNull(historyReport);
+                    var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2023, true);
+                    Assert.IsNotNull(historySummary);
+                    json = JsonConvert.SerializeObject(historySummary, Formatting.Indented);
 
                     var jobList = await _server.GetJobListAsync();
                     Assert.IsNotNull(jobList);
+                    json = JsonConvert.SerializeObject(jobList, Formatting.Indented);
 
                     var license = await _server.GetLicenseDataAsync();
                     Assert.IsNotNull(license);
+                    json = JsonConvert.SerializeObject(license, Formatting.Indented);
 
                     var messages = await _server.GetMessagesAsync();
                     Assert.IsNotNull(messages);
+                    json = JsonConvert.SerializeObject(messages, Formatting.Indented);
 
                     var groups = await _server.GetModelGroupsAsync();
                     Assert.IsNotNull(groups);
+                    json = JsonConvert.SerializeObject(groups, Formatting.Indented);
 
-                    var files = await _server.GetModelsAsync();
+                    ObservableCollection<IGcode> files = await _server.GetModelsAsync();
                     Assert.IsNotNull(files);
+                    json = JsonConvert.SerializeObject(files, Formatting.Indented);
 
                     var config = await _server.GetPrinterConfigAsync();
                     Assert.IsNotNull(config);
+                    json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
-                    var printers = await _server.GetPrintersAsync();
+                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.IsNotNull(printers);
+                    json = JsonConvert.SerializeObject(printers, Formatting.Indented);
 
                     var servers = await _server.GetProjectsListServerAsync();
                     Assert.IsNotNull(servers);
+                    json = JsonConvert.SerializeObject(servers, Formatting.Indented);
 
-                    var projects = await _server.GetProjectItemsAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    var projects = await _server.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.IsNotNull(projects);
+                    json = JsonConvert.SerializeObject(projects, Formatting.Indented);
 
-                    var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault().Uuid ?? Guid.Empty);
+                    var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.IsNotNull(folders);
+                    json = JsonConvert.SerializeObject(folders, Formatting.Indented);
 
                     var state = await _server.GetStatesAsync();
                     Assert.IsNotNull(state);
+                    json = JsonConvert.SerializeObject(state, Formatting.Indented);
 
                     //await _server.RefreshAllAsync();
                     //Assert.IsTrue(_server.InitialDataFetched);

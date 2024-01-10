@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,26 +7,27 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("active")]
+        [property: JsonIgnore]
         bool active;
 
         [ObservableProperty]
         [JsonProperty("name")]
+        [property: JsonIgnore]
         string name;
 
         [ObservableProperty]
         [JsonProperty("online")]
+        [property: JsonIgnore]
         long online;
 
         [ObservableProperty]
         [JsonProperty("slug")]
+        [property: JsonIgnore]
         string slug;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }
