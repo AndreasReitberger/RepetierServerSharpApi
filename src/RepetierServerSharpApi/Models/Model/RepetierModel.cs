@@ -235,6 +235,13 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #endregion
 
+        #region Ctor
+        public RepetierModel()
+        {
+            Id = Guid.NewGuid();
+        }
+        #endregion
+
         #region Methods
         public Task MoveToAsync(IPrint3dServerClient client, string targetPath, bool copy = false)
         {

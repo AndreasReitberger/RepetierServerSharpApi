@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
     public class RepetierActivePrintInfosChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public ObservableCollection<RepetierCurrentPrintInfo> NewActivePrintInfos { get; set; } = new ObservableCollection<RepetierCurrentPrintInfo>();
+        public List<RepetierCurrentPrintInfo> NewActivePrintInfos { get; set; } = [];
         #endregion
 
         #region Overrides

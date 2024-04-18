@@ -14,12 +14,12 @@ namespace AndreasReitberger.API.Repetier
     {
         #region Methods
 
-        public override async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
+        public override async Task<List<IPrinter3d>> GetPrintersAsync()
         {
             IRestApiRequestRespone? result = null;
             try
             {
-                ObservableCollection<IPrinter3d> repetierPrinterList = new();
+                List<IPrinter3d> repetierPrinterList = [];
                 if (!IsReady)
                     return repetierPrinterList;
 
@@ -41,7 +41,7 @@ namespace AndreasReitberger.API.Repetier
                 RepetierPrinterListRespone? respone = GetObjectFromJson<RepetierPrinterListRespone>(result?.Result);
                 if (respone is not null)
                 {
-                    repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
+                    repetierPrinterList = new List<IPrinter3d>(respone.Printers);
                     foreach (RepetierPrinter? printer in repetierPrinterList.Cast<RepetierPrinter>())
                     {
                         if (printer is not null)
@@ -63,9 +63,8 @@ namespace AndreasReitberger.API.Repetier
                             else printer.CurrentPrintImage = [];
                         }
                     }
-                    Printers = repetierPrinterList;
+                    Printers = [.. repetierPrinterList];
                 }
-
                 return repetierPrinterList;
             }
             catch (JsonException jecx)
@@ -82,34 +81,34 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<IPrinter3d>();
+                return [];
             }
         }
         public async Task RefreshPrinterListAsync()
         {
             try
             {
-                ObservableCollection<IPrinter3d> printers = new();
+                List<IPrinter3d> printers = [];
                 if (!IsReady)
                 {
-                    Printers = printers;
+                    Printers = [.. printers];
                     return;
                 }
 
-                ObservableCollection<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
+                List<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
                 if (result is not null)
                 {
-                    Printers = result;
+                    Printers = [.. result];
                 }
                 else
                 {
-                    Printers = printers;
+                    Printers = [.. printers];
                 }
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Printers = new ObservableCollection<IPrinter3d>();
+                Printers = [];
             }
         }
 

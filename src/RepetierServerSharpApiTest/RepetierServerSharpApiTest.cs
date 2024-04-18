@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -362,7 +361,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.IsTrue(printers != null && printers.Count > 0);
                 }
                 else
@@ -392,7 +391,7 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync();
                     }
 
-                    ObservableCollection<IGcodeGroup> modelgroups = await _server.GetModelGroupsAsync();
+                    List<IGcodeGroup> modelgroups = await _server.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
 
                     await _server.RefreshModelGroupsAsync();
@@ -423,12 +422,12 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
+                    List<IGcode> models = await _server.GetModelsAsync();
                     Assert.IsTrue(models?.Count > 0);
 
                     // Try to fetch models from a second printer, which is not set active at the moment
                     string secondPrinter = "Prusa_i3_MK3S";
-                    ObservableCollection<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
+                    List<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
                     Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
                 }
                 else
@@ -481,7 +480,7 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<IGcode> models = await _server.GetModelsAsync();
+                    List<IGcode> models = await _server.GetModelsAsync();
                     if (models?.Count > 0)
                     {
                         bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: false);
@@ -1041,7 +1040,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsNotNull(groups);
                     json = JsonConvert.SerializeObject(groups, Formatting.Indented);
 
-                    ObservableCollection<IGcode> files = await _server.GetModelsAsync();
+                    List<IGcode> files = await _server.GetModelsAsync();
                     Assert.IsNotNull(files);
                     json = JsonConvert.SerializeObject(files, Formatting.Indented);
 
@@ -1049,7 +1048,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsNotNull(config);
                     json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
-                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.IsNotNull(printers);
                     json = JsonConvert.SerializeObject(printers, Formatting.Indented);
 

@@ -17,16 +17,16 @@ namespace AndreasReitberger.API.Repetier
         #region Methods
 
         #region Files
-        public override Task<ObservableCollection<IGcode>> GetFilesAsync() => GetModelsAsync(GetActivePrinterSlug(), GcodeImageType.Thumbnail, null);
+        public override Task<List<IGcode>> GetFilesAsync() => GetModelsAsync(GetActivePrinterSlug(), GcodeImageType.Thumbnail, null);
 
-        public async Task<ObservableCollection<IGcode>> GetModelsAsync(
+        public async Task<List<IGcode>> GetModelsAsync(
             string PrinterName = "",
             GcodeImageType ImageType = GcodeImageType.Thumbnail,
             IProgress<int>? Prog = null)
         {
             try
             {
-                ObservableCollection<IGcode> modelDatas = new();
+                List<IGcode> modelDatas = [];
                 if (!IsReady)
                     return modelDatas;
 
@@ -41,7 +41,7 @@ namespace AndreasReitberger.API.Repetier
                     List<RepetierModel> modelList = models.Data;
                     if (modelList is not null)
                     {
-                        ObservableCollection<IGcode> Models = new(modelList);
+                        List<IGcode> Models = new(modelList);
                         if (ImageType != GcodeImageType.None)
                         {
                             int total = Models.Count;
@@ -86,9 +86,7 @@ namespace AndreasReitberger.API.Repetier
                         return Models;
                     }
                 }
-
                 Prog?.Report(100);
-
                 return modelDatas;
             }
             catch (Exception exc)
@@ -155,18 +153,19 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<IGcode> modelDatas = new();
+                List<IGcode> modelDatas = [];
                 if (!IsReady || ActivePrinter == null)
                 {
-                    Files = modelDatas;
+                    Files = [.. modelDatas];
                     return;
                 }
-                Files = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
+                List<IGcode> files = await GetModelsAsync(GetActivePrinterSlug(), imageType, prog).ConfigureAwait(false);
+                Files = [.. files];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Files = new ObservableCollection<IGcode>();
+                Files = [];
             }
         }
         public async Task<bool> CopyModelToPrintQueueAsync(IGcode model, bool startPrintIfPossible = true)
@@ -481,10 +480,10 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<ObservableCollection<IGcodeGroup>> GetModelGroupsAsync()
+        public async Task<List<IGcodeGroup>> GetModelGroupsAsync()
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<IGcodeGroup> resultObject = new();
+            List<IGcodeGroup> resultObject = [];
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -509,7 +508,9 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 */
                 RepetierModelGroups? info = GetObjectFromJson<RepetierModelGroups>(result?.Result);
-                return info is not null && info.GroupNames is not null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })) : resultObject;
+                return 
+                    info is not null && info.GroupNames is not null ? 
+                    [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;
             }
             catch (JsonException jecx)
             {
@@ -532,10 +533,10 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<IGcodeGroup> groups = [];
+                List<IGcodeGroup> groups = [];
                 if (!IsReady || ActivePrinter == null)
                 {
-                    Groups = groups;
+                    Groups = [.. groups];
                     return;
                 }
 
@@ -543,12 +544,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierModelGroups? result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
-                if (result is not null)
-                {
-                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames.Select(g => new RepetierModelGroup() { Name = g }));
-                }
-                else Groups = groups;
-
+                Groups = result is not null ? ([.. result.GroupNames.Select(g => new RepetierModelGroup() { Name = g })]) : ([.. groups]);
             }
             catch (Exception exc)
             {

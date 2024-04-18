@@ -65,9 +65,9 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public override Task<ObservableCollection<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamConfigsAsync(GetActivePrinterSlug());
+        public override Task<List<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamConfigsAsync(GetActivePrinterSlug());
 
-        public async Task<ObservableCollection<IWebCamConfig>?> GetWebCamConfigsAsync(string slug)
+        public async Task<List<IWebCamConfig>?> GetWebCamConfigsAsync(string slug)
         {
             try
             {
