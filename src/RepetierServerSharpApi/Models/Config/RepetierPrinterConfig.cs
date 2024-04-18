@@ -17,7 +17,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruders")]
         List<RepetierPrinterConfigExtruder> extruders = [];
-        
+
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fanPresets")]
         List<RepetierPrinterConfigPreset> fanPresets = [];
@@ -65,7 +65,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("shape")]
         RepetierPrinterConfigShape? shape;
-        
+
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("speedPresets")]
         List<RepetierPrinterConfigPreset> speedPresets = [];
@@ -85,7 +85,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         #endregion
     }
 }

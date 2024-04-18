@@ -704,14 +704,14 @@ namespace RepetierServerSharpApiTest
                 string webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
                 Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
-                type = RepetierWebcamType.Static;              
+                type = RepetierWebcamType.Static;
                 webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
                 Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
                 type = RepetierWebcamType.Dynamic;
                 var webCams = await _server.GetWebCamConfigsAsync();
                 Assert.IsTrue(webCams?.Count > 0);
-                foreach(var cam in webCams)
+                foreach (var cam in webCams)
                 {
                     webcamUriDynamic = await _server.GetWebCamUriAsync((int)cam.Position, type);
                     Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
@@ -773,7 +773,7 @@ namespace RepetierServerSharpApiTest
                 {
                     foreach (var keyPair in args.NewIgnoredJsonResults)
                     {
-                        if(!unkownJsonRespones.ContainsKey(keyPair.Key))
+                        if (!unkownJsonRespones.ContainsKey(keyPair.Key))
                             unkownJsonRespones.Add(keyPair.Key, keyPair.Value);
                     }
                 };

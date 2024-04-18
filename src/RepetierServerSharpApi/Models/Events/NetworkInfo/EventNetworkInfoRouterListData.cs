@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]     
+        [property: JsonProperty("active")]
         bool active;
 
         [ObservableProperty, JsonIgnore]
@@ -16,11 +16,11 @@ namespace AndreasReitberger.API.Repetier.Models
         bool hidden;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ignore")]   
+        [property: JsonProperty("ignore")]
         bool ignore;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4Address")]    
+        [property: JsonProperty("ipv4Address")]
         string ipv4Address = string.Empty;
 
         [ObservableProperty, JsonIgnore]
@@ -52,15 +52,15 @@ namespace AndreasReitberger.API.Repetier.Models
         long ipv6MaskBits;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Mode")]       
+        [property: JsonProperty("ipv6Mode")]
         string ipv6Mode = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Nameserver")]     
+        [property: JsonProperty("ipv6Nameserver")]
         string ipv6Nameserver = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manualManaged")]      
+        [property: JsonProperty("manualManaged")]
         bool manualManaged;
 
         [ObservableProperty, JsonIgnore]
@@ -68,11 +68,11 @@ namespace AndreasReitberger.API.Repetier.Models
         string password = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("passwordMethod")]     
+        [property: JsonProperty("passwordMethod")]
         string passwordMethod = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ssid")]    
+        [property: JsonProperty("ssid")]
         string ssid = string.Empty;
         #endregion
 

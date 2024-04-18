@@ -244,7 +244,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
         public Task RefreshDiskSpaceAsync() => UpdateFreeSpaceAsync();
-        
+
         public override async Task<byte[]?> DownloadFileAsync(string relativeFilePath)
         {
             try
@@ -269,7 +269,7 @@ namespace AndreasReitberger.API.Repetier
         public async Task<bool> AddModelGroupAsync(string? groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter) ||groupName is null) return false;
+            if (string.IsNullOrEmpty(currentPrinter) || groupName is null) return false;
 
             try
             {

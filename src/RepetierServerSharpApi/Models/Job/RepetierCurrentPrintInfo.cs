@@ -84,7 +84,7 @@ namespace AndreasReitberger.API.Repetier.Models
         double? startTime;
         partial void OnStartTimeChanged(double? value)
         {
-            if(value is not null )
+            if (value is not null)
                 StartTimeGeneralized = TimeBaseConvertHelper.FromDouble(value);
         }
 
@@ -144,7 +144,7 @@ namespace AndreasReitberger.API.Repetier.Models
         long? start;
         partial void OnStartChanged(long? value)
         {
-            if(value is not null)
+            if (value is not null)
                 StartTime = value;
         }
 
@@ -160,10 +160,10 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         Print3dJobState? state;
-        
+
         [ObservableProperty, JsonIgnore]
         IGcodeMeta? meta;
-        
+
         #region JsonIgnore
 
         [JsonIgnore]

@@ -240,7 +240,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         #endregion
 
         #region Dispose
@@ -268,7 +268,7 @@ namespace AndreasReitberger.API.Repetier.Models
         {
             return MemberwiseClone();
         }
-      
+
         #endregion
     }
 }

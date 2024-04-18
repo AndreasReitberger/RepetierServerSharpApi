@@ -227,7 +227,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         GcodeImageType imageType = GcodeImageType.Thumbnail;
-            
+
         [ObservableProperty, JsonIgnore]
         string printerName = string.Empty;
 
@@ -254,9 +254,9 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         #endregion
-        
+
         #region Dispose
         public void Dispose()
         {
@@ -278,8 +278,8 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Clone
 
-        public object Clone() =>  MemberwiseClone();
-        
+        public object Clone() => MemberwiseClone();
+
         #endregion
 
     }
