@@ -14,12 +14,12 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
 
-        string job;
+        string job = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
 
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("online")]
@@ -39,7 +39,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
 
-        string slug;
+        string slug = string.Empty;
         #endregion
 
         #region Overrides

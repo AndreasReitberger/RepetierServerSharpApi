@@ -7,12 +7,10 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("folder")]
-
-        RepetierProjectFolder folder;
+        RepetierProjectFolder? folder;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ok")]
-
         bool ok;
         #endregion
 

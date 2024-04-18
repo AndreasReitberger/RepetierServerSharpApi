@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("login")]
-        string login;
+        string login = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("permissions")]
@@ -20,7 +20,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("settings")]
-        RepetierLoginResultSettings settings;
+        RepetierLoginResultSettings? settings;
         #endregion
 
         #region Overrides

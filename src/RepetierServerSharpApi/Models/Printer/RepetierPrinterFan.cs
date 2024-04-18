@@ -20,7 +20,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Json Ignore
         [JsonIgnore]
-        public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage / 255m * 100m), 0));
+        public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage ?? 0 / 255m * 100m), 0));
 
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -30,7 +30,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Methods
-        public Task<bool> SetFanSpeedAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
+        public Task<bool> SetFanSpeedAsync(IPrint3dServerClient client, string command, object? data) => client.SetFanSpeedAsync(command, data);
         #endregion
 
         #region Overrides

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("file")]
-        string file;
+        string file = string.Empty;
         #endregion
 
         #region Overrides

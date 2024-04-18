@@ -9,11 +9,11 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("basicShape")]
-        RepetierPrinterConfigBasicShape basicShape;
+        RepetierPrinterConfigBasicShape? basicShape;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gridColor")]
-        string gridColor;
+        string gridColor = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gridSpacing")]
@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("imageExtension")]
-        string imageExtension;
+        string imageExtension = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("imageOpacity")]
@@ -33,7 +33,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("marker")]
-        List<object> marker = new();
+        List<object> marker = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("showImage")]

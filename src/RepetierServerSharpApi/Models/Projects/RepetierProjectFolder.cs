@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -9,37 +8,30 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("empty")]
-
         bool empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("folders")]
-
-        List<RepetierProjectSubFolder> folders = new();
+        List<RepetierProjectSubFolder> folders = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("idx")]
-
         long idx;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("parents")]
-
-        List<RepetierProjectParentElement> parents = new();
+        List<RepetierProjectParentElement> parents = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("projects")]
-
-        List<RepetierProject> projects = new();
+        List<RepetierProject> projects = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]
-
         long version;
         #endregion
 

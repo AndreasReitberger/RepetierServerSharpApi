@@ -7,15 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
-        RepetierLoginRequiredResultDataItem data;
+        RepetierLoginRequiredResultDataItem? data;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("event")]
-        string eventName;
+        string eventName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printer")]
-        string printer;
+        string printer = string.Empty;
 
         #endregion
 

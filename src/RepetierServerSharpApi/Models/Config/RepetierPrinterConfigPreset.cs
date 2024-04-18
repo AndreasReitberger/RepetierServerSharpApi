@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("value")]

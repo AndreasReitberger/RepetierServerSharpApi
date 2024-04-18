@@ -15,17 +15,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("error")]
-
         long error;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("output")]
-
         long output;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("tempRead")]
-
         double? tempRead;
 
         [ObservableProperty, JsonIgnore]
@@ -36,19 +33,15 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Interface, unsused
 
         [ObservableProperty, JsonIgnore]
-
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-
         double x = 0;
 
         [ObservableProperty, JsonIgnore]
-
         double y = 0;
 
         [ObservableProperty, JsonIgnore]
-
         double z = 0;
         #endregion
 
@@ -80,7 +73,7 @@ namespace AndreasReitberger.API.Repetier.Models
             }
         }
 
-        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetExtruderTemperatureAsync(command, data);
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object? data) => client.SetExtruderTemperatureAsync(command, data);
         #endregion
 
         #region Overrides

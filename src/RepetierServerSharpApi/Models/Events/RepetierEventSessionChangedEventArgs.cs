@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierEventSessionChangedEventArgs : SessionChangedEventArgs
     {
         #region Properties
-        public EventSession Sesson { get; set; }
+        public EventSession? Sesson { get; set; }
         #endregion
 
         #region Overrides

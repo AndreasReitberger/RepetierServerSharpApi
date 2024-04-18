@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("licence")]
-        string licence;
+        string licence = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("wantsBranding")]

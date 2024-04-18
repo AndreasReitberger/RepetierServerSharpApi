@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcodeGroup")]
-        string gcodeGroup;
+        string gcodeGroup = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcodeSortBy")]
@@ -39,7 +39,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("theme")]
-        string theme;
+        string theme = string.Empty;
         #endregion
 
         #region Overrides

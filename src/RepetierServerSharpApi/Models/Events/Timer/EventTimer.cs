@@ -7,11 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
-        object data;
+        object? data;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("event")]
-        string eventName;
+        string? eventName;
         #endregion
 
         #region Overrides

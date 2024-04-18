@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("session")]
-        string session;
+        string session = string.Empty;
         #endregion
 
         #region Overrides

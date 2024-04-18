@@ -9,35 +9,35 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("icon")]
-        public long? icon;
+        long? icon;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("msgType")]
-        public long? msgType;
+        long? msgType;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-        public string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("text")]
-        public string text;
+        string text = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("unit")]
-        public string unit;
+        string unit = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("urgency")]
-        public long? urgency;
+        long? urgency;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("url")]
-        public string url;
+        string url = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("value")]
-        public double? value;
+        double? value;
         #endregion
 
         #region Overrides

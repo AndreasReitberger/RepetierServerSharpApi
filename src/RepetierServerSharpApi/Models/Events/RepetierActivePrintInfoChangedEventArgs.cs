@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierActivePrintInfoChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public RepetierCurrentPrintInfo NewActivePrintInfo { get; set; }
+        public RepetierCurrentPrintInfo? NewActivePrintInfo { get; set; }
         #endregion
 
         #region Overrides

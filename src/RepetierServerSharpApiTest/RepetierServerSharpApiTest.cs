@@ -515,17 +515,17 @@ namespace RepetierServerSharpApiTest
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync();
-                    ObservableCollection<RepetierHistorySummaryItem> history = await _server.GetHistorySummaryItemsAsync("", 2022, true);
+                    ObservableCollection<RepetierHistorySummaryItem>? history = await _server.GetHistorySummaryItemsAsync("", 2022, true);
                     Assert.IsTrue(history?.Any());
 
                     ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
                     Assert.IsTrue(list?.Any());
 
-                    RepetierHistoryListItem historyItem = list?.FirstOrDefault();
+                    RepetierHistoryListItem? historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
-                    byte[] report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
-                    Assert.IsTrue(report.Length > 0);
+                    byte[]? report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
+                    Assert.IsTrue(report?.Length > 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
                     Assert.IsTrue(File.Exists(downloadTarget));
@@ -580,7 +580,7 @@ namespace RepetierServerSharpApiTest
                 if (_server.IsOnline)
                 {
                     await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierHistoryListItem> report = await _server.GetHistoryListAsync(_server.ActivePrinter.Slug);
+                    ObservableCollection<RepetierHistoryListItem>? report = await _server.GetHistoryListAsync(_server?.ActivePrinter?.Slug ?? "");
                     Assert.IsTrue(report.Count > 0);
                 }
                 else
@@ -993,11 +993,11 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    RepetierAvailableUpdateInfo update = await _server.GetAvailableServerUpdateAsync();
+                    RepetierAvailableUpdateInfo? update = await _server.GetAvailableServerUpdateAsync();
                     Assert.IsNotNull(update);
                     string json = JsonConvert.SerializeObject(update, Formatting.Indented);
 
-                    RepetierCurrentPrintInfo printInfo = await _server.GetCurrentPrintInfoAsync();
+                    RepetierCurrentPrintInfo? printInfo = await _server.GetCurrentPrintInfoAsync();
                     Assert.IsNotNull(printInfo);
                     json = JsonConvert.SerializeObject(printInfo, Formatting.Indented);
 

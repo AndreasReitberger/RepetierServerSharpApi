@@ -16,11 +16,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("link")]
-        public string link;
+        public string link = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("msg")]
-        public string msg;
+        public string msg = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pause")]
@@ -28,7 +28,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-        public string slug;
+        public string slug = string.Empty;
         #endregion
 
         #region Overrides

@@ -19,7 +19,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmwarePowerlossSignal")]
-        string firmwarePowerlossSignal;
+        string firmwarePowerlossSignal = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("maxTimeForAutocontinue")]
@@ -27,7 +27,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("procedure")]
-        string procedure;
+        string procedure = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("reactivateBedOnConnect")]
@@ -39,7 +39,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("runOnConnect")]
-        string runOnConnect;
+        string runOnConnect = string.Empty;
         #endregion
 
         #region Overrides

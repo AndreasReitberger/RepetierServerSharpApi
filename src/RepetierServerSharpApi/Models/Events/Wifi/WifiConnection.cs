@@ -7,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("SSID")]
-
-        string ssid;
+        string ssid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("device")]
-
-        string device;
+        string device = string.Empty;
         #endregion
 
         #region Overrides

@@ -29,7 +29,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
 
-        string filename;
+        string filename = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
@@ -44,7 +44,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("notes")]
 
-        string notes;
+        string notes = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pauseTime")]
@@ -54,22 +54,22 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerName")]
 
-        string printerName;
+        string printerName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerSlug")]
 
-        string printerSlug;
+        string printerSlug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerUUID")]
 
-        string printerUuid;
+        string printerUuid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("report")]
 
-        string report;
+        string report = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("startTime")]
@@ -84,7 +84,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("username")]
 
-        string username;
+        string username = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("year")]

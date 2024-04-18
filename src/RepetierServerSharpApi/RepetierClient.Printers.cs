@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Repetier
 
         public override async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             try
             {
                 ObservableCollection<IPrinter3d> repetierPrinterList = new();
@@ -38,27 +38,30 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandFeature.list)
                     .ConfigureAwait(false);
                 */
-                RepetierPrinterListRespone respone = GetObjectFromJson<RepetierPrinterListRespone>(result.Result);
-                if (respone != null)
+                RepetierPrinterListRespone? respone = GetObjectFromJson<RepetierPrinterListRespone>(result?.Result);
+                if (respone is not null)
                 {
                     repetierPrinterList = new ObservableCollection<IPrinter3d>(respone.Printers);
-                    foreach (RepetierPrinter printer in repetierPrinterList.Cast<RepetierPrinter>())
+                    foreach (RepetierPrinter? printer in repetierPrinterList.Cast<RepetierPrinter>())
                     {
-                        if (printer?.JobId > 0)
+                        if (printer is not null)
                         {
-                            IPrinter3d prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
-                            if (prevPrinter is null) continue;
-                            // Avoid unnecessary calls if the image or the job hasn't changed
-                            if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                            if (printer?.JobId > 0)
                             {
-                                printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
+                                IPrinter3d? prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
+                                if (prevPrinter is null) continue;
+                                // Avoid unnecessary calls if the image or the job hasn't changed
+                                if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                                {
+                                    printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
+                                }
+                                else
+                                {
+                                    printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
+                                }
                             }
-                            else
-                            {
-                                printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
-                            }
+                            else printer.CurrentPrintImage = [];
                         }
-                        else printer.CurrentPrintImage = [];
                     }
                     Printers = repetierPrinterList;
                 }
@@ -74,7 +77,7 @@ namespace AndreasReitberger.API.Repetier
                     TargetType = nameof(RepetierPrinter),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<IPrinter3d>();
+                return [];
             }
             catch (Exception exc)
             {
@@ -94,7 +97,7 @@ namespace AndreasReitberger.API.Repetier
                 }
 
                 ObservableCollection<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
-                if (result != null)
+                if (result is not null)
                 {
                     Printers = result;
                 }
@@ -110,14 +113,14 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<RepetierPrinterConfig> GetPrinterConfigAsync(string printerName = "")
+        public async Task<RepetierPrinterConfig?> GetPrinterConfigAsync(string printerName = "")
         {
-            RepetierPrinterConfig resultObject = null;
+            RepetierPrinterConfig? resultObject = null;
 
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
@@ -136,8 +139,8 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierPrinterConfig config = GetObjectFromJson<RepetierPrinterConfig>(result.Result);
-                if (config != null)
+                RepetierPrinterConfig? config = GetObjectFromJson<RepetierPrinterConfig>(result?.Result);
+                if (config is not null)
                 {
                     Config = resultObject = config;
                 }
@@ -163,8 +166,8 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                RepetierPrinterConfig result = await GetPrinterConfigAsync().ConfigureAwait(false);
-                if (result != null)
+                RepetierPrinterConfig? result = await GetPrinterConfigAsync().ConfigureAwait(false);
+                if (result is not null)
                 {
                     Config = result;
                 }
@@ -183,7 +186,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
 
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";

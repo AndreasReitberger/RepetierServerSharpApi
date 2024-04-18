@@ -11,7 +11,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmwareuploader_extraPort")]
-        string firmwareuploaderExtraPort;
+        string firmwareuploaderExtraPort = string.Empty;
         #endregion
 
         #region Overrides

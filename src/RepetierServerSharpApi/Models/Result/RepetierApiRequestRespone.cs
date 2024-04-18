@@ -1,4 +1,4 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using Newtonsoft.Json;
 using System;
 
@@ -13,7 +13,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public bool Succeeded { get; set; } = false;
         public bool HasAuthenticationError { get; set; } = false;
 
-        public RepetierRestEventArgs EventArgs { get; set; }
+        public RestEventArgs? EventArgs { get; set; }
         #endregion
 
         #region Overrides

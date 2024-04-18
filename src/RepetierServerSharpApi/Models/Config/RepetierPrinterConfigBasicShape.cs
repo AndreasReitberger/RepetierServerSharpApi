@@ -13,7 +13,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("color")]
-        string color;
+        string color = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("radius")]
@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("shape")]
-        string shape;
+        string shape = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("x")]

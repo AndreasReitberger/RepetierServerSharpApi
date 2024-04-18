@@ -10,27 +10,22 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-
         Guid id;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("active")]
-
         bool isActive;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("analysed")]
-
         int? analysed;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
-
         double? done;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
-
         string activeJobName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
@@ -43,27 +38,22 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
-        string activeJobId;
+        string activeJobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("jobstate")]
-
         string? activeJobState;
         
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("linesSend")]
-
         long? lineSent;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
         string name = string.Empty;
         
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ofLayer")]
-
         long? layers;
 
         [ObservableProperty, JsonIgnore]
@@ -76,42 +66,34 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         bool isOnline = false;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pauseState")]
-
         long? pauseState;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("paused")]
-
         bool paused;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printStart")]
-
         double? printStart;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printTime")]
-
         double? printTime;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printedTimeComp")]
-
         double? printedTimeComp;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("repeat")]
-
         int? repeat;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-
         string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
@@ -124,20 +106,16 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         double? printStarted = 0;
 
         [ObservableProperty, JsonIgnore]
-
         double? printDuration = 0;
 
         [ObservableProperty, JsonIgnore]
-
         double? printDurationEstimated = 0;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("totalLines")]
-
         long? totalLines;
 
         #region JsonIgnored
@@ -187,14 +165,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Methods
 
-        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client?.HomeAsync(x, y, z);
+        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client.HomeAsync(x, y, z);
 
         #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is not RepetierPrinter item)
                 return false;

@@ -12,7 +12,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebSocket
 
-        protected void Client_WebSocketMessageReceived(object sender, WebsocketEventArgs e)
+        protected void Client_WebSocketMessageReceived(object? sender, WebsocketEventArgs e)
         {
             try
             {
@@ -31,11 +31,11 @@ namespace AndreasReitberger.API.Repetier
                 }
                 else if (text.ToLower().Contains("event"))
                 {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
-                    if (repetierEvent != null)
+                    RepetierEventContainer? repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
+                    if (repetierEvent is not null)
                     {
                         string name = string.Empty;
-                        string jsonBody = string.Empty;
+                        string? jsonBody = string.Empty;
                         foreach (RepetierEventData obj in repetierEvent.Data)
                         {
                             name = obj.EventName;
@@ -43,8 +43,8 @@ namespace AndreasReitberger.API.Repetier
                             switch (name)
                             {
                                 case "userCredentials":
-                                    RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
-                                    if (login != null)
+                                    RepetierLoginResult? login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
+                                    if (login is not null)
                                     {
                                         OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
                                         {
@@ -57,8 +57,8 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "temp":
-                                    EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
-                                    if (eventTempData != null)
+                                    EventTempData? eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
+                                    if (eventTempData is not null)
                                     {
                                         OnTempDataReceived(new RepetierTempDataEventArgs()
                                         {
@@ -70,7 +70,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "jobStarted":
-                                    EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
+                                    EventJobStartedData? eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
                                     OnJobStarted(new RepetierJobStartedEventArgs()
                                     {
                                         Job = eventJobStarted,
@@ -80,8 +80,8 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "jobsChanged":
-                                    EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
-                                    if (eventJobsChanged != null)
+                                    EventJobChangedData? eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
+                                    if (eventJobsChanged is not null)
                                     {
                                         OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                         {
@@ -94,8 +94,8 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "jobDeactivated":
                                 case "jobFinished":
-                                    EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
-                                    if (eventJobFinished != null)
+                                    EventJobFinishedData? eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
+                                    if (eventJobFinished is not null)
                                     {
                                         OnJobFinished(new RepetierJobFinishedEventArgs()
                                         {
@@ -107,8 +107,8 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "messagesChanged":
-                                    EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
-                                    if (eventMessageChanged != null)
+                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
+                                    if (eventMessageChanged is not null)
                                     {
                                         OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
                                         {
@@ -120,7 +120,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "hardwareInfo":
-                                    EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
+                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
                                     OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
                                     {
                                         Info = eventHardwareInfoChanged,
@@ -130,7 +130,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "wifiChanged":
-                                    EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
+                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
                                     OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
                                     {
                                         Data = eventWifiChanged,
@@ -140,13 +140,13 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "gcodeInfoUpdated":
-                                    EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
+                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
                                     break;
                                 case "layerChanged":
-                                    RepetierLayerChangedEvent eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
+                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
                                     break;
                                 case "updatePrinterState":
-                                    RepetierPrinterState updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
+                                    RepetierPrinterState? updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
                                     break;
                                 case "timelapseChanged":
 #if DEBUG
@@ -205,7 +205,7 @@ namespace AndreasReitberger.API.Repetier
                                     Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
                                     ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
-                                    if (!loggedResults.ContainsKey(name))
+                                    if (!loggedResults.ContainsKey(name) && !string.IsNullOrEmpty(jsonBody))
                                     {
                                         // Log unused json results for further releases
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
@@ -244,7 +244,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                if (msg.Text == null || string.IsNullOrEmpty(msg.Text))
+                if (msg?.Text == null || string.IsNullOrEmpty(msg.Text))
                     return;
                 base.WebSocket_MessageReceived(msg);
                 string text = msg.Text;
@@ -260,11 +260,11 @@ namespace AndreasReitberger.API.Repetier
                 }
                 else if (text.ToLower().Contains("event"))
                 {
-                    RepetierEventContainer repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
-                    if (repetierEvent != null)
+                    RepetierEventContainer? repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
+                    if (repetierEvent is not null)
                     {
                         string name = string.Empty;
-                        string jsonBody = string.Empty;
+                        string? jsonBody = string.Empty;
                         foreach (RepetierEventData obj in repetierEvent.Data)
                         {
                             name = obj.EventName;
@@ -272,8 +272,8 @@ namespace AndreasReitberger.API.Repetier
                             switch (name)
                             {
                                 case "userCredentials":
-                                    RepetierLoginResult login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
-                                    if (login != null)
+                                    RepetierLoginResult? login = GetObjectFromJson<RepetierLoginResult>(jsonBody);
+                                    if (login is not null)
                                     {
                                         OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
                                         {
@@ -286,8 +286,8 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "temp":
-                                    EventTempData eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
-                                    if (eventTempData != null)
+                                    EventTempData? eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
+                                    if (eventTempData is not null)
                                     {
                                         OnTempDataReceived(new RepetierTempDataEventArgs()
                                         {
@@ -299,7 +299,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "jobStarted":
-                                    EventJobStartedData eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
+                                    EventJobStartedData? eventJobStarted = GetObjectFromJson<EventJobStartedData>(jsonBody);
                                     OnJobStarted(new RepetierJobStartedEventArgs()
                                     {
                                         Job = eventJobStarted,
@@ -309,8 +309,8 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "jobsChanged":
-                                    EventJobChangedData eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
-                                    if (eventJobsChanged != null)
+                                    EventJobChangedData? eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
+                                    if (eventJobsChanged is not null)
                                     {
                                         OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                         {
@@ -323,8 +323,8 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "jobDeactivated":
                                 case "jobFinished":
-                                    EventJobFinishedData eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
-                                    if (eventJobFinished != null)
+                                    EventJobFinishedData? eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
+                                    if (eventJobFinished is not null)
                                     {
                                         OnJobFinished(new RepetierJobFinishedEventArgs()
                                         {
@@ -336,8 +336,8 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "messagesChanged":
-                                    EventMessageChangedData eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
-                                    if (eventMessageChanged != null)
+                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJson<EventMessageChangedData>(jsonBody);
+                                    if (eventMessageChanged is not null)
                                     {
                                         OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
                                         {
@@ -349,7 +349,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "hardwareInfo":
-                                    EventHardwareInfoChangedData eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
+                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJson<EventHardwareInfoChangedData>(jsonBody);
                                     OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
                                     {
                                         Info = eventHardwareInfoChanged,
@@ -359,7 +359,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "wifiChanged":
-                                    EventWifiChangedData eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
+                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJson<EventWifiChangedData>(jsonBody);
                                     OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
                                     {
                                         Data = eventWifiChanged,
@@ -369,13 +369,13 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "gcodeInfoUpdated":
-                                    EventGcodeInfoUpdatedData eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
+                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJson<EventGcodeInfoUpdatedData>(jsonBody);
                                     break;
                                 case "layerChanged":
-                                    RepetierLayerChangedEvent eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
+                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJson<RepetierLayerChangedEvent>(jsonBody);
                                     break;
                                 case "updatePrinterState":
-                                    RepetierPrinterState updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
+                                    RepetierPrinterState? updatePrinterState = GetObjectFromJson<RepetierPrinterState>(jsonBody);
                                     break;
                                 case "timelapseChanged":
 #if DEBUG
@@ -434,7 +434,7 @@ namespace AndreasReitberger.API.Repetier
                                     Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
                                     ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
-                                    if (!loggedResults.ContainsKey(name))
+                                    if (!loggedResults.ContainsKey(name) && !string.IsNullOrEmpty(jsonBody))
                                     {
                                         // Log unused json results for further releases
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
@@ -463,7 +463,7 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = msg.Text,
+                    OriginalString = msg?.Text,
                     Message = jecx.Message,
                 });
             }

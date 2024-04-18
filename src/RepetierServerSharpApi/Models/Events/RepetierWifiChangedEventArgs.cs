@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierWifiChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public EventWifiChangedData Data { get; set; }
+        public EventWifiChangedData? Data { get; set; }
         #endregion
 
         #region Overrides

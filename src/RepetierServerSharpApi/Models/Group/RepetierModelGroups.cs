@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("groupNames")]
-        string[] groupNames;
+        string[] groupNames = [];
 
         [property: JsonProperty("ok")]
         [ObservableProperty, JsonIgnore]

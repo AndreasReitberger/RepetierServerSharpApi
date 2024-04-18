@@ -4,13 +4,13 @@ using System;
 namespace AndreasReitberger.API.Repetier.Models
 {
     [Obsolete("Replace with RestEventArgs")]
-    public class RepetierRestEventArgs : EventArgs, IRestEventArgs
+    internal class RepetierRestEventArgs : EventArgs, IRestEventArgs
     {
         #region Properties
-        public string Message { get; set; }
-        public string Status { get; set; }
-        public Uri Uri { get; set; }
-        public Exception Exception { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public Uri? Uri { get; set; }
+        public Exception? Exception { get; set; }
         #endregion
 
         #region Overrides

@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("list")]
-        string list;
+        string list = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("modelId")]
@@ -16,11 +15,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("modelPath")]
-        string modelPath;
+        string modelPath = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-        string slug;
+        string slug = string.Empty;
 
         #endregion
 

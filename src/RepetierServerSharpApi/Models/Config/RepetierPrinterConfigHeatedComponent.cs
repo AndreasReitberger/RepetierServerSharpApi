@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("alias")]
-        string alias;
+        string alias = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("cooldownPerSecond")]
@@ -32,7 +32,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("temperatures")]
-        List<RepetierPrinterConfigTemperature> temperatures = new();
+        List<RepetierPrinterConfigTemperature> temperatures = [];
         #endregion
 
         #region Overrides

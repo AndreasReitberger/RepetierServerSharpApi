@@ -6,10 +6,10 @@ namespace AndreasReitberger.API.Repetier
 {
     public partial class RepetierClient
     {
-        #region EventHandlerss
+        #region EventHandlers
 
         #region Debug
-        public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs> RepetierIgnoredJsonResultsChanged;
+        public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs>? RepetierIgnoredJsonResultsChanged;
         protected virtual void OnRepetierIgnoredJsonResultsChanged(RepetierIgnoredJsonResultsChangedEventArgs e)
         {
             RepetierIgnoredJsonResultsChanged?.Invoke(this, e);
@@ -132,44 +132,44 @@ namespace AndreasReitberger.API.Repetier
             ListeningChanged?.Invoke(this, e);
         }
         */
-        public new event EventHandler<RepetierEventSessionChangedEventArgs> SessionChanged;
+        public new event EventHandler<RepetierEventSessionChangedEventArgs>? SessionChanged;
         protected virtual void OnSessionChangedEvent(RepetierEventSessionChangedEventArgs e)
         {
             SessionChanged?.Invoke(this, e);
         }
         
-        public event EventHandler<RepetierMessagesChangedEventArgs> MessagesChanged;
+        public event EventHandler<RepetierMessagesChangedEventArgs>? MessagesChanged;
         protected virtual void OnMessagesChangedEvent(RepetierMessagesChangedEventArgs e)
         {
             MessagesChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierActivePrintInfosChangedEventArgs> PrintInfosChanged;
+        public event EventHandler<RepetierActivePrintInfosChangedEventArgs>? PrintInfosChanged;
         protected virtual void OnPrintInfosChangedEvent(RepetierActivePrintInfosChangedEventArgs e)
         {
             PrintInfosChanged?.Invoke(this, e);
         }
         [Obsolete("Use OnActiveJobChanged instead")]
-        public event EventHandler<RepetierActivePrintInfoChangedEventArgs> PrintInfoChanged;
+        public event EventHandler<RepetierActivePrintInfoChangedEventArgs>? PrintInfoChanged;
         [Obsolete("Use OnActiveJobChanged instead")]
         protected virtual void OnPrintInfoChangedEvent(RepetierActivePrintInfoChangedEventArgs e)
         {
             PrintInfoChanged?.Invoke(this, e);
         }
-        /**/
-        public new event EventHandler<RepetierJobStartedEventArgs> JobsStarted;
+
+        public new event EventHandler<RepetierJobStartedEventArgs>? JobsStarted;
         protected virtual void OnJobStarted(RepetierJobStartedEventArgs e)
         {
             JobsStarted?.Invoke(this, e);
         }
 
-        public new event EventHandler<RepetierJobsChangedEventArgs> JobsChanged;
+        public new event EventHandler<RepetierJobsChangedEventArgs>? JobsChanged;
         protected virtual void OnJobsChangedEvent(RepetierJobsChangedEventArgs e)
         {
             JobsChanged?.Invoke(this, e);
         }
 
-        public new event EventHandler<RepetierJobFinishedEventArgs> JobFinished;
+        public new event EventHandler<RepetierJobFinishedEventArgs>? JobFinished;
         protected virtual void OnJobFinished(RepetierJobFinishedEventArgs e)
         {
             JobFinished?.Invoke(this, e);
@@ -177,62 +177,62 @@ namespace AndreasReitberger.API.Repetier
         
 
         [Obsolete("Use TemperatureDataReceived event")]
-        public event EventHandler<RepetierTempDataEventArgs> TempDataReceived;
+        public event EventHandler<RepetierTempDataEventArgs>? TempDataReceived;
         protected virtual void OnTempDataReceived(RepetierTempDataEventArgs e)
         {
             TempDataReceived?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierHardwareInfoChangedEventArgs> HardwareInfoChanged;
+        public event EventHandler<RepetierHardwareInfoChangedEventArgs>? HardwareInfoChanged;
         protected virtual void OnHardwareInfoChangedEvent(RepetierHardwareInfoChangedEventArgs e)
         {
             HardwareInfoChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierWifiChangedEventArgs> WifiChangedEvent;
+        public event EventHandler<RepetierWifiChangedEventArgs>? WifiChangedEvent;
         protected virtual void OnWifiChangedEvent(RepetierWifiChangedEventArgs e)
         {
             WifiChangedEvent?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierPrinterConfigChangedEventArgs> RepetierPrinterConfigChanged;
+        public event EventHandler<RepetierPrinterConfigChangedEventArgs>? RepetierPrinterConfigChanged;
         protected virtual void OnRepetierPrinterConfigChangedEvent(RepetierPrinterConfigChangedEventArgs e)
         {
             RepetierPrinterConfigChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierPrinterStateChangedEventArgs> RepetierPrinterStateChanged;
+        public event EventHandler<RepetierPrinterStateChangedEventArgs>? RepetierPrinterStateChanged;
         protected virtual void OnRepetierPrinterStateChangedEvent(RepetierPrinterStateChangedEventArgs e)
         {
             RepetierPrinterStateChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierModelsChangedEventArgs> RepetierModelsChanged;
+        public event EventHandler<RepetierModelsChangedEventArgs>? RepetierModelsChanged;
         protected virtual void OnRepetierModelsChangedEvent(RepetierModelsChangedEventArgs e)
         {
             RepetierModelsChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierModelGroupsChangedEventArgs> RepetierModelGroupsChanged;
+        public event EventHandler<RepetierModelGroupsChangedEventArgs>? RepetierModelGroupsChanged;
         protected virtual void OnRepetierModelGroupsChangedEvent(RepetierModelGroupsChangedEventArgs e)
         {
             RepetierModelGroupsChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<RepetierJobListChangedEventArgs> RepetierJobListChanged;
+        public event EventHandler<RepetierJobListChangedEventArgs>? RepetierJobListChanged;
         protected virtual void OnRepetierJobListChangedEvent(RepetierJobListChangedEventArgs e)
         {
             RepetierJobListChanged?.Invoke(this, e);
         }
         /*
-        public event EventHandler<RepetierActivePrinterChangedEventArgs> ActivePrinterChanged;
+        public event EventHandler<RepetierActivePrinterChangedEventArgs>? ActivePrinterChanged;
         protected virtual void OnActivePrinterChangedEvent(RepetierActivePrinterChangedEventArgs e)
         {
             ActivePrinterChanged?.Invoke(this, e);
         }
         */
 
-        public event EventHandler<RepetierWebCallActionsChangedEventArgs> WebCallActionsChanged;
+        public event EventHandler<RepetierWebCallActionsChangedEventArgs>? WebCallActionsChanged;
         protected virtual void OnWebCallActionsChangedEvent(RepetierWebCallActionsChangedEventArgs e)
         {
             WebCallActionsChanged?.Invoke(this, e);
@@ -240,7 +240,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Jobs & Queue
-        public event EventHandler<RepetierCurrentPrintImageChangedEventArgs> RepetierCurrentPrintImageChanged;
+        public event EventHandler<RepetierCurrentPrintImageChangedEventArgs>? RepetierCurrentPrintImageChanged;
         protected virtual void OnRepetierCurrentPrintImageChanged(RepetierCurrentPrintImageChangedEventArgs e) {
             RepetierCurrentPrintImageChanged?.Invoke(this, e);
         }

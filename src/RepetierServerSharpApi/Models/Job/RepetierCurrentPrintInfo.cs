@@ -10,28 +10,23 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-
         Guid id;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("active")]
-
         bool active;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("analysed")]
-
         long analysed;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
-
         double? done;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
-
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(JobId))]
@@ -43,12 +38,12 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(State))]
         [property: JsonProperty("jobstate")]
-        string jobState;
+        string jobState = string.Empty;
         partial void OnJobStateChanged(string value)
         {
             State = value == "running" ? Print3dJobState.InProgress : Print3dJobState.Completed;
@@ -56,27 +51,22 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("linesSend")]
-
         long linesSend;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        string printerName;
+        string printerName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ofLayer")]
-
         long ofLayer;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("online")]
-
         long online;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pauseState")]
-
         long pauseState;
 
         [ObservableProperty, JsonIgnore]
@@ -99,11 +89,9 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         DateTime? startTimeGeneralized;
 
         [ObservableProperty, JsonIgnore]
-
         double? endTime;
         partial void OnEndTimeChanged(double? value)
         {
@@ -112,7 +100,6 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         DateTime? endTimeGeneralized;
 
         [ObservableProperty, JsonIgnore]
@@ -126,16 +113,13 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         TimeSpan? printDurationGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printedTimeComp")]
-
         double? printDurationTimeComp;
 
         [ObservableProperty, JsonIgnore]
-
         double? totalPrintDuration;
         partial void OnTotalPrintDurationChanged(double? value)
         {
@@ -144,18 +128,15 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         TimeSpan? totalPrintDurationGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("repeat")]
-
         long? repeat;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-
-        string slug;
+        string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(StartTime))]
@@ -169,24 +150,19 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("totalLines")]
-
         long? totalLines;
 
         [ObservableProperty, JsonIgnore]
-
         double? filamentUsed;
 
         [ObservableProperty, JsonIgnore]
-
         bool fileExists;
 
         [ObservableProperty, JsonIgnore]
-
-        Print3dJobState state;
+        Print3dJobState? state;
         
         [ObservableProperty, JsonIgnore]
-
-        IGcodeMeta meta;
+        IGcodeMeta? meta;
         
         #region JsonIgnore
 

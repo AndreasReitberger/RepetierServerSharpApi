@@ -8,15 +8,15 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("confirm")]
-        string confirm;
+        string confirm = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("execute")]
-        string execute;
+        string execute = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("icon")]
-        string icon;
+        string icon = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
@@ -36,7 +36,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("permAdd")]
@@ -60,11 +60,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-        string slug;
+        string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("terminal")]
-        string terminal;
+        string terminal = string.Empty;
         #endregion
 
         #region Overrides
