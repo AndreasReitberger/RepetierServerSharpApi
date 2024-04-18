@@ -8,8 +8,8 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         /*
-        [ObservableProperty]
-        [JsonProperty("on")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("on")]
         bool on;
         */
         #endregion

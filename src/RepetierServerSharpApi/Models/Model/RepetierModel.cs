@@ -13,86 +13,86 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         Guid id;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         GcodeTimeBaseTarget timeBaseTarget = GcodeTimeBaseTarget.DoubleSeconds;
 
-        [ObservableProperty]
-        [JsonProperty("analysed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analysed")]
+
         long analysed;
 
-        [ObservableProperty]
-        [JsonProperty("created")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("created")]
+
         long created;
 
-        [ObservableProperty]
-        [JsonProperty("extruderUsage")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruderUsage")]
+
         double[] extruderUsage;
 
-        [ObservableProperty]
-        [JsonProperty("filamentTotal")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filamentTotal")]
+
         double filament;
 
-        [ObservableProperty]
-        [JsonProperty("fits")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("fits")]
+
         bool fits;
 
-        [ObservableProperty]
-        [JsonProperty("gcodePatch")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodePatch")]
+
         string gcodePatch;
 
-        [ObservableProperty]
-        [JsonProperty("group")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("group")]
+
         string group;
 
-        [ObservableProperty]
-        [JsonProperty("id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
+
         long identifier;
 
-        [ObservableProperty]
-        [JsonProperty("lastPrintTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lastPrintTime")]
+
         double lastPrintTime;
 
-        [ObservableProperty]
-        [JsonProperty("layer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("layer")]
+
         long layer;
 
-        [ObservableProperty]
-        [JsonProperty("length")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("length")]
+
         long length;
 
-        [ObservableProperty]
-        [JsonProperty("lines")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lines")]
+
         long lines;
 
-        [ObservableProperty]
-        [JsonProperty("materials")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("materials")]
+
         string[] materials;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string fileName;
 
-        [ObservableProperty]
-        [JsonProperty("notes")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("notes")]
+
         string notes;
 
         [ObservableProperty, JsonIgnore]
@@ -104,192 +104,180 @@ namespace AndreasReitberger.API.Repetier.Models
             PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         TimeSpan? printTimeGeneralized;
 
-        [ObservableProperty]
-        [JsonProperty("printed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printed")]
+
         long printed;
 
-        [ObservableProperty]
-        [JsonProperty("printerParam1")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerParam1")]
+
         long printerParam1;
 
-        [ObservableProperty]
-        [JsonProperty("printerType")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerType")]
+
         long printerType;
 
-        [ObservableProperty]
-        [JsonProperty("radius")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("radius")]
+
         double radius;
 
-        [ObservableProperty]
-        [JsonProperty("radiusMove")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("radiusMove")]
+
         double radiusMove;
 
-        [ObservableProperty]
-        [JsonProperty("repeat")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("repeat")]
+
         int repeat;
 
-        [ObservableProperty]
-        [JsonProperty("slicer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slicer")]
+
         string slicer;
 
-        [ObservableProperty]
-        [JsonProperty("state")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state")]
+
         string state;
 
-        [ObservableProperty]
-        [JsonProperty("version")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version")]
+
         long version;
 
-        [ObservableProperty]
-        [JsonProperty("volumeTotal")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("volumeTotal")]
+
         double volume;
 
-        [ObservableProperty]
-        [JsonProperty("volumeUsage")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("volumeUsage")]
+
         double[] volumeUsage;
 
-        [ObservableProperty]
-        [JsonProperty("volumetric")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("volumetric")]
+
         bool volumetric;
 
-        [ObservableProperty]
-        [JsonProperty("xMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMax")]
+
         double xMax;
 
-        [ObservableProperty]
-        [JsonProperty("xMaxMove")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMaxMove")]
+
         double xMaxMove;
 
-        [ObservableProperty]
-        [JsonProperty("xMaxView")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMaxView")]
+
         double xMaxView;
 
-        [ObservableProperty]
-        [JsonProperty("xMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMin")]
+
         long xMin;
 
-        [ObservableProperty]
-        [JsonProperty("xMinMove")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMinMove")]
+
         long xMinMove;
 
-        [ObservableProperty]
-        [JsonProperty("xMinView")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMinView")]
+
         long xMinView;
 
-        [ObservableProperty]
-        [JsonProperty("yMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMax")]
+
         double yMax;
 
-        [ObservableProperty]
-        [JsonProperty("yMaxMove")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMaxMove")]
+
         double yMaxMove;
 
-        [ObservableProperty]
-        [JsonProperty("yMaxView")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMaxView")]
+
         double yMaxView;
 
-        [ObservableProperty]
-        [JsonProperty("yMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMin")]
+
         long yMin;
 
-        [ObservableProperty]
-        [JsonProperty("yMinMove")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMinMove")]
+
         long yMinMove;
 
-        [ObservableProperty]
-        [JsonProperty("yMinView")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMinView")]
+
         long yMinView;
 
-        [ObservableProperty]
-        [JsonProperty("zMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zMax")]
+
         double zMax;
 
-        [ObservableProperty]
-        [JsonProperty("zMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zMin")]
+
         long zMin;
 
         #region Interface, unused
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double modified;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         string filePath;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         string permissions;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         long size;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         IGcodeMeta meta;
         #endregion
 
         #region JsonIgnore
 
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool isVisible;
 
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool isLoadingImage = false;
 
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
-        byte[] image = Array.Empty<byte>();
+        [ObservableProperty, JsonIgnore]
+        byte[] image = [];
 
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
-        byte[] thumbnail = Array.Empty<byte>();
+        [ObservableProperty, JsonIgnore]
+        byte[] thumbnail = [];
 
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         GcodeImageType imageType = GcodeImageType.Thumbnail;
             
-        [ObservableProperty]
-        [JsonIgnore]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         string printerName = string.Empty;
 
         #endregion

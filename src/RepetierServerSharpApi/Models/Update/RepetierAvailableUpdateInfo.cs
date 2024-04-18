@@ -7,119 +7,119 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierAvailableUpdateInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("availableBrandingVersion")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("availableBrandingVersion")]
+        
         long availableBrandingVersion;
 
-        [ObservableProperty]
-        [JsonProperty("betaActive")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("betaActive")]
+        
         bool betaActive;
 
-        [ObservableProperty]
-        [JsonProperty("branded")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("branded")]
+        
         bool branded;
 
-        [ObservableProperty]
-        [JsonProperty("currentBrandingVersion")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("currentBrandingVersion")]
+        
         long currentBrandingVersion;
 
-        [ObservableProperty]
-        [JsonProperty("currentVersion")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("currentVersion")]
+        
         string currentVersion;
 
-        [ObservableProperty]
-        [JsonProperty("demo")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("demo")]
+        
         bool demo;
 
-        [ObservableProperty]
-        [JsonProperty("downloadUrl")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("downloadUrl")]
+        
         Uri downloadUrl;
 
-        [ObservableProperty]
-        [JsonProperty("features")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("features")]
+        
         long features;
 
-        [ObservableProperty]
-        [JsonProperty("free")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("free")]
+        
         bool free;
 
-        [ObservableProperty]
-        [JsonProperty("ignoreVersion")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ignoreVersion")]
+        
         string ignoreVersion;
 
-        [ObservableProperty]
-        [JsonProperty("installerType")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("installerType")]
+        
         long installerType;
 
-        [ObservableProperty]
-        [JsonProperty("licensed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("licensed")]
+        
         bool licensed;
 
-        [ObservableProperty]
-        [JsonProperty("message")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("message")]
+        
         string message;
 
-        [ObservableProperty]
-        [JsonProperty("messageHtml")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("messageHtml")]
+        
         string messageHtml;
 
-        [ObservableProperty]
-        [JsonProperty("printerFrontendUrl")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerFrontendUrl")]
+        
         string printerFrontendUrl;
 
-        [ObservableProperty]
-        [JsonProperty("showUpdate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("showUpdate")]
+        
         bool showUpdate;
 
-        [ObservableProperty]
-        [JsonProperty("teaser")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("teaser")]
+        
         RepetierUpdateTeaser teaser;
 
-        [ObservableProperty]
-        [JsonProperty("testperiodMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("testperiodMode")]
+        
         long testperiodMode;
 
-        [ObservableProperty]
-        [JsonProperty("updateAvailable")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("updateAvailable")]
+        
         bool updateAvailable;
 
-        [ObservableProperty]
-        [JsonProperty("versionMessage")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("versionMessage")]
+        
         string versionMessage;
 
-        [ObservableProperty]
-        [JsonProperty("versionMessageHtml")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("versionMessageHtml")]
+        
         string versionMessageHtml;
 
-        [ObservableProperty]
-        [JsonProperty("versionName")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("versionName")]
+        
         string versionName;
 
-        [ObservableProperty]
-        [JsonProperty("webFrontendUrl")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webFrontendUrl")]
+        
         string webFrontendUrl;
         #endregion
 

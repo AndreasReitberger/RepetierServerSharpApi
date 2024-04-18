@@ -5,9 +5,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierActionResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("ok")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ok")]
         bool ok;
         #endregion
 

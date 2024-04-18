@@ -5,19 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnectionIp : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("address")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("address")]
         string address;
 
-        [ObservableProperty]
-        [JsonProperty("keepAliveInterval")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("keepAliveInterval")]
         long keepAliveInterval;
 
-        [ObservableProperty]
-        [JsonProperty("port")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("port")]
         long port;
         #endregion
 

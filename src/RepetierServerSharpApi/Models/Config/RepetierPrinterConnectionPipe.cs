@@ -5,9 +5,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnectionPipe : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("file")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("file")]
         string file;
         #endregion
 

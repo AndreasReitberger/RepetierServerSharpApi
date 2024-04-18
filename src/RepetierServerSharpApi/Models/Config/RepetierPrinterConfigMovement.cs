@@ -6,203 +6,164 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigMovement : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("G10Distance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G10Distance")]
         long g10Distance;
 
-        [ObservableProperty]
-        [JsonProperty("G10LongDistance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G10LongDistance")]
         long g10LongDistance;
 
-        [ObservableProperty]
-        [JsonProperty("G10Speed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G10Speed")]
         long g10Speed;
 
-        [ObservableProperty]
-        [JsonProperty("G10ZLift")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G10ZLift")]
         long g10ZLift;
 
-        [ObservableProperty]
-        [JsonProperty("G11ExtraDistance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G11ExtraDistance")]
         long g11ExtraDistance;
 
-        [ObservableProperty]
-        [JsonProperty("G11ExtraLongDistance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G11ExtraLongDistance")]
         long g11ExtraLongDistance;
 
-        [ObservableProperty]
-        [JsonProperty("G11Speed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("G11Speed")]
         long g11Speed;
 
-        [ObservableProperty]
-        [JsonProperty("allEndstops")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("allEndstops")]
         bool allEndstops;
 
-        [ObservableProperty]
-        [JsonProperty("autolevel")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("autolevel")]
         bool autolevel;
 
-        [ObservableProperty]
-        [JsonProperty("defaultAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("defaultAcceleration")]
         long defaultAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("defaultRetractAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("defaultRetractAcceleration")]
         long defaultRetractAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("defaultTravelAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("defaultTravelAcceleration")]
         long defaultTravelAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("invertX")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("invertX")]
         bool invertX;
 
-        [ObservableProperty]
-        [JsonProperty("invertY")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("invertY")]
         bool invertY;
 
-        [ObservableProperty]
-        [JsonProperty("invertZ")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("invertZ")]
         bool invertZ;
 
-        [ObservableProperty]
-        [JsonProperty("maxXYSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxXYSpeed")]
         long maxXySpeed;
 
-        [ObservableProperty]
-        [JsonProperty("maxZSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxZSpeed")]
         long maxZSpeed;
 
-        [ObservableProperty]
-        [JsonProperty("movebuffer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("movebuffer")]
         long movebuffer;
 
-        [ObservableProperty]
-        [JsonProperty("startWithAbsolutePositions")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("startWithAbsolutePositions")]
         bool startWithAbsolutePositions;
 
-        [ObservableProperty]
-        [JsonProperty("timeMultiplier")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timeMultiplier")]
         double timeMultiplier;
 
-        [ObservableProperty]
-        [JsonProperty("xEndstop")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xEndstop")]
         bool xEndstop;
 
-        [ObservableProperty]
-        [JsonProperty("xHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xHome")]
         long xHome;
 
-        [ObservableProperty]
-        [JsonProperty("xMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMax")]
         long xMax;
 
-        [ObservableProperty]
-        [JsonProperty("xMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMin")]
         long xMin;
 
-        [ObservableProperty]
-        [JsonProperty("xyJerk")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xyJerk")]
         long xyJerk;
 
-        [ObservableProperty]
-        [JsonProperty("xyPrintAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xyPrintAcceleration")]
         long xyPrintAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("xySpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xySpeed")]
         long xySpeed;
 
-        [ObservableProperty]
-        [JsonProperty("xyTravelAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xyTravelAcceleration")]
         long xyTravelAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("yEndstop")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yEndstop")]
         bool yEndstop;
 
-        [ObservableProperty]
-        [JsonProperty("yHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yHome")]
         long yHome;
 
-        [ObservableProperty]
-        [JsonProperty("yMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMax")]
         long yMax;
 
-        [ObservableProperty]
-        [JsonProperty("yMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMin")]
         long yMin;
 
-        [ObservableProperty]
-        [JsonProperty("zEndstop")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zEndstop")]
         bool zEndstop;
 
-        [ObservableProperty]
-        [JsonProperty("zHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zHome")]
         long zHome;
 
-        [ObservableProperty]
-        [JsonProperty("zJerk")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zJerk")]
         double zJerk;
 
-        [ObservableProperty]
-        [JsonProperty("zMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zMax")]
         long zMax;
 
-        [ObservableProperty]
-        [JsonProperty("zMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zMin")]
         long zMin;
 
-        [ObservableProperty]
-        [JsonProperty("zPrintAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zPrintAcceleration")]
         long zPrintAcceleration;
 
-        [ObservableProperty]
-        [JsonProperty("zSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zSpeed")]
         long zSpeed;
 
-        [ObservableProperty]
-        [JsonProperty("zTravelAcceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zTravelAcceleration")]
         long zTravelAcceleration;
         #endregion
 

@@ -8,6 +8,7 @@ using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -432,7 +433,12 @@ namespace AndreasReitberger.API.Repetier
                 HasHeatedBed = HeatedChambers?.Count > 0;
                 ActiveHeatedChamber = HeatedChambers?.FirstOrDefault().Value;
 
-                Fans = new ObservableCollection<IPrint3dFan>(newState.Fans);
+                ConcurrentDictionary<string, IPrint3dFan> fans = new();
+                for(int i = 0; i < newState.Fans.Count; i++)
+                {
+                    fans.TryAdd($"{i}", newState.Fans[i]);
+                }
+                Fans = fans;
                 HasFan = Fans?.Count > 0;
 
                 X = newState.X;
@@ -1775,7 +1781,7 @@ namespace AndreasReitberger.API.Repetier
                     {
                         CurrentPrintImage = info?.JobIdLong > 0
                             ? await GetDynamicRenderImageByJobIdAsync(info.JobIdLong, false).ConfigureAwait(false)
-                            : Array.Empty<byte>();
+                            : [];
                     }
                 }
                 UpdateActivePrintInfo(ActiveJob);
@@ -1784,7 +1790,7 @@ namespace AndreasReitberger.API.Repetier
                 ActivePrintInfo = ActivePrintInfos.FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
                 CurrentPrintImage = ActivePrintInfo?.JobIdLong > 0
                     ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
-                    : Array.Empty<byte>();
+                    : [];
                 */
             }
             catch (Exception exc)

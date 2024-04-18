@@ -6,49 +6,40 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigWizardTemplate : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("author")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("author")]
         string author;
 
-        [ObservableProperty]
-        [JsonProperty("command")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("command")]
         string command;
 
-        [ObservableProperty]
-        [JsonProperty("description")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("description")]
         string description;
 
-        [ObservableProperty]
-        [JsonProperty("icon")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("icon")]
         string icon;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("source")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("source")]
         string source;
 
-        [ObservableProperty]
-        [JsonProperty("uuid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("uuid")]
         Guid uuid;
 
-        [ObservableProperty]
-        [JsonProperty("version")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version")]
         long version;
 
-        [ObservableProperty]
-        [JsonProperty("visibleWhenPrinting")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("visibleWhenPrinting")]
         bool visibleWhenPrinting;
 
         #endregion

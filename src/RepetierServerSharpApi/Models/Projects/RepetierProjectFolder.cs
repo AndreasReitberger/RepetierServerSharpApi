@@ -7,39 +7,39 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectFolder : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("empty")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("empty")]
+
         bool empty;
 
-        [ObservableProperty]
-        [JsonProperty("folders")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("folders")]
+
         List<RepetierProjectSubFolder> folders = new();
 
-        [ObservableProperty]
-        [JsonProperty("idx")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("idx")]
+
         long idx;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("parents")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("parents")]
+
         List<RepetierProjectParentElement> parents = new();
 
-        [ObservableProperty]
-        [JsonProperty("projects")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("projects")]
+
         List<RepetierProject> projects = new();
 
-        [ObservableProperty]
-        [JsonProperty("version")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version")]
+
         long version;
         #endregion
 

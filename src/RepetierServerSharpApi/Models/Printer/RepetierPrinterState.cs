@@ -9,209 +9,209 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("activeExtruder")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("activeExtruder")]
+
         long activeExtruder;
 
-        [ObservableProperty]
-        [JsonProperty("autostartNextPrint")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("autostartNextPrint")]
+
         bool autostartNextPrint;
 
-        [ObservableProperty]
-        [JsonProperty("condition")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("condition")]
+
         long condition;
 
-        [ObservableProperty]
-        [JsonProperty("conditionReason")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("conditionReason")]
+
         string conditionReason;
 
-        [ObservableProperty]
-        [JsonProperty("debugLevel")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("debugLevel")]
+
         long debugLevel;
 
-        [ObservableProperty]
-        [JsonProperty("doorOpen")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("doorOpen")]
+
         bool doorOpen;
 
-        [ObservableProperty]
-        [JsonProperty("extruder")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder")]
+
         List<RepetierPrinterToolhead> extruder = new();
 
-        [ObservableProperty]
-        [JsonProperty("f")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("f")]
+
         long f;
 
-        [ObservableProperty]
-        [JsonProperty("fans")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("fans")]
+
         List<RepetierPrinterFan> fans = new();
 
-        [ObservableProperty]
-        [JsonProperty("filterFan")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filterFan")]
+
         bool filterFan;
 
-        [ObservableProperty]
-        [JsonProperty("firmware")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("firmware")]
+
         string firmware;
 
-        [ObservableProperty]
-        [JsonProperty("firmwareStyle")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("firmwareStyle")]
+
         string firmwareStyle;
 
-        [ObservableProperty]
-        [JsonProperty("firmwareURL")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("firmwareURL")]
+
         Uri firmwareUrl;
 
-        [ObservableProperty]
-        [JsonProperty("flowMultiply")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("flowMultiply")]
+
         long flowMultiply;
 
-        [ObservableProperty]
-        [JsonProperty("global")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("global")]
+
         RepetierPrinterStateGlobal global;
 
-        [ObservableProperty]
-        [JsonProperty("gperm")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gperm")]
+
         RepetierPrinterStateGlobal gperm;
 
-        [ObservableProperty]
-        [JsonProperty("hasXHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hasXHome")]
+
         bool hasXHome;
 
-        [ObservableProperty]
-        [JsonProperty("hasYHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hasYHome")]
+
         bool hasYHome;
 
-        [ObservableProperty]
-        [JsonProperty("hasZHome")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hasZHome")]
+
         bool hasZHome;
 
-        [ObservableProperty]
-        [JsonProperty("heatedBeds")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedBeds")]
+
         List<RepetierPrinterHeaterComponent> heatedBeds = new();
 
-        [ObservableProperty]
-        [JsonProperty("heatedChambers")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedChambers")]
+
         List<RepetierPrinterHeaterComponent> heatedChambers = new();
 
-        [ObservableProperty]
-        [JsonProperty("layer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("layer")]
+
         long layer;
 
-        [ObservableProperty]
-        [JsonProperty("lights")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lights")]
+
         long lights;
 
-        [ObservableProperty]
-        [JsonProperty("maxLayer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxLayer")]
+
         long maxLayer;
 
-        [ObservableProperty]
-        [JsonProperty("notification")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("notification")]
+
         string notification;
 
-        [ObservableProperty]
-        [JsonProperty("numExtruder")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("numExtruder")]
+
         long numExtruder;
 
-        [ObservableProperty]
-        [JsonProperty("perm")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("perm")]
+
         RepetierPrinterStateGlobal perm;
 
-        [ObservableProperty]
-        [JsonProperty("powerOn")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("powerOn")]
+
         bool powerOn;
 
-        [ObservableProperty]
-        [JsonProperty("rec")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rec")]
+
         bool rec;
 
-        [ObservableProperty]
-        [JsonProperty("sdcardMounted")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sdcardMounted")]
+
         bool sdcardMounted;
 
-        [ObservableProperty]
-        [JsonProperty("sglobal")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sglobal")]
+
         RepetierPrinterStateGlobal sglobal;
 
-        [ObservableProperty]
-        [JsonProperty("shutdownAfterPrint")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("shutdownAfterPrint")]
+
         bool shutdownAfterPrint;
 
-        [ObservableProperty]
-        [JsonProperty("speedMultiply")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("speedMultiply")]
+
         long speedMultiply;
 
-        [ObservableProperty]
-        [JsonProperty("volumetric")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("volumetric")]
+
         bool volumetric;
 
-        [ObservableProperty]
-        [JsonProperty("webcams")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webcams")]
+
         List<RepetierPrinterConfigWebcam> webcams = new();
 
-        [ObservableProperty]
-        [JsonProperty("x")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("x")]
+
         long x;
 
-        [ObservableProperty]
-        [JsonProperty("xOff")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xOff")]
+
         long xOff;
 
-        [ObservableProperty]
-        [JsonProperty("y")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("y")]
+
         long y;
 
-        [ObservableProperty]
-        [JsonProperty("yOff")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yOff")]
+
         long yOff;
 
-        [ObservableProperty]
-        [JsonProperty("z")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("z")]
+
         long z;
 
-        [ObservableProperty]
-        [JsonProperty("zOff")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("zOff")]
+
         long zOff;
         #endregion
 

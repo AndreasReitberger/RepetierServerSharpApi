@@ -58,7 +58,7 @@ namespace AndreasReitberger.API.Repetier
                                 printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
                             }
                         }
-                        else printer.CurrentPrintImage = Array.Empty<byte>();
+                        else printer.CurrentPrintImage = [];
                     }
                     Printers = repetierPrinterList;
                 }

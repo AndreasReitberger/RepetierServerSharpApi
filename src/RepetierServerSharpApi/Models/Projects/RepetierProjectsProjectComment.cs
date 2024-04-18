@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsProjectComment : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("comment")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("comment")]
+
         string comment;
 
-        [ObservableProperty]
-        [JsonProperty("time")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("time")]
+
         long? time;
 
-        [ObservableProperty]
-        [JsonProperty("user")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("user")]
+
         string user;
         #endregion 
 

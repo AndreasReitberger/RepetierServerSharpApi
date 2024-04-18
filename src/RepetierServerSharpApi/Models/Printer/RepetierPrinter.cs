@@ -10,27 +10,27 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         Guid id;
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
+
         bool isActive;
 
-        [ObservableProperty]
-        [JsonProperty("analysed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analysed")]
+
         int? analysed;
 
-        [ObservableProperty]
-        [JsonProperty("done")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("done")]
+
         double? done;
 
-        [ObservableProperty]
-        [JsonProperty("job")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job")]
+
         string activeJobName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
@@ -43,27 +43,27 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         string activeJobId;
 
-        [ObservableProperty]
-        [JsonProperty("jobstate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("jobstate")]
+
         string? activeJobState;
         
-        [ObservableProperty]
-        [JsonProperty("linesSend")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("linesSend")]
+
         long? lineSent;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name = string.Empty;
         
-        [ObservableProperty]
-        [JsonProperty("ofLayer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ofLayer")]
+
         long? layers;
 
         [ObservableProperty, JsonIgnore]
@@ -76,42 +76,42 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         bool isOnline = false;
 
-        [ObservableProperty]
-        [JsonProperty("pauseState")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseState")]
+
         long? pauseState;
 
-        [ObservableProperty]
-        [JsonProperty("paused")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("paused")]
+
         bool paused;
 
-        [ObservableProperty]
-        [JsonProperty("printStart")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printStart")]
+
         double? printStart;
 
-        [ObservableProperty]
-        [JsonProperty("printTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printTime")]
+
         double? printTime;
 
-        [ObservableProperty]
-        [JsonProperty("printedTimeComp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printedTimeComp")]
+
         double? printedTimeComp;
 
-        [ObservableProperty]
-        [JsonProperty("repeat")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("repeat")]
+
         int? repeat;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
@@ -124,88 +124,62 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double? printStarted = 0;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double? printDuration = 0;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double? printDurationEstimated = 0;
 
-        [ObservableProperty]
-        [JsonProperty("totalLines")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("totalLines")]
+
         long? totalLines;
 
         #region JsonIgnored
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? extruder1Temperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? extruder2Temperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? extruder3Temperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? extruder4Temperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? extruder5Temperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? heatedBedTemperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? heatedChamberTemperature = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? printProgress = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double? remainingPrintDuration = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool isPrinting = false;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool isPaused = false;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool isSelected = false;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
-        [JsonIgnore]
-        byte[] currentPrintImage = Array.Empty<byte>();
+        [ObservableProperty, JsonIgnore]
+        byte[] currentPrintImage = [];
 
         #endregion
 

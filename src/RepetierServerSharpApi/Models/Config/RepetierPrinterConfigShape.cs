@@ -7,44 +7,36 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigShape : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("basicShape")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("basicShape")]
         RepetierPrinterConfigBasicShape basicShape;
 
-        [ObservableProperty]
-        [JsonProperty("gridColor")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gridColor")]
         string gridColor;
 
-        [ObservableProperty]
-        [JsonProperty("gridSpacing")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gridSpacing")]
         long gridSpacing;
 
-        [ObservableProperty]
-        [JsonProperty("imageExtension")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("imageExtension")]
         string imageExtension;
 
-        [ObservableProperty]
-        [JsonProperty("imageOpacity")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("imageOpacity")]
         long imageOpacity;
 
-        [ObservableProperty]
-        [JsonProperty("imageZoom")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("imageZoom")]
         long imageZoom;
 
-        [ObservableProperty]
-        [JsonProperty("marker")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("marker")]
         List<object> marker = new();
 
-        [ObservableProperty]
-        [JsonProperty("showImage")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("showImage")]
         bool showImage;
         #endregion
 

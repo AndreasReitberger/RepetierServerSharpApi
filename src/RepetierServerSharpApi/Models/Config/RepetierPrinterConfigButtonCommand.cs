@@ -5,14 +5,12 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigButtonCommand : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("command")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("command")]
         string command;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
         #endregion

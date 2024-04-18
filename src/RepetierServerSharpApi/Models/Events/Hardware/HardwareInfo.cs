@@ -7,44 +7,36 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("icon")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("icon")]
         public long? icon;
 
-        [ObservableProperty]
-        [JsonProperty("msgType")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("msgType")]
         public long? msgType;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         public string name;
 
-        [ObservableProperty]
-        [JsonProperty("text")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("text")]
         public string text;
 
-        [ObservableProperty]
-        [JsonProperty("unit")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("unit")]
         public string unit;
 
-        [ObservableProperty]
-        [JsonProperty("urgency")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("urgency")]
         public long? urgency;
 
-        [ObservableProperty]
-        [JsonProperty("url")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("url")]
         public string url;
 
-        [ObservableProperty]
-        [JsonProperty("value")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("value")]
         public double? value;
         #endregion
 

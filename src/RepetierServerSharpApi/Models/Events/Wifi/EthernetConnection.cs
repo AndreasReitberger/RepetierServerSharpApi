@@ -5,44 +5,44 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EthernetConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("ipv4_addresses")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4_addresses")]
+
         string ipv4Addresses;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4_dns")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4_dns")]
+
         string ipv4Dns;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4_gateway")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4_gateway")]
+
         string ipv4Gateway;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4_method")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4_method")]
+
         string ipv4Method;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6_addresses")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6_addresses")]
+
         string ipv6Addresses;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6_dns")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6_dns")]
+
         string ipv6Dns;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6_gateway")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6_gateway")]
+
         string ipv6Gateway;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6_method")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6_method")]
+
         string ipv6Method;
         #endregion
 

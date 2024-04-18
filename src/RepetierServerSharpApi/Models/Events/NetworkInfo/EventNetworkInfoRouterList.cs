@@ -5,49 +5,49 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventNetworkInfoRouterList : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("SSID")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("SSID")]
+        
         public string ssid;
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
+        
         public bool active;
 
-        [ObservableProperty]
-        [JsonProperty("bars")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("bars")]
+        
         public long bars;
 
-        [ObservableProperty]
-        [JsonProperty("channel")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("channel")]
+        
         public long channel;
 
-        [ObservableProperty]
-        [JsonProperty("data")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("data")]
+        
         public EventNetworkInfoRouterListData data;
 
-        [ObservableProperty]
-        [JsonProperty("mode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mode")]
+        
         public string mode;
 
-        [ObservableProperty]
-        [JsonProperty("rate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rate")]
+        
         public string rate;
 
-        [ObservableProperty]
-        [JsonProperty("secure")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("secure")]
+        
         public bool secure;
 
-        [ObservableProperty]
-        [JsonProperty("signal")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("signal")]
+        
         public long signal;
         #endregion
 

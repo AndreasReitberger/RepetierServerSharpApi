@@ -7,34 +7,34 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierUpdateTeaser : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("available")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("available")]
+        
         bool available;
 
-        [ObservableProperty]
-        [JsonProperty("end")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("end")]
+        
         long end;
 
-        [ObservableProperty]
-        [JsonProperty("msg")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("msg")]
+        
         string msg;
 
-        [ObservableProperty]
-        [JsonProperty("start")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("start")]
+        
         long start;
 
-        [ObservableProperty]
-        [JsonProperty("updated")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("updated")]
+        
         long updated;
 
-        [ObservableProperty]
-        [JsonProperty("url")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("url")]
+        
         Uri url;
         #endregion
 

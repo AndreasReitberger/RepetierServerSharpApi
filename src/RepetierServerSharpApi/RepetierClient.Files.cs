@@ -22,7 +22,7 @@ namespace AndreasReitberger.API.Repetier
         public async Task<ObservableCollection<IGcode>> GetModelsAsync(
             string PrinterName = "",
             GcodeImageType ImageType = GcodeImageType.Thumbnail,
-            IProgress<int> Prog = null)
+            IProgress<int>? Prog = null)
         {
             try
             {
@@ -247,9 +247,23 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public async Task RefreshDiskSpaceAsync()
+        public Task RefreshDiskSpaceAsync() => UpdateFreeSpaceAsync();
+        
+        public override async Task<byte[]?> DownloadFileAsync(string relativeFilePath)
         {
-            await UpdateFreeSpaceAsync().ConfigureAwait(false);
+            try
+            {
+                string uri = $"{FullWebAddress}/server/files/{relativeFilePath}";
+                byte[]? file = await DownloadFileFromUriAsync(uri)
+                    .ConfigureAwait(false)
+                    ;
+                return file;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
         }
         #endregion
 

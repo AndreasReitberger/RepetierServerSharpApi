@@ -5,59 +5,48 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("compressCommunication")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("compressCommunication")]
         bool compressCommunication;
 
-        [ObservableProperty]
-        [JsonProperty("connectionMethod")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("connectionMethod")]
         long connectionMethod;
 
-        [ObservableProperty]
-        [JsonProperty("continueAfterFastReconnect")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("continueAfterFastReconnect")]
         bool continueAfterFastReconnect;
 
-        [ObservableProperty]
-        [JsonProperty("ip")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ip")]
         RepetierPrinterConnectionIp ip;
 
-        [ObservableProperty]
-        [JsonProperty("lcdTimeMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lcdTimeMode")]
         long lcdTimeMode;
 
-        [ObservableProperty]
-        [JsonProperty("password")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("password")]
         string password;
 
-        [ObservableProperty]
-        [JsonProperty("pipe")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pipe")]
         RepetierPrinterConnectionPipe pipe;
 
-        [ObservableProperty]
-        [JsonProperty("powerOffIdleMinutes")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("powerOffIdleMinutes")]
         long powerOffIdleMinutes;
 
-        [ObservableProperty]
-        [JsonProperty("powerOffMaxTemperature")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("powerOffMaxTemperature")]
         long powerOffMaxTemperature;
 
-        [ObservableProperty]
-        [JsonProperty("resetScript")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("resetScript")]
         string resetScript;
 
-        [ObservableProperty]
-        [JsonProperty("serial")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("serial")]
         RepetierPrinterConnectionSerial serial;
         #endregion
 

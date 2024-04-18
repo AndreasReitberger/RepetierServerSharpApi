@@ -5,19 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigTemperature : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("temp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temp")]
         long temp;
 
         #region Json Ignore
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         string targetComponent;
         #endregion
 

@@ -7,134 +7,134 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierGpioListItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("bias")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("bias")]
+
         long? bias;
 
-        [ObservableProperty]
-        [JsonProperty("chip")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("chip")]
+
         long? chip;
 
-        [ObservableProperty]
-        [JsonProperty("debounceMS")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("debounceMS")]
+
         long? debounceMs;
 
-        [ObservableProperty]
-        [JsonProperty("description")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("description")]
+
         string description;
 
-        [ObservableProperty]
-        [JsonProperty("direction")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("direction")]
+
         long? direction;
 
-        [ObservableProperty]
-        [JsonProperty("display")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("display")]
+
         string display;
 
-        [ObservableProperty]
-        [JsonProperty("drive")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("drive")]
+
         long? drive;
 
-        [ObservableProperty]
-        [JsonProperty("edge")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("edge")]
+
         long? edge;
 
-        [ObservableProperty]
-        [JsonProperty("error")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("error")]
+
         string error;
 
-        [ObservableProperty]
-        [JsonProperty("icon")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("icon")]
+
         string icon;
 
-        [ObservableProperty]
-        [JsonProperty("iconOff")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("iconOff")]
+
         string iconOff;
 
-        [ObservableProperty]
-        [JsonProperty("initEnabled")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("initEnabled")]
+
         bool? initEnabled;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("operation")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("operation")]
+
         long? operation;
 
-        [ObservableProperty]
-        [JsonProperty("parameter")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("parameter")]
+
         string parameter;
 
-        [ObservableProperty]
-        [JsonProperty("pinNumber")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pinNumber")]
+
         long? pinNumber;
 
-        [ObservableProperty]
-        [JsonProperty("pos")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pos")]
+
         long? pos;
 
-        [ObservableProperty]
-        [JsonProperty("pwmDutyCycle")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pwmDutyCycle")]
+
         long? pwmDutyCycle;
 
-        [ObservableProperty]
-        [JsonProperty("pwmFrequency")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pwmFrequency")]
+
         long? pwmFrequency;
 
-        [ObservableProperty]
-        [JsonProperty("pwmInitDutyCycle")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pwmInitDutyCycle")]
+
         long? pwmInitDutyCycle;
 
-        [ObservableProperty]
-        [JsonProperty("pwmPolarity")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pwmPolarity")]
+
         bool? pwmPolarity;
 
-        [ObservableProperty]
-        [JsonProperty("securityQuestion")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("securityQuestion")]
+
         bool? securityQuestion;
 
-        [ObservableProperty]
-        [JsonProperty("showInMenu")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("showInMenu")]
+
         bool? showInMenu;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug;
 
-        [ObservableProperty]
-        [JsonProperty("state")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state")]
+
         bool? state;
 
-        [ObservableProperty]
-        [JsonProperty("uuid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("uuid")]
+
         Guid? uuid;
         #endregion
 

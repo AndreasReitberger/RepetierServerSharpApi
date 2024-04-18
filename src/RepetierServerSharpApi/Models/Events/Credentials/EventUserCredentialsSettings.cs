@@ -5,19 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventUserCredentialsSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("gcodeGroup")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeGroup")]
         string gcodeGroup;
 
-        [ObservableProperty]
-        [JsonProperty("gcodeSortBy")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeSortBy")]
         long gcodeSortBy;
 
-        [ObservableProperty]
-        [JsonProperty("gcodeViewMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeViewMode")]
         long gcodeViewMode;
         #endregion
 

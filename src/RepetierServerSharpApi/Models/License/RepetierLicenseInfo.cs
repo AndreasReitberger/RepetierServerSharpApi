@@ -6,24 +6,20 @@ namespace AndreasReitberger.API.Repetier
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("hasBranding")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hasBranding")]
         bool hasBranding;
 
-        [ObservableProperty]
-        [JsonProperty("licence")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("licence")]
         string licence;
 
-        [ObservableProperty]
-        [JsonProperty("wantsBranding")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("wantsBranding")]
         bool wantsBranding;
         #endregion
 

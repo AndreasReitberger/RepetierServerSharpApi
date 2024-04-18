@@ -6,39 +6,32 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigHeatedComponent : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("alias")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("alias")]
         string alias;
 
-        [ObservableProperty]
-        [JsonProperty("cooldownPerSecond")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cooldownPerSecond")]
         double? cooldownPerSecond;
 
-        [ObservableProperty]
-        [JsonProperty("heatupPerSecond")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatupPerSecond")]
         double? heatupPerSecond;
 
-        [ObservableProperty]
-        [JsonProperty("lastTemp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lastTemp")]
         long? lastTemp;
 
-        [ObservableProperty]
-        [JsonProperty("maxTemp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxTemp")]
         long? maxTemp;
 
-        [ObservableProperty]
-        [JsonProperty("offset")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("offset")]
         long? offset;
 
-        [ObservableProperty]
-        [JsonProperty("temperatures")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temperatures")]
         List<RepetierPrinterConfigTemperature> temperatures = new();
         #endregion
 

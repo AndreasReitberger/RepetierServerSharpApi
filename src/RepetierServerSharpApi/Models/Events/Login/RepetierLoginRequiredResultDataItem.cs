@@ -5,9 +5,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLoginRequiredResultDataItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("session")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("session")]
         string session;
         #endregion
 

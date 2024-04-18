@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsProjectFile : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("n")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("n")]
+
         string n;
 
-        [ObservableProperty]
-        [JsonProperty("s")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("s")]
+
         long? s;
 
-        [ObservableProperty]
-        [JsonProperty("p")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("p")]
+
         string p;
         #endregion 
 

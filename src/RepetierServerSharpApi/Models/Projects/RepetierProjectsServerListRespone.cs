@@ -6,14 +6,14 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsServerListRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("ok")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ok")]
+
         bool ok;
 
-        [ObservableProperty]
-        [JsonProperty("server")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("server")]
+
         List<ProjectsServer> server = new();
         #endregion 
 

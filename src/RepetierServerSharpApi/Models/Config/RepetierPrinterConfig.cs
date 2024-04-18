@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -7,99 +6,80 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfig : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
         List<RepetierPrinterConfigButtonCommand> buttonCommands = new();
 
-        [ObservableProperty]
-        [JsonProperty("connection")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("connection")]
         RepetierPrinterConnection connection;
 
-        [ObservableProperty]
-        [JsonProperty("extruders")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruders")]
         List<RepetierPrinterConfigExtruder> extruders = new();
         
-        [ObservableProperty]
-        [JsonProperty("fanPresets")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("fanPresets")]
         List<RepetierPrinterConfigPreset> fanPresets = new();
 
-        [ObservableProperty]
-        [JsonProperty("flowPresets")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("flowPresets")]
         List<RepetierPrinterConfigPreset> flowPresets = new();
 
-        [ObservableProperty]
-        [JsonProperty("gcodeReplacements")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeReplacements")]
         List<RepetierPrinterConfigGcodeReplacement> gcodeReplacements = new();
 
-        [ObservableProperty]
-        [JsonProperty("general")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("general")]
         RepetierPrinterConfigGeneral general;
 
-        [ObservableProperty]
-        [JsonProperty("heatedBeds")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedBeds")]
         List<RepetierPrinterConfigHeatedComponent> heatedBeds = new();
 
-        [ObservableProperty]
-        [JsonProperty("heatedChambers")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedChambers")]
         List<RepetierPrinterConfigHeatedComponent> heatedChambers = new();
 
-        [ObservableProperty]
-        [JsonProperty("movement")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("movement")]
         RepetierPrinterConfigMovement movement;
 
-        [ObservableProperty]
-        [JsonProperty("properties")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("properties")]
         RepetierPrinterConfigProperties properties;
 
-        [ObservableProperty]
-        [JsonProperty("quickCommands")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("quickCommands")]
         List<RepetierQuickGcodeCommand> quickCommands = new();
 
-        [ObservableProperty]
-        [JsonProperty("recover")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("recover")]
         RepetierPrinterConfigRecover recover;
 
-        [ObservableProperty]
-        [JsonProperty("responseEvents")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("responseEvents")]
         List<object> responseEvents = new();
 
-        [ObservableProperty]
-        [JsonProperty("shape")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("shape")]
         RepetierPrinterConfigShape shape;
         
-        [ObservableProperty]
-        [JsonProperty("speedPresets")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("speedPresets")]
         List<RepetierPrinterConfigPreset> speedPresets = new();
 
-        [ObservableProperty]
-        [JsonProperty("webcams")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webcams")]
         List<RepetierPrinterConfigWebcam> webcams = new();
 
-        [ObservableProperty]
-        [JsonProperty("wizardCommands")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("wizardCommands")]
         List<object> wizardCommands = new();
 
-        [ObservableProperty]
-        [JsonProperty("wizardTemplates")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("wizardTemplates")]
         List<RepetierPrinterConfigWizardTemplate> wizardTemplates = new();
         #endregion
 
