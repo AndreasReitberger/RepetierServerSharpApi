@@ -7,9 +7,9 @@ namespace AndreasReitberger.API.Repetier.Models
     internal class RepetierJsonConvertEventArgs : EventArgs
     {
         #region Properties
-        public string Message { get; set; } = string.Empty; 
+        public string Message { get; set; } = string.Empty;
         public string OriginalString { get; set; } = string.Empty;
-        public string TargetType { get; set; } = string.Empty;  
+        public string TargetType { get; set; } = string.Empty;
         public Exception? Exception { get; set; }
         #endregion
 

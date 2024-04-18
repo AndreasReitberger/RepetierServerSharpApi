@@ -9,32 +9,32 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("available")]
-        
+
         bool available;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("end")]
-        
+
         long end;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("msg")]
-        
+
         string msg = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("start")]
-        
+
         long start;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("updated")]
-        
+
         long updated;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("url")]
-        
+
         Uri? url;
         #endregion
 

@@ -69,7 +69,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerHomepage")]
-        Uri?     printerHomepage;
+        Uri? printerHomepage;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerManual")]
@@ -111,7 +111,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         #endregion
     }
 }
