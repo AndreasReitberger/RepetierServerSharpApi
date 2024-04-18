@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
     public class RepetierWebCallActionsChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public ObservableCollection<RepetierWebCallAction> NewWebCallActions { get; set; } = new();
+        public List<RepetierWebCallAction> NewWebCallActions { get; set; } = [];
         #endregion
 
         #region Overrides

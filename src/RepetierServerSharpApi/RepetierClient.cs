@@ -93,7 +93,7 @@ namespace AndreasReitberger.API.Repetier
         {
             OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
             {
-                RepetierMessages = value,
+                RepetierMessages = [.. value],
                 SessonId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
@@ -110,7 +110,7 @@ namespace AndreasReitberger.API.Repetier
         {
             OnWebCallActionsChangedEvent(new RepetierWebCallActionsChangedEventArgs()
             {
-                NewWebCallActions = value,
+                NewWebCallActions = [.. value],
                 SessonId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
@@ -179,7 +179,7 @@ namespace AndreasReitberger.API.Repetier
             OnPrintInfosChangedEvent(new RepetierActivePrintInfosChangedEventArgs()
             {
                 SessonId = SessionId,
-                NewActivePrintInfos = value,
+                NewActivePrintInfos = [.. value],
                 Printer = GetActivePrinterSlug(),
             });
         }
@@ -462,7 +462,7 @@ namespace AndreasReitberger.API.Repetier
                 if (newConfig is null) return;
                 if (newConfig.Webcams is not null)
                 {
-                    WebCams = new ObservableCollection<IWebCamConfig>(newConfig.Webcams);
+                    WebCams = [.. newConfig.Webcams];
                     HasWebCam = WebCams is not null && WebCams.Count > 0;
                     if (HasWebCam)
                         SelectedWebCam = WebCams?.FirstOrDefault();
@@ -1255,9 +1255,7 @@ namespace AndreasReitberger.API.Repetier
                     {
                         if (group != "#")
                         {
-                            ObservableCollection<IGcode> res = await GetModelsAsync(printerName).ConfigureAwait(false);
-                            List<IGcode> list = new(res);
-
+                            List<IGcode> list = await GetModelsAsync(printerName).ConfigureAwait(false);
                             string fileName = info.Name.Replace(Path.GetExtension(filePath), string.Empty);
                             IGcode? model = list.FirstOrDefault(m => m.FileName == fileName);
                             if (model is not null)

@@ -1,13 +1,12 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
     public class RepetierModelGroupsChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public ObservableCollection<IGcodeGroup> NewModelGroups { get; set; } = new();
+        public List<IGcodeGroup> NewModelGroups { get; set; } = [];
         #endregion
 
         #region Overrides

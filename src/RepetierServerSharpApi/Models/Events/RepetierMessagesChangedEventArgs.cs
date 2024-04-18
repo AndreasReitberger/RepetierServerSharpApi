@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         public EventMessageChangedData? RepetierMessage { get; set; }
-        public ObservableCollection<RepetierMessage> RepetierMessages { get; set; } = [];
+        public List<RepetierMessage> RepetierMessages { get; set; } = [];
         #endregion
 
         #region Overrides
