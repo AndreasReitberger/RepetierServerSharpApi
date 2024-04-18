@@ -6,79 +6,64 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class ExternalCommand : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("confirm")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("confirm")]
         string confirm;
 
-        [ObservableProperty]
-        [JsonProperty("execute")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("execute")]
         string execute;
 
-        [ObservableProperty]
-        [JsonProperty("icon")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("icon")]
         string icon;
 
-        [ObservableProperty]
-        [JsonProperty("id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
         long id;
 
-        [ObservableProperty]
-        [JsonProperty("ifAllNotPrinting")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ifAllNotPrinting")]
         bool ifAllNotPrinting;
 
-        [ObservableProperty]
-        [JsonProperty("ifThisNotPrinting")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ifThisNotPrinting")]
         bool ifThisNotPrinting;
 
-        [ObservableProperty]
-        [JsonProperty("local")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("local")]
         bool local;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("permAdd")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permAdd")]
         bool permAdd;
 
-        [ObservableProperty]
-        [JsonProperty("permConfig")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permConfig")]
         bool permConfig;
 
-        [ObservableProperty]
-        [JsonProperty("permDel")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permDel")]
         bool permDel;
 
-        [ObservableProperty]
-        [JsonProperty("permPrint")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permPrint")]
         bool permPrint;
 
-        [ObservableProperty]
-        [JsonProperty("remote")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("remote")]
         bool remote;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
         string slug;
 
-        [ObservableProperty]
-        [JsonProperty("terminal")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("terminal")]
         string terminal;
         #endregion
 

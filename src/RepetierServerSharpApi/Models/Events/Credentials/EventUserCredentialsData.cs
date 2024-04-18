@@ -5,19 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventUserCredentialsData : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("login")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("login")]
         string login;
 
-        [ObservableProperty]
-        [JsonProperty("permissions")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permissions")]
         long permissions;
 
-        [ObservableProperty]
-        [JsonProperty("settings")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("settings")]
         EventUserCredentialsSettings settings;
 
         #endregion

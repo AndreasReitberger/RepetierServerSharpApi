@@ -9,12 +9,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         
-        [ObservableProperty]
-        [JsonProperty("printer")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printer")]
         RepetierPrinterState printer = new();
 
-        [ObservableProperty]
-        [JsonProperty("printer1")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printer1")]
         RepetierPrinterState printer1 = new();
 
         #endregion

@@ -5,19 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventSession : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("callback_id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("callback_id")]
         long callbackId;
 
-        [ObservableProperty]
-        [JsonProperty("data")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("data")]
         object data;
 
-        [ObservableProperty]
-        [JsonProperty("session")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("session")]
         string session;
         #endregion
 

@@ -7,54 +7,44 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("angle")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("angle")]
         long angle;
 
-        [ObservableProperty]
-        [JsonProperty("color")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("color")]
         string color;
 
-        [ObservableProperty]
-        [JsonProperty("radius")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("radius")]
         long radius;
 
-        [ObservableProperty]
-        [JsonProperty("shape")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("shape")]
         string shape;
 
-        [ObservableProperty]
-        [JsonProperty("x")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("x")]
         long x;
 
-        [ObservableProperty]
-        [JsonProperty("xMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMax")]
         long xMax;
 
-        [ObservableProperty]
-        [JsonProperty("xMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("xMin")]
         long xMin;
 
-        [ObservableProperty]
-        [JsonProperty("y")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("y")]
         long y;
 
-        [ObservableProperty]
-        [JsonProperty("yMax")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMax")]
         long yMax;
 
-        [ObservableProperty]
-        [JsonProperty("yMin")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("yMin")]
         long yMin;
         #endregion
 

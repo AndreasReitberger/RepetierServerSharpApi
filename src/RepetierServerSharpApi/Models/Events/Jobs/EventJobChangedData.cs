@@ -6,9 +6,8 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
         string slug;
         #endregion
 

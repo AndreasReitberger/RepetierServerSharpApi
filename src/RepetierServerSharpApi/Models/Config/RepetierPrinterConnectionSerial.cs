@@ -5,74 +5,60 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnectionSerial : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("baudrate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("baudrate")]
         long baudrate;
 
-        [ObservableProperty]
-        [JsonProperty("communicationTimeout")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("communicationTimeout")]
         long communicationTimeout;
 
-        [ObservableProperty]
-        [JsonProperty("connectionDelay")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("connectionDelay")]
         long connectionDelay;
 
-        [ObservableProperty]
-        [JsonProperty("device")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("device")]
         string device;
 
-        [ObservableProperty]
-        [JsonProperty("dtr")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("dtr")]
         long dtr;
 
-        [ObservableProperty]
-        [JsonProperty("emergencySolution")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("emergencySolution")]
         long emergencySolution;
 
-        [ObservableProperty]
-        [JsonProperty("inputBufferSize")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inputBufferSize")]
         long inputBufferSize;
 
-        [ObservableProperty]
-        [JsonProperty("interceptor")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("interceptor")]
         bool interceptor;
 
-        [ObservableProperty]
-        [JsonProperty("malyanHack")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("malyanHack")]
         bool malyanHack;
 
-        [ObservableProperty]
-        [JsonProperty("maxParallelCommands")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxParallelCommands")]
         bool maxParallelCommands;
 
-        [ObservableProperty]
-        [JsonProperty("pingPong")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pingPong")]
         bool pingPong;
 
-        [ObservableProperty]
-        [JsonProperty("rts")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rts")]
         long rts;
 
-        [ObservableProperty]
-        [JsonProperty("usbreset")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("usbreset")]
         long usbreset;
 
-        [ObservableProperty]
-        [JsonProperty("visibleWithoutRunning")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("visibleWithoutRunning")]
         bool visibleWithoutRunning;
         #endregion
 

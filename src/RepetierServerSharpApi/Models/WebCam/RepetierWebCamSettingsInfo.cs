@@ -7,37 +7,37 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierWebCamSettingsInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Guid id = Guid.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool isDefault = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool autostart = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         string name = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         RepetierWebcamType type = RepetierWebcamType.Dynamic;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         string slug = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Guid serverId = Guid.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         int camIndex = -1;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         int rotationAngle = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         int networkBufferTime = 150;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         int fileCachingTime = 1000;
 
         #endregion

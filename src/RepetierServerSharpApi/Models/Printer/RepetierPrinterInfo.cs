@@ -5,24 +5,24 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
+
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("online")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("online")]
+
         long online;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug;
         #endregion
 

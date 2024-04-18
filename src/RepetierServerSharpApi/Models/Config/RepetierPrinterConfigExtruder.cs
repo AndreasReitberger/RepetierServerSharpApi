@@ -7,114 +7,92 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigExtruder : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("acceleration")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("acceleration")]
         long? acceleration;
 
-        [ObservableProperty]
-        [JsonProperty("alias")]
-        [property: JsonIgnore]
-        string alias;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("alias")]
+        string alias = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("changeFastDistance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("changeFastDistance")]
         long? changeFastDistance;
 
-        [ObservableProperty]
-        [JsonProperty("changeSlowDistance")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("changeSlowDistance")]
         long? changeSlowDistance;
 
-        [ObservableProperty]
-        [JsonProperty("cooldownPerSecond")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cooldownPerSecond")]
         double? cooldownPerSecond;
 
-        [ObservableProperty]
-        [JsonProperty("eJerk")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("eJerk")]
         long? eJerk;
 
-        [ObservableProperty]
-        [JsonProperty("extrudeSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extrudeSpeed")]
         long? extrudeSpeed;
 
-        [ObservableProperty]
-        [JsonProperty("filamentDiameter")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filamentDiameter")]
         double? filamentDiameter;
 
-        [ObservableProperty]
-        [JsonProperty("heatupPerSecond")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatupPerSecond")]
         long? heatupPerSecond;
 
-        [ObservableProperty]
-        [JsonProperty("lastTemp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lastTemp")]
         long? lastTemp;
 
-        [ObservableProperty]
-        [JsonProperty("maxSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxSpeed")]
         long? maxSpeed;
 
-        [ObservableProperty]
-        [JsonProperty("maxTemp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("maxTemp")]
         long? maxTemp;
 
-        [ObservableProperty]
-        [JsonProperty("num")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("num")]
         long? num;
 
-        [ObservableProperty]
-        [JsonProperty("offset")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("offset")]
         long? offset;
 
-        [ObservableProperty]
-        [JsonProperty("offsetX")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("offsetX")]
         long? offsetX;
 
-        [ObservableProperty]
-        [JsonProperty("offsetY")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("offsetY")]
         long? offsetY;
 
-        [ObservableProperty]
-        [JsonProperty("retractSpeed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("retractSpeed")]
         long? retractSpeed;
 
-        [ObservableProperty]
-        [JsonProperty("supportTemperature")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("supportTemperature")]
         bool? supportTemperature;
 
-        [ObservableProperty]
-        [JsonProperty("tempMaster")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempMaster")]
         long? tempMaster;
 
-        [ObservableProperty]
-        [JsonProperty("temperatures")]
-        [property: JsonIgnore]
-        List<RepetierPrinterConfigTemperature> temperatures;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temperatures")]
+        List<RepetierPrinterConfigTemperature> temperatures = [];
 
-        [ObservableProperty]
-        [JsonProperty("toolDiameter")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("toolDiameter")]
         double? toolDiameter;
 
-        [ObservableProperty]
-        [JsonProperty("toolType")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("toolType")]
         long? toolType;
         #endregion
 

@@ -7,94 +7,94 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("activeRouter")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("activeRouter")]
+
         bool? activeRouter;
 
-        [ObservableProperty]
-        [JsonProperty("activeSSID")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("activeSSID")]
+
         string activeSsid;
 
-        [ObservableProperty]
-        [JsonProperty("apMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("apMode")]
+
         long? apMode;
 
-        [ObservableProperty]
-        [JsonProperty("apSSID")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("apSSID")]
+
         string apSsid;
 
-        [ObservableProperty]
-        [JsonProperty("channel")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("channel")]
+
         long? channel;
 
-        [ObservableProperty]
-        [JsonProperty("channels")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("channels")]
+
         List<long> channels = new();
 
-        [ObservableProperty]
-        [JsonProperty("connections")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("connections")]
+
         List<WifiConnection> connections = new();
 
-        [ObservableProperty]
-        [JsonProperty("country")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("country")]
+
         string country;
 
-        [ObservableProperty]
-        [JsonProperty("ethernet")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ethernet")]
+
         EthernetConnection ethernet;
 
-        [ObservableProperty]
-        [JsonProperty("hostname")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hostname")]
+
         string hostname;
 
-        [ObservableProperty]
-        [JsonProperty("manageable")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("manageable")]
+
         bool? manageable;
 
-        [ObservableProperty]
-        [JsonProperty("manualWifi")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("manualWifi")]
+
         bool manualWifi;
 
-        [ObservableProperty]
-        [JsonProperty("mode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mode")]
+
         long? mode;
 
-        [ObservableProperty]
-        [JsonProperty("routerList")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("routerList")]
+
         List<RouterList> routerList = new();
 
-        [ObservableProperty]
-        [JsonProperty("screensaver")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("screensaver")]
+
         bool? screensaver;
 
-        [ObservableProperty]
-        [JsonProperty("supportAP")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("supportAP")]
+
         bool? supportAp;
 
-        [ObservableProperty]
-        [JsonProperty("timezone")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timezone")]
+
         string timezone;
 
-        [ObservableProperty]
-        [JsonProperty("version")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version")]
+
         long? version;
         #endregion
 

@@ -6,14 +6,14 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventPrinterListChanged : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("data")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("data")]
+
         List<EventPrinterListChangedData> data = new();
 
-        [ObservableProperty]
-        [JsonProperty("event")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("event")]
+
         string eventName;
         #endregion
 

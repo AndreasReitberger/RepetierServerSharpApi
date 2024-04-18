@@ -7,19 +7,19 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventNetworkInfoConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("SSID")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("SSID")]
+        
         string ssid;
 
-        [ObservableProperty]
-        [JsonProperty("device")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("device")]
+        
         string device;
 
-        [ObservableProperty]
-        [JsonProperty("uuid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("uuid")]
+        
         Guid uuid;
         #endregion
 

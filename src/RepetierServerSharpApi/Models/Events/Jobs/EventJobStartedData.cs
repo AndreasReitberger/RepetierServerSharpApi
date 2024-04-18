@@ -6,9 +6,8 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("start")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("start")]
         long? start;
         #endregion
 

@@ -9,28 +9,28 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierCurrentPrintInfo : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         Guid id;
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
+
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("analysed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analysed")]
+
         long analysed;
 
-        [ObservableProperty]
-        [JsonProperty("done")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("done")]
+
         double? done;
 
-        [ObservableProperty]
-        [JsonProperty("job")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job")]
+
         string fileName;
 
         [ObservableProperty, JsonIgnore]
@@ -54,29 +54,29 @@ namespace AndreasReitberger.API.Repetier.Models
             State = value == "running" ? Print3dJobState.InProgress : Print3dJobState.Completed;
         }
 
-        [ObservableProperty]
-        [JsonProperty("linesSend")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("linesSend")]
+
         long linesSend;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string printerName;
 
-        [ObservableProperty]
-        [JsonProperty("ofLayer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ofLayer")]
+
         long ofLayer;
 
-        [ObservableProperty]
-        [JsonProperty("online")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("online")]
+
         long online;
 
-        [ObservableProperty]
-        [JsonProperty("pauseState")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseState")]
+
         long pauseState;
 
         [ObservableProperty, JsonIgnore]
@@ -98,12 +98,12 @@ namespace AndreasReitberger.API.Repetier.Models
                 StartTimeGeneralized = TimeBaseConvertHelper.FromDouble(value);
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         DateTime? startTimeGeneralized;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         double? endTime;
         partial void OnEndTimeChanged(double? value)
         {
@@ -111,8 +111,8 @@ namespace AndreasReitberger.API.Repetier.Models
                 EndTimeGeneralized = TimeBaseConvertHelper.FromDouble(value);
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         DateTime? endTimeGeneralized;
 
         [ObservableProperty, JsonIgnore]
@@ -125,17 +125,17 @@ namespace AndreasReitberger.API.Repetier.Models
                 PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         TimeSpan? printDurationGeneralized;
 
-        [ObservableProperty]
-        [JsonProperty("printedTimeComp")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printedTimeComp")]
+
         double? printDurationTimeComp;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         double? totalPrintDuration;
         partial void OnTotalPrintDurationChanged(double? value)
         {
@@ -143,18 +143,18 @@ namespace AndreasReitberger.API.Repetier.Models
                 TotalPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         TimeSpan? totalPrintDurationGeneralized;
 
-        [ObservableProperty]
-        [JsonProperty("repeat")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("repeat")]
+
         long? repeat;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug;
 
         [ObservableProperty, JsonIgnore]
@@ -167,25 +167,25 @@ namespace AndreasReitberger.API.Repetier.Models
                 StartTime = value;
         }
 
-        [ObservableProperty]
-        [JsonProperty("totalLines")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("totalLines")]
+
         long? totalLines;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         double? filamentUsed;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         bool fileExists;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         Print3dJobState state;
         
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+
         IGcodeMeta meta;
         
         #region JsonIgnore

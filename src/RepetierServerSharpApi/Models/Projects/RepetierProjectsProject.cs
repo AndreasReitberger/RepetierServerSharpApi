@@ -8,104 +8,104 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsProject : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("author")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("author")]
+
         public string author;
 
-        [ObservableProperty]
-        [JsonProperty("comments")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("comments")]
+
         public List<RepetierProjectsProjectComment> comments = new();
 
-        [ObservableProperty]
-        [JsonProperty("created")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("created")]
+
         public long? created;
 
-        [ObservableProperty]
-        [JsonProperty("description")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("description")]
+
         public string description;
 
-        [ObservableProperty]
-        [JsonProperty("descriptionHtml")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("descriptionHtml")]
+
         public string descriptionHtml;
 
-        [ObservableProperty]
-        [JsonProperty("images")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("images")]
+
         public List<RepetierProjectsProjectFile> images = new();
 
-        [ObservableProperty]
-        [JsonProperty("instructions")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("instructions")]
+
         public string instructions;
 
-        [ObservableProperty]
-        [JsonProperty("instructionsHtml")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("instructionsHtml")]
+
         public string instructionsHtml;
 
-        [ObservableProperty]
-        [JsonProperty("license")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("license")]
+
         public string license;
 
-        [ObservableProperty]
-        [JsonProperty("licenseFile")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("licenseFile")]
+
         public string licenseFile;
 
-        [ObservableProperty]
-        [JsonProperty("licenseHtml")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("licenseHtml")]
+
         public string licenseHtml;
 
-        [ObservableProperty]
-        [JsonProperty("models")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("models")]
+
         public List<RepetierProjectsProjectFile> models = new();
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         public string name;
 
-        [ObservableProperty]
-        [JsonProperty("openNewFiles")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("openNewFiles")]
+
         public long? openNewFiles;
 
-        [ObservableProperty]
-        [JsonProperty("others")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("others")]
+
         public List<RepetierProjectsProjectFile> others = new();
 
-        [ObservableProperty]
-        [JsonProperty("parents")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("parents")]
+
         public List<RepetierProjectsProjectParent> parents = new();
 
-        [ObservableProperty]
-        [JsonProperty("preview")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("preview")]
+
         public string preview;
 
-        [ObservableProperty]
-        [JsonProperty("tags")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tags")]
+
         public List<string> tags = new();
 
-        [ObservableProperty]
-        [JsonProperty("uuid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("uuid")]
+
         public Guid? uuid;
 
-        [ObservableProperty]
-        [JsonProperty("version")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version")]
+
         public long? version;
         #endregion 
 

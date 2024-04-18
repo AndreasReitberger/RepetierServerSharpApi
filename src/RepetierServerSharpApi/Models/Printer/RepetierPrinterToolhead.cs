@@ -11,44 +11,44 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
-        [JsonProperty("error")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("error")]
+
         long error;
 
-        [ObservableProperty]
-        [JsonProperty("output")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("output")]
+
         long output;
 
-        [ObservableProperty]
-        [JsonProperty("tempRead")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempRead")]
+
         double? tempRead;
 
-        [ObservableProperty]
-        [JsonProperty("tempSet")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempSet")]
+
         double? tempSet;
 
         #region Interface, unsused
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         string name;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double x = 0;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double y = 0;
+
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+
         double z = 0;
         #endregion
 
@@ -57,7 +57,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [JsonIgnore]
         public RepetierToolState State { get => GetCurrentState(); }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.Other;
         #endregion
 

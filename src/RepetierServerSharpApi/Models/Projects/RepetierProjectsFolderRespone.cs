@@ -5,14 +5,14 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsFolderRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("folder")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("folder")]
+
         RepetierProjectFolder folder;
 
-        [ObservableProperty]
-        [JsonProperty("ok")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ok")]
+
         bool ok;
         #endregion
 

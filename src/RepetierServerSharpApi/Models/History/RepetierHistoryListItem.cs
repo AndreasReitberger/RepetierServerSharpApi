@@ -6,89 +6,89 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierHistoryListItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("computedTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("computedTime")]
+
         double computedTime;
 
-        [ObservableProperty]
-        [JsonProperty("costs")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("costs")]
+
         double costs;
 
-        [ObservableProperty]
-        [JsonProperty("endTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("endTime")]
+
         double endTime;
 
-        [ObservableProperty]
-        [JsonProperty("filament")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filament")]
+
         double filament;
 
-        [ObservableProperty]
-        [JsonProperty("filename")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filename")]
+
         string filename;
 
-        [ObservableProperty]
-        [JsonProperty("id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
+
         long id;
 
-        [ObservableProperty]
-        [JsonProperty("month")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("month")]
+
         long month;
 
-        [ObservableProperty]
-        [JsonProperty("notes")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("notes")]
+
         string notes;
 
-        [ObservableProperty]
-        [JsonProperty("pauseTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseTime")]
+
         double pauseTime;
 
-        [ObservableProperty]
-        [JsonProperty("printerName")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerName")]
+
         string printerName;
 
-        [ObservableProperty]
-        [JsonProperty("printerSlug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerSlug")]
+
         string printerSlug;
 
-        [ObservableProperty]
-        [JsonProperty("printerUUID")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerUUID")]
+
         string printerUuid;
 
-        [ObservableProperty]
-        [JsonProperty("report")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("report")]
+
         string report;
 
-        [ObservableProperty]
-        [JsonProperty("startTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("startTime")]
+
         double startTime;
 
-        [ObservableProperty]
-        [JsonProperty("status")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("status")]
+
         long status;
 
-        [ObservableProperty]
-        [JsonProperty("username")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("username")]
+
         string username;
 
-        [ObservableProperty]
-        [JsonProperty("year")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("year")]
+
         long year;
         #endregion
 

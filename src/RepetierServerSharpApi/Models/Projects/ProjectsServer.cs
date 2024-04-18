@@ -6,14 +6,14 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class ProjectsServer : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("uuid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("uuid")]
+
         Guid uuid;
         #endregion 
 

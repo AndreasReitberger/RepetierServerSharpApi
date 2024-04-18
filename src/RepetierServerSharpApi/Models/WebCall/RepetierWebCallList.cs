@@ -6,14 +6,12 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierWebCallList : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("list")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("list")]
         List<RepetierWebCallAction> list = new();
 
-        [ObservableProperty]
-        [JsonProperty("ok")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ok")]
         bool ok;
         #endregion
 

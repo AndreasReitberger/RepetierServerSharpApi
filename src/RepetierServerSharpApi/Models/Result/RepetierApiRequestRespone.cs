@@ -5,7 +5,7 @@ using System;
 namespace AndreasReitberger.API.Repetier.Models
 {
     [Obsolete("Replace with RestApiRequestRespone")]
-    public class RepetierApiRequestRespone// : IRestApiRequestRespone
+    internal class RepetierApiRequestRespone// : IRestApiRequestRespone
     {
         #region Properties
         public string Result { get; set; } = string.Empty;

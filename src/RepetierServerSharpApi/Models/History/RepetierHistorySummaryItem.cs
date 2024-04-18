@@ -7,49 +7,49 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierHistorySummaryItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("aborted")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("aborted")]
+
         long aborted;
 
-        [ObservableProperty]
-        [JsonProperty("computed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("computed")]
+
         double computed;
 
-        [ObservableProperty]
-        [JsonProperty("costs")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("costs")]
+
         double costs;
 
-        [ObservableProperty]
-        [JsonProperty("filament")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filament")]
+
         double filament;
 
-        [ObservableProperty]
-        [JsonProperty("finished")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("finished")]
+
         long finished;
 
-        [ObservableProperty]
-        [JsonProperty("month")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("month")]
+
         long month;
 
-        [ObservableProperty]
-        [JsonProperty("num")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("num")]
+
         long num;
 
-        [ObservableProperty]
-        [JsonProperty("real")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("real")]
+
         double real;
 
-        [ObservableProperty]
-        [JsonProperty("year")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("year")]
+
         long year;
         #endregion
 

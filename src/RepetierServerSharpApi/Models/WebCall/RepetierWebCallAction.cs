@@ -8,59 +8,59 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("content_type")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("content_type")]
+
         string contentType;
 
-        [ObservableProperty]
-        [JsonProperty("icon")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("icon")]
+
         string icon;
 
-        [ObservableProperty]
-        [JsonProperty("method")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("method")]
+
         string method;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("pos")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pos")]
+
         long pos;
 
-        [ObservableProperty]
-        [JsonProperty("post")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("post")]
+
         string post;
 
-        [ObservableProperty]
-        [JsonProperty("question")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("question")]
+
         string question;
 
-        [ObservableProperty]
-        [JsonProperty("show_in_menu")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("show_in_menu")]
+
         bool showInMenu;
 
-        [ObservableProperty]
-        [JsonProperty("show_name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("show_name")]
+
         string showName;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug;
 
-        [ObservableProperty]
-        [JsonProperty("url")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("url")]
+
         Uri url;
         #endregion
 

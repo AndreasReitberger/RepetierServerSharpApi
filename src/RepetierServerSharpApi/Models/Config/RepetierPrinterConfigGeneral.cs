@@ -7,129 +7,104 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("defaultVolumetric")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("defaultVolumetric")]
         bool defaultVolumetric;
 
-        [ObservableProperty]
-        [JsonProperty("deleteJobAfterManualStop")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("deleteJobAfterManualStop")]
         bool deleteJobAfterManualStop;
 
-        [ObservableProperty]
-        [JsonProperty("doorHandling")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("doorHandling")]
         long doorHandling;
 
-        [ObservableProperty]
-        [JsonProperty("eepromType")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("eepromType")]
         string eepromType;
 
-        [ObservableProperty]
-        [JsonProperty("enableQueue")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("enableQueue")]
         bool enableQueue;
 
-        [ObservableProperty]
-        [JsonProperty("firmwareName")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("firmwareName")]
         string firmwareName;
 
-        [ObservableProperty]
-        [JsonProperty("heatedBed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedBed")]
         bool heatedBed;
 
-        [ObservableProperty]
-        [JsonProperty("logHistory")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("logHistory")]
         bool logHistory;
 
-        [ObservableProperty]
-        [JsonProperty("manufacturer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("manufacturer")]
         string manufacturer;
 
-        [ObservableProperty]
-        [JsonProperty("model")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("model")]
         string model;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("numFans")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("numFans")]
         long numFans;
 
-        [ObservableProperty]
-        [JsonProperty("pauseHandling")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseHandling")]
         long pauseHandling;
 
-        [ObservableProperty]
-        [JsonProperty("pauseSeconds")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseSeconds")]
         long pauseSeconds;
 
-        [ObservableProperty]
-        [JsonProperty("printerHomepage")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerHomepage")]
         Uri printerHomepage;
 
-        [ObservableProperty]
-        [JsonProperty("printerManual")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerManual")]
         string printerManual;
 
-        [ObservableProperty]
-        [JsonProperty("printerVariant")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("printerVariant")]
         string printerVariant;
 
-        [ObservableProperty]
-        [JsonProperty("sdcard")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sdcard")]
         bool sdcard;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
         string slug;
 
-        [ObservableProperty]
-        [JsonProperty("softwareLight")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("softwareLight")]
         bool softwareLight;
 
-        [ObservableProperty]
-        [JsonProperty("softwarePower")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("softwarePower")]
         bool softwarePower;
 
-        [ObservableProperty]
-        [JsonProperty("tempUpdateEvery")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempUpdateEvery")]
         long tempUpdateEvery;
 
-        [ObservableProperty]
-        [JsonProperty("useModelFromSlug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("useModelFromSlug")]
         string useModelFromSlug;
 
-        [ObservableProperty]
-        [JsonProperty("useOwnModelRepository")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("useOwnModelRepository")]
         bool useOwnModelRepository;
 
         #endregion

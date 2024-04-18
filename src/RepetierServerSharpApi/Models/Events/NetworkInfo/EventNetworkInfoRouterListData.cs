@@ -7,89 +7,78 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]     
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("hidden")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hidden")]
         bool hidden;
 
-        [ObservableProperty]
-        [JsonProperty("ignore")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ignore")]   
         bool ignore;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4Address")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4Address")]    
         string ipv4Address;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4Gateway")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4Gateway")]
         string ipv4Gateway;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4MaskBits")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4MaskBits")]
         long ipv4MaskBits;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4Mode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4Mode")]
         string ipv4Mode;
 
-        [ObservableProperty]
-        [JsonProperty("ipv4Nameserver")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv4Nameserver")]
         string ipv4Nameserver;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6Address")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6Address")]
         string ipv6Address;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6Gateway")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6Gateway")]
         string ipv6Gateway;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6MaskBits")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6MaskBits")]
         long ipv6MaskBits;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6Mode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6Mode")]
+        
         string ipv6Mode;
 
-        [ObservableProperty]
-        [JsonProperty("ipv6Nameserver")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ipv6Nameserver")]
+        
         string ipv6Nameserver;
 
-        [ObservableProperty]
-        [JsonProperty("manualManaged")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("manualManaged")]
+        
         bool manualManaged;
 
-        [ObservableProperty]
-        [JsonProperty("password")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("password")]
+        
         string password;
 
-        [ObservableProperty]
-        [JsonProperty("passwordMethod")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("passwordMethod")]
+        
         string passwordMethod;
 
-        [ObservableProperty]
-        [JsonProperty("ssid")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ssid")]
+        
         string ssid;
         #endregion
 

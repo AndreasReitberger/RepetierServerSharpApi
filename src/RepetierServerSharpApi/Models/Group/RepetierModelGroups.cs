@@ -5,14 +5,12 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierModelGroups : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("groupNames")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("groupNames")]
         string[] groupNames;
 
-        [JsonProperty("ok")]
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [property: JsonProperty("ok")]
+        [ObservableProperty, JsonIgnore]
         bool ok;
         #endregion
 

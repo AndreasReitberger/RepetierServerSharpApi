@@ -5,9 +5,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventRecoverChangedData : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("state")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state")]
         long state;
         #endregion
 

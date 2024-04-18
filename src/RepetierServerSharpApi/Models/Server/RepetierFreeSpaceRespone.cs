@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierFreeSpaceRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("available")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("available")]
+
         long available;
 
-        [ObservableProperty]
-        [JsonProperty("capacity")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("capacity")]
+
         long capacity;
 
-        [ObservableProperty]
-        [JsonProperty("free")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("free")]
+
         long free;
         #endregion
 

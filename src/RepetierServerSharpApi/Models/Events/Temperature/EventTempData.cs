@@ -5,29 +5,24 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventTempData : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("O")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("O")]
         long o;
 
-        [ObservableProperty]
-        [JsonProperty("S")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("S")]
         long s;
 
-        [ObservableProperty]
-        [JsonProperty("T")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("T")]
         double t;
 
-        [ObservableProperty]
-        [JsonProperty("id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
         long id;
 
-        [ObservableProperty]
-        [JsonProperty("t")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("t")]
         long dataT;
 
         #endregion

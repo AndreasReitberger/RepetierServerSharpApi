@@ -8,122 +8,98 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigWebcam : ObservableObject, IWebCamConfig
     {
         #region Properties
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
-        [JsonProperty("alias")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("alias")]
         string alias;
 
-        [ObservableProperty]
-        [JsonProperty("dynamicUrl")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("dynamicUrl")]
         Uri? webCamUrlDynamic;
 
-        [ObservableProperty]
-        [JsonProperty("forceSnapshotPosition")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("forceSnapshotPosition")]
         bool forceSnapshotPosition;
 
-        [ObservableProperty]
-        [JsonProperty("method")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("method")]
         long method;
 
-        [ObservableProperty]
-        [JsonProperty("orientation")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("orientation")]
         long orientation;
 
-        [ObservableProperty]
-        [JsonProperty("pos")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pos")]
         long position;
 
-        [ObservableProperty]
-        [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore)]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore)]
         long rec;
 
-        [ObservableProperty]
-        [JsonProperty("reloadInterval")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("reloadInterval")]
         long reloadInterval;
 
-        [ObservableProperty]
-        [JsonProperty("snapshotDelay")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("snapshotDelay")]
         long snapshotDelay;
 
-        [ObservableProperty]
-        [JsonProperty("snapshotStabilizeTime")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("snapshotStabilizeTime")]
         long snapshotStabilizeTime;
 
-        [ObservableProperty]
-        [JsonProperty("snapshotX")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("snapshotX")]
         long snapshotX;
 
-        [ObservableProperty]
-        [JsonProperty("snapshotY")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("snapshotY")]
         long snapshotY;
 
-        [ObservableProperty]
-        [JsonProperty("staticUrl")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("staticUrl")]
         Uri? webCamUrlStatic;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseBitrate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseBitrate")]
         long timelapseBitrate;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseFramerate")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseFramerate")]
         long timelapseFramerate;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseHeight")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseHeight")]
         double timelapseHeight;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseInterval")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseInterval")]
         long timelapseInterval;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseLayer")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseLayer")]
         long timelapseLayer;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseMethod")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseMethod")]
         long timelapseMethod;
 
-        [ObservableProperty]
-        [JsonProperty("timelapseSelected")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("timelapseSelected")]
         long timelapseSelected;
         #endregion
 
         #region Interface, unused
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool enabled = true;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool flipX = false;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         bool flipY = false;
         #endregion
 

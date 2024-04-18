@@ -7,9 +7,9 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty]
-        [JsonProperty("list")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("list")]
+
         List<RepetierHistoryListItem> list = new();
         #endregion
 

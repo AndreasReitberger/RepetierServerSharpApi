@@ -6,39 +6,39 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventPrinterListChangedData : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("active")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active")]
+
         bool active;
 
-        [ObservableProperty]
-        [JsonProperty("job")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job")]
+
         string job;
 
-        [ObservableProperty]
-        [JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+
         string name;
 
-        [ObservableProperty]
-        [JsonProperty("online")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("online")]
+
         long online;
 
-        [ObservableProperty]
-        [JsonProperty("pauseState")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pauseState")]
+
         long pauseState;
 
-        [ObservableProperty]
-        [JsonProperty("paused")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("paused")]
+
         bool paused;
 
-        [ObservableProperty]
-        [JsonProperty("slug")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("slug")]
+
         string slug;
         #endregion
 

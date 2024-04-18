@@ -5,49 +5,40 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLoginResultSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("gcodeGroup")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeGroup")]
         string gcodeGroup;
 
-        [ObservableProperty]
-        [JsonProperty("gcodeSortBy")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeSortBy")]
         long? gcodeSortBy;
 
-        [ObservableProperty]
-        [JsonProperty("gcodeViewMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcodeViewMode")]
         long? gcodeViewMode;
 
-        [ObservableProperty]
-        [JsonProperty("tempDiagActive")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempDiagActive")]
         long? tempDiagActive;
 
-        [ObservableProperty]
-        [JsonProperty("tempDiagAll")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempDiagAll")]
         long? tempDiagAll;
 
-        [ObservableProperty]
-        [JsonProperty("tempDiagBed")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempDiagBed")]
         long? tempDiagBed;
 
-        [ObservableProperty]
-        [JsonProperty("tempDiagChamber")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempDiagChamber")]
         long? tempDiagChamber;
 
-        [ObservableProperty]
-        [JsonProperty("tempDiagMode")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempDiagMode")]
         long? tempDiagMode;
 
-        [ObservableProperty]
-        [JsonProperty("theme")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("theme")]
         string theme;
         #endregion
 

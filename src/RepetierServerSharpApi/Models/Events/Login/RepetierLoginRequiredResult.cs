@@ -6,19 +6,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLoginRequiredResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [JsonProperty("callback_id")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("callback_id")]
         long? callbackId;
 
-        [ObservableProperty]
-        [JsonProperty("data")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("data")]
         List<RepetierLoginRequiredResultData> data = new();
 
-        [ObservableProperty]
-        [JsonProperty("eventList")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("eventList")]
         bool? eventList;
 
         #endregion

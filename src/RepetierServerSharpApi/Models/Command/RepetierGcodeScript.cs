@@ -5,12 +5,12 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierGcodeScript : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonProperty("name")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
         string name;
 
-        [ObservableProperty,JsonProperty("script")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("script")]
         string script;
         #endregion
 
