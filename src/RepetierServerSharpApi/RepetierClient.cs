@@ -47,7 +47,7 @@ namespace AndreasReitberger.API.Repetier
                 }
             }
         }
-       
+
         #endregion
 
         #region Properties
@@ -65,7 +65,7 @@ namespace AndreasReitberger.API.Repetier
                 CallbackId = Session?.CallbackId ?? -1,
                 Sesson = value,
                 SessionId = value?.Session
-            });           
+            });
         }
 
         #endregion
@@ -92,12 +92,12 @@ namespace AndreasReitberger.API.Repetier
         partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
         {
             OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
-                {
-                    RepetierMessages = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Printer = GetActivePrinterSlug(),
-                });
+            {
+                RepetierMessages = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Printer = GetActivePrinterSlug(),
+            });
         }
 
         #endregion
@@ -132,14 +132,14 @@ namespace AndreasReitberger.API.Repetier
         RepetierPrinterConfig? config;
         partial void OnConfigChanged(RepetierPrinterConfig? value)
         {
-           OnRepetierPrinterConfigChangedEvent(new RepetierPrinterConfigChangedEventArgs()
+            OnRepetierPrinterConfigChangedEvent(new RepetierPrinterConfigChangedEventArgs()
             {
                 NewConfiguration = value,
                 SessonId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
-            UpdatePrinterConfig(value); 
+            UpdatePrinterConfig(value);
         }
 
         [ObservableProperty]
@@ -408,7 +408,7 @@ namespace AndreasReitberger.API.Repetier
                 NumberOfToolHeads = (int)newState.NumExtruder;
 
                 Toolheads ??= new();
-                foreach(var ext in newState.Extruder.Select((x, i) => new { Value = x, Index = i }))
+                foreach (var ext in newState.Extruder.Select((x, i) => new { Value = x, Index = i }))
                 {
                     Toolheads.AddOrUpdate(ext.Index, ext.Value, (key, oldValue) => oldValue = ext.Value);
                 }
@@ -432,7 +432,7 @@ namespace AndreasReitberger.API.Repetier
                 ActiveHeatedChamber = HeatedChambers?.FirstOrDefault().Value;
 
                 ConcurrentDictionary<string, IPrint3dFan> fans = new();
-                for(int i = 0; i < newState.Fans.Count; i++)
+                for (int i = 0; i < newState.Fans.Count; i++)
                 {
                     fans.TryAdd($"{i}", newState.Fans[i]);
                 }
@@ -699,7 +699,7 @@ namespace AndreasReitberger.API.Repetier
             SecureProxyConnection = secure;
             UpdateRestClientInstance();
         }
-        
+
         public void SetProxOldy(bool secure, string address, int port, string user = "", SecureString? password = null, bool enable = true)
         {
             EnableProxy = enable;
@@ -714,7 +714,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public new Task StartListeningAsync(bool stopActiveListening = false, string[]? commandsOnConnect = null) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async() =>
+        public new Task StartListeningAsync(bool stopActiveListening = false, string[]? commandsOnConnect = null) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async () =>
         {
             List<Task> tasks =
             [
@@ -926,8 +926,8 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        
-        public override async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)     
+
+        public override async Task SetPrinterActiveAsync(string slug, bool refreshPrinterList = true)
         {
             try
             {
@@ -1001,7 +1001,7 @@ namespace AndreasReitberger.API.Repetier
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", cts);
         public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}", AuthHeaders, "{}", timeout);
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
-        
+
         #endregion
 
         #region Updates
@@ -1245,7 +1245,7 @@ namespace AndreasReitberger.API.Repetier
 
                 request.AddHeader("x-api-key", ApiKey);
                 request.AddFile(Path.GetFileNameWithoutExtension(filePath), filePath);
-                
+
                 CancellationTokenSource cts = new(timeout);
                 if (restClient is not null)
                 {
@@ -1396,10 +1396,10 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public Task<bool> StartJobAsync(IGcode model) => StartJobAsync(model.Identifier);   
+        public Task<bool> StartJobAsync(IGcode model) => StartJobAsync(model.Identifier);
         public Task<bool> StartJobAsync(RepetierJobListItem jobItem) => StartJobAsync(jobItem.Identifier);
         public Task<bool> StartJobAsync(IPrint3dJob jobItem) => StartJobAsync(jobItem.JobId);
-        
+
         public async Task<bool> RemoveJobAsync(long jobId)
         {
             try
@@ -1473,7 +1473,7 @@ namespace AndreasReitberger.API.Repetier
         public Task<bool> RemoveJobAsync(RepetierCurrentPrintInfo job) => RemoveJobAsync(job.JobIdLong);
         public Task<bool> RemoveJobAsync(RepetierJobListItem job) => RemoveJobAsync(job.Identifier);
         public Task<bool> RemoveJobAsync(IPrint3dJob job) => RemoveJobAsync(job.JobId);
-        
+
         public async Task<bool> ContinueJobAsync(string printerName = "")
         {
             try
@@ -1502,7 +1502,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 */
                 return GetQueryResult(result?.Result, true);
-                
+
             }
             catch (Exception exc)
             {
@@ -1580,7 +1580,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setShutdownAfterPrint",
-                       jsonObject: new { shutdown = shutdown ? "true" : "false"},
+                       jsonObject: new { shutdown = shutdown ? "true" : "false" },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1667,7 +1667,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return;
                 }
-                Dictionary<string, RepetierPrinterState>? result = await GetStatesAsync().ConfigureAwait(false);              
+                Dictionary<string, RepetierPrinterState>? result = await GetStatesAsync().ConfigureAwait(false);
                 if (result is not null && result?.Count > 0)
                 {
                     State = result.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? result.FirstOrDefault().Value;
@@ -1774,7 +1774,7 @@ namespace AndreasReitberger.API.Repetier
                 }
                 else
                 {
-                    if(CurrentPrintImage is null || CurrentPrintImage.Length == 0)
+                    if (CurrentPrintImage is null || CurrentPrintImage.Length == 0)
                     {
                         updatePrintImage = true;
                     }
@@ -2308,7 +2308,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setFlowMultiply",
-                       jsonObject: new { speed = multiplier},
+                       jsonObject: new { speed = multiplier },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2575,7 +2575,7 @@ namespace AndreasReitberger.API.Repetier
 
                 string cmd = string.Format("{{\"name\":\"{0}\",\"params\":{1}}}", action.Name, JsonConvert.SerializeObject(new string[] { action.Question }));
                 CancellationTokenSource cts = new(timeout);
-                
+
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -2669,7 +2669,7 @@ namespace AndreasReitberger.API.Repetier
                 request.Method = Method.Get;
                 request.Timeout = timeout;
 
-                if(additionalParameters is not null)
+                if (additionalParameters is not null)
                 {
                     foreach (KeyValuePair<string, object> parameter in additionalParameters)
                     {
@@ -2680,7 +2680,7 @@ namespace AndreasReitberger.API.Repetier
 
                 // Workaround, because the RestClient returns bad requests
                 return await DownloadFileFromUriAsync(fullUrl).ConfigureAwait(false);
-                
+
                 /*
                 CancellationTokenSource cts = new(timeout);
                 byte[] respone = await restClient.DownloadDataAsync(request, cts.Token)
@@ -2721,8 +2721,8 @@ namespace AndreasReitberger.API.Repetier
                 {
                     { "v", size }
                 };
-                string path = string.IsNullOrEmpty(preview) ? 
-                    $"project/{server}/{action}/{project}/": 
+                string path = string.IsNullOrEmpty(preview) ?
+                    $"project/{server}/{action}/{project}/" :
                     $"project/{server}/{action}/{project}/{preview}/"
                     ;
                 return await DownloadFileFromUriAsync(path, timeout, parameters).ConfigureAwait(false);
@@ -2819,7 +2819,7 @@ namespace AndreasReitberger.API.Repetier
                 return new RepetierProjectsFolderRespone();
             }
         }
-        
+
         public async Task<ObservableCollection<RepetierProjectItem>> GetProjectItemsAsync(Guid serverUuid, int index = 1, string printerName = "")
         {
             RepetierProjectsFolderRespone? result;
@@ -2888,7 +2888,7 @@ namespace AndreasReitberger.API.Repetier
                 return [];
             }
         }
-        
+
         public async Task<RepetierProjectsProjectRespone?> GetProjectsGetProjectAsync(Guid serverUuid, Guid projectUuid, string printerName = "")
         {
             IRestApiRequestRespone? result = null;
@@ -3136,7 +3136,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
-                RepetierHistoryListRespone? historyList = 
+                RepetierHistoryListRespone? historyList =
                     await GetHistoryListResponeAsync(printerNameForHistory, serverUuid, limit, page, start, allPrinter)
                     .ConfigureAwait(false);
                 return [.. historyList?.List];
@@ -3262,7 +3262,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-#endregion
+        #endregion
 
         #region GPIO 
         async Task<RepetierGpioListRespone?> GetGPIOListResponeAsync()

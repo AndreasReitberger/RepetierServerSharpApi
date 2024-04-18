@@ -56,7 +56,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ipv6Nameserver")]
-        string ipv6Nameserver = string.Empty    ;
+        string ipv6Nameserver = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("manualManaged")]

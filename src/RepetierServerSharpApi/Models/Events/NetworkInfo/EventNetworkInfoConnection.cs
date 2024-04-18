@@ -8,15 +8,15 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("SSID")]      
+        [property: JsonProperty("SSID")]
         string ssid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("device")]     
+        [property: JsonProperty("device")]
         string device = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("uuid")]      
+        [property: JsonProperty("uuid")]
         Guid uuid;
         #endregion
 

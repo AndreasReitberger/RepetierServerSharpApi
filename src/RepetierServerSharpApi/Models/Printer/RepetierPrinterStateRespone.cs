@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterStateRespone : ObservableObject
     {
         #region Properties
-        
+
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printer")]
         RepetierPrinterState printer = new();

@@ -43,7 +43,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("jobstate")]
         string? activeJobState;
-        
+
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("linesSend")]
         long? lineSent;
@@ -51,7 +51,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
         string name = string.Empty;
-        
+
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ofLayer")]
         long? layers;
@@ -171,7 +171,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         public override bool Equals(object? obj)
         {
             if (obj is not RepetierPrinter item)
@@ -208,7 +208,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Clone
 
         public object Clone() => MemberwiseClone();
-        
+
         #endregion
     }
 }

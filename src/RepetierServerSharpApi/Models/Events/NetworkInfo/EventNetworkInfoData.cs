@@ -12,51 +12,51 @@ namespace AndreasReitberger.API.Repetier.Models
         bool activeRouter;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("activeSSID")]      
+        [property: JsonProperty("activeSSID")]
         string activeSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apMode")]        
+        [property: JsonProperty("apMode")]
         long apMode;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apSSID")]      
+        [property: JsonProperty("apSSID")]
         string apSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]        
+        [property: JsonProperty("channel")]
         long channel;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channels")]        
+        [property: JsonProperty("channels")]
         List<long> channels = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connections")]      
+        [property: JsonProperty("connections")]
         List<EventNetworkInfoConnection> connections = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("country")]       
+        [property: JsonProperty("country")]
         string country = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hostname")]       
+        [property: JsonProperty("hostname")]
         string hostname = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manageable")]       
+        [property: JsonProperty("manageable")]
         bool manageable;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mode")]     
+        [property: JsonProperty("mode")]
         long mode;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("routerList")]   
+        [property: JsonProperty("routerList")]
         List<EventNetworkInfoRouterList> routerList = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("screensaver")]      
+        [property: JsonProperty("screensaver")]
         bool screensaver;
 
         [ObservableProperty, JsonIgnore]
@@ -65,7 +65,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]
-        
+
         long version;
         #endregion
 

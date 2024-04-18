@@ -137,7 +137,7 @@ namespace AndreasReitberger.API.Repetier
         {
             SessionChanged?.Invoke(this, e);
         }
-        
+
         public event EventHandler<RepetierMessagesChangedEventArgs>? MessagesChanged;
         protected virtual void OnMessagesChangedEvent(RepetierMessagesChangedEventArgs e)
         {
@@ -174,7 +174,7 @@ namespace AndreasReitberger.API.Repetier
         {
             JobFinished?.Invoke(this, e);
         }
-        
+
 
         [Obsolete("Use TemperatureDataReceived event")]
         public event EventHandler<RepetierTempDataEventArgs>? TempDataReceived;
@@ -241,7 +241,8 @@ namespace AndreasReitberger.API.Repetier
 
         #region Jobs & Queue
         public event EventHandler<RepetierCurrentPrintImageChangedEventArgs>? RepetierCurrentPrintImageChanged;
-        protected virtual void OnRepetierCurrentPrintImageChanged(RepetierCurrentPrintImageChangedEventArgs e) {
+        protected virtual void OnRepetierCurrentPrintImageChanged(RepetierCurrentPrintImageChangedEventArgs e)
+        {
             RepetierCurrentPrintImageChanged?.Invoke(this, e);
         }
         #endregion
