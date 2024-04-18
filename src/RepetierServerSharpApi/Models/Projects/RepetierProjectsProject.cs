@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -10,103 +9,93 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("author")]
-
-        public string author;
+        string author = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("comments")]
-
-        public List<RepetierProjectsProjectComment> comments = new();
+        List<RepetierProjectsProjectComment> comments = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("created")]
 
-        public long? created;
+        long? created;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("description")]
 
-        public string description;
+        string description = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("descriptionHtml")]
 
-        public string descriptionHtml;
+        string descriptionHtml = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("images")]
 
-        public List<RepetierProjectsProjectFile> images = new();
+        List<RepetierProjectsProjectFile> images = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("instructions")]
 
-        public string instructions;
+        string instructions = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("instructionsHtml")]
 
-        public string instructionsHtml;
+        string instructionsHtml = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("license")]
 
-        public string license;
+        string license = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("licenseFile")]
 
-        public string licenseFile;
+        string licenseFile = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("licenseHtml")]
 
-        public string licenseHtml;
+        string licenseHtml = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("models")]
 
-        public List<RepetierProjectsProjectFile> models = new();
+        List<RepetierProjectsProjectFile> models = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        public string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("openNewFiles")]
-
-        public long? openNewFiles;
+        long? openNewFiles;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("others")]
-
-        public List<RepetierProjectsProjectFile> others = new();
+        List<RepetierProjectsProjectFile> others = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("parents")]
-
-        public List<RepetierProjectsProjectParent> parents = new();
+        List<RepetierProjectsProjectParent> parents = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("preview")]
-
-        public string preview;
+        string preview = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("tags")]
-
-        public List<string> tags = new();
+        List<string> tags = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("uuid")]
-
-        public Guid? uuid;
+        Guid? uuid;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]
-
-        public long? version;
+        long? version;
         #endregion 
 
         #region Overrides

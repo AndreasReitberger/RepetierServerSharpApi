@@ -8,79 +8,79 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
-        List<RepetierPrinterConfigButtonCommand> buttonCommands = new();
+        List<RepetierPrinterConfigButtonCommand> buttonCommands = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("connection")]
-        RepetierPrinterConnection connection;
+        RepetierPrinterConnection? connection;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruders")]
-        List<RepetierPrinterConfigExtruder> extruders = new();
+        List<RepetierPrinterConfigExtruder> extruders = [];
         
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fanPresets")]
-        List<RepetierPrinterConfigPreset> fanPresets = new();
+        List<RepetierPrinterConfigPreset> fanPresets = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("flowPresets")]
-        List<RepetierPrinterConfigPreset> flowPresets = new();
+        List<RepetierPrinterConfigPreset> flowPresets = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcodeReplacements")]
-        List<RepetierPrinterConfigGcodeReplacement> gcodeReplacements = new();
+        List<RepetierPrinterConfigGcodeReplacement> gcodeReplacements = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("general")]
-        RepetierPrinterConfigGeneral general;
+        RepetierPrinterConfigGeneral? general;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedBeds")]
-        List<RepetierPrinterConfigHeatedComponent> heatedBeds = new();
+        List<RepetierPrinterConfigHeatedComponent> heatedBeds = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedChambers")]
-        List<RepetierPrinterConfigHeatedComponent> heatedChambers = new();
+        List<RepetierPrinterConfigHeatedComponent> heatedChambers = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("movement")]
-        RepetierPrinterConfigMovement movement;
+        RepetierPrinterConfigMovement? movement;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("properties")]
-        RepetierPrinterConfigProperties properties;
+        RepetierPrinterConfigProperties? properties;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("quickCommands")]
-        List<RepetierQuickGcodeCommand> quickCommands = new();
+        List<RepetierQuickGcodeCommand> quickCommands = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("recover")]
-        RepetierPrinterConfigRecover recover;
+        RepetierPrinterConfigRecover? recover;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("responseEvents")]
-        List<object> responseEvents = new();
+        List<object> responseEvents = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("shape")]
-        RepetierPrinterConfigShape shape;
+        RepetierPrinterConfigShape? shape;
         
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("speedPresets")]
-        List<RepetierPrinterConfigPreset> speedPresets = new();
+        List<RepetierPrinterConfigPreset> speedPresets = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webcams")]
-        List<RepetierPrinterConfigWebcam> webcams = new();
+        List<RepetierPrinterConfigWebcam> webcams = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("wizardCommands")]
-        List<object> wizardCommands = new();
+        List<object> wizardCommands = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("wizardTemplates")]
-        List<RepetierPrinterConfigWizardTemplate> wizardTemplates = new();
+        List<RepetierPrinterConfigWizardTemplate> wizardTemplates = [];
         #endregion
 
         #region Overrides

@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("SSID")]
         
-        public string ssid;
+        public string ssid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("active")]
@@ -28,17 +28,17 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
         
-        public EventNetworkInfoRouterListData data;
+        public EventNetworkInfoRouterListData? data;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mode")]
         
-        public string mode;
+        public string mode = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("rate")]
         
-        public string rate;
+        public string rate = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("secure")]

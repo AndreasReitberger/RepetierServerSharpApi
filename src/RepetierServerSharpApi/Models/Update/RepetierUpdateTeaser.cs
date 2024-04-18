@@ -20,7 +20,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("msg")]
         
-        string msg;
+        string msg = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("start")]
@@ -35,7 +35,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("url")]
         
-        Uri url;
+        Uri? url;
         #endregion
 
         #region Overrides

@@ -35,11 +35,11 @@ namespace AndreasReitberger.API.Repetier
 
                 // Reporting
                 Prog?.Report(0);
-                RepetierModelList models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
-                if (models != null)
+                RepetierModelList? models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
+                if (models is not null)
                 {
                     List<RepetierModel> modelList = models.Data;
-                    if (modelList != null)
+                    if (modelList is not null)
                     {
                         ObservableCollection<IGcode> Models = new(modelList);
                         if (ImageType != GcodeImageType.None)
@@ -65,8 +65,7 @@ namespace AndreasReitberger.API.Repetier
                                         model.Image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
                                         break;
                                 }
-
-                                if (Prog != null)
+                                if (Prog is not null)
                                 {
                                     float progress = ((float)i / total) * 100f;
                                     if (i < total - 1)
@@ -94,26 +93,23 @@ namespace AndreasReitberger.API.Repetier
             }
             catch (Exception exc)
             {
-                if (Prog != null)
-                    Prog.Report(100);
-
+                Prog?.Report(100);
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new ObservableCollection<IGcode>();
+                return [];
             }
         }
 
-        public async Task<Dictionary<long, byte[]>> GetModelImagesAsync(ObservableCollection<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail)
+        public async Task<Dictionary<long, byte[]>?> GetModelImagesAsync(ObservableCollection<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return null;
-
-            Dictionary<long, byte[]> result = new();
+            Dictionary<long, byte[]> result = [];
             try
             {
                 for (int i = 0; i < models.Count; i++)
                 {
                     IGcode model = models[i];
-                    byte[] image = new byte[0];
+                    byte[] image = [];
                     image = imageType switch
                     {
                         GcodeImageType.Thumbnail => await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false),
@@ -138,7 +134,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeModel",
@@ -146,7 +142,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -155,7 +151,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task RefreshModelsAsync(GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int> prog = null)
+        public async Task RefreshModelsAsync(GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int>? prog = null)
         {
             try
             {
@@ -184,7 +180,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeModel",
@@ -201,7 +197,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 */
                 await RefreshJobListAsync().ConfigureAwait(false);
-                return GetQueryResult(result.Result, true);
+                return GetQueryResult(result?.Result, true);
             }
             catch (Exception exc)
             {
@@ -212,7 +208,7 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task UpdateFreeSpaceAsync()
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
@@ -224,8 +220,8 @@ namespace AndreasReitberger.API.Repetier
                    )
                 .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone space = GetObjectFromJson<RepetierFreeSpaceRespone>(result.Result);
-                if (space != null)
+                RepetierFreeSpaceRespone? space = GetObjectFromJson<RepetierFreeSpaceRespone>(result?.Result);
+                if (space is not null)
                 {
                     FreeDiskSpace = space.Free;
                     TotalDiskSpace = space.Capacity;
@@ -268,12 +264,12 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Groups
-        public async Task<bool> AddModelGroupAsync(IGcodeGroup group) => await AddModelGroupAsync(group?.Name);
+        public async Task<bool> AddModelGroupAsync(IGcodeGroup? group) => await AddModelGroupAsync(group?.Name);
 
-        public async Task<bool> AddModelGroupAsync(string groupName)
+        public async Task<bool> AddModelGroupAsync(string? groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return false;
+            if (string.IsNullOrEmpty(currentPrinter) ||groupName is null) return false;
 
             try
             {
@@ -282,7 +278,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     groupName = groupName,
                 };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
@@ -298,7 +294,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -316,7 +312,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     groupName = groupName,
                 };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
@@ -332,7 +328,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -354,7 +350,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     groupName = groupName,
                 };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
@@ -370,7 +366,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -389,7 +385,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     groupName = groupName,
                 };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
@@ -405,7 +401,7 @@ namespace AndreasReitberger.API.Repetier
                         printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -428,7 +424,7 @@ namespace AndreasReitberger.API.Repetier
                     groupName = groupName,
                     id = id,
                 };
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "moveModelFileToGroup",
@@ -445,7 +441,7 @@ namespace AndreasReitberger.API.Repetier
                         )
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -459,7 +455,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
-                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                         command: "removeModel",
@@ -476,7 +472,7 @@ namespace AndreasReitberger.API.Repetier
                         )
                     .ConfigureAwait(false);
                 */
-                return GetQueryResult(result.Result);
+                return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
             {
@@ -487,7 +483,7 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task<ObservableCollection<IGcodeGroup>> GetModelGroupsAsync()
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             ObservableCollection<IGcodeGroup> resultObject = new();
 
             string currentPrinter = GetActivePrinterSlug();
@@ -512,8 +508,8 @@ namespace AndreasReitberger.API.Repetier
                    printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierModelGroups info = GetObjectFromJson<RepetierModelGroups>(result.Result);
-                return info != null && info.GroupNames != null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })) : resultObject;
+                RepetierModelGroups? info = GetObjectFromJson<RepetierModelGroups>(result?.Result);
+                return info is not null && info.GroupNames is not null ? new ObservableCollection<IGcodeGroup>(info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })) : resultObject;
             }
             catch (JsonException jecx)
             {
@@ -524,7 +520,7 @@ namespace AndreasReitberger.API.Repetier
                     TargetType = nameof(String),
                     Message = jecx.Message,
                 });
-                return new ObservableCollection<IGcodeGroup>();
+                return [];
             }
             catch (Exception exc)
             {
@@ -536,7 +532,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<IGcodeGroup> groups = new();
+                ObservableCollection<IGcodeGroup> groups = [];
                 if (!IsReady || ActivePrinter == null)
                 {
                     Groups = groups;
@@ -546,10 +542,10 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = ActivePrinter.Slug;
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
-                RepetierModelGroups result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
-                if (result != null)
+                RepetierModelGroups? result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
+                if (result is not null)
                 {
-                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames?.Select(g => new RepetierModelGroup() { Name = g }));
+                    Groups = new ObservableCollection<IGcodeGroup>(result.GroupNames.Select(g => new RepetierModelGroup() { Name = g }));
                 }
                 else Groups = groups;
 
@@ -557,7 +553,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Groups = new ObservableCollection<IGcodeGroup>();
+                Groups = [];
             }
         }
         #endregion

@@ -9,38 +9,30 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-
         Guid id;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        string name;
+        string name = string.Empty;
 
         #region Interface
         [ObservableProperty, JsonIgnore]
-
-        string directoryName;
-
-        [ObservableProperty, JsonIgnore]
-
-        string path;
+        string directoryName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-
-        string root;
+        string path = string.Empty;
 
         [ObservableProperty, JsonIgnore]
+        string root = string.Empty;
 
+        [ObservableProperty, JsonIgnore]
         double modified;
 
         [ObservableProperty, JsonIgnore]
-
         long size;
 
         [ObservableProperty, JsonIgnore]
-
-        string permissions;
+        string permissions = string.Empty;
         #endregion
 
         #endregion

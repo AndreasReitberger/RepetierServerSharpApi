@@ -11,11 +11,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
-        object data;
+        object? data;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("session")]
-        string session;
+        string session = string.Empty;
         #endregion
 
         #region Overrides

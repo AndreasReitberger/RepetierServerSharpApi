@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
@@ -13,7 +12,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("alias")]
-        string alias;
+        string alias = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dynamicUrl")]

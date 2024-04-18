@@ -9,92 +9,75 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("activeRouter")]
-
         bool? activeRouter;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("activeSSID")]
-
-        string activeSsid;
+        string activeSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("apMode")]
-
         long? apMode;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("apSSID")]
-
-        string apSsid;
+        string apSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("channel")]
-
         long? channel;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("channels")]
-
-        List<long> channels = new();
+        List<long> channels = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("connections")]
 
-        List<WifiConnection> connections = new();
+        List<WifiConnection> connections = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("country")]
-
-        string country;
+        string country = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ethernet")]
-
-        EthernetConnection ethernet;
+        EthernetConnection? ethernet;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("hostname")]
-
-        string hostname;
+        string hostname = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("manageable")]
-
         bool? manageable;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("manualWifi")]
-
         bool manualWifi;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mode")]
-
         long? mode;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("routerList")]
-
-        List<RouterList> routerList = new();
+        List<RouterList> routerList = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("screensaver")]
-
         bool? screensaver;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("supportAP")]
-
         bool? supportAp;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("timezone")]
-
-        string timezone;
+        string timezone = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]
-
         long? version;
         #endregion
 

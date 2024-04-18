@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierJobsChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public EventJobChangedData Data { get; set; }
+        public EventJobChangedData? Data { get; set; }
         #endregion
 
         #region Overrides

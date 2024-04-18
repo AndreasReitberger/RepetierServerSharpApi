@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierLoginEventArgs : RepetierEventArgs
     {
         #region Properties
-        public RepetierLoginResult Data { get; set; }
+        public RepetierLoginResult? Data { get; set; }
         public bool LoginSucceeded { get; set; } = false;
         #endregion
 

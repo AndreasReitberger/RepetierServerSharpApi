@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
-using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -45,7 +44,7 @@ namespace AndreasReitberger.API.Repetier
                 return "";
             }
         }
-        public async Task<IWebCamConfig> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
+        public async Task<IWebCamConfig?> GetWebCamConfigAsync(int camIndex = 0, bool refreshConfigs = true)
         {
             try
             {
@@ -66,14 +65,14 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public override Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync() => GetWebCamConfigsAsync(GetActivePrinterSlug());
+        public override Task<ObservableCollection<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamConfigsAsync(GetActivePrinterSlug());
 
-        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync(string slug)
+        public async Task<ObservableCollection<IWebCamConfig>?> GetWebCamConfigsAsync(string slug)
         {
             try
             {
-                RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);
-                return new(config?.Webcams ?? new());
+                RepetierPrinterConfig? config = await GetPrinterConfigAsync(slug);
+                return [.. config?.Webcams];
             }
             catch (Exception exc)
             {
@@ -81,11 +80,11 @@ namespace AndreasReitberger.API.Repetier
                 return null;
             }
         }
-        public async Task<IWebCamConfig> GetWebCamConfigAsync(string slug, int camIndex = 0)
+        public async Task<IWebCamConfig?> GetWebCamConfigAsync(string slug, int camIndex = 0)
         {
             try
             {
-                RepetierPrinterConfig config = await GetPrinterConfigAsync(slug);
+                RepetierPrinterConfig? config = await GetPrinterConfigAsync(slug);
                 return config?.Webcams?.FirstOrDefault(webCam => webCam.Position == camIndex);
             }
             catch (Exception exc)

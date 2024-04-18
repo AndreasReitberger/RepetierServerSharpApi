@@ -4,13 +4,20 @@ using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierProjectFile
+    public partial class RepetierProjectFile : ObservableObject
     {
         #region Properties
-        public RepetierProjectFileType Type { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public Guid ProjectUuid { get; set; } = Guid.Empty;
-        public RepetierProjectsProjectFile File { get; set; }
+        [ObservableProperty, JsonIgnore]
+        RepetierProjectFileType type;
+
+        [ObservableProperty, JsonIgnore]
+        string name = string.Empty;
+
+        [ObservableProperty, JsonIgnore]
+        Guid projectUuid = Guid.Empty;
+
+        [ObservableProperty, JsonIgnore]
+        RepetierProjectsProjectFile? file;
         #endregion
 
         #region Overrides

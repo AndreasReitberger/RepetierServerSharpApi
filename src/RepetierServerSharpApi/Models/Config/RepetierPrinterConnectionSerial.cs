@@ -19,7 +19,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("device")]
-        string device;
+        string device = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dtr")]

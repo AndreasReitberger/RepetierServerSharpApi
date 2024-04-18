@@ -7,9 +7,8 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        
-        EventNetworkInfoData data;
+        [property: JsonProperty("data")]      
+        EventNetworkInfoData? data;
         #endregion
 
         #region Overrides

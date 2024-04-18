@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -10,73 +9,59 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("activeRouter")]
-        
         bool activeRouter;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("activeSSID")]
-        
-        string activeSsid;
+        [property: JsonProperty("activeSSID")]      
+        string activeSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apMode")]
-        
+        [property: JsonProperty("apMode")]        
         long apMode;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apSSID")]
-        
-        string apSsid;
+        [property: JsonProperty("apSSID")]      
+        string apSsid = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]
-        
+        [property: JsonProperty("channel")]        
         long channel;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channels")]
-        
-        List<long> channels = new();
+        [property: JsonProperty("channels")]        
+        List<long> channels = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connections")]
-        
-        List<EventNetworkInfoConnection> connections = new();
+        [property: JsonProperty("connections")]      
+        List<EventNetworkInfoConnection> connections = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("country")]
-        
-        string country;
+        [property: JsonProperty("country")]       
+        string country = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hostname")]
-        
-        string hostname;
+        [property: JsonProperty("hostname")]       
+        string hostname = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manageable")]
-        
+        [property: JsonProperty("manageable")]       
         bool manageable;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mode")]
-        
+        [property: JsonProperty("mode")]     
         long mode;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("routerList")]
-        
-        List<EventNetworkInfoRouterList> routerList = new();
+        [property: JsonProperty("routerList")]   
+        List<EventNetworkInfoRouterList> routerList = [];
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("screensaver")]
-        
+        [property: JsonProperty("screensaver")]      
         bool screensaver;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("timezone")]
-        
-        string timezone;
+        string timezone = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]

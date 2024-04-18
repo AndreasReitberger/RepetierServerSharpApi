@@ -7,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ok")]
-
         bool? ok;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("project")]
-
-        RepetierProjectsProject project;
+        RepetierProjectsProject? project;
         #endregion 
 
         #region Overrides

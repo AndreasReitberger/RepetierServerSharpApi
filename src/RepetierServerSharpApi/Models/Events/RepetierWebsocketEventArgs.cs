@@ -6,11 +6,11 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierWebsocketEventArgs : EventArgs
     {
         #region Properties
-        public string Message { get; set; }
-        public byte[] Data { get; set; }
-        public string Printer { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public byte[] Data { get; set; } = [];
+        public string Printer { get; set; } = string.Empty;
         public long CallbackId { get; set; }
-        public string SessonId { get; set; }
+        public string SessonId { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

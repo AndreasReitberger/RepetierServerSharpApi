@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierHardwareInfoChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public EventHardwareInfoChangedData Info { get; set; }
+        public EventHardwareInfoChangedData? Info { get; set; }
         #endregion
 
         #region Overrides

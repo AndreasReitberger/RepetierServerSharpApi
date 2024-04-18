@@ -37,8 +37,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Interface, unsused
 
         [ObservableProperty, JsonIgnore]
-
-        string name;
+        string name = string.Empty;
         #endregion
 
         #region Json Ignore
@@ -69,7 +68,7 @@ namespace AndreasReitberger.API.Repetier.Models
             }
         }
 
-        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object? data) => client.SetFanSpeedAsync(command, data);
         #endregion
 
         #region Overrides

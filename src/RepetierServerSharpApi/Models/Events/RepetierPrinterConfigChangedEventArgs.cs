@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierPrinterConfigChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public RepetierPrinterConfig NewConfiguration { get; set; }
+        public RepetierPrinterConfig? NewConfiguration { get; set; }
         #endregion
 
         #region Overrides

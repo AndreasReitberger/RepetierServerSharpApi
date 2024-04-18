@@ -25,7 +25,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("eepromType")]
-        string eepromType;
+        string eepromType = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enableQueue")]
@@ -33,7 +33,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmwareName")]
-        string firmwareName;
+        string firmwareName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedBed")]
@@ -45,15 +45,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("manufacturer")]
-        string manufacturer;
+        string manufacturer = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("model")]
-        string model;
+        string model = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("numFans")]
@@ -69,15 +69,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerHomepage")]
-        Uri printerHomepage;
+        Uri?     printerHomepage;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerManual")]
-        string printerManual;
+        string printerManual = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerVariant")]
-        string printerVariant;
+        string printerVariant = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sdcard")]
@@ -85,7 +85,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-        string slug;
+        string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("softwareLight")]
@@ -101,7 +101,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("useModelFromSlug")]
-        string useModelFromSlug;
+        string useModelFromSlug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("useOwnModelRepository")]

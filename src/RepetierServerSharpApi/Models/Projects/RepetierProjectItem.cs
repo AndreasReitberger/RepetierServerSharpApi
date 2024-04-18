@@ -2,19 +2,27 @@
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierProjectItem
+    public partial class RepetierProjectItem : ObservableObject
     {
         #region Properties
-        public bool IsFolder
-        {
-            get => Folder != null && Project == null;
-        }
-        public long Index { get; set; }
-        public string Path { get; set; }
-        public byte[] PreviewImage { get; set; }
+        public bool IsFolder => Folder is not null && Project is null;
 
-        public RepetierProjectSubFolder Folder { get; set; }
-        public RepetierProject Project { get; set; }
+        [ObservableProperty]
+        long index;
+
+        [ObservableProperty]
+        string path = string.Empty;
+
+        [ObservableProperty]
+        byte[]? previewImage;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFolder))]
+        RepetierProjectSubFolder? folder;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFolder))]
+        RepetierProject? project;
         #endregion
 
         #region Overrides

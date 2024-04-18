@@ -12,48 +12,39 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-
         Guid id;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("analysed")]
-
         long analysed;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("created")]
-
         long created;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
-
         double? done;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruderUsage")]
-
-        List<double> extruderUsage;
+        List<double> extruderUsage = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filamentTotal")]
-
         double filamentTotal;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fits")]
-
         bool fits;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcodePatch")]
-
-        string gcodePatch;
+        string gcodePatch = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("group")]
-
-        string group;
+        string group = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(JobId))]
@@ -65,189 +56,152 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("lastPrintTime")]
-
         double lastPrintTime;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("layer")]
-
         long layer;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("length")]
-
         long length;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("lines")]
-
         long lines;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("materials")]
-
-        List<string> materials;
+        List<string> materials = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("notes")]
-
-        string notes;
+        string notes = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printTime")]
-
         double printTime;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printed")]
-
         long printed;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printedTimeComp")]
-
         long printedTimeComp;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerParam1")]
-
         long printerParam1;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerType")]
-
         long printerType;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("radius")]
-
         double radius;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("radiusMove")]
-
         long radiusMove;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("repeat")]
-
         long repeat;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slicer")]
-
-        string slicer;
+        string slicer = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("state")]
-
-        string state;
+        string state = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("version")]
-
         long version;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volumeTotal")]
-
         double volumeTotal;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volumeUsage")]
-
-        List<double> volumeUsage;
+        List<double> volumeUsage = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volumetric")]
-
         bool volumetric;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMax")]
-
         double xMax;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMaxMove")]
-
         double xMaxMove;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMaxView")]
-
         double xMaxView;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMin")]
-
         long xMin;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMinMove")]
-
         long xMinMove;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xMinView")]
-
         double xMinView;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMax")]
-
         double yMax;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMaxMove")]
-
         long yMaxMove;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMaxView")]
-
         double yMaxView;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMin")]
-
         long yMin;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMinMove")]
-
         long yMinMove;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yMinView")]
-
         double yMinView;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("zMax")]
-
         double zMax;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("zMin")]
-
         long zMin;
 
         #region Interface, unused
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
-
         double? timeAdded = 0;
         partial void OnTimeAddedChanged(double? value)
         {
@@ -256,12 +210,10 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         DateTime? timeAddedGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
-
         double? timeInQueue = 0;
         partial void OnTimeInQueueChanged(double? value)
         {
@@ -270,18 +222,17 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty, JsonIgnore]
-
         DateTime? timeInQueueGeneralized;
         #endregion
 
         #endregion
 
         #region Methods
-        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StartJobAsync(this, command, data);
+        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client.StartJobAsync(this, command, data);
 
-        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client?.PauseJobAsync(command, data);
+        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client.PauseJobAsync(command, data);
 
-        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StopJobAsync(command, data);
+        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client.StopJobAsync(command, data);
 
         public Task<bool> RemoveFromQueueAsync(IPrint3dServerClient client, string command, object? data) => client.RemoveJobAsync(this, command, data);
 

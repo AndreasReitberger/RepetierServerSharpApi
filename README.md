@@ -123,7 +123,7 @@ To read back the current set and read temperature, use following method.
 
 ```csharp
 RepetierPrinterStateRespone state = await _server.GetStateObjectAsync();
-if (state != null && state.Printer != null)
+if (state is not null && state.Printer is not null)
 {
     List<RepetierPrinterExtruder> extruders = state.Printer.Extruder;
     if (extruders == null || extruders.Count == 0)

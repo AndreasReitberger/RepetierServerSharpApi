@@ -5,7 +5,7 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierJobFinishedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public EventJobFinishedData Job { get; set; }
+        public EventJobFinishedData? Job { get; set; }
         #endregion
 
         #region Overrides

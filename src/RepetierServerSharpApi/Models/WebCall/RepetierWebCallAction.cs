@@ -11,22 +11,22 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("content_type")]
 
-        string contentType;
+        string contentType = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("icon")]
 
-        string icon;
+        string icon = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("method")]
 
-        string method;
+        string method = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
 
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pos")]
@@ -36,12 +36,12 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("post")]
 
-        string post;
+        string post = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("question")]
 
-        string question;
+        string question = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("show_in_menu")]
@@ -51,17 +51,17 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("show_name")]
 
-        string showName;
+        string showName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
 
-        string slug;
+        string slug = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("url")]
 
-        Uri url;
+        Uri? url;
         #endregion
 
         #region Overrides

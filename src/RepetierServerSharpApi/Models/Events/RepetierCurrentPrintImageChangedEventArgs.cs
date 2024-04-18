@@ -5,8 +5,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierCurrentPrintImageChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public byte[] NewImage { get; set; }
-        public byte[] PreviousImage { get; set; }
+        public byte[]? NewImage { get; set; }
+        public byte[]? PreviousImage { get; set; }
         #endregion
 
         #region Overrides

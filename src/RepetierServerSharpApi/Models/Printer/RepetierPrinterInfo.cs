@@ -7,23 +7,19 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("active")]
-
         bool active;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("online")]
-
         long online;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slug")]
-
-        string slug;
+        string slug = string.Empty;
         #endregion
 
         #region Overrides

@@ -8,11 +8,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
-        EventUserCredentialsData data;
+        EventUserCredentialsData? data;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("event")]
-        string eventName;
+        string eventName = string.Empty;
 
         #endregion
 

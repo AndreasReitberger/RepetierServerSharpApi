@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -8,119 +7,96 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("availableBrandingVersion")]
-        
+        [property: JsonProperty("availableBrandingVersion")]      
         long availableBrandingVersion;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("betaActive")]
-        
+        [property: JsonProperty("betaActive")]      
         bool betaActive;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("branded")]
-        
+        [property: JsonProperty("branded")]       
         bool branded;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("currentBrandingVersion")]
-        
+        [property: JsonProperty("currentBrandingVersion")]      
         long currentBrandingVersion;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("currentVersion")]
-        
-        string currentVersion;
+        string currentVersion = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("demo")]
-        
         bool demo;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("downloadUrl")]
-        
-        Uri downloadUrl;
+        [property: JsonProperty("downloadUrl")]      
+        Uri? downloadUrl;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("features")]
-        
+        [property: JsonProperty("features")]      
         long features;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("free")]
-        
+        [property: JsonProperty("free")]  
         bool free;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ignoreVersion")]
-        
-        string ignoreVersion;
+        [property: JsonProperty("ignoreVersion")]      
+        string ignoreVersion = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("installerType")]
-        
+        [property: JsonProperty("installerType")]    
         long installerType;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("licensed")]
-        
+        [property: JsonProperty("licensed")]      
         bool licensed;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("message")]
-        
-        string message;
+        [property: JsonProperty("message")]     
+        string message = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("messageHtml")]
-        
-        string messageHtml;
+        [property: JsonProperty("messageHtml")]    
+        string messageHtml = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerFrontendUrl")]
-        
-        string printerFrontendUrl;
+        [property: JsonProperty("printerFrontendUrl")]     
+        string printerFrontendUrl = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("showUpdate")]
-        
+        [property: JsonProperty("showUpdate")]     
         bool showUpdate;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("teaser")]
-        
-        RepetierUpdateTeaser teaser;
+        [property: JsonProperty("teaser")]      
+        RepetierUpdateTeaser? teaser;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("testperiodMode")]
-        
+        [property: JsonProperty("testperiodMode")]       
         long testperiodMode;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("updateAvailable")]
-        
+        [property: JsonProperty("updateAvailable")]       
         bool updateAvailable;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("versionMessage")]
-        
-        string versionMessage;
+        [property: JsonProperty("versionMessage")]       
+        string versionMessage = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("versionMessageHtml")]
-        
-        string versionMessageHtml;
+        string versionMessageHtml = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("versionName")]
-        
-        string versionName;
+        [property: JsonProperty("versionName")]       
+        string versionName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("webFrontendUrl")]
-        
-        string webFrontendUrl;
+        [property: JsonProperty("webFrontendUrl")]       
+        string webFrontendUrl = string.Empty;
         #endregion
 
         #region Overrides

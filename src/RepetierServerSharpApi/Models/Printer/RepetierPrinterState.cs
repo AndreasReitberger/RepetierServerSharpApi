@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -11,207 +10,167 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("activeExtruder")]
-
         long activeExtruder;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("autostartNextPrint")]
-
         bool autostartNextPrint;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("condition")]
-
         long condition;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("conditionReason")]
-
-        string conditionReason;
+        string conditionReason = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("debugLevel")]
-
         long debugLevel;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("doorOpen")]
-
         bool doorOpen;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
-
-        List<RepetierPrinterToolhead> extruder = new();
+        List<RepetierPrinterToolhead> extruder = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("f")]
-
         long f;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fans")]
-
-        List<RepetierPrinterFan> fans = new();
+        List<RepetierPrinterFan> fans = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filterFan")]
-
         bool filterFan;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmware")]
-
-        string firmware;
+        string firmware = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmwareStyle")]
-
-        string firmwareStyle;
+        string firmwareStyle = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("firmwareURL")]
-
-        Uri firmwareUrl;
+        Uri? firmwareUrl;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("flowMultiply")]
-
         long flowMultiply;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("global")]
-
-        RepetierPrinterStateGlobal global;
+        RepetierPrinterStateGlobal? global;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gperm")]
-
-        RepetierPrinterStateGlobal gperm;
+        RepetierPrinterStateGlobal? gperm;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("hasXHome")]
-
         bool hasXHome;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("hasYHome")]
-
         bool hasYHome;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("hasZHome")]
-
         bool hasZHome;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedBeds")]
-
-        List<RepetierPrinterHeaterComponent> heatedBeds = new();
+        List<RepetierPrinterHeaterComponent> heatedBeds = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedChambers")]
-
-        List<RepetierPrinterHeaterComponent> heatedChambers = new();
+        List<RepetierPrinterHeaterComponent> heatedChambers = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("layer")]
-
         long layer;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("lights")]
-
         long lights;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("maxLayer")]
-
         long maxLayer;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("notification")]
-
-        string notification;
+        string notification = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("numExtruder")]
-
         long numExtruder;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("perm")]
-
-        RepetierPrinterStateGlobal perm;
+        RepetierPrinterStateGlobal? perm;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("powerOn")]
-
         bool powerOn;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("rec")]
-
         bool rec;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sdcardMounted")]
-
         bool sdcardMounted;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sglobal")]
 
-        RepetierPrinterStateGlobal sglobal;
+        RepetierPrinterStateGlobal? sglobal;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("shutdownAfterPrint")]
-
         bool shutdownAfterPrint;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("speedMultiply")]
-
         long speedMultiply;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volumetric")]
-
         bool volumetric;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webcams")]
-
-        List<RepetierPrinterConfigWebcam> webcams = new();
+        List<RepetierPrinterConfigWebcam> webcams = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("x")]
-
         long x;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("xOff")]
-
         long xOff;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("y")]
-
         long y;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("yOff")]
-
         long yOff;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("z")]
-
         long z;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("zOff")]
-
         long zOff;
         #endregion
 

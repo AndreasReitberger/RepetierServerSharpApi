@@ -6,8 +6,8 @@ namespace AndreasReitberger.API.Repetier.Models
     public class RepetierActivePrinterChangedEventArgs : RepetierEventArgs
     {
         #region Properties
-        public IPrinter3d NewPrinter { get; set; }
-        public IPrinter3d OldPrinter { get; set; }
+        public IPrinter3d? NewPrinter { get; set; }
+        public IPrinter3d? OldPrinter { get; set; }
         #endregion
 
         #region Overrides

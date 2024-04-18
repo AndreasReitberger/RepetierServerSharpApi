@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("address")]
-        string address;
+        string address = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("keepAliveInterval")]

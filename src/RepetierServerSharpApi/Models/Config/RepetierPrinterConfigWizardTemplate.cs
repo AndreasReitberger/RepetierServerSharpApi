@@ -8,27 +8,27 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("author")]
-        string author;
+        string author = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("command")]
-        string command;
+        string command = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("description")]
-        string description;
+        string description = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("icon")]
-        string icon;
+        string icon = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
-        string name;
+        string name = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("source")]
-        string source;
+        string source = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("uuid")]

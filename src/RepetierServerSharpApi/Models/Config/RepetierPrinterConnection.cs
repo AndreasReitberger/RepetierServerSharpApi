@@ -19,7 +19,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ip")]
-        RepetierPrinterConnectionIp ip;
+        RepetierPrinterConnectionIp? ip;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("lcdTimeMode")]
@@ -27,11 +27,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("password")]
-        string password;
+        string password = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pipe")]
-        RepetierPrinterConnectionPipe pipe;
+        RepetierPrinterConnectionPipe? pipe;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("powerOffIdleMinutes")]
@@ -43,11 +43,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("resetScript")]
-        string resetScript;
+        string resetScript = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("serial")]
-        RepetierPrinterConnectionSerial serial;
+        RepetierPrinterConnectionSerial? serial;
         #endregion
 
         #region Overrides

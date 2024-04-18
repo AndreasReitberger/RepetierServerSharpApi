@@ -7,18 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("n")]
-
-        string n;
+        string n = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("s")]
-
         long? s;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("p")]
-
-        string p;
+        string p = string.Empty;
         #endregion 
 
         #region Overrides
