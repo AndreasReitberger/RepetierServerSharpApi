@@ -53,14 +53,14 @@ namespace AndreasReitberger.API.Repetier
                                 // Avoid unnecessary calls if the image or the job hasn't changed
                                 if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
                                 {
-                                    printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
+                                    if (printer is not null) printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
                                 }
                                 else
                                 {
-                                    printer.CurrentPrintImage = prevPrinter.CurrentPrintImage;
+                                    if (printer is not null) printer.CurrentPrintImage = prevPrinter?.CurrentPrintImage ?? [];
                                 }
                             }
-                            else printer.CurrentPrintImage = [];
+                            else if (printer is not null) printer.CurrentPrintImage = [];
                         }
                     }
                     Printers = [.. repetierPrinterList];

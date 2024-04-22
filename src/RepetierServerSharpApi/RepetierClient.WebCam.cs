@@ -2,7 +2,6 @@
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,14 +10,12 @@ namespace AndreasReitberger.API.Repetier
     public partial class RepetierClient
     {
         #region Methods
-        [Obsolete("Use GetDefaultWebCamUri instead or change to call base method")]
         public string GetWebCamUri(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
         {
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return string.Empty;
-
                 return $"{FullWebAddress}/printer/{(type == RepetierWebcamType.Dynamic ? "cammjpg" : "camjpg")}/{currentPrinter}?cam={camIndex}&apikey={ApiKey}";
             }
             catch (Exception exc)
@@ -27,7 +24,7 @@ namespace AndreasReitberger.API.Repetier
                 return "";
             }
         }
-        [Obsolete("Use GetDefaultWebCamUri instead or change to call base method")]
+
         public async Task<string> GetWebCamUriAsync(int camIndex = 0, RepetierWebcamType type = RepetierWebcamType.Dynamic)
         {
             try

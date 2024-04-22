@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
 using Newtonsoft.Json;
 using System;
@@ -60,11 +61,11 @@ namespace AndreasReitberger.API.Repetier
                                     EventTempData? eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
                                     if (eventTempData is not null)
                                     {
-                                        OnTempDataReceived(new RepetierTempDataEventArgs()
+                                        OnTemperatureDataReceived(new TemperatureDataEventArgs()
                                         {
-                                            TemperatureData = eventTempData,
+                                            TemperatureInfo = eventTempData,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -289,11 +290,11 @@ namespace AndreasReitberger.API.Repetier
                                     EventTempData? eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
                                     if (eventTempData is not null)
                                     {
-                                        OnTempDataReceived(new RepetierTempDataEventArgs()
+                                        OnTemperatureDataReceived(new TemperatureDataEventArgs()
                                         {
-                                            TemperatureData = eventTempData,
+                                            TemperatureInfo = eventTempData,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }

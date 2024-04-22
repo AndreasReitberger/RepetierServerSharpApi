@@ -32,6 +32,7 @@ namespace AndreasReitberger.API.Repetier
                 new AbstractConverter<RepetierJobListItem, IPrint3dJob>(),
                 new AbstractConverter<RepetierPrinterToolhead, IToolhead>(),
                 new AbstractConverter<RepetierPrinterHeaterComponent, IHeaterComponent>(),
+                new AbstractConverter<EventTempData, IPrint3dTemperatureInfo>(),
             }
         };
         #endregion
@@ -52,6 +53,7 @@ namespace AndreasReitberger.API.Repetier
                 new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
                 new AbstractConverter<RepetierPrinterToolhead, IToolhead>(),
                 new AbstractConverter<RepetierPrinterHeaterComponent, IHeaterComponent>(),
+                new AbstractConverter<EventTempData, IPrint3dTemperatureInfo>(),
             }
         };
         #endregion

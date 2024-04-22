@@ -157,20 +157,6 @@ namespace AndreasReitberger.API.Repetier
             UpdatePrinterState(value);
         }
 
-        [ObservableProperty, Obsolete("Use ActiveJob instead")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        RepetierCurrentPrintInfo? activePrintInfo;
-        partial void OnActivePrintInfoChanged(RepetierCurrentPrintInfo? value)
-        {
-            OnPrintInfoChangedEvent(new RepetierActivePrintInfoChangedEventArgs()
-            {
-                SessonId = SessionId,
-                NewActivePrintInfo = value,
-                Printer = GetActivePrinterSlug(),
-            });
-            UpdateActivePrintInfo(value);
-        }
-
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<RepetierCurrentPrintInfo> activePrintInfos = [];
@@ -183,7 +169,6 @@ namespace AndreasReitberger.API.Repetier
                 Printer = GetActivePrinterSlug(),
             });
         }
-
 
         #endregion
 
@@ -1834,8 +1819,8 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string cmd = $"T{extruder}\\nG92 E0";
-                _ = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
-
+                _ = await SendGcodeAsync(command: "send", data: new { cmd = cmd }).ConfigureAwait(false);
+                //_ = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
@@ -1853,12 +1838,14 @@ namespace AndreasReitberger.API.Repetier
                 bool result;
                 if (x && y && z)
                 {
-                    result = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
+                    result = await SendGcodeAsync(command: "send", data: new { cmd = "G28" }).ConfigureAwait(false);
+                    //result = await SendGcodeCommandAsync("G28").ConfigureAwait(false);
                 }
                 else
                 {
                     string cmd = string.Format("G28{0}{1}{2}", x ? " X0 " : "", y ? " Y0 " : "", z ? " Z0 " : "");
-                    result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                    result = await SendGcodeAsync(command: "send", data: new { cmd = cmd }).ConfigureAwait(false);
+                    //result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
                 }
                 return result;
             }
@@ -2388,43 +2375,6 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        #endregion
-
-        #region Gcode Commands
-        [Obsolete("Use SendGcodeAsync")]
-        public async Task<bool> SendGcodeCommandAsync(string command, string printerName = "")
-        {
-            try
-            {
-                string currentPrinter = GetActivePrinterSlug();
-                if (!string.IsNullOrEmpty(printerName)) currentPrinter = printerName; // Override current selected printer, if needed
-                if (string.IsNullOrEmpty(currentPrinter)) return false;
-
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                IRestApiRequestRespone? result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "send",
-                       jsonObject: new { cmd = command },
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-
-                /*
-                RepetierApiRequestRespone result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "send", jsonData: string.Format("{{\"cmd\":\"{0}\"}}", command),
-                    printerName: currentPrinter
-                    ).ConfigureAwait(false);
-                */
-                return GetQueryResult(result?.Result, true);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
         #endregion
 
         #region Gcode Scripts

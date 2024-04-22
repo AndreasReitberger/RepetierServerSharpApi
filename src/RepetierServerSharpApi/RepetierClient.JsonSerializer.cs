@@ -23,8 +23,7 @@ namespace AndreasReitberger.API.Repetier
             //MissingMemberHandling = MissingMemberHandling.Error,
             ReferenceHandler = ReferenceHandler.Preserve,
             WriteIndented = true,
-            Converters =
-            {                     
+            Converters = { 
                 // Map the converters
                 new TypeMappingConverter<IAuthenticationHeader, AuthenticationHeader>(),
                 new TypeMappingConverter<IGcode, RepetierModel>(),
@@ -32,6 +31,7 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IPrint3dJob, RepetierJobListItem>(),
                 new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
                 new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
+                new TypeMappingConverter<IPrint3dTemperatureInfo, EventTempData>(),
             }
         };
         #endregion
@@ -50,6 +50,7 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IPrint3dJob, RepetierJobListItem>(),
                 new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
                 new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
+                new TypeMappingConverter<IPrint3dTemperatureInfo, EventTempData>(),
             }
         };
         #endregion

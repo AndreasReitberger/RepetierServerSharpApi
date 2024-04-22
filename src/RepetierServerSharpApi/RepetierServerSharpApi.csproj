@@ -22,6 +22,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Print3dServer.Core" Version="1.0.0-preview" />
     <PackageReference Include="RCoreSharp" Version="1.0.9" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
