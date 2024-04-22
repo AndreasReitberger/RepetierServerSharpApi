@@ -47,10 +47,10 @@ namespace AndreasReitberger.API.Repetier
             Converters =
             {
                 // Map the converters
-                new AbstractConverter<KlipperGcodeMetaResult, IGcodeMeta>(),
-                new AbstractConverter<KlipperGcodeThumbnail, IGcodeImage>(),
-                new AbstractConverter<KlipperJobQueueItem, IPrint3dJob>(),
                 new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
+                new AbstractConverter<RepetierModel, IGcode>(),
+                new AbstractConverter<RepetierModelGroup, IGcodeGroup>(),
+                new AbstractConverter<RepetierJobListItem, IPrint3dJob>(),
                 new AbstractConverter<RepetierPrinterToolhead, IToolhead>(),
                 new AbstractConverter<RepetierPrinterHeaterComponent, IHeaterComponent>(),
                 new AbstractConverter<EventTempData, IPrint3dTemperatureInfo>(),
