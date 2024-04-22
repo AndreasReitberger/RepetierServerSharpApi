@@ -9,50 +9,11 @@ namespace AndreasReitberger.API.Repetier
         #region EventHandlers
 
         #region Debug
+        /*
         public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs>? RepetierIgnoredJsonResultsChanged;
         protected virtual void OnRepetierIgnoredJsonResultsChanged(RepetierIgnoredJsonResultsChangedEventArgs e)
         {
             RepetierIgnoredJsonResultsChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region WebSocket
-
-        /*
-        public event EventHandler<RepetierEventArgs> WebSocketConnected;
-        protected virtual void OnWebSocketConnected(RepetierEventArgs e)
-        {
-            WebSocketConnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> WebSocketDisconnected;
-        protected virtual void OnWebSocketDisconnected(RepetierEventArgs e)
-        {
-            WebSocketDisconnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<ErrorEventArgs> WebSocketError;
-        protected virtual void OnWebSocketError(ErrorEventArgs e)
-        {
-            WebSocketError?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierWebsocketEventArgs> WebSocketMessageReceived;
-        protected virtual void OnWebSocketMessageReceived(RepetierWebsocketEventArgs e)
-        {
-            WebSocketMessageReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierWebsocketEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(RepetierWebsocketEventArgs e)
-        {
-            WebSocketDataReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierLoginRequiredEventArgs> LoginResultReceived;
-        protected virtual void OnLoginResultReceived(RepetierLoginRequiredEventArgs e)
-        {
-            LoginResultReceived?.Invoke(this, e);
         }
         */
         #endregion
@@ -149,13 +110,6 @@ namespace AndreasReitberger.API.Repetier
         {
             PrintInfosChanged?.Invoke(this, e);
         }
-        [Obsolete("Use OnActiveJobChanged instead")]
-        public event EventHandler<RepetierActivePrintInfoChangedEventArgs>? PrintInfoChanged;
-        [Obsolete("Use OnActiveJobChanged instead")]
-        protected virtual void OnPrintInfoChangedEvent(RepetierActivePrintInfoChangedEventArgs e)
-        {
-            PrintInfoChanged?.Invoke(this, e);
-        }
 
         public new event EventHandler<RepetierJobStartedEventArgs>? JobsStarted;
         protected virtual void OnJobStarted(RepetierJobStartedEventArgs e)
@@ -173,14 +127,6 @@ namespace AndreasReitberger.API.Repetier
         protected virtual void OnJobFinished(RepetierJobFinishedEventArgs e)
         {
             JobFinished?.Invoke(this, e);
-        }
-
-
-        [Obsolete("Use TemperatureDataReceived event")]
-        public event EventHandler<RepetierTempDataEventArgs>? TempDataReceived;
-        protected virtual void OnTempDataReceived(RepetierTempDataEventArgs e)
-        {
-            TempDataReceived?.Invoke(this, e);
         }
 
         public event EventHandler<RepetierHardwareInfoChangedEventArgs>? HardwareInfoChanged;

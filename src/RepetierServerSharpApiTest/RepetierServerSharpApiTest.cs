@@ -670,7 +670,7 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     if (_server.IsPrinting)
                     {
-                        var info = _server.ActivePrintInfo;
+                        IPrint3dJobStatus? info = _server.ActiveJob;
                         if (info == null)
                             Assert.Fail("Print info was null");
                     }
@@ -768,7 +768,7 @@ namespace RepetierServerSharpApiTest
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
-                _server.RepetierIgnoredJsonResultsChanged += (o, args) =>
+                _server.IgnoredJsonResultsChanged += (o, args) =>
                 {
                     foreach (var keyPair in args.NewIgnoredJsonResults)
                     {
