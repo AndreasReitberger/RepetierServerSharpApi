@@ -1,6 +1,16 @@
 # RepetierServerSharpApi
 An C# based library to to interact with a Repetier Server Pro instance via REST-API.
 
+# Support me
+If you want to support me, you can order over following affilate links (I'll get a small share from your purchase from the corresponding store).
+
+- Prusa: http://www.prusa3d.com/#a_aid=AndreasReitberger *
+- Jake3D: https://tidd.ly/3x9JOBp * 
+- Amazon: https://amzn.to/2Z8PrDu *
+
+(*) Affiliate link
+Thank you very much for supporting me!
+
 # Important!
 With the upcoming version, starting from `1.2.7`, `RepetierServerPro` become `RepetierClient`. also the namespaces will changed and generalized with our other print server api nugets.
 
