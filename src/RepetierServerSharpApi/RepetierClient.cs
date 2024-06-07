@@ -292,7 +292,7 @@ namespace AndreasReitberger.API.Repetier
                     AlwaysMultipartFormData = true,
                     RequestFormat = DataFormat.Json,
                     Method = Method.Get,
-                    Timeout = timeout,
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
                 if (!string.IsNullOrEmpty(ApiKey))
                 {
@@ -347,7 +347,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     RequestFormat = DataFormat.None,
                     Method = Method.Get,
-                    Timeout = timeout
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
 
                 request.AddParameter("q", "jobs");
@@ -1224,7 +1224,7 @@ namespace AndreasReitberger.API.Repetier
                 RestRequest request = new(string.Format("/printer/model/{2}", ServerAddress, Port, printerName.Replace(" ", "_")))
                 {
                     Method = Method.Post,
-                    Timeout = timeout,
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                     AlwaysMultipartFormData = true,
                 };
 
@@ -2615,7 +2615,7 @@ namespace AndreasReitberger.API.Repetier
                 request.AddParameter("apikey", ApiKey);
                 request.RequestFormat = DataFormat.Json;
                 request.Method = Method.Get;
-                request.Timeout = timeout;
+                request.Timeout = TimeSpan.FromMilliseconds(timeout);
 
                 if (additionalParameters is not null)
                 {

@@ -23,6 +23,13 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
         double? done;
+        partial void OnDoneChanged(double? value)
+        {
+            if (value is not null)
+                DonePercentage = value / 100;
+            else
+                DonePercentage = 0;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
@@ -154,6 +161,9 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         double? filamentUsed;
+
+        [ObservableProperty, JsonIgnore]
+        double? donePercentage;
 
         [ObservableProperty, JsonIgnore]
         bool fileExists;
