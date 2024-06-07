@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierJobFinishedEventArgs : RepetierEventArgs
+    public class RepetierJobFinishedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public EventJobFinishedData? Job { get; set; }

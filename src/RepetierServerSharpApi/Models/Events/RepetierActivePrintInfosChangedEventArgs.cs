@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierActivePrintInfosChangedEventArgs : RepetierEventArgs
+    public class RepetierActivePrintInfosChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public List<RepetierCurrentPrintInfo> NewActivePrintInfos { get; set; } = [];

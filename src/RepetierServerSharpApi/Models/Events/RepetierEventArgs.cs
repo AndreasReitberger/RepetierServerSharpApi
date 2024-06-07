@@ -3,7 +3,8 @@ using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierEventArgs : EventArgs
+    [Obsolete("Use Print3dBaseEventArgs instead")]
+    internal class RepetierEventArgs : EventArgs
     {
         #region Properties
         public string Message { get; set; } = string.Empty;

@@ -94,7 +94,7 @@ namespace AndreasReitberger.API.Repetier
             OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
             {
                 RepetierMessages = [.. value],
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -111,7 +111,7 @@ namespace AndreasReitberger.API.Repetier
             OnWebCallActionsChangedEvent(new RepetierWebCallActionsChangedEventArgs()
             {
                 NewWebCallActions = [.. value],
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -135,7 +135,7 @@ namespace AndreasReitberger.API.Repetier
             OnRepetierPrinterConfigChangedEvent(new RepetierPrinterConfigChangedEventArgs()
             {
                 NewConfiguration = value,
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -150,7 +150,7 @@ namespace AndreasReitberger.API.Repetier
             OnRepetierPrinterStateChangedEvent(new RepetierPrinterStateChangedEventArgs()
             {
                 NewPrinterState = value,
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -164,7 +164,7 @@ namespace AndreasReitberger.API.Repetier
         {
             OnPrintInfosChangedEvent(new RepetierActivePrintInfosChangedEventArgs()
             {
-                SessonId = SessionId,
+                SessionId = SessionId,
                 NewActivePrintInfos = [.. value],
                 Printer = GetActivePrinterSlug(),
             });

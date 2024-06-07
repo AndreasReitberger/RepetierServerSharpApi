@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierWifiChangedEventArgs : RepetierEventArgs
+    public partial class RepetierWifiChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public EventWifiChangedData? Data { get; set; }
