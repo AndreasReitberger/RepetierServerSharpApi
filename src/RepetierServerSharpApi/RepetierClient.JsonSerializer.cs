@@ -32,6 +32,7 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
                 new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
                 new TypeMappingConverter<IPrint3dTemperatureInfo, EventTempData>(),
+                new TypeMappingConverter<IPrint3dJobStatus, RepetierCurrentPrintInfo>(),
             }
         };
         #endregion
@@ -51,6 +52,7 @@ namespace AndreasReitberger.API.Repetier
                 new TypeMappingConverter<IToolhead, RepetierPrinterToolhead>(),
                 new TypeMappingConverter<IHeaterComponent, RepetierPrinterHeaterComponent>(),
                 new TypeMappingConverter<IPrint3dTemperatureInfo, EventTempData>(),
+                new TypeMappingConverter<IPrint3dJobStatus, RepetierCurrentPrintInfo>(),
             }
         };
         #endregion
