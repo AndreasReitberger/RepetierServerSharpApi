@@ -9,7 +9,6 @@ using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -481,98 +480,6 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        #endregion
-
-        #region Models
-        async Task<RepetierModelList?> GetModelListInfoResponeAsync(string printerName)
-        {
-            IRestApiRequestRespone? result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "listModels",
-                   jsonObject: null,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listModels",
-                   printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                RepetierModelList? list = GetObjectFromJson<RepetierModelList>(result?.Result);
-                await UpdateFreeSpaceAsync().ConfigureAwait(false);
-
-                return list;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierModelList),
-                    Message = jecx.Message,
-                });
-                return new RepetierModelList();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelList();
-            }
-        }
-        #endregion
-
-        #region ModelGroups
-        async Task<RepetierModelGroups?> GetModelGroupsAsync(string printerName)
-        {
-            IRestApiRequestRespone? result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "listModelGroups",
-                   jsonObject: null,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listModelGroups",
-                   printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJson<RepetierModelGroups>(result?.Result);
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierModelGroups),
-                    Message = jecx.Message,
-                });
-                return new RepetierModelGroups();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelGroups();
             }
         }
 
