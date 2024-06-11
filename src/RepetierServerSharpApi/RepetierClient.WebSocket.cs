@@ -88,7 +88,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             Data = eventJobsChanged,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -102,7 +102,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             Job = eventJobFinished,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -115,7 +115,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             RepetierMessage = eventMessageChanged,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -126,7 +126,7 @@ namespace AndreasReitberger.API.Repetier
                                     {
                                         Info = eventHardwareInfoChanged,
                                         CallbackId = PingCounter,
-                                        SessonId = SessionId,
+                                        SessionId = SessionId,
                                         Printer = obj.Printer,
                                     });
                                     break;
@@ -136,7 +136,7 @@ namespace AndreasReitberger.API.Repetier
                                     {
                                         Data = eventWifiChanged,
                                         CallbackId = PingCounter,
-                                        SessonId = SessionId,
+                                        SessionId = SessionId,
                                         Printer = obj.Printer,
                                     });
                                     break;
@@ -317,7 +317,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             Data = eventJobsChanged,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -331,7 +331,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             Job = eventJobFinished,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -344,7 +344,7 @@ namespace AndreasReitberger.API.Repetier
                                         {
                                             RepetierMessage = eventMessageChanged,
                                             CallbackId = PingCounter,
-                                            SessonId = SessionId,
+                                            SessionId = SessionId,
                                             Printer = obj.Printer,
                                         });
                                     }
@@ -355,7 +355,7 @@ namespace AndreasReitberger.API.Repetier
                                     {
                                         Info = eventHardwareInfoChanged,
                                         CallbackId = PingCounter,
-                                        SessonId = SessionId,
+                                        SessionId = SessionId,
                                         Printer = obj.Printer,
                                     });
                                     break;
@@ -365,7 +365,7 @@ namespace AndreasReitberger.API.Repetier
                                     {
                                         Data = eventWifiChanged,
                                         CallbackId = PingCounter,
-                                        SessonId = SessionId,
+                                        SessionId = SessionId,
                                         Printer = obj.Printer,
                                     });
                                     break;
@@ -455,7 +455,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     CallbackId = PingCounter,
                     Message = text,
-                    SessonId = SessionId,
+                    SessionId = SessionId,
                 });
                 */
             }

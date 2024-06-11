@@ -5,7 +5,6 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,19 +34,19 @@ namespace AndreasReitberger.API.Repetier
 
                 // Reporting
                 Prog?.Report(0);
-                RepetierModelList? models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
-                if (models is not null)
+                RepetierModelList? modelInfo = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
+                if (modelInfo is not null)
                 {
-                    List<RepetierModel> modelList = models.Data;
+                    List<RepetierModel> modelList = modelInfo.Data;
                     if (modelList is not null)
                     {
-                        List<IGcode> Models = new(modelList);
+                        List<IGcode> models = new(modelList);
                         if (ImageType != GcodeImageType.None)
                         {
-                            int total = Models.Count;
+                            int total = models.Count;
                             for (int i = 0; i < total; i++)
                             {
-                                IGcode model = Models[i];
+                                IGcode model = models[i];
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
                                 // Load image depending on settings
@@ -83,7 +82,7 @@ namespace AndreasReitberger.API.Repetier
                         {
                             Prog?.Report(100);
                         }
-                        return Models;
+                        return models;
                     }
                 }
                 Prog?.Report(100);
@@ -94,6 +93,43 @@ namespace AndreasReitberger.API.Repetier
                 Prog?.Report(100);
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return [];
+            }
+        }
+
+        async Task<RepetierModelList?> GetModelListInfoResponeAsync(string printerName)
+        {
+            IRestApiRequestRespone? result = null;
+            try
+            {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "listModels",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                RepetierModelList? list = GetObjectFromJson<RepetierModelList>(result?.Result);
+                await UpdateFreeSpaceAsync().ConfigureAwait(false);
+
+                return list;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result?.Result,
+                    TargetType = nameof(RepetierModelList),
+                    Message = jecx.Message,
+                });
+                return new RepetierModelList();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new RepetierModelList();
             }
         }
 
@@ -263,6 +299,110 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Groups
+
+        [Obsolete("Use GetModelGroupsAsync() instead")]
+        async Task<RepetierModelGroups?> GetModelGroupsFromPrinterAsync(string printerName)
+        {
+            IRestApiRequestRespone? result = null;
+            try
+            {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
+                result = await SendRestApiRequestAsync(
+                   requestTargetUri: targetUri,
+                   method: Method.Post,
+                   command: "listModelGroups",
+                   jsonObject: null,
+                   authHeaders: AuthHeaders
+                   )
+                .ConfigureAwait(false);
+                return GetObjectFromJson<RepetierModelGroups>(result?.Result);
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result?.Result,
+                    TargetType = nameof(RepetierModelGroups),
+                    Message = jecx.Message,
+                });
+                return new RepetierModelGroups();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return new RepetierModelGroups();
+            }
+        }
+        /// <summary>
+        /// Gets the model groups from the server.
+        /// </summary>
+        /// <param name="path">Printer name</param>
+        /// <returns>Available groups</returns>
+        public override async Task<List<IGcodeGroup>> GetModelGroupsAsync(string path = "")
+        {
+            IRestApiRequestRespone? result = null;
+            List<IGcodeGroup> resultObject = [];
+
+            string currentPrinter = !string.IsNullOrEmpty(path) ? path : GetActivePrinterSlug();
+            if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
+
+            try
+            {
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "listModelGroups",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders
+                       )
+                    .ConfigureAwait(false);
+                RepetierModelGroups? info = GetObjectFromJson<RepetierModelGroups>(result?.Result);
+                return
+                    info is not null && info.GroupNames is not null ?
+                    [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result?.Result,
+                    TargetType = nameof(String),
+                    Message = jecx.Message,
+                });
+                return [];
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshModelGroupsAsync()
+        {
+            try
+            {
+                List<IGcodeGroup> groups = [];
+                if (!IsReady || ActivePrinter == null)
+                {
+                    Groups = [.. groups];
+                    return;
+                }
+
+                string currentPrinter = ActivePrinter.Slug;
+                if (string.IsNullOrEmpty(currentPrinter)) return;
+
+                groups = await GetModelGroupsAsync(path: currentPrinter).ConfigureAwait(false);
+                Groups = [.. groups];
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                Groups = [];
+            }
+        }
         public async Task<bool> AddModelGroupAsync(IGcodeGroup? group) => await AddModelGroupAsync(group?.Name);
 
         public async Task<bool> AddModelGroupAsync(string? groupName)
@@ -480,78 +620,6 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<List<IGcodeGroup>> GetModelGroupsAsync()
-        {
-            IRestApiRequestRespone? result = null;
-            List<IGcodeGroup> resultObject = [];
-
-            string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
-
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
-                result = await SendRestApiRequestAsync(
-                       requestTargetUri: targetUri,
-                       method: Method.Post,
-                       command: "listModelGroups",
-                       jsonObject: null,
-                       authHeaders: AuthHeaders
-                       )
-                    .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api, 
-                   command: "listModelGroups", 
-                   printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                RepetierModelGroups? info = GetObjectFromJson<RepetierModelGroups>(result?.Result);
-                return 
-                    info is not null && info.GroupNames is not null ? 
-                    [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(String),
-                    Message = jecx.Message,
-                });
-                return [];
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
-            }
-        }
-        public async Task RefreshModelGroupsAsync()
-        {
-            try
-            {
-                List<IGcodeGroup> groups = [];
-                if (!IsReady || ActivePrinter == null)
-                {
-                    Groups = [.. groups];
-                    return;
-                }
-
-                string currentPrinter = ActivePrinter.Slug;
-                if (string.IsNullOrEmpty(currentPrinter)) return;
-
-                RepetierModelGroups? result = await GetModelGroupsAsync(currentPrinter).ConfigureAwait(false);
-                Groups = result is not null ? ([.. result.GroupNames.Select(g => new RepetierModelGroup() { Name = g })]) : ([.. groups]);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                Groups = [];
-            }
-        }
         #endregion
 
         #endregion

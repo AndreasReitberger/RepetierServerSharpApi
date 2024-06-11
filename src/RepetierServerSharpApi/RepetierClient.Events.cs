@@ -8,92 +8,11 @@ namespace AndreasReitberger.API.Repetier
     {
         #region EventHandlers
 
-        #region Debug
-        /*
-        public event EventHandler<RepetierIgnoredJsonResultsChangedEventArgs>? RepetierIgnoredJsonResultsChanged;
-        protected virtual void OnRepetierIgnoredJsonResultsChanged(RepetierIgnoredJsonResultsChangedEventArgs e)
-        {
-            RepetierIgnoredJsonResultsChanged?.Invoke(this, e);
-        }
-        */
-        #endregion
-
-        #region ServerConnectionState
-        /*
-        public event EventHandler<RepetierEventArgs> ServerWentOffline;
-        protected virtual void OnServerWentOffline(RepetierEventArgs e)
-        {
-            ServerWentOffline?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> ServerWentOnline;
-        protected virtual void OnServerWentOnline(RepetierEventArgs e)
-        {
-            ServerWentOnline?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierEventArgs> ServerUpdateAvailable;
-        protected virtual void OnServerUpdateAvailable(RepetierEventArgs e)
-        {
-            ServerUpdateAvailable?.Invoke(this, e);
-        }
-        */
-        #endregion
-
-        #region Errors
-        /*
-        public event EventHandler Error;
-        protected virtual void OnError()
-        {
-            Error?.Invoke(this, EventArgs.Empty);
-        }
-        protected virtual void OnError(ErrorEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(UnhandledExceptionEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(RepetierJsonConvertEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        public event EventHandler<RepetierRestEventArgs> RestApiError;
-        protected virtual void OnRestApiError(RepetierRestEventArgs e)
-        {
-            RestApiError?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierRestEventArgs> RestApiAuthenticationError;
-        protected virtual void OnRestApiAuthenticationError(RepetierRestEventArgs e)
-        {
-            RestApiAuthenticationError?.Invoke(this, e);
-        }
-        public event EventHandler<RepetierRestEventArgs> RestApiAuthenticationSucceeded;
-        protected virtual void OnRestApiAuthenticationSucceeded(RepetierRestEventArgs e)
-        {
-            RestApiAuthenticationSucceeded?.Invoke(this, e);
-        }
-
-        public event EventHandler<RepetierJsonConvertEventArgs> RestJsonConvertError;
-        protected virtual void OnRestJsonConvertError(RepetierJsonConvertEventArgs e)
-        {
-            RestJsonConvertError?.Invoke(this, e);
-        }
-        */
-        #endregion
-
         #region ServerStateChanges
 
-        /*
-        public event EventHandler<RepetierEventListeningChangedEventArgs> ListeningChanged;
-        protected virtual void OnListeningChangedEvent(RepetierEventListeningChangedEventArgs e)
-        {
-            ListeningChanged?.Invoke(this, e);
-        }
-        */
+        [Obsolete("Use SessionChanged from Core instead")]
         public new event EventHandler<RepetierEventSessionChangedEventArgs>? SessionChanged;
+        [Obsolete("Use OnSessionChanged from Core instead")]
         protected virtual void OnSessionChangedEvent(RepetierEventSessionChangedEventArgs e)
         {
             SessionChanged?.Invoke(this, e);
@@ -117,13 +36,17 @@ namespace AndreasReitberger.API.Repetier
             JobsStarted?.Invoke(this, e);
         }
 
+        [Obsolete("Use JobsChanged from Core instead")]
         public new event EventHandler<RepetierJobsChangedEventArgs>? JobsChanged;
+        [Obsolete("Use OnJobsChanged from Core instead")]
         protected virtual void OnJobsChangedEvent(RepetierJobsChangedEventArgs e)
         {
             JobsChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use JobFinished from Core instead")]
         public new event EventHandler<RepetierJobFinishedEventArgs>? JobFinished;
+        [Obsolete("Use OnJobFinished from Core instead")]
         protected virtual void OnJobFinished(RepetierJobFinishedEventArgs e)
         {
             JobFinished?.Invoke(this, e);
@@ -153,30 +76,29 @@ namespace AndreasReitberger.API.Repetier
             RepetierPrinterStateChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use GcodesChanged instead")]
         public event EventHandler<RepetierModelsChangedEventArgs>? RepetierModelsChanged;
+        [Obsolete("Use OnGcodesChanged instead")]
         protected virtual void OnRepetierModelsChangedEvent(RepetierModelsChangedEventArgs e)
         {
             RepetierModelsChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use GcodeGroupsChanged instead")]
         public event EventHandler<RepetierModelGroupsChangedEventArgs>? RepetierModelGroupsChanged;
+        [Obsolete("Use OnGcodeGroupsChanged instead")]
         protected virtual void OnRepetierModelGroupsChangedEvent(RepetierModelGroupsChangedEventArgs e)
         {
             RepetierModelGroupsChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use JobListChanged instead")]
         public event EventHandler<RepetierJobListChangedEventArgs>? RepetierJobListChanged;
+        [Obsolete("Use OnJobListChanged instead")]
         protected virtual void OnRepetierJobListChangedEvent(RepetierJobListChangedEventArgs e)
         {
             RepetierJobListChanged?.Invoke(this, e);
         }
-        /*
-        public event EventHandler<RepetierActivePrinterChangedEventArgs>? ActivePrinterChanged;
-        protected virtual void OnActivePrinterChangedEvent(RepetierActivePrinterChangedEventArgs e)
-        {
-            ActivePrinterChanged?.Invoke(this, e);
-        }
-        */
 
         public event EventHandler<RepetierWebCallActionsChangedEventArgs>? WebCallActionsChanged;
         protected virtual void OnWebCallActionsChangedEvent(RepetierWebCallActionsChangedEventArgs e)
@@ -186,7 +108,10 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Jobs & Queue
+
+        [Obsolete("Use ActivePrintImageChanged instead")]
         public event EventHandler<RepetierCurrentPrintImageChangedEventArgs>? RepetierCurrentPrintImageChanged;
+        [Obsolete("Use OnActivePrintImageChanged instead")]
         protected virtual void OnRepetierCurrentPrintImageChanged(RepetierCurrentPrintImageChangedEventArgs e)
         {
             RepetierCurrentPrintImageChanged?.Invoke(this, e);

@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
 
-    public class RepetierPrinterStateChangedEventArgs : RepetierEventArgs
+    public class RepetierPrinterStateChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public RepetierPrinterState? NewPrinterState { get; set; }

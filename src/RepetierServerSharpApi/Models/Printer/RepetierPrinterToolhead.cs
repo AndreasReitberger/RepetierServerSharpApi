@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Repetier.Enum;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -48,7 +47,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Json Ignore
 
         [JsonIgnore]
-        public RepetierToolState State { get => GetCurrentState(); }
+        public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.Other;
@@ -57,22 +56,21 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Methods
-        RepetierToolState GetCurrentState()
+        public Printer3dToolHeadState GetCurrentState()
         {
             if (Error > 1)
-                return RepetierToolState.Error;
+                return Printer3dToolHeadState.Error;
             else
             {
                 if (TempSet <= 0)
-                    return RepetierToolState.Idle;
+                    return Printer3dToolHeadState.Idle;
                 // Check if temperature is reached with a hysteresis
                 else if (TempSet > TempRead && Math.Abs(TempSet ?? 0 - TempRead ?? 0) > 2)
-                    return RepetierToolState.Heating;
+                    return Printer3dToolHeadState.Heating;
                 else
-                    return RepetierToolState.Ready;
+                    return Printer3dToolHeadState.Ready;
             }
         }
-
         public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object? data) => client.SetExtruderTemperatureAsync(command, data);
         #endregion
 

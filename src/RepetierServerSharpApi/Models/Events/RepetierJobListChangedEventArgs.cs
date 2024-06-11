@@ -1,10 +1,12 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
-using System.Collections.Generic;
+using AndreasReitberger.API.Print3dServer.Core.Events;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierJobListChangedEventArgs : RepetierEventArgs
+    [Obsolete("Use JobListChangedEventArgs instead")]
+    public class RepetierJobListChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public List<IPrint3dJob> NewJobList { get; set; } = [];

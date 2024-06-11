@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
+    [Obsolete("Use ListeningChangedEventArgs instead")]
     public class RepetierEventListeningChangedEventArgs : RepetierEventSessionChangedEventArgs
     {
         #region Properties

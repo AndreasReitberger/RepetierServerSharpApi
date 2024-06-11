@@ -23,6 +23,13 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
         double? done;
+        partial void OnDoneChanged(double? value)
+        {
+            if (value is not null)
+                DonePercentage = value / 100;
+            else
+                DonePercentage = 0;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
@@ -110,6 +117,7 @@ namespace AndreasReitberger.API.Repetier.Models
         {
             if (value is not null)
                 PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+            RemainingPrintTime = value > 0 ? value - PrintDurationTimeComp : 0;
         }
 
         [ObservableProperty, JsonIgnore]
@@ -118,6 +126,10 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printedTimeComp")]
         double? printDurationTimeComp;
+        partial void OnPrintDurationTimeCompChanged(double? value)
+        {
+            RemainingPrintTime = value > 0 ? PrintDuration - value : 0;
+        }
 
         [ObservableProperty, JsonIgnore]
         double? totalPrintDuration;
@@ -156,6 +168,9 @@ namespace AndreasReitberger.API.Repetier.Models
         double? filamentUsed;
 
         [ObservableProperty, JsonIgnore]
+        double? donePercentage;
+
+        [ObservableProperty, JsonIgnore]
         bool fileExists;
 
         [ObservableProperty, JsonIgnore]
@@ -164,10 +179,14 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         IGcodeMeta? meta;
 
-        #region JsonIgnore
+        [ObservableProperty, JsonIgnore]
+        double? remainingPrintTime;
 
+        #region JsonIgnore
+        /*
         [JsonIgnore]
         public double? RemainingPrintTime => PrintDuration > 0 ? PrintDuration - PrintDurationTimeComp : 0;
+        */
         #endregion
 
         #endregion

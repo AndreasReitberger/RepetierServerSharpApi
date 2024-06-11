@@ -9,7 +9,6 @@ using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -60,10 +59,10 @@ namespace AndreasReitberger.API.Repetier
         partial void OnSessionChanged(EventSession? value)
         {
             SessionId = Session?.Session ?? string.Empty;
-            OnSessionChangedEvent(new RepetierEventSessionChangedEventArgs()
+            OnSessionChangedEvent(new SessionChangedEventArgs()
             {
                 CallbackId = Session?.CallbackId ?? -1,
-                Sesson = value,
+                Session = value?.Session,
                 SessionId = value?.Session
             });
         }
@@ -94,7 +93,7 @@ namespace AndreasReitberger.API.Repetier
             OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
             {
                 RepetierMessages = [.. value],
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -111,7 +110,7 @@ namespace AndreasReitberger.API.Repetier
             OnWebCallActionsChangedEvent(new RepetierWebCallActionsChangedEventArgs()
             {
                 NewWebCallActions = [.. value],
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -135,7 +134,7 @@ namespace AndreasReitberger.API.Repetier
             OnRepetierPrinterConfigChangedEvent(new RepetierPrinterConfigChangedEventArgs()
             {
                 NewConfiguration = value,
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -150,7 +149,7 @@ namespace AndreasReitberger.API.Repetier
             OnRepetierPrinterStateChangedEvent(new RepetierPrinterStateChangedEventArgs()
             {
                 NewPrinterState = value,
-                SessonId = SessionId,
+                SessionId = SessionId,
                 CallbackId = -1,
                 Printer = GetActivePrinterSlug(),
             });
@@ -164,7 +163,7 @@ namespace AndreasReitberger.API.Repetier
         {
             OnPrintInfosChangedEvent(new RepetierActivePrintInfosChangedEventArgs()
             {
-                SessonId = SessionId,
+                SessionId = SessionId,
                 NewActivePrintInfos = [.. value],
                 Printer = GetActivePrinterSlug(),
             });
@@ -292,7 +291,7 @@ namespace AndreasReitberger.API.Repetier
                     AlwaysMultipartFormData = true,
                     RequestFormat = DataFormat.Json,
                     Method = Method.Get,
-                    Timeout = timeout,
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
                 if (!string.IsNullOrEmpty(ApiKey))
                 {
@@ -347,7 +346,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     RequestFormat = DataFormat.None,
                     Method = Method.Get,
-                    Timeout = timeout
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
 
                 request.AddParameter("q", "jobs");
@@ -481,98 +480,6 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        #endregion
-
-        #region Models
-        async Task<RepetierModelList?> GetModelListInfoResponeAsync(string printerName)
-        {
-            IRestApiRequestRespone? result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "listModels",
-                   jsonObject: null,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listModels",
-                   printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                RepetierModelList? list = GetObjectFromJson<RepetierModelList>(result?.Result);
-                await UpdateFreeSpaceAsync().ConfigureAwait(false);
-
-                return list;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierModelList),
-                    Message = jecx.Message,
-                });
-                return new RepetierModelList();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelList();
-            }
-        }
-        #endregion
-
-        #region ModelGroups
-        async Task<RepetierModelGroups?> GetModelGroupsAsync(string printerName)
-        {
-            IRestApiRequestRespone? result = null;
-            try
-            {
-                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
-                result = await SendRestApiRequestAsync(
-                   requestTargetUri: targetUri,
-                   method: Method.Post,
-                   command: "listModelGroups",
-                   jsonObject: null,
-                   authHeaders: AuthHeaders
-                   )
-                .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listModelGroups",
-                   printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJson<RepetierModelGroups>(result?.Result);
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(RepetierModelGroups),
-                    Message = jecx.Message,
-                });
-                return new RepetierModelGroups();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new RepetierModelGroups();
             }
         }
 
@@ -1224,7 +1131,7 @@ namespace AndreasReitberger.API.Repetier
                 RestRequest request = new(string.Format("/printer/model/{2}", ServerAddress, Port, printerName.Replace(" ", "_")))
                 {
                     Method = Method.Post,
-                    Timeout = timeout,
+                    Timeout = TimeSpan.FromMilliseconds(timeout),
                     AlwaysMultipartFormData = true,
                 };
 
@@ -2615,7 +2522,7 @@ namespace AndreasReitberger.API.Repetier
                 request.AddParameter("apikey", ApiKey);
                 request.RequestFormat = DataFormat.Json;
                 request.Method = Method.Get;
-                request.Timeout = timeout;
+                request.Timeout = TimeSpan.FromMilliseconds(timeout);
 
                 if (additionalParameters is not null)
                 {

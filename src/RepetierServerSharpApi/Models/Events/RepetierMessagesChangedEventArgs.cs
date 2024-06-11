@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
-    public class RepetierMessagesChangedEventArgs : RepetierEventArgs
+    public class RepetierMessagesChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public EventMessageChangedData? RepetierMessage { get; set; }
