@@ -3169,7 +3169,10 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 RepetierGpioListRespone? list = await GetGPIOListResponeAsync().ConfigureAwait(false);
-                return [.. list?.List];
+                if (list?.List is not null)
+                    return [.. list.List];
+                else
+                    return [];
             }
             catch (Exception exc)
             {
