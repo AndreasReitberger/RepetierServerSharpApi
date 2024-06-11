@@ -1,5 +1,8 @@
-﻿namespace AndreasReitberger.API.Repetier.Enum
+﻿using System;
+
+namespace AndreasReitberger.API.Repetier.Enum
 {
+    [Obsolete("Use Printer3dToolHeadState instead")]
     public enum RepetierToolState
     {
         Idle = 0,

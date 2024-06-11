@@ -5,7 +5,6 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,19 +34,19 @@ namespace AndreasReitberger.API.Repetier
 
                 // Reporting
                 Prog?.Report(0);
-                RepetierModelList? models = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
-                if (models is not null)
+                RepetierModelList? modelInfo = await GetModelListInfoResponeAsync(currentPrinter).ConfigureAwait(false);
+                if (modelInfo is not null)
                 {
-                    List<RepetierModel> modelList = models.Data;
+                    List<RepetierModel> modelList = modelInfo.Data;
                     if (modelList is not null)
                     {
-                        List<IGcode> Models = new(modelList);
+                        List<IGcode> models = new(modelList);
                         if (ImageType != GcodeImageType.None)
                         {
-                            int total = Models.Count;
+                            int total = models.Count;
                             for (int i = 0; i < total; i++)
                             {
-                                IGcode model = Models[i];
+                                IGcode model = models[i];
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
                                 // Load image depending on settings
@@ -83,7 +82,7 @@ namespace AndreasReitberger.API.Repetier
                         {
                             Prog?.Report(100);
                         }
-                        return Models;
+                        return models;
                     }
                 }
                 Prog?.Report(100);
@@ -96,7 +95,6 @@ namespace AndreasReitberger.API.Repetier
                 return [];
             }
         }
-
 
         async Task<RepetierModelList?> GetModelListInfoResponeAsync(string printerName)
         {

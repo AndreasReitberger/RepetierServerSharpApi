@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using AndreasReitberger.API.Print3dServer.Core.Events;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
+    //[Obsolete("Use JobStatusChangedEventArgs insead")]
     public class RepetierActivePrintInfosChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties

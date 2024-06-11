@@ -59,10 +59,10 @@ namespace AndreasReitberger.API.Repetier
         partial void OnSessionChanged(EventSession? value)
         {
             SessionId = Session?.Session ?? string.Empty;
-            OnSessionChangedEvent(new RepetierEventSessionChangedEventArgs()
+            OnSessionChangedEvent(new SessionChangedEventArgs()
             {
                 CallbackId = Session?.CallbackId ?? -1,
-                Sesson = value,
+                Session = value?.Session,
                 SessionId = value?.Session
             });
         }

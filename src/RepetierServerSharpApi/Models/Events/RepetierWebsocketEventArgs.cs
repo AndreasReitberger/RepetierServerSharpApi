@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using AndreasReitberger.API.Print3dServer.Core.Events;
+using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
+    [Obsolete("Use WebsocketEventArgs instead")]
     public class RepetierWebsocketEventArgs : Print3dBaseEventArgs
     {
         #region Properties
