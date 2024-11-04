@@ -117,7 +117,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
-                PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
             //RemainingPrintTime = value > 0 ? value - PrintDurationTimeComp : 0;
         }
 
@@ -142,7 +142,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnTotalPrintDurationChanged(double? value)
         {
             if (value is not null)
-                TotalPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                TotalPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
             RemainingPrintTime = value > 0 ? value - PrintDuration : 0;
         }
 
@@ -191,7 +191,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnRemainingPrintTimeChanged(double? value)
         {
             if (value is not null)
-                RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
         [ObservableProperty, JsonIgnore]
