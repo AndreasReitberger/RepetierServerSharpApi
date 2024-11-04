@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
-using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
 using Newtonsoft.Json;
 using System;
@@ -84,9 +83,18 @@ namespace AndreasReitberger.API.Repetier
                                     EventJobChangedData? eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
                                     if (eventJobsChanged is not null)
                                     {
+                                        /*
                                         OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                         {
                                             Data = eventJobsChanged,
+                                            CallbackId = PingCounter,
+                                            SessionId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                        */
+                                        OnJobListChangedEvent(new JobListChangedEventArgs()
+                                        {
+                                            NewJobList = [],
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
                                             Printer = obj.Printer,
@@ -98,9 +106,18 @@ namespace AndreasReitberger.API.Repetier
                                     EventJobFinishedData? eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
                                     if (eventJobFinished is not null)
                                     {
+                                        /*
                                         OnJobFinished(new RepetierJobFinishedEventArgs()
                                         {
                                             Job = eventJobFinished,
+                                            CallbackId = PingCounter,
+                                            SessionId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                        */
+                                        OnJobFinished(new JobFinishedEventArgs()
+                                        {
+                                            Job = new RepetierJobListItem() { PrintTime = eventJobFinished.Duration },
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
                                             Printer = obj.Printer,
@@ -313,9 +330,18 @@ namespace AndreasReitberger.API.Repetier
                                     EventJobChangedData? eventJobsChanged = GetObjectFromJson<EventJobChangedData>(jsonBody);
                                     if (eventJobsChanged is not null)
                                     {
+                                        /*
                                         OnJobsChangedEvent(new RepetierJobsChangedEventArgs()
                                         {
                                             Data = eventJobsChanged,
+                                            CallbackId = PingCounter,
+                                            SessionId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                        */
+                                        OnJobListChangedEvent(new JobListChangedEventArgs()
+                                        {
+                                            NewJobList = [],
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
                                             Printer = obj.Printer,
@@ -327,9 +353,18 @@ namespace AndreasReitberger.API.Repetier
                                     EventJobFinishedData? eventJobFinished = GetObjectFromJson<EventJobFinishedData>(jsonBody);
                                     if (eventJobFinished is not null)
                                     {
+                                        /*
                                         OnJobFinished(new RepetierJobFinishedEventArgs()
                                         {
                                             Job = eventJobFinished,
+                                            CallbackId = PingCounter,
+                                            SessionId = SessionId,
+                                            Printer = obj.Printer,
+                                        });
+                                        */
+                                        OnJobFinished(new JobFinishedEventArgs()
+                                        {
+                                            Job = new RepetierJobListItem() { PrintTime = eventJobFinished.Duration },
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
                                             Printer = obj.Printer,
