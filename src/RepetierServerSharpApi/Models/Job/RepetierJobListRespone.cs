@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("data")]
-        List<RepetierJobListItem> data = new();
+        List<RepetierJobListItem> data = [];
 
         #endregion
 
