@@ -113,7 +113,7 @@ namespace AndreasReitberger.API.Repetier.Models
         long printed;
 
         [ObservableProperty, JsonIgnore]
-        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
+        [NotifyPropertyChangedFor(nameof(PrintedTimeCompGeneralized))]
         [property: JsonProperty("printedTimeComp")]
         long? printedTimeComp;
 
