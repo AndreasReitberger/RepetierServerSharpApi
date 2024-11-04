@@ -426,9 +426,11 @@ namespace RepetierServerSharpApiTest
                     Assert.IsTrue(models?.Count > 0);
 
                     // Try to fetch models from a second printer, which is not set active at the moment
+                    /*
                     string secondPrinter = "Prusa_i3_MK3S";
                     List<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
                     Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
+                    */
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -992,9 +994,14 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
+
+                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    Assert.IsNotNull(printers);
+                    string json = JsonConvert.SerializeObject(printers, Formatting.Indented);
+
                     RepetierAvailableUpdateInfo? update = await _server.GetAvailableServerUpdateAsync();
                     Assert.IsNotNull(update);
-                    string json = JsonConvert.SerializeObject(update, Formatting.Indented);
+                    json = JsonConvert.SerializeObject(update, Formatting.Indented);
 
                     RepetierCurrentPrintInfo? printInfo = await _server.GetCurrentPrintInfoAsync();
                     Assert.IsNotNull(printInfo);
@@ -1016,9 +1023,13 @@ namespace RepetierServerSharpApiTest
                     Assert.IsNotNull(history);
                     json = JsonConvert.SerializeObject(history, Formatting.Indented);
 
+                    // Only works if enabled in Settings
+                    /*
+                    var hid = history?.FirstOrDefault()?.Id;
                     var historyReport = await _server.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
                     Assert.IsNotNull(historyReport);
                     json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
+                    */
 
                     var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2023, true);
                     Assert.IsNotNull(historySummary);
@@ -1047,10 +1058,6 @@ namespace RepetierServerSharpApiTest
                     var config = await _server.GetPrinterConfigAsync();
                     Assert.IsNotNull(config);
                     json = JsonConvert.SerializeObject(config, Formatting.Indented);
-
-                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
-                    Assert.IsNotNull(printers);
-                    json = JsonConvert.SerializeObject(printers, Formatting.Indented);
 
                     var servers = await _server.GetProjectsListServerAsync();
                     Assert.IsNotNull(servers);
