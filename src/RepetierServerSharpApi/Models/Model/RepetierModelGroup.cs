@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 
@@ -14,6 +15,10 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
         string name = string.Empty;
+        partial void OnNameChanged(string value)
+        {
+            DirectoryName = value;
+        }
 
         #region Interface
         [ObservableProperty, JsonIgnore]
@@ -26,7 +31,16 @@ namespace AndreasReitberger.API.Repetier.Models
         string root = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        double modified;
+        [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
+        double? modified;
+        partial void OnModifiedChanged(double? value)
+        {
+            if (value is not null)
+                ModifiedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        DateTime? modifiedGeneralized;
 
         [ObservableProperty, JsonIgnore]
         long size;
