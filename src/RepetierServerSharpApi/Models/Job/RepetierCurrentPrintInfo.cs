@@ -111,32 +111,39 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
-        [property: JsonProperty("printTime")]
+        //[property: JsonProperty("printTime")]
+        [property: JsonProperty("printedTimeComp")]
         double? printDuration;
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
                 PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
-            RemainingPrintTime = value > 0 ? value - PrintDurationTimeComp : 0;
+            //RemainingPrintTime = value > 0 ? value - PrintDurationTimeComp : 0;
         }
 
         [ObservableProperty, JsonIgnore]
         TimeSpan? printDurationGeneralized;
 
+        /*
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printedTimeComp")]
         double? printDurationTimeComp;
         partial void OnPrintDurationTimeCompChanged(double? value)
         {
-            RemainingPrintTime = value > 0 ? PrintDuration - value : 0;
+            RemainingPrintTime = value > 0 ? TotalPrintDuration - value : 0;
+            PrintDuration = PrintDurationTimeComp;
         }
+        */
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(TotalPrintDurationGeneralized))]
+        [property: JsonProperty("printTime")]
         double? totalPrintDuration;
         partial void OnTotalPrintDurationChanged(double? value)
         {
             if (value is not null)
                 TotalPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+            RemainingPrintTime = value > 0 ? value - PrintDuration : 0;
         }
 
         [ObservableProperty, JsonIgnore]
@@ -181,6 +188,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         double? remainingPrintTime;
+        partial void OnRemainingPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? remainingPrintTimeGeneralized;
 
         #region JsonIgnore
         /*
