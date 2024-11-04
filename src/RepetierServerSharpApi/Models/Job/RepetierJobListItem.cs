@@ -54,6 +54,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnIdentifierChanged(long value)
         {
             JobId = value.ToString();
+            Id = new Guid(value.ToString().PadLeft(32, '0'));
         }
 
         [ObservableProperty, JsonIgnore]
@@ -66,7 +67,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnPrintTimeChanged(double? value)
         {
             if (value is not null)
-                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
         [ObservableProperty, JsonIgnore]
         TimeSpan? printTimeGeneralized;
@@ -78,7 +79,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnLastPrintTimeChanged(double? value)
         {
             if (value is not null)
-                LastPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                LastPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
         [ObservableProperty, JsonIgnore]
@@ -120,7 +121,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnPrintedTimeCompChanged(long? value)
         {
             if (value is not null)
-                PrintedTimeCompGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+                PrintedTimeCompGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
         [ObservableProperty, JsonIgnore]
@@ -227,7 +228,6 @@ namespace AndreasReitberger.API.Repetier.Models
         long zMin;
 
         #region Interface, unused
-
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("created")]
