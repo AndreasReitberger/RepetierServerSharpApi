@@ -21,9 +21,24 @@ namespace AndreasReitberger.API.Repetier.Models
         [property: JsonProperty("analysed")]
         long analysed;
 
+        /*
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("created")]
         long created;
+        */
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("created")]
+        [NotifyPropertyChangedFor(nameof(CreatedGeneralized))]
+        double? created = 0;
+        partial void OnCreatedChanged(double? value)
+        {
+            if (value is not null)
+                CreatedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        DateTime? createdGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruderUsage")]
@@ -44,14 +59,26 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("group")]
         string group = string.Empty;
+        partial void OnGroupChanged(string value)
+        {
+            FilePath = value;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
         long identifier;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(LastPrintTimeGeneralized))]
         [property: JsonProperty("lastPrintTime")]
-        double lastPrintTime;
+        double? lastPrintTime;
+        partial void OnLastPrintTimeChanged(double? value)
+        {
+            LastPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? lastPrintTimeGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("layer")]
