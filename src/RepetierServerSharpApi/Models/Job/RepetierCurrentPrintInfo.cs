@@ -92,7 +92,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnStartTimeChanged(double? value)
         {
             if (value is not null)
-                StartTimeGeneralized = TimeBaseConvertHelper.FromDouble(value);
+                StartTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
         [ObservableProperty, JsonIgnore]
@@ -103,7 +103,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnEndTimeChanged(double? value)
         {
             if (value is not null)
-                EndTimeGeneralized = TimeBaseConvertHelper.FromDouble(value);
+                EndTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
         [ObservableProperty, JsonIgnore]

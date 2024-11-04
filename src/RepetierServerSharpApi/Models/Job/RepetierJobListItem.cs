@@ -2,7 +2,6 @@
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -18,9 +17,11 @@ namespace AndreasReitberger.API.Repetier.Models
         [property: JsonProperty("analysed")]
         long analysed;
 
+        /*
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("created")]
         long created;
+        */
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
@@ -59,8 +60,29 @@ namespace AndreasReitberger.API.Repetier.Models
         string jobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
+        [property: JsonProperty("printTime")]
+        double? printTime;
+        partial void OnPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? printTimeGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         [property: JsonProperty("lastPrintTime")]
-        double lastPrintTime;
+        double? lastPrintTime;
+        partial void OnLastPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                LastPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? lastPrintTimeGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("layer")]
@@ -87,16 +109,22 @@ namespace AndreasReitberger.API.Repetier.Models
         string notes = string.Empty;
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printTime")]
-        double printTime;
-
-        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printed")]
         long printed;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         [property: JsonProperty("printedTimeComp")]
-        long printedTimeComp;
+        long? printedTimeComp;
+
+        partial void OnPrintedTimeCompChanged(long? value)
+        {
+            if (value is not null)
+                PrintedTimeCompGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? printedTimeCompGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printerParam1")]
@@ -200,13 +228,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Interface, unused
 
+
         [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("created")]
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
         double? timeAdded = 0;
         partial void OnTimeAddedChanged(double? value)
         {
             if (value is not null)
-                TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+                TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
         [ObservableProperty, JsonIgnore]
@@ -218,7 +248,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnTimeInQueueChanged(double? value)
         {
             if (value is not null)
-                TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+                TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
         [ObservableProperty, JsonIgnore]
