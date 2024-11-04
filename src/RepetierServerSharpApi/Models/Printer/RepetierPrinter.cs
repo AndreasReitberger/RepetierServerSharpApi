@@ -1,5 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +15,10 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("active")]
         bool isActive;
+        partial void OnIsActiveChanged(bool value)
+        {
+            IsPrinting = true;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("analysed")]
@@ -23,6 +27,13 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
         double? done;
+        partial void OnDoneChanged(double? value)
+        {
+            if (value is not null)
+                PrintProgress = value / 100;
+            else
+                PrintProgress = 0;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job")]
@@ -76,17 +87,39 @@ namespace AndreasReitberger.API.Repetier.Models
         [property: JsonProperty("paused")]
         bool paused;
 
+        /*
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printStart")]
         double? printStart;
+        */
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         [property: JsonProperty("printTime")]
         double? printTime;
+        partial void OnPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+            if (value > 0)
+                RemainingPrintDuration = value * PrintProgress;
+        }
 
         [ObservableProperty, JsonIgnore]
+        TimeSpan? printTimeGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintedTimeCompGeneralized))]
         [property: JsonProperty("printedTimeComp")]
         double? printedTimeComp;
+        partial void OnPrintedTimeCompChanged(double? value)
+        {
+            if (value is not null)
+                PrintedTimeCompGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? printedTimeCompGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("repeat")]
@@ -102,17 +135,44 @@ namespace AndreasReitberger.API.Repetier.Models
         long? start;
         partial void OnStartChanged(long? value)
         {
-            PrintStarted = value;
+            //PrintStarted = value;
         }
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintStartedGeneralized))]
+        [property: JsonProperty("printStart")]
         double? printStarted = 0;
+        partial void OnPrintStartedChanged(double? value)
+        {
+            if (value is not null)
+                PrintStartedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
+        [ObservableProperty, JsonIgnore]
+        DateTime? printStartedGeneralized;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
         double? printDuration = 0;
+        partial void OnPrintDurationChanged(double? value)
+        {
+            if (value is not null)
+                PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
 
         [ObservableProperty, JsonIgnore]
+        TimeSpan? printDurationGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintDurationEstimatedGeneralized))]
         double? printDurationEstimated = 0;
+        partial void OnPrintDurationEstimatedChanged(double? value)
+        {
+            if (value is not null)
+                PrintDurationEstimatedGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? printDurationEstimatedGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("totalLines")]
@@ -143,9 +203,22 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         double? printProgress = 0;
+        partial void OnPrintProgressChanged(double? value)
+        {
+            if (value > 0)
+                RemainingPrintDuration = value * PrintTime;
+        }
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         double? remainingPrintDuration = 0;
+        partial void OnRemainingPrintDurationChanged(double? value)
+        {
+            if (value is not null)
+                RemainingPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? remainingPrintDurationGeneralized;
 
         [ObservableProperty, JsonIgnore]
         bool isPrinting = false;
