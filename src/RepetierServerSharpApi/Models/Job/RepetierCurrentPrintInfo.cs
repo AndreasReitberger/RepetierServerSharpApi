@@ -187,7 +187,8 @@ namespace AndreasReitberger.API.Repetier.Models
         IGcodeMeta? meta;
 
         [ObservableProperty, JsonIgnore]
-        double? remainingPrintTime;
+        [NotifyPropertyChangedFor(nameof(RemainingPrintTimeGeneralized))]
+        double ? remainingPrintTime;
         partial void OnRemainingPrintTimeChanged(double? value)
         {
             if (value is not null)

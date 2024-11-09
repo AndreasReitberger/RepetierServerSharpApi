@@ -17,12 +17,6 @@ namespace AndreasReitberger.API.Repetier.Models
         [property: JsonProperty("analysed")]
         long analysed;
 
-        /*
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("created")]
-        long created;
-        */
-
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("done")]
         double? done;
