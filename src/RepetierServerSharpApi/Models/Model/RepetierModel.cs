@@ -223,7 +223,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Interface, unused
 
         [ObservableProperty, JsonIgnore]
-        double modified;
+        double? modified;
 
         [ObservableProperty, JsonIgnore]
         string filePath = string.Empty;

@@ -95,14 +95,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
-        [property: JsonProperty("printTime")]
+        //[property: JsonProperty("printTime")]
         double? printTime;
         partial void OnPrintTimeChanged(double? value)
         {
             if (value is not null)
                 PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
-            if (value > 0)
-                RemainingPrintDuration = value * PrintProgress;
+            //if (value > 0)
+            //    RemainingPrintDuration = value * PrintProgress;
         }
 
         [ObservableProperty, JsonIgnore]
@@ -152,11 +152,14 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
+        [property: JsonProperty("printTime")]
         double? printDuration = 0;
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
                 PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+            if (value > 0)
+                RemainingPrintDuration = value * PrintProgress;
         }
 
         [ObservableProperty, JsonIgnore]
@@ -206,11 +209,12 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnPrintProgressChanged(double? value)
         {
             if (value > 0)
-                RemainingPrintDuration = value * PrintTime;
+                RemainingPrintDuration = value * printDuration;
+                //RemainingPrintDuration = value * PrintTime;
         }
 
         [ObservableProperty, JsonIgnore]
-        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
+        [NotifyPropertyChangedFor(nameof(RemainingPrintDurationGeneralized))]
         double? remainingPrintDuration = 0;
         partial void OnRemainingPrintDurationChanged(double? value)
         {

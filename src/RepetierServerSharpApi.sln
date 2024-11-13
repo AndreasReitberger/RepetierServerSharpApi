@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\common.props = ..\common.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Print3dServer.Core", "..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj", "{0DDB6C2B-E2C0-45C5-AF6A-DFD1186FF4AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,11 @@ Global
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DDB6C2B-E2C0-45C5-AF6A-DFD1186FF4AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DDB6C2B-E2C0-45C5-AF6A-DFD1186FF4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DDB6C2B-E2C0-45C5-AF6A-DFD1186FF4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DDB6C2B-E2C0-45C5-AF6A-DFD1186FF4AA}.Release|Any CPU.Build.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
