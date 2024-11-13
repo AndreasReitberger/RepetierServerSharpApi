@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
@@ -625,8 +626,8 @@ namespace AndreasReitberger.API.Repetier
                 if (IsRefreshing) return;
                 IsRefreshing = true;
                 //await RefreshPrinterListAsync();
-                List<Task> task = new()
-                {
+                List<Task> task =
+                [
                     CheckForServerUpdateAsync(),
                     RefreshDiskSpaceAsync(),
                     RefreshModelGroupsAsync(),
@@ -639,7 +640,7 @@ namespace AndreasReitberger.API.Repetier
                     RefreshWebCallsAsync(),
                     RefreshGPIOListAsync(),
                     RefreshJobListAsync(),
-                };
+                ];
                 await Task.WhenAll(task).ConfigureAwait(false);
                 if (!InitialDataFetched)
                     InitialDataFetched = true;
@@ -2532,18 +2533,7 @@ namespace AndreasReitberger.API.Repetier
                     }
                 }
                 Uri? fullUrl = restClient?.BuildUri(request);
-
-                // Workaround, because the RestClient returns bad requests
                 return await DownloadFileFromUriAsync(fullUrl).ConfigureAwait(false);
-
-                /*
-                CancellationTokenSource cts = new(timeout);
-                byte[] respone = await restClient.DownloadDataAsync(request, cts.Token)
-                    .ConfigureAwait(false)
-                    ;
-
-                return respone;
-                */
             }
             catch (Exception exc)
             {
@@ -2556,10 +2546,14 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 if (uri is null) return null;
-                // Workaround, because the RestClient returns bad requests
+                using HttpClient httpClient = new();
+                byte[] data = await httpClient.GetByteArrayAsync(uri);
+                return data;
+                /*
                 using WebClient client = new();
                 byte[] bytes = await client.DownloadDataTaskAsync(uri);
                 return bytes;
+                */
             }
             catch (Exception exc)
             {

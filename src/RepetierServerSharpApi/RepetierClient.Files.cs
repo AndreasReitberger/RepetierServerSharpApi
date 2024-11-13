@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier
@@ -295,6 +296,116 @@ namespace AndreasReitberger.API.Repetier
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Downloads the file by using a <c>HttpClient</c> instead of the rest api.
+        /// </summary>
+        /// <param name="fid">The file id to be downloaded</param>
+        /// <returns>File as <c>byte[]</c></returns>
+        public async Task<byte[]?> DownloadGcodeAsync(string fid)
+        {
+            try
+            {
+#if NET6_0_OR_GREATER
+                ArgumentNullException.ThrowIfNull(fid, nameof(fid));
+#endif
+                // Example: http://IP/printer/model/PRINTER?a=download&id=FILEID
+                string uri = $"{FullWebAddress}/printer/model/{ActivePrinter?.Name.Replace(" ", "_")}?a=download&id={fid}";
+                byte[]? file = await DownloadFileFromUriAsync(uri)
+                    .ConfigureAwait(false)
+                    ;
+                return file;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Downloads the file by using a <c>HttpClient</c> instead of the rest api.
+        /// </summary>
+        /// <param name="gcode">The file to be downloaded</param>
+        /// <returns>File as <c>byte[]</c></returns>
+        public Task<byte[]?> DownloadGcodeAsync(IGcode gcode)
+            => DownloadGcodeAsync(fid: $"{gcode.Identifier}");
+
+        /// <summary>
+        /// Downloads the gocde file as string by its file Id.
+        /// </summary>
+        /// <param name="fileId">The file Id to be downloaded</param>
+        /// <param name="printerName">The printer name (if not provided, ActivePrinter is used)</param>
+        /// <returns>File as <c>byte[]</c></returns>
+        public async Task<string?> DownloadGcodeAsync(string fileId, string printerName = "")
+        {
+            IRestApiRequestRespone? result = null;
+            string resultString = string.Empty;
+            string? resultObject = null;
+
+            string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
+            if (string.IsNullOrEmpty(currentPrinter))
+            {
+                return resultObject;
+            }
+            try
+            {
+                if (!IsReady)
+                {
+                    return null;
+                }
+                string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Model}/{currentPrinter}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "download",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       urlSegments: new() {{ "id", $"{fileId}" } }
+                       )
+                    .ConfigureAwait(false);
+                return result?.Result;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = resultString,
+                    Message = jecx.Message,
+                });
+                return null;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Downloads the gocde file as string.
+        /// </summary>
+        /// <param name="gcode">The file to be downloaded</param>
+        /// <param name="printerName">The printer name (if not provided, ActivePrinter is used)</param>
+        /// <returns>File as <c>byte[]</c></returns>
+        public Task<string?> DownloadGcodeAsync(IGcode gcode, string printerName = "")
+            => DownloadGcodeAsync(fileId: $"{gcode.Identifier}", printerName: printerName);
+
+        /// <summary>
+        /// Downloads the gocde file as text and converts it with the provided encoding.
+        /// </summary>
+        /// <param name="gcode">The gcode file for the download</param>
+        /// <param name="encoding">The encoding, default is <c>Encoding.Default</c></param>
+        /// <param name="printerName">The printer name (if not provided, ActivePrinter is used)</param>
+        /// <returns>File as <c>byte[]</c></returns>
+        public async Task<byte[]?> DownloadGcodeAsync(IGcode gcode, Encoding? encoding = null, string printerName = "")
+        {
+            string? resultString = string.Empty;
+            encoding ??= Encoding.Default;
+            resultString = await DownloadGcodeAsync(gcode, printerName).ConfigureAwait(false);
+            return resultString is not null ? encoding?.GetBytes(resultString) : null;
         }
         #endregion
 
