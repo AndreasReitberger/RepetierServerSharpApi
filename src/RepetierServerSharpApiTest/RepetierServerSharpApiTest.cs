@@ -1086,5 +1086,42 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
+
+        [TestMethod]
+        public async Task DownloadGcodeTestAsync()
+        {
+            try
+            {
+                RepetierClient _server = new(_host, _api, _port, _ssl);
+                _server.Error += (o, e) =>
+                {
+                    Assert.Fail(e.ToString());
+                };
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    if (_server.ActivePrinter == null)
+                        await _server.SetPrinterActiveAsync(0, true);
+
+
+                    List<IGcode> files = await _server.GetFilesAsync();
+                    Assert.IsNotNull(files);
+
+                    byte[] file = await _server.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
+                    Assert.IsTrue(file.Length > 0);
+
+                    byte[] file2 = await _server.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
+                    Assert.IsTrue(file2.Length > 0);
+
+                    Assert.IsTrue(file.Length == file2.Length);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
     }
 }
