@@ -273,7 +273,8 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Download
-        public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000)
+ 
+        public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000, string? targetUri = "dyn/render_image")
         {
             try
             {
@@ -287,10 +288,11 @@ namespace AndreasReitberger.API.Repetier
                 {
                     UpdateRestClientInstance();
                 }
-                RestRequest request = new("dyn/render_image")
+                RestRequest request = new(targetUri ??= "dyn/render_image")
                 {
                     AlwaysMultipartFormData = true,
-                    RequestFormat = DataFormat.Json,
+                    RequestFormat = DataFormat.None,
+                    //RequestFormat = DataFormat.Json,
                     Method = Method.Get,
                     Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
@@ -308,20 +310,9 @@ namespace AndreasReitberger.API.Repetier
                 Uri? fullUrl = restClient?.BuildUri(request);
                 if (fullUrl is null) return resultObject;
 
-                // Workaround, because the RestClient returns bad requests
-                using WebClient client = new();
-                byte[]? bytes = await client.DownloadDataTaskAsync(fullUrl);
+                HttpClient ??= new();
+                byte[]? bytes = await HttpClient.GetByteArrayAsync(fullUrl);
                 return bytes ?? resultObject;
-
-                /*
-                CancellationTokenSource cts = new(timeout);
-                byte[] respone = await restClient.DownloadDataAsync(request, cts.Token).ConfigureAwait(false);
-                if(respone?.Length == 0)
-                {
-
-                }
-                return respone;
-                */
             }
             catch (Exception exc)
             {
@@ -330,26 +321,33 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<byte[]> GetDynamicRenderImageByJobIdAsync(long jobId, bool thumbnail, int timeout = 20000)
+        public async Task<byte[]> GetDynamicRenderImageByJobIdAsync(long jobId, bool thumbnail, int timeout = 20000, string? targetUri = "dyn/render_image")
         {
             try
             {
                 byte[] resultObject = [];
-
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
+                // http://repetierserver.local/dyn/render_image?q=models&id=158&slug=Prusa_i3_MK3S&t=m
+                // https://www.repetier-server.com/manuals/programming/API/index.html
                 if (restClient == null)
                 {
                     UpdateRestClientInstance();
                 }
-                RestRequest request = new("dyn/render_image")
+                RestRequest request = new(targetUri ??= "dyn/render_image")
                 {
+                    AlwaysMultipartFormData = true,
                     RequestFormat = DataFormat.None,
+                    //RequestFormat = DataFormat.Json,
                     Method = Method.Get,
                     Timeout = TimeSpan.FromMilliseconds(timeout),
                 };
-
+                if (!string.IsNullOrEmpty(ApiKey))
+                {
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
+                }
+                //request.AddHeader("Content-Type", "image/png");
                 request.AddParameter("q", "jobs");
                 request.AddParameter("id", jobId);
                 request.AddParameter("slug", currentPrinter);
@@ -359,20 +357,9 @@ namespace AndreasReitberger.API.Repetier
                 Uri? fullUrl = restClient?.BuildUri(request);
                 if (fullUrl is null) return resultObject;
 
-                // Workaround, because the RestClient returns bad requests
-                using WebClient client = new();
-                byte[]? bytes = await client.DownloadDataTaskAsync(fullUrl);
-                if (bytes?.Length == 0)
-                {
-
-                }
+                HttpClient ??= new();
+                byte[]? bytes = await HttpClient.GetByteArrayAsync(fullUrl);
                 return bytes ?? resultObject;
-
-                /*
-                CancellationTokenSource cts = new(timeout);
-                byte[] respone = await restClient.DownloadDataAsync(request, cts.Token).ConfigureAwait(false);
-                return respone;
-                */
             }
             catch (Exception exc)
             {
@@ -2546,14 +2533,9 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 if (uri is null) return null;
-                using HttpClient httpClient = new();
-                byte[] data = await httpClient.GetByteArrayAsync(uri);
+                HttpClient ??= new();
+                byte[] data = await HttpClient.GetByteArrayAsync(uri);
                 return data;
-                /*
-                using WebClient client = new();
-                byte[] bytes = await client.DownloadDataTaskAsync(uri);
-                return bytes;
-                */
             }
             catch (Exception exc)
             {

@@ -44,6 +44,7 @@ namespace AndreasReitberger.API.Repetier
                         List<IGcode> models = new(modelList);
                         if (ImageType != GcodeImageType.None)
                         {
+                            int lastProgres = -1;
                             int total = models.Count;
                             for (int i = 0; i < total; i++)
                             {
@@ -70,7 +71,12 @@ namespace AndreasReitberger.API.Repetier
                                     float progress = ((float)i / total) * 100f;
                                     if (i < total - 1)
                                     {
-                                        Prog.Report(Convert.ToInt32(progress));
+                                        if (Math.Round(progress, 0) > lastProgres)
+                                        {
+                                            int reportedProgress = Convert.ToInt32(progress);
+                                            Prog.Report(reportedProgress);
+                                            lastProgres = reportedProgress;
+                                        }
                                     }
                                     else
                                     {
@@ -134,13 +140,17 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<Dictionary<long, byte[]>?> GetModelImagesAsync(ObservableCollection<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail)
+        public async Task<Dictionary<long, byte[]>?> GetModelImagesAsync(
+            IList<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int>? Prog = null
+            )
         {
             string currentPrinter = GetActivePrinterSlug();
-            if (string.IsNullOrEmpty(currentPrinter)) return null;
+            if (string.IsNullOrEmpty(currentPrinter) || imageType == GcodeImageType.None) return null;
             Dictionary<long, byte[]> result = [];
             try
             {
+                int lastProgres = -1;
+                int total = models.Count;
                 for (int i = 0; i < models.Count; i++)
                 {
                     IGcode model = models[i];
@@ -152,15 +162,94 @@ namespace AndreasReitberger.API.Repetier
                         _ => throw new NotSupportedException($"The image type '{imageType}' is not supported here."),
                     };
                     result.Add(model.Identifier, image);
+                    // Update progress
+                    if (Prog is not null)
+                    {
+                        float progress = ((float)i / total) * 100f;
+                        if (i < total - 1)
+                        {
+                            if (Math.Round(progress, 0) > lastProgres)
+                            {
+                                int reportedProgress = Convert.ToInt32(progress);
+                                Prog.Report(reportedProgress);
+                                lastProgres = reportedProgress;
+                            }
+                        }
+                        else
+                        {
+                            Prog.Report(100);
+                        }
+                    }
                 }
+                //Prog?.Report(100);
                 return result;
             }
             catch (Exception exc)
             {
+                Prog?.Report(100);
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return null;
             }
         }
+
+        public async Task<IList<IGcode>?> UpdateModelImagesAsync(
+            IList<IGcode> models, GcodeImageType imageType = GcodeImageType.Thumbnail, IProgress<int>? Prog = null
+            )
+        {
+            string currentPrinter = GetActivePrinterSlug();
+            if (string.IsNullOrEmpty(currentPrinter) || imageType == GcodeImageType.None) return null;
+            IList<IGcode> result = models;
+            try
+            {
+                int lastProgres = -1;
+                int total = models.Count;
+                for (int i = 0; i < models.Count; i++)
+                {
+                    IGcode model = models[i];
+                    byte[] image = [];
+                    switch (imageType)
+                    {
+                        case GcodeImageType.Thumbnail:
+                            image = await GetDynamicRenderImageAsync(model.Identifier, true).ConfigureAwait(false);
+                            model.Thumbnail = image;
+                            break;
+                        case GcodeImageType.Image:
+                            image = await GetDynamicRenderImageAsync(model.Identifier, false).ConfigureAwait(false);
+                            model.Image = image;
+                            break;
+                        default:
+                            throw new NotSupportedException($"The image type '{imageType}' is not supported here.");
+                    }
+                    // Update progress
+                    if (Prog is not null)
+                    {
+                        float progress = ((float)i / total) * 100f;
+                        if (i < total - 1)
+                        {
+                            if (Math.Round(progress, 0) > lastProgres)
+                            {
+                                int reportedProgress = Convert.ToInt32(progress);
+                                Prog.Report(reportedProgress);
+                                lastProgres = reportedProgress;
+                            }
+                        }
+                        else
+                        {
+                            Prog.Report(100);
+                        }
+                    }
+                }
+                //Prog?.Report(100);
+                return result;
+            }
+            catch (Exception exc)
+            {
+                Prog?.Report(100);
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return null;
+            }
+        }
+
         public async Task<bool> DeleteModelFromServerAsync(IGcode model)
         {
             string currentPrinter = GetActivePrinterSlug();

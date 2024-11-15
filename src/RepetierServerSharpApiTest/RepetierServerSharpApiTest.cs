@@ -5,9 +5,11 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -422,15 +424,39 @@ namespace RepetierServerSharpApiTest
                     if (_server.ActivePrinter == null)
                         await _server.SetPrinterActiveAsync(0, true);
 
-                    List<IGcode> models = await _server.GetModelsAsync();
+                    IProgress<int> progress = new Progress<int>(prog =>
+                        Debug.WriteLine($"Done: {prog:N0}")
+                    );
+                    Stopwatch sw = Stopwatch.StartNew();
+                    List<IGcode> models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
                     Assert.IsTrue(models?.Count > 0);
 
-                    // Try to fetch models from a second printer, which is not set active at the moment
-                    /*
-                    string secondPrinter = "Prusa_i3_MK3S";
-                    List<IGcode> modelsSecondPrinter = await _server.GetModelsAsync(secondPrinter);
-                    Assert.IsTrue(modelsSecondPrinter?.Count > 0 && models.Count != modelsSecondPrinter.Count);
-                    */
+                    sw.Stop();
+                    Debug.WriteLine($"Time elapsed: {sw.Elapsed} (without images)");
+
+                    sw = Stopwatch.StartNew();
+                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Thumbnail, progress);
+                    Assert.IsTrue(models?.Count > 0);
+
+                    sw.Stop();
+                    Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with thumbnails)");
+
+                    sw = Stopwatch.StartNew();
+                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    Assert.IsTrue(models?.Count > 0);
+
+                    sw.Stop();
+                    Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with images)");
+
+                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
+                    Assert.IsTrue(models?.Count > 0);
+
+                    List<IGcode> filesCollection = [.. models.Take(25)];
+                    Dictionary<long, byte[]>? images = await _server.GetModelImagesAsync(filesCollection, imageType: AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    Assert.IsTrue(images?.Select(kp => kp.Value).Any(image => image.Length > 0));
+
+                    IList<IGcode>? updatedModels = await _server.UpdateModelImagesAsync(filesCollection, AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    Assert.IsTrue(updatedModels?.Select(model => model.Image).Any(image => image?.Length > 0));
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
