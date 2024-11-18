@@ -209,7 +209,7 @@ namespace AndreasReitberger.API.Repetier.Models
         partial void OnPrintProgressChanged(double? value)
         {
             if (value > 0)
-                RemainingPrintDuration = value * printDuration;
+                RemainingPrintDuration = value * PrintDuration;
                 //RemainingPrintDuration = value * PrintTime;
         }
 

@@ -1133,11 +1133,11 @@ namespace RepetierServerSharpApiTest
                     List<IGcode> files = await _server.GetFilesAsync();
                     Assert.IsNotNull(files);
 
-                    byte[] file = await _server.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
-                    Assert.IsTrue(file.Length > 0);
+                    byte[]? file = await _server.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
+                    Assert.IsTrue(file?.Length > 0);
 
-                    byte[] file2 = await _server.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
-                    Assert.IsTrue(file2.Length > 0);
+                    byte[]? file2 = await _server.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
+                    Assert.IsTrue(file2?.Length > 0);
 
                     Assert.IsTrue(file.Length == file2.Length);
                 }

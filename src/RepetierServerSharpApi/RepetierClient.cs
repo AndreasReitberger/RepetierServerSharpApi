@@ -284,7 +284,7 @@ namespace AndreasReitberger.API.Repetier
 
                 // http://repetierserver.local/dyn/render_image?q=models&id=158&slug=Prusa_i3_MK3S&t=m
                 // https://www.repetier-server.com/manuals/programming/API/index.html
-                if (restClient == null)
+                if (RestClient == null)
                 {
                     UpdateRestClientInstance();
                 }
@@ -307,7 +307,7 @@ namespace AndreasReitberger.API.Repetier
                 request.AddParameter("t", thumbnail ? "s" : "l");
                 request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
 
-                Uri? fullUrl = restClient?.BuildUri(request);
+                Uri? fullUrl = RestClient?.BuildUri(request);
                 if (fullUrl is null) return resultObject;
 
                 HttpClient ??= new();
@@ -331,7 +331,7 @@ namespace AndreasReitberger.API.Repetier
 
                 // http://repetierserver.local/dyn/render_image?q=models&id=158&slug=Prusa_i3_MK3S&t=m
                 // https://www.repetier-server.com/manuals/programming/API/index.html
-                if (restClient == null)
+                if (RestClient == null)
                 {
                     UpdateRestClientInstance();
                 }
@@ -354,7 +354,7 @@ namespace AndreasReitberger.API.Repetier
                 request.AddParameter("t", thumbnail ? "s" : "l");
                 request.AddParameter("apikey", ApiKey, ParameterType.QueryString);
 
-                Uri? fullUrl = restClient?.BuildUri(request);
+                Uri? fullUrl = RestClient?.BuildUri(request);
                 if (fullUrl is null) return resultObject;
 
                 HttpClient ??= new();
@@ -1112,7 +1112,7 @@ namespace AndreasReitberger.API.Repetier
                 FileInfo info = new(filePath);
                 if (!info.Exists) return RepetierErrorCodes.FILE_NOT_FOUND;
 
-                if (restClient == null)
+                if (RestClient == null)
                 {
                     UpdateRestClientInstance();
                 }
@@ -1127,9 +1127,9 @@ namespace AndreasReitberger.API.Repetier
                 request.AddFile(Path.GetFileNameWithoutExtension(filePath), filePath);
 
                 CancellationTokenSource cts = new(timeout);
-                if (restClient is not null)
+                if (RestClient is not null)
                 {
-                    RestResponse? respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
+                    RestResponse? respone = await RestClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
 
                     if (respone.StatusCode == HttpStatusCode.OK)
                     {
@@ -2502,7 +2502,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                if (restClient == null)
+                if (RestClient == null)
                 {
                     UpdateRestClientInstance();
                 }
@@ -2519,7 +2519,7 @@ namespace AndreasReitberger.API.Repetier
                         request.AddParameter(parameter.Key, parameter.Value.ToString());
                     }
                 }
-                Uri? fullUrl = restClient?.BuildUri(request);
+                Uri? fullUrl = RestClient?.BuildUri(request);
                 return await DownloadFileFromUriAsync(fullUrl).ConfigureAwait(false);
             }
             catch (Exception exc)
