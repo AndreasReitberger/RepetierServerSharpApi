@@ -36,6 +36,12 @@
                 return this;
             }
 
+            public RepetierConnectionBuilder WithPingInterval(int interval = 5)
+            {
+                _client.PingInterval = interval;
+                return this;
+            }
+
             #endregion
         }
     }

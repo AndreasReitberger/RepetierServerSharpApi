@@ -758,8 +758,8 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                Dictionary<DateTime, string> websocketMessages = new();
-                Dictionary<string, string> unkownJsonRespones = new();
+                Dictionary<DateTime, string> websocketMessages = [];
+                Dictionary<string, string> unkownJsonRespones = [];
                 RepetierClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 await _server.SetPrinterActiveAsync();

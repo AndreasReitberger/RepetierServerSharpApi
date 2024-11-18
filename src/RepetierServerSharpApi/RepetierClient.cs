@@ -202,14 +202,12 @@ namespace AndreasReitberger.API.Repetier
         #region Destructor
         ~RepetierClient()
         {
-            if (WebSocket is not null)
+            /* Done in Dtor of Print3dServerClient
+            if (WebSocket is not null && WebSocket.IsRunning)
             {
-                /* SharpWebSocket
-                if (WebSocket.ReadyState == WebSocketState.Open)
-                    WebSocket.Close();
-                WebSocket = null;
-                */
+                WebSocket.Stop(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, $"{nameof(RepetierClient)} was disposed...");
             }
+            */
             WebSocketMessageReceived -= Client_WebSocketMessageReceived;
         }
         #endregion
@@ -263,6 +261,7 @@ namespace AndreasReitberger.API.Repetier
         #region Misc
         void LoadDefaults()
         {
+            PingInterval = 5;
             Target = Print3dServerTarget.RepetierServer;
             ApiKeyRegexPattern = RegexHelper.RepetierServerProApiKey;
             WebSocketTarget = "/socket/";
