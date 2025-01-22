@@ -3,6 +3,8 @@ using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.JSON.Newtonsoft;
 using Newtonsoft.Json;
+using AndreasReitberger.API.REST;
+using AndreasReitberger.API.REST.Interfaces;
 
 namespace AndreasReitberger.API.Repetier
 {
@@ -11,10 +13,6 @@ namespace AndreasReitberger.API.Repetier
 
 #if DEBUG
         #region Debug
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        JsonSerializerSettings newtonsoftJsonSerializerSettings = DefaultNewtonsoftJsonSerializerSettings;
 
         public new static JsonSerializerSettings DefaultNewtonsoftJsonSerializerSettings = new()
         {

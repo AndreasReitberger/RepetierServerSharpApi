@@ -5,6 +5,8 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
+using AndreasReitberger.API.REST.Events;
+using AndreasReitberger.API.REST.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -567,6 +569,7 @@ namespace AndreasReitberger.API.Repetier
         #region Public
 
         #region Proxy
+        [Obsolete("Use `SetProxy` instead")]
         public void SetProxyOld(bool secure, string address, int port, bool enable = true)
         {
             EnableProxy = enable;
@@ -579,7 +582,8 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
 
-        public void SetProxOldy(bool secure, string address, int port, string user = "", SecureString? password = null, bool enable = true)
+        [Obsolete("Use `SetProxy` instead")]
+        public void SetProxOldy(bool secure, string address, int port, string user = "", string? password = null, bool enable = true)
         {
             EnableProxy = enable;
             ProxyUserUsesDefaultCredentials = false;
