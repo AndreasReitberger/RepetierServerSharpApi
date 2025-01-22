@@ -5,11 +5,9 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -44,7 +42,7 @@ namespace RepetierServerSharpApiTest
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                 };
-                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                 var serializedString = System.Text.Json.JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
                 var serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
@@ -71,7 +69,7 @@ namespace RepetierServerSharpApiTest
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                 };
-                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                 var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
@@ -219,7 +217,7 @@ namespace RepetierServerSharpApiTest
                         TotalDiskSpace = 65621361616161,
                         IsMultiExtruder = true,
                     };
-                    RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                    RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                     xmlSerializer.Serialize(fileStream, RepetierClient.Instance);
                     Assert.IsTrue(File.Exists(Path.Combine(dir, "server.xml")));
@@ -805,7 +803,7 @@ namespace RepetierServerSharpApiTest
                     }
                 };
                 // Wait 30 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
+                CancellationTokenSource cts = new(new TimeSpan(0, 60, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     var duraton = DateTime.Now - start;
