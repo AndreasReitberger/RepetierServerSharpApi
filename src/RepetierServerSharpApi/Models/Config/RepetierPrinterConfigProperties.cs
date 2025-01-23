@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigProperties : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("firmwareuploader_board")]
-        long firmwareuploaderBoard;
+        [ObservableProperty]
+        
+        [JsonProperty("firmwareuploader_board")]
+        public partial long FirmwareuploaderBoard { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("firmwareuploader_extraPort")]
-        string firmwareuploaderExtraPort = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("firmwareuploader_extraPort")]
+        public partial string FirmwareuploaderExtraPort { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

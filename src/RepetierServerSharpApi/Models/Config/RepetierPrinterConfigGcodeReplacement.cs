@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigGcodeReplacement : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("comment")]
-        string comment = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("comment")]
+        public partial string Comment { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("expression")]
-        string expression = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("expression")]
+        public partial string Expression { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("script")]
-        string script = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("script")]
+        public partial string Script { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

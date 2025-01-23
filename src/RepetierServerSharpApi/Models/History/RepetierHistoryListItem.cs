@@ -6,90 +6,90 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierHistoryListItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("computedTime")]
+        [ObservableProperty]
+        
+        [JsonProperty("computedTime")]
+        public partial double ComputedTime { get; set; }
 
-        double computedTime;
+        [ObservableProperty]
+        
+        [JsonProperty("costs")]
+        public partial double Costs { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("costs")]
+        [ObservableProperty]
+        
+        [JsonProperty("endTime")]
+        public partial double EndTime { get; set; }
 
-        double costs;
+        [ObservableProperty]
+        
+        [JsonProperty("filament")]
+        public partial double Filament { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("endTime")]
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string Filename { get; set; } = string.Empty;
 
-        double endTime;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial long Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament")]
+        [ObservableProperty]
+        
+        [JsonProperty("month")]
+        public partial long Month { get; set; }
 
-        double filament;
+        [ObservableProperty]
+        
+        [JsonProperty("notes")]
+        public partial string Notes { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
+        [ObservableProperty]
+        
+        [JsonProperty("pauseTime")]
+        public partial double PauseTime { get; set; }
 
-        string filename = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("printerName")]
+        public partial string PrinterName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
+        [ObservableProperty]
+        
+        [JsonProperty("printerSlug")]
+        public partial string PrinterSlug { get; set; } = string.Empty;
 
-        long id;
+        [ObservableProperty]
+        
+        [JsonProperty("printerUUID")]
+        public partial string PrinterUuid { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("month")]
+        [ObservableProperty]
+        
+        [JsonProperty("report")]
+        public partial string Report { get; set; } = string.Empty;
 
-        long month;
+        [ObservableProperty]
+        
+        [JsonProperty("startTime")]
+        public partial double StartTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("notes")]
+        [ObservableProperty]
+        
+        [JsonProperty("status")]
+        public partial long Status { get; set; }
 
-        string notes = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("username")]
+        public partial string Username { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pauseTime")]
-
-        double pauseTime;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerName")]
-
-        string printerName = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerSlug")]
-
-        string printerSlug = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerUUID")]
-
-        string printerUuid = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("report")]
-
-        string report = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("startTime")]
-
-        double startTime;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-
-        long status;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("username")]
-
-        string username = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("year")]
-
-        long year;
+        [ObservableProperty]
+        
+        [JsonProperty("year")]
+        public partial long Year { get; set; }
         #endregion
 
         #region Overrides

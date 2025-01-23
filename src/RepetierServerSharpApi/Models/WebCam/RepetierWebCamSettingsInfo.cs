@@ -7,38 +7,49 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierWebCamSettingsInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        Guid id = Guid.Empty;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        bool isDefault = false;
+        [ObservableProperty]
+        
+        public partial bool IsDefault { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        bool autostart = false;
+        [ObservableProperty]
+        
+        public partial bool Autostart { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        RepetierWebcamType type = RepetierWebcamType.Dynamic;
+        [ObservableProperty]
+        
+        public partial RepetierWebcamType Type { get; set; } = RepetierWebcamType.Dynamic;
 
-        [ObservableProperty, JsonIgnore]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Slug { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        Guid serverId = Guid.Empty;
+        [ObservableProperty]
+        
+        public partial Guid ServerId { get; set; } = Guid.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        int camIndex = -1;
+        [ObservableProperty]
+        
+        public partial int CamIndex { get; set; } = -1;
 
-        [ObservableProperty, JsonIgnore]
-        int rotationAngle = 0;
+        [ObservableProperty]
+        
+        public partial int RotationAngle { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        int networkBufferTime = 150;
+        [ObservableProperty]
+        
+        public partial int NetworkBufferTime { get; set; } = 150;
 
-        [ObservableProperty, JsonIgnore]
-        int fileCachingTime = 1000;
+        [ObservableProperty]
+        
+        public partial int FileCachingTime { get; set; } = 1000;
 
         #endregion
 

@@ -8,25 +8,30 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printers")]
-        List<RepetierPrinterInfo> printers = [];
+        [ObservableProperty]
+        
+        [JsonProperty("printers")]
+        public partial List<RepetierPrinterInfo> Printers { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("servername")]
-        string servername = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("servername")]
+        public partial string Servername { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("serveruuid")]
-        Guid serveruuid;
+        [ObservableProperty]
+        
+        [JsonProperty("serveruuid")]
+        public partial Guid Serveruuid { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version")]
-        string version = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("version")]
+        public partial string Version { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

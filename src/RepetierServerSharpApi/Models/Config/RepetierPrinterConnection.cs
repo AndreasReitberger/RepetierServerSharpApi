@@ -5,49 +5,60 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("compressCommunication")]
-        bool compressCommunication;
+        [ObservableProperty]
+        
+        [JsonProperty("compressCommunication")]
+        public partial bool CompressCommunication { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connectionMethod")]
-        long connectionMethod;
+        [ObservableProperty]
+        
+        [JsonProperty("connectionMethod")]
+        public partial long ConnectionMethod { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("continueAfterFastReconnect")]
-        bool continueAfterFastReconnect;
+        [ObservableProperty]
+        
+        [JsonProperty("continueAfterFastReconnect")]
+        public partial bool ContinueAfterFastReconnect { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ip")]
-        RepetierPrinterConnectionIp? ip;
+        [ObservableProperty]
+        
+        [JsonProperty("ip")]
+        public partial RepetierPrinterConnectionIp? Ip { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("lcdTimeMode")]
-        long lcdTimeMode;
+        [ObservableProperty]
+        
+        [JsonProperty("lcdTimeMode")]
+        public partial long LcdTimeMode { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("password")]
-        string password = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("password")]
+        public partial string Password { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pipe")]
-        RepetierPrinterConnectionPipe? pipe;
+        [ObservableProperty]
+        
+        [JsonProperty("pipe")]
+        public partial RepetierPrinterConnectionPipe? Pipe { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("powerOffIdleMinutes")]
-        long powerOffIdleMinutes;
+        [ObservableProperty]
+        
+        [JsonProperty("powerOffIdleMinutes")]
+        public partial long PowerOffIdleMinutes { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("powerOffMaxTemperature")]
-        long powerOffMaxTemperature;
+        [ObservableProperty]
+        
+        [JsonProperty("powerOffMaxTemperature")]
+        public partial long PowerOffMaxTemperature { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("resetScript")]
-        string resetScript = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("resetScript")]
+        public partial string ResetScript { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("serial")]
-        RepetierPrinterConnectionSerial? serial;
+        [ObservableProperty]
+        
+        [JsonProperty("serial")]
+        public partial RepetierPrinterConnectionSerial? Serial { get; set; }
         #endregion
 
         #region Overrides

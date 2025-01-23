@@ -6,81 +6,100 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfig : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
-        List<RepetierPrinterConfigButtonCommand> buttonCommands = [];
+        [ObservableProperty]
+        
+        [JsonProperty("buttonCommands", NullValueHandling = NullValueHandling.Ignore)]
+        public partial List<RepetierPrinterConfigButtonCommand> ButtonCommands { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connection")]
-        RepetierPrinterConnection? connection;
+        [ObservableProperty]
+        
+        [JsonProperty("connection")]
+        public partial RepetierPrinterConnection? Connection { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruders")]
-        List<RepetierPrinterConfigExtruder> extruders = [];
+        [ObservableProperty]
+        
+        [JsonProperty("extruders")]
+        public partial List<RepetierPrinterConfigExtruder> Extruders { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("fanPresets")]
-        List<RepetierPrinterConfigPreset> fanPresets = [];
+        [ObservableProperty]
+        
+        [JsonProperty("fanPresets")]
+        public partial List<RepetierPrinterConfigPreset> FanPresets { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flowPresets")]
-        List<RepetierPrinterConfigPreset> flowPresets = [];
+        [ObservableProperty]
+        
+        [JsonProperty("flowPresets")]
+        public partial List<RepetierPrinterConfigPreset> FlowPresets { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcodeReplacements")]
-        List<RepetierPrinterConfigGcodeReplacement> gcodeReplacements = [];
+        [ObservableProperty]
+        
+        [JsonProperty("gcodeReplacements")]
+        public partial List<RepetierPrinterConfigGcodeReplacement> GcodeReplacements { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("general")]
-        RepetierPrinterConfigGeneral? general;
+        [ObservableProperty]
+        
+        [JsonProperty("general")]
+        public partial RepetierPrinterConfigGeneral? General { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heatedBeds")]
-        List<RepetierPrinterConfigHeatedComponent> heatedBeds = [];
+        [ObservableProperty]
+        
+        [JsonProperty("heatedBeds")]
+        public partial List<RepetierPrinterConfigHeatedComponent> HeatedBeds { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heatedChambers")]
-        List<RepetierPrinterConfigHeatedComponent> heatedChambers = [];
+        [ObservableProperty]
+        
+        [JsonProperty("heatedChambers")]
+        public partial List<RepetierPrinterConfigHeatedComponent> HeatedChambers { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("movement")]
-        RepetierPrinterConfigMovement? movement;
+        [ObservableProperty]
+        
+        [JsonProperty("movement")]
+        public partial RepetierPrinterConfigMovement? Movement { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("properties")]
-        RepetierPrinterConfigProperties? properties;
+        [ObservableProperty]
+        
+        [JsonProperty("properties")]
+        public partial RepetierPrinterConfigProperties? Properties { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("quickCommands")]
-        List<RepetierQuickGcodeCommand> quickCommands = [];
+        [ObservableProperty]
+        
+        [JsonProperty("quickCommands")]
+        public partial List<RepetierQuickGcodeCommand> QuickCommands { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("recover")]
-        RepetierPrinterConfigRecover? recover;
+        [ObservableProperty]
+        
+        [JsonProperty("recover")]
+        public partial RepetierPrinterConfigRecover? Recover { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("responseEvents")]
-        List<object> responseEvents = [];
+        [ObservableProperty]
+        
+        [JsonProperty("responseEvents")]
+        public partial List<object> ResponseEvents { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("shape")]
-        RepetierPrinterConfigShape? shape;
+        [ObservableProperty]
+        
+        [JsonProperty("shape")]
+        public partial RepetierPrinterConfigShape? Shape { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("speedPresets")]
-        List<RepetierPrinterConfigPreset> speedPresets = [];
+        [ObservableProperty]
+        
+        [JsonProperty("speedPresets")]
+        public partial List<RepetierPrinterConfigPreset> SpeedPresets { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("webcams")]
-        List<RepetierPrinterConfigWebcam> webcams = [];
+        [ObservableProperty]
+        
+        [JsonProperty("webcams")]
+        public partial List<RepetierPrinterConfigWebcam> Webcams { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("wizardCommands")]
-        List<object> wizardCommands = [];
+        [ObservableProperty]
+        
+        [JsonProperty("wizardCommands")]
+        public partial List<object> WizardCommands { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("wizardTemplates")]
-        List<RepetierPrinterConfigWizardTemplate> wizardTemplates = [];
+        [ObservableProperty]
+        
+        [JsonProperty("wizardTemplates")]
+        public partial List<RepetierPrinterConfigWizardTemplate> WizardTemplates { get; set; } = [];
         #endregion
 
         #region Overrides

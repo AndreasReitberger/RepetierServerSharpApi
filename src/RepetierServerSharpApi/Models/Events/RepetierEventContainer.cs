@@ -6,20 +6,20 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("callback_id")]
+        [ObservableProperty]
+        
+        [JsonProperty("callback_id")]
+        public partial long CallbackId { get; set; }
 
-        long callbackId;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial List<RepetierEventData> Data { get; set; } = new();
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-
-        List<RepetierEventData> data = new();
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("eventList")]
-
-        bool eventList;
+        [ObservableProperty]
+        
+        [JsonProperty("eventList")]
+        public partial bool EventList { get; set; }
         #endregion
 
         #region Overrides

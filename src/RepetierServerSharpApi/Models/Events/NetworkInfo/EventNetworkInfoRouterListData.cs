@@ -7,73 +7,90 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]
-        bool active;
+        [ObservableProperty]
+        
+        [JsonProperty("active")]
+        public partial bool Active { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hidden")]
-        bool hidden;
+        [ObservableProperty]
+        
+        [JsonProperty("hidden")]
+        public partial bool Hidden { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ignore")]
-        bool ignore;
+        [ObservableProperty]
+        
+        [JsonProperty("ignore")]
+        public partial bool Ignore { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4Address")]
-        string ipv4Address = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4Address")]
+        public partial string Ipv4Address { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4Gateway")]
-        string ipv4Gateway = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4Gateway")]
+        public partial string Ipv4Gateway { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4MaskBits")]
-        long ipv4MaskBits;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4MaskBits")]
+        public partial long Ipv4MaskBits { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4Mode")]
-        string ipv4Mode = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4Mode")]
+        public partial string Ipv4Mode { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4Nameserver")]
-        string ipv4Nameserver = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4Nameserver")]
+        public partial string Ipv4Nameserver { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Address")]
-        string ipv6Address = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6Address")]
+        public partial string Ipv6Address { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Gateway")]
-        string ipv6Gateway = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6Gateway")]
+        public partial string Ipv6Gateway { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6MaskBits")]
-        long ipv6MaskBits;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6MaskBits")]
+        public partial long Ipv6MaskBits { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Mode")]
-        string ipv6Mode = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6Mode")]
+        public partial string Ipv6Mode { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6Nameserver")]
-        string ipv6Nameserver = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6Nameserver")]
+        public partial string Ipv6Nameserver { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manualManaged")]
-        bool manualManaged;
+        [ObservableProperty]
+        
+        [JsonProperty("manualManaged")]
+        public partial bool ManualManaged { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("password")]
-        string password = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("password")]
+        public partial string Password { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("passwordMethod")]
-        string passwordMethod = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("passwordMethod")]
+        public partial string PasswordMethod { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ssid")]
-        string ssid = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ssid")]
+        public partial string Ssid { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

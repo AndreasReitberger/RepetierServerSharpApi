@@ -5,45 +5,45 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EthernetConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4_addresses")]
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4_addresses")]
+        public partial string Ipv4Addresses { get; set; } = string.Empty;
 
-        string ipv4Addresses = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4_dns")]
+        public partial string Ipv4Dns { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4_dns")]
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4_gateway")]
+        public partial string Ipv4Gateway { get; set; } = string.Empty;
 
-        string ipv4Dns = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv4_method")]
+        public partial string Ipv4Method { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4_gateway")]
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6_addresses")]
+        public partial string Ipv6Addresses { get; set; } = string.Empty;
 
-        string ipv4Gateway = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6_dns")]
+        public partial string Ipv6Dns { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv4_method")]
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6_gateway")]
+        public partial string Ipv6Gateway { get; set; } = string.Empty;
 
-        string ipv4Method = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6_addresses")]
-
-        string ipv6Addresses = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6_dns")]
-
-        string ipv6Dns = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6_gateway")]
-
-        string ipv6Gateway = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ipv6_method")]
-
-        string ipv6Method = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ipv6_method")]
+        public partial string Ipv6Method { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

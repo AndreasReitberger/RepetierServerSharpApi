@@ -7,9 +7,10 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierModelList : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        List<RepetierModel> data = new();
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial List<RepetierModel> Data { get; set; } = new();
 
         #endregion
 

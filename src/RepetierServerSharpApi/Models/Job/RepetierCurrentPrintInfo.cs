@@ -9,20 +9,25 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierCurrentPrintInfo : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]
-        bool active;
+        [ObservableProperty]
+        
+        [JsonProperty("active")]
+        public partial bool Active { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analysed")]
-        long analysed;
+        [ObservableProperty]
+        
+        [JsonProperty("analysed")]
+        public partial long Analysed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("done")]
-        double? done;
+        [ObservableProperty]
+        
+        [JsonProperty("done")]
+        public partial double? Done { get; set; }
+
         partial void OnDoneChanged(double? value)
         {
             if (value is not null)
@@ -31,89 +36,110 @@ namespace AndreasReitberger.API.Repetier.Models
                 DonePercentage = 0;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("job")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(JobId))]
-        [property: JsonProperty("jobid")]
-        long jobIdLong;
+        [JsonProperty("jobid")]
+        public partial long JobIdLong { get; set; }
+
         partial void OnJobIdLongChanged(long value)
         {
             JobId = value.ToString() ?? "";
         }
 
-        [ObservableProperty, JsonIgnore]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(State))]
-        [property: JsonProperty("jobstate")]
-        string jobState = string.Empty;
+        [JsonProperty("jobstate")]
+        public partial string JobState { get; set; } = string.Empty;
+
         partial void OnJobStateChanged(string value)
         {
             State = value == "running" ? Print3dJobState.InProgress : Print3dJobState.Completed;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("linesSend")]
-        long linesSend;
+        [ObservableProperty]
+        
+        [JsonProperty("linesSend")]
+        public partial long LinesSend { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string printerName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string PrinterName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ofLayer")]
-        long ofLayer;
+        [ObservableProperty]
+        
+        [JsonProperty("ofLayer")]
+        public partial long OfLayer { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("online")]
-        long online;
+        [ObservableProperty]
+        
+        [JsonProperty("online")]
+        public partial long Online { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pauseState")]
-        long pauseState;
+        [ObservableProperty]
+        
+        [JsonProperty("pauseState")]
+        public partial long PauseState { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(State))]
-        [property: JsonProperty("paused")]
-        bool paused;
+        [JsonProperty("paused")]
+        public partial bool Paused { get; set; }
+
         partial void OnPausedChanged(bool value)
         {
             State = value ? Print3dJobState.Paused : Print3dJobState.InProgress;
         }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(StartTimeGeneralized))]
-        [property: JsonProperty("printStart")]
-        double? startTime;
+        [JsonProperty("printStart")]
+        public partial double? StartTime { get; set; }
+
         partial void OnStartTimeChanged(double? value)
         {
             if (value is not null)
                 StartTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? startTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? StartTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? endTime;
+        [ObservableProperty]
+        
+        public partial double? EndTime { get; set; }
+
         partial void OnEndTimeChanged(double? value)
         {
             if (value is not null)
                 EndTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? endTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? EndTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
         //[property: JsonProperty("printTime")]
-        [property: JsonProperty("printedTimeComp")]
-        double? printDuration;
+        [JsonProperty("printedTimeComp")]
+        public partial double? PrintDuration { get; set; }
+
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -121,8 +147,9 @@ namespace AndreasReitberger.API.Repetier.Models
             //RemainingPrintTime = value > 0 ? value - PrintDurationTimeComp : 0;
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? printDurationGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? PrintDurationGeneralized { get; set; }
 
         /*
         [ObservableProperty, JsonIgnore]
@@ -135,10 +162,12 @@ namespace AndreasReitberger.API.Repetier.Models
         }
         */
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(TotalPrintDurationGeneralized))]
-        [property: JsonProperty("printTime")]
-        double? totalPrintDuration;
+        [JsonProperty("printTime")]
+        public partial double? TotalPrintDuration { get; set; }
+
         partial void OnTotalPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -146,57 +175,71 @@ namespace AndreasReitberger.API.Repetier.Models
             RemainingPrintTime = value > 0 ? value - PrintDuration : 0;
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? totalPrintDurationGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? TotalPrintDurationGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("repeat")]
-        long? repeat;
+        [ObservableProperty]
+        
+        [JsonProperty("repeat")]
+        public partial long? Repeat { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(StartTime))]
-        [property: JsonProperty("start")]
-        long? start;
+        [JsonProperty("start")]
+        public partial long? Start { get; set; }
+
         partial void OnStartChanged(long? value)
         {
             if (value is not null)
                 StartTime = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("totalLines")]
-        long? totalLines;
+        [ObservableProperty]
+        
+        [JsonProperty("totalLines")]
+        public partial long? TotalLines { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? filamentUsed;
+        [ObservableProperty]
+        
+        public partial double? FilamentUsed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? donePercentage;
+        [ObservableProperty]
+        
+        public partial double? DonePercentage { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        bool fileExists;
+        [ObservableProperty]
+        
+        public partial bool FileExists { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        Print3dJobState? state;
+        [ObservableProperty]
+        
+        public partial Print3dJobState? State { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        IGcodeMeta? meta;
+        [ObservableProperty]
+        
+        public partial IGcodeMeta? Meta { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(RemainingPrintTimeGeneralized))]
-        double ? remainingPrintTime;
+        public partial double? RemainingPrintTime { get; set; }
+
         partial void OnRemainingPrintTimeChanged(double? value)
         {
             if (value is not null)
                 RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? remainingPrintTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? RemainingPrintTimeGeneralized { get; set; }
 
         #region JsonIgnore
         /*

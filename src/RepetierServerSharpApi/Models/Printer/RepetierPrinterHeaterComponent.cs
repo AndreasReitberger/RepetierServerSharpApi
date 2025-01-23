@@ -9,29 +9,35 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterHeaterComponent : ObservableObject, IHeaterComponent
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("error")]
-        long error;
+        [ObservableProperty]
+        
+        [JsonProperty("error")]
+        public partial long Error { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("output")]
-        long output;
+        [ObservableProperty]
+        
+        [JsonProperty("output")]
+        public partial long Output { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tempRead")]
-        double? tempRead;
+        [ObservableProperty]
+        
+        [JsonProperty("tempRead")]
+        public partial double? TempRead { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tempSet")]
-        double? tempSet;
+        [ObservableProperty]
+        
+        [JsonProperty("tempSet")]
+        public partial double? TempSet { get; set; }
 
         #region Interface, unsused
 
-        [ObservableProperty, JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Name { get; set; } = string.Empty;
         #endregion
 
         #region Json Ignore
@@ -39,8 +45,9 @@ namespace AndreasReitberger.API.Repetier.Models
         [JsonIgnore]
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
-        [ObservableProperty, JsonIgnore]
-        Printer3dHeaterType type = Printer3dHeaterType.Other;
+        [ObservableProperty]
+        
+        public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.Other;
         #endregion
 
         #endregion

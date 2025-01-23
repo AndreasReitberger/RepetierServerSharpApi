@@ -8,22 +8,21 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Id
         [ObservableProperty]
-        Guid id;
+        public partial Guid Id { get; set; }
         #endregion
 
         #region Properties
         [ObservableProperty]
-        string command = string.Empty;
-
-
-        [ObservableProperty]
-        bool sent = false;
+        public partial string Command { get; set; } = string.Empty;
 
         [ObservableProperty]
-        bool succeeded = false;
+        public partial bool Sent { get; set; } = false;
 
         [ObservableProperty]
-        DateTime timeStamp = DateTime.Now;
+        public partial bool Succeeded { get; set; } = false;
+
+        [ObservableProperty]
+        public partial DateTime TimeStamp { get; set; } = DateTime.Now;
 
         #endregion
 

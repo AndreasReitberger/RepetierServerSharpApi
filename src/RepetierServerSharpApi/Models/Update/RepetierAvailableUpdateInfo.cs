@@ -6,97 +6,120 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierAvailableUpdateInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("availableBrandingVersion")]
-        long availableBrandingVersion;
+        [ObservableProperty]
+        
+        [JsonProperty("availableBrandingVersion")]
+        public partial long AvailableBrandingVersion { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("betaActive")]
-        bool betaActive;
+        [ObservableProperty]
+        
+        [JsonProperty("betaActive")]
+        public partial bool BetaActive { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("branded")]
-        bool branded;
+        [ObservableProperty]
+        
+        [JsonProperty("branded")]
+        public partial bool Branded { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("currentBrandingVersion")]
-        long currentBrandingVersion;
+        [ObservableProperty]
+        
+        [JsonProperty("currentBrandingVersion")]
+        public partial long CurrentBrandingVersion { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("currentVersion")]
-        string currentVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("currentVersion")]
+        public partial string CurrentVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("demo")]
-        bool demo;
+        [ObservableProperty]
+        
+        [JsonProperty("demo")]
+        public partial bool Demo { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("downloadUrl")]
-        Uri? downloadUrl;
+        [ObservableProperty]
+        
+        [JsonProperty("downloadUrl")]
+        public partial Uri? DownloadUrl { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("features")]
-        long features;
+        [ObservableProperty]
+        
+        [JsonProperty("features")]
+        public partial long Features { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("free")]
-        bool free;
+        [ObservableProperty]
+        
+        [JsonProperty("free")]
+        public partial bool Free { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ignoreVersion")]
-        string ignoreVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("ignoreVersion")]
+        public partial string IgnoreVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("installerType")]
-        long installerType;
+        [ObservableProperty]
+        
+        [JsonProperty("installerType")]
+        public partial long InstallerType { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("licensed")]
-        bool licensed;
+        [ObservableProperty]
+        
+        [JsonProperty("licensed")]
+        public partial bool Licensed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("message")]
-        string message = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("message")]
+        public partial string Message { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("messageHtml")]
-        string messageHtml = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("messageHtml")]
+        public partial string MessageHtml { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerFrontendUrl")]
-        string printerFrontendUrl = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("printerFrontendUrl")]
+        public partial string PrinterFrontendUrl { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("showUpdate")]
-        bool showUpdate;
+        [ObservableProperty]
+        
+        [JsonProperty("showUpdate")]
+        public partial bool ShowUpdate { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("teaser")]
-        RepetierUpdateTeaser? teaser;
+        [ObservableProperty]
+        
+        [JsonProperty("teaser")]
+        public partial RepetierUpdateTeaser? Teaser { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("testperiodMode")]
-        long testperiodMode;
+        [ObservableProperty]
+        
+        [JsonProperty("testperiodMode")]
+        public partial long TestperiodMode { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("updateAvailable")]
-        bool updateAvailable;
+        [ObservableProperty]
+        
+        [JsonProperty("updateAvailable")]
+        public partial bool UpdateAvailable { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("versionMessage")]
-        string versionMessage = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("versionMessage")]
+        public partial string VersionMessage { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("versionMessageHtml")]
-        string versionMessageHtml = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("versionMessageHtml")]
+        public partial string VersionMessageHtml { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("versionName")]
-        string versionName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("versionName")]
+        public partial string VersionName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("webFrontendUrl")]
-        string webFrontendUrl = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("webFrontendUrl")]
+        public partial string WebFrontendUrl { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

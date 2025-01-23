@@ -6,21 +6,25 @@ namespace AndreasReitberger.API.Repetier
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]
-        bool active;
+        [ObservableProperty]
+        
+        [JsonProperty("active")]
+        public partial bool Active { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hasBranding")]
-        bool hasBranding;
+        [ObservableProperty]
+        
+        [JsonProperty("hasBranding")]
+        public partial bool HasBranding { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("licence")]
-        string licence = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("licence")]
+        public partial string Licence { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("wantsBranding")]
-        bool wantsBranding;
+        [ObservableProperty]
+        
+        [JsonProperty("wantsBranding")]
+        public partial bool WantsBranding { get; set; }
         #endregion
 
         #region Overrides

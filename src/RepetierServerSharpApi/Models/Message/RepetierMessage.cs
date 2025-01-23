@@ -6,29 +6,35 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        long id;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial long Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("msg")]
-        string msg = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("msg")]
+        public partial string Msg { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("link")]
-        string link = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("link")]
+        public partial string Link { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("date")]
-        string date = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("date")]
+        public partial string Date { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pause")]
-        bool pause;
+        [ObservableProperty]
+        
+        [JsonProperty("pause")]
+        public partial bool Pause { get; set; }
         #endregion
 
         #region Overrides

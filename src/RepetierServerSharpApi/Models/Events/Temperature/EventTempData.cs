@@ -7,50 +7,62 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventTempData :  ObservableObject, IPrint3dTemperatureInfo
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("O")]
-        long o;
+        [ObservableProperty]
+        
+        [JsonProperty("O")]
+        public partial long O { get; set; }
+
         partial void OnOChanged(long value)
         {
             TemperatureOffset = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("S")]
-        long s;
+        [ObservableProperty]
+        
+        [JsonProperty("S")]
+        public partial long S { get; set; }
+
         partial void OnSChanged(long value)
         {
             TemperatureSet = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("T")]
-        double t;
+        [ObservableProperty]
+        
+        [JsonProperty("T")]
+        public partial double T { get; set; }
+
         partial void OnTChanged(double value)
         {
             TemperatureTarget = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        long eventId;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial long EventId { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("t")]
-        long dataT;
+        [ObservableProperty]
+        
+        [JsonProperty("t")]
+        public partial long DataT { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? temperatureOffset;
+        [ObservableProperty]
+        
+        public partial double? TemperatureOffset { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? temperatureSet;
+        [ObservableProperty]
+        
+        public partial double? TemperatureSet { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double? temperatureTarget;
+        [ObservableProperty]
+        
+        public partial double? TemperatureTarget { get; set; }
 
         #endregion
 

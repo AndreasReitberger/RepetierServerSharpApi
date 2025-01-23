@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,45 +6,55 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("angle")]
-        long angle;
+        [ObservableProperty]
+        
+        [JsonProperty("angle")]
+        public partial long Angle { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("color")]
-        string color = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("color")]
+        public partial string Color { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("radius")]
-        long radius;
+        [ObservableProperty]
+        
+        [JsonProperty("radius")]
+        public partial long Radius { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("shape")]
-        string shape = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("shape")]
+        public partial string Shape { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("x")]
-        long x;
+        [ObservableProperty]
+        
+        [JsonProperty("x")]
+        public partial long X { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMax")]
-        long xMax;
+        [ObservableProperty]
+        
+        [JsonProperty("xMax")]
+        public partial long XMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMin")]
-        long xMin;
+        [ObservableProperty]
+        
+        [JsonProperty("xMin")]
+        public partial long XMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("y")]
-        long y;
+        [ObservableProperty]
+        
+        [JsonProperty("y")]
+        public partial long Y { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMax")]
-        long yMax;
+        [ObservableProperty]
+        
+        [JsonProperty("yMax")]
+        public partial long YMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMin")]
-        long yMin;
+        [ObservableProperty]
+        
+        [JsonProperty("yMin")]
+        public partial long YMin { get; set; }
         #endregion
 
         #region Overrides

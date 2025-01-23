@@ -7,66 +7,80 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("activeRouter")]
-        bool activeRouter;
+        [ObservableProperty]
+        
+        [JsonProperty("activeRouter")]
+        public partial bool ActiveRouter { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("activeSSID")]
-        string activeSsid = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("activeSSID")]
+        public partial string ActiveSsid { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apMode")]
-        long apMode;
+        [ObservableProperty]
+        
+        [JsonProperty("apMode")]
+        public partial long ApMode { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("apSSID")]
-        string apSsid = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("apSSID")]
+        public partial string ApSsid { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]
-        long channel;
+        [ObservableProperty]
+        
+        [JsonProperty("channel")]
+        public partial long Channel { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channels")]
-        List<long> channels = [];
+        [ObservableProperty]
+        
+        [JsonProperty("channels")]
+        public partial List<long> Channels { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connections")]
-        List<EventNetworkInfoConnection> connections = [];
+        [ObservableProperty]
+        
+        [JsonProperty("connections")]
+        public partial List<EventNetworkInfoConnection> Connections { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("country")]
-        string country = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("country")]
+        public partial string Country { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hostname")]
-        string hostname = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("hostname")]
+        public partial string Hostname { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manageable")]
-        bool manageable;
+        [ObservableProperty]
+        
+        [JsonProperty("manageable")]
+        public partial bool Manageable { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mode")]
-        long mode;
+        [ObservableProperty]
+        
+        [JsonProperty("mode")]
+        public partial long Mode { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("routerList")]
-        List<EventNetworkInfoRouterList> routerList = [];
+        [ObservableProperty]
+        
+        [JsonProperty("routerList")]
+        public partial List<EventNetworkInfoRouterList> RouterList { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("screensaver")]
-        bool screensaver;
+        [ObservableProperty]
+        
+        [JsonProperty("screensaver")]
+        public partial bool Screensaver { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("timezone")]
-        string timezone = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("timezone")]
+        public partial string Timezone { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version")]
-
-        long version;
+        [ObservableProperty]
+        
+        [JsonProperty("version")]
+        public partial long Version { get; set; }
         #endregion
 
         #region Overrides

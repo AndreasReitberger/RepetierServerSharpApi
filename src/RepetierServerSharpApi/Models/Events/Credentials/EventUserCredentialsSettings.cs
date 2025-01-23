@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventUserCredentialsSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcodeGroup")]
-        string gcodeGroup = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("gcodeGroup")]
+        public partial string GcodeGroup { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcodeSortBy")]
-        long gcodeSortBy;
+        [ObservableProperty]
+        
+        [JsonProperty("gcodeSortBy")]
+        public partial long GcodeSortBy { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcodeViewMode")]
-        long gcodeViewMode;
+        [ObservableProperty]
+        
+        [JsonProperty("gcodeViewMode")]
+        public partial long GcodeViewMode { get; set; }
         #endregion
 
         #region Overrides

@@ -6,10 +6,10 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterListRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-
-        List<RepetierPrinter> printers = new();
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial List<RepetierPrinter> Printers { get; set; } = new();
         #endregion
 
         #region Overrides

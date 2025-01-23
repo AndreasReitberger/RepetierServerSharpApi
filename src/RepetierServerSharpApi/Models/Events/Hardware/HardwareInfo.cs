@@ -7,37 +7,45 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("icon")]
-        long? icon;
+        [ObservableProperty]
+        
+        [JsonProperty("icon")]
+        public partial long? Icon { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("msgType")]
-        long? msgType;
+        [ObservableProperty]
+        
+        [JsonProperty("msgType")]
+        public partial long? MsgType { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("text")]
-        string text = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("text")]
+        public partial string Text { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("unit")]
-        string unit = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("unit")]
+        public partial string Unit { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("urgency")]
-        long? urgency;
+        [ObservableProperty]
+        
+        [JsonProperty("urgency")]
+        public partial long? Urgency { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("url")]
-        string url = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("url")]
+        public partial string Url { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("value")]
-        double? value;
+        [ObservableProperty]
+        
+        [JsonProperty("value")]
+        public partial double? Value { get; set; }
         #endregion
 
         #region Overrides

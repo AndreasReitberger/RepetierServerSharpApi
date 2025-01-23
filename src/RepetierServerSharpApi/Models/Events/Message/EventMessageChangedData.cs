@@ -6,29 +6,35 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventMessageChangedData : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("date")]
-        public DateTimeOffset? date;
+        [ObservableProperty]
+        
+        [JsonProperty("date")]
+        public partial DateTimeOffset? Date { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        public long? id;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial long? Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("link")]
-        public string link = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("link")]
+        public partial string Link { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("msg")]
-        public string msg = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("msg")]
+        public partial string Msg { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pause")]
-        public bool? pause;
+        [ObservableProperty]
+        
+        [JsonProperty("pause")]
+        public partial bool? Pause { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-        public string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

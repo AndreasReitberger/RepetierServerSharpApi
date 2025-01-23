@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventDispatcherCountChangedData : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("count")]
-        long count;
+        [ObservableProperty]
+        
+        [JsonProperty("count")]
+        public partial long Count { get; set; }
         #endregion
 
         #region Overrides

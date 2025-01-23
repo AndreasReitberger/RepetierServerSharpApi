@@ -5,21 +5,25 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierQuickGcodeCommand : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("command")]
-        string command = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("command")]
+        public partial string Command { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("icon")]
-        string icon = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("icon")]
+        public partial string Icon { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("visibleWhenPrinting")]
-        bool visibleWhenPrinting;
+        [ObservableProperty]
+        
+        [JsonProperty("visibleWhenPrinting")]
+        public partial bool VisibleWhenPrinting { get; set; }
         #endregion
 
         #region Overrides

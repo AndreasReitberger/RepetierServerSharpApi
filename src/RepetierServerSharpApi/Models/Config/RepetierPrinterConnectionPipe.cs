@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnectionPipe : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("file")]
-        string file = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("file")]
+        public partial string File { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
