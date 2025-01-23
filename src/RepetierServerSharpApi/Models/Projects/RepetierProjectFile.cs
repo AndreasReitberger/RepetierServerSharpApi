@@ -7,17 +7,21 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectFile : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        RepetierProjectFileType type;
+        [ObservableProperty]
+        
+        public partial RepetierProjectFileType Type { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        Guid projectUuid = Guid.Empty;
+        [ObservableProperty]
+        
+        public partial Guid ProjectUuid { get; set; } = Guid.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        RepetierProjectsProjectFile? file;
+        [ObservableProperty]
+        
+        public partial RepetierProjectsProjectFile? File { get; set; }
         #endregion
 
         #region Overrides

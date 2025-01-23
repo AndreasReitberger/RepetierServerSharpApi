@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

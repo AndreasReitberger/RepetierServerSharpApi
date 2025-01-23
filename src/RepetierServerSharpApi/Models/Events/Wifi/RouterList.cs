@@ -5,49 +5,50 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RouterList : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("SSID")]
-        string ssid = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("SSID")]
+        public partial string Ssid { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]
+        [ObservableProperty]
+        
+        [JsonProperty("active")]
+        public partial bool? Active { get; set; }
 
-        bool? active;
+        [ObservableProperty]
+        
+        [JsonProperty("bars")]
+        public partial long? Bars { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("bars")]
+        [ObservableProperty]
+        
+        [JsonProperty("channel")]
+        public partial long? Channel { get; set; }
 
-        long? bars;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial ConnectionData? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]
+        [ObservableProperty]
+        
+        [JsonProperty("mode")]
+        public partial string Mode { get; set; } = string.Empty;
 
-        long? channel;
+        [ObservableProperty]
+        
+        [JsonProperty("rate")]
+        public partial string Rate { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
+        [ObservableProperty]
+        
+        [JsonProperty("secure")]
+        public partial bool? Secure { get; set; }
 
-        ConnectionData? data;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mode")]
-
-        string mode = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rate")]
-
-        string rate = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("secure")]
-
-        bool? secure;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("signal")]
-
-        long? signal;
+        [ObservableProperty]
+        
+        [JsonProperty("signal")]
+        public partial long? Signal { get; set; }
         #endregion
 
         #region Overrides

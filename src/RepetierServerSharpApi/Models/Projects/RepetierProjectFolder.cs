@@ -6,33 +6,40 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectFolder : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("empty")]
-        bool empty;
+        [ObservableProperty]
+        
+        [JsonProperty("empty")]
+        public partial bool Empty { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("folders")]
-        List<RepetierProjectSubFolder> folders = [];
+        [ObservableProperty]
+        
+        [JsonProperty("folders")]
+        public partial List<RepetierProjectSubFolder> Folders { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("idx")]
-        long idx;
+        [ObservableProperty]
+        
+        [JsonProperty("idx")]
+        public partial long Idx { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("parents")]
-        List<RepetierProjectParentElement> parents = [];
+        [ObservableProperty]
+        
+        [JsonProperty("parents")]
+        public partial List<RepetierProjectParentElement> Parents { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("projects")]
-        List<RepetierProject> projects = [];
+        [ObservableProperty]
+        
+        [JsonProperty("projects")]
+        public partial List<RepetierProject> Projects { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version")]
-        long version;
+        [ObservableProperty]
+        
+        [JsonProperty("version")]
+        public partial long Version { get; set; }
         #endregion
 
         #region Overrides

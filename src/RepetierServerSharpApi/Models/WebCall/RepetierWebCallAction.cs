@@ -8,60 +8,60 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("content_type")]
+        [ObservableProperty]
+        
+        [JsonProperty("content_type")]
+        public partial string ContentType { get; set; } = string.Empty;
 
-        string contentType = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("icon")]
+        public partial string Icon { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("icon")]
+        [ObservableProperty]
+        
+        [JsonProperty("method")]
+        public partial string Method { get; set; } = string.Empty;
 
-        string icon = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("method")]
+        [ObservableProperty]
+        
+        [JsonProperty("pos")]
+        public partial long Pos { get; set; }
 
-        string method = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("post")]
+        public partial string Post { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
+        [ObservableProperty]
+        
+        [JsonProperty("question")]
+        public partial string Question { get; set; } = string.Empty;
 
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("show_in_menu")]
+        public partial bool ShowInMenu { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pos")]
+        [ObservableProperty]
+        
+        [JsonProperty("show_name")]
+        public partial string ShowName { get; set; } = string.Empty;
 
-        long pos;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("post")]
-
-        string post = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("question")]
-
-        string question = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("show_in_menu")]
-
-        bool showInMenu;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("show_name")]
-
-        string showName = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-
-        string slug = string.Empty;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("url")]
-
-        Uri? url;
+        [ObservableProperty]
+        
+        [JsonProperty("url")]
+        public partial Uri? Url { get; set; }
         #endregion
 
         #region Overrides

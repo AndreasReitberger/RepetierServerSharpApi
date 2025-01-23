@@ -7,10 +7,10 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("list")]
-
-        List<RepetierHistorySummaryItem> summaries = new();
+        [ObservableProperty]
+        
+        [JsonProperty("list")]
+        public partial List<RepetierHistorySummaryItem> Summaries { get; set; } = new();
 
         #endregion
 

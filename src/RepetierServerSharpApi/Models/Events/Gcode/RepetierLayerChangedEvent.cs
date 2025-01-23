@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLayerChangedEvent : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("layer")]
-        long layer;
+        [ObservableProperty]
+        
+        [JsonProperty("layer")]
+        public partial long Layer { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxLayer")]
-        long maxLayer;
+        [ObservableProperty]
+        
+        [JsonProperty("maxLayer")]
+        public partial long MaxLayer { get; set; }
         #endregion
 
         #region Overrides

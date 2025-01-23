@@ -6,33 +6,40 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigHeatedComponent : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("alias")]
-        string alias = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("alias")]
+        public partial string Alias { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cooldownPerSecond")]
-        double? cooldownPerSecond;
+        [ObservableProperty]
+        
+        [JsonProperty("cooldownPerSecond")]
+        public partial double? CooldownPerSecond { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heatupPerSecond")]
-        double? heatupPerSecond;
+        [ObservableProperty]
+        
+        [JsonProperty("heatupPerSecond")]
+        public partial double? HeatupPerSecond { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("lastTemp")]
-        long? lastTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("lastTemp")]
+        public partial long? LastTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxTemp")]
-        long? maxTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("maxTemp")]
+        public partial long? MaxTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("offset")]
-        long? offset;
+        [ObservableProperty]
+        
+        [JsonProperty("offset")]
+        public partial long? Offset { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperatures")]
-        List<RepetierPrinterConfigTemperature> temperatures = [];
+        [ObservableProperty]
+        
+        [JsonProperty("temperatures")]
+        public partial List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = [];
         #endregion
 
         #region Overrides

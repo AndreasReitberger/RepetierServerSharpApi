@@ -6,17 +6,20 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        EventTempData? data;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial EventTempData? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("event")]
-        string eventName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("event")]
+        public partial string EventName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printer")]
-        string printer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("printer")]
+        public partial string Printer { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

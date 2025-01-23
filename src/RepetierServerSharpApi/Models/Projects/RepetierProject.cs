@@ -6,25 +6,30 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProject : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("folder")]
-        long folder;
+        [ObservableProperty]
+        
+        [JsonProperty("folder")]
+        public partial long Folder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("preview")]
-        string preview = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("preview")]
+        public partial string Preview { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("uuid")]
-        Guid uuid;
+        [ObservableProperty]
+        
+        [JsonProperty("uuid")]
+        public partial Guid Uuid { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version")]
-        long version;
+        [ObservableProperty]
+        
+        [JsonProperty("version")]
+        public partial long Version { get; set; }
         #endregion
 
         #region Overrides

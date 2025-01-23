@@ -8,21 +8,21 @@ namespace AndreasReitberger.API.Repetier.Models
         public bool IsFolder => Folder is not null && Project is null;
 
         [ObservableProperty]
-        long index;
+        public partial long Index { get; set; }
 
         [ObservableProperty]
-        string path = string.Empty;
+        public partial string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
-        byte[]? previewImage;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsFolder))]
-        RepetierProjectSubFolder? folder;
+        public partial byte[]? PreviewImage { get; set; }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFolder))]
-        RepetierProject? project;
+        public partial RepetierProjectSubFolder? Folder { get; set; }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFolder))]
+        public partial RepetierProject? Project { get; set; }
         #endregion
 
         #region Overrides

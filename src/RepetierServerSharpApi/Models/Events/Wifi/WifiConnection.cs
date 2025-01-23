@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class WifiConnection : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("SSID")]
-        string ssid = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("SSID")]
+        public partial string Ssid { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("device")]
-        string device = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("device")]
+        public partial string Device { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

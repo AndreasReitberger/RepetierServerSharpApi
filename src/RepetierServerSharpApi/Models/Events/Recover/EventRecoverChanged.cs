@@ -6,17 +6,20 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventRecoverChanged : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        EventRecoverChangedData? data;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial EventRecoverChangedData? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("event")]
-        string eventName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("event")]
+        public partial string EventName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printer")]
-        string printer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("printer")]
+        public partial string Printer { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

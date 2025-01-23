@@ -10,107 +10,132 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analysed")]
-        long analysed;
+        [ObservableProperty]
+        
+        [JsonProperty("analysed")]
+        public partial long Analysed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("done")]
-        double? done;
+        [ObservableProperty]
+        
+        [JsonProperty("done")]
+        public partial double? Done { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruderUsage")]
-        List<double> extruderUsage = [];
+        [ObservableProperty]
+        
+        [JsonProperty("extruderUsage")]
+        public partial List<double> ExtruderUsage { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filamentTotal")]
-        double filamentTotal;
+        [ObservableProperty]
+        
+        [JsonProperty("filamentTotal")]
+        public partial double FilamentTotal { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("fits")]
-        bool fits;
+        [ObservableProperty]
+        
+        [JsonProperty("fits")]
+        public partial bool Fits { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcodePatch")]
-        string gcodePatch = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("gcodePatch")]
+        public partial string GcodePatch { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("group")]
-        string group = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("group")]
+        public partial string Group { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(JobId))]
-        [property: JsonProperty("id")]
-        long identifier;
+        [JsonProperty("id")]
+        public partial long Identifier { get; set; }
+
         partial void OnIdentifierChanged(long value)
         {
             JobId = value.ToString();
             Id = new Guid(value.ToString().PadLeft(32, '0'));
         }
 
-        [ObservableProperty, JsonIgnore]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
-        [property: JsonProperty("printTime")]
-        double? printTime;
+        [JsonProperty("printTime")]
+        public partial double? PrintTime { get; set; }
+
         partial void OnPrintTimeChanged(double? value)
         {
             if (value is not null)
                 PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? printTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? PrintTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
-        [property: JsonProperty("lastPrintTime")]
-        double? lastPrintTime;
+        [JsonProperty("lastPrintTime")]
+        public partial double? LastPrintTime { get; set; }
+
         partial void OnLastPrintTimeChanged(double? value)
         {
             if (value is not null)
                 LastPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? lastPrintTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? LastPrintTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("layer")]
-        long layer;
+        [ObservableProperty]
+        
+        [JsonProperty("layer")]
+        public partial long Layer { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("length")]
-        long length;
+        [ObservableProperty]
+        
+        [JsonProperty("length")]
+        public partial long Length { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("lines")]
-        long lines;
+        [ObservableProperty]
+        
+        [JsonProperty("lines")]
+        public partial long Lines { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("materials")]
-        List<string> materials = [];
+        [ObservableProperty]
+        
+        [JsonProperty("materials")]
+        public partial List<string> Materials { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("notes")]
-        string notes = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("notes")]
+        public partial string Notes { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printed")]
-        long printed;
+        [ObservableProperty]
+        
+        [JsonProperty("printed")]
+        public partial long Printed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintedTimeCompGeneralized))]
-        [property: JsonProperty("printedTimeComp")]
-        long? printedTimeComp;
+        [JsonProperty("printedTimeComp")]
+        public partial long? PrintedTimeComp { get; set; }
 
         partial void OnPrintedTimeCompChanged(long? value)
         {
@@ -118,135 +143,167 @@ namespace AndreasReitberger.API.Repetier.Models
                 PrintedTimeCompGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? printedTimeCompGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? PrintedTimeCompGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerParam1")]
-        long printerParam1;
+        [ObservableProperty]
+        
+        [JsonProperty("printerParam1")]
+        public partial long PrinterParam1 { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printerType")]
-        long printerType;
+        [ObservableProperty]
+        
+        [JsonProperty("printerType")]
+        public partial long PrinterType { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("radius")]
-        double radius;
+        [ObservableProperty]
+        
+        [JsonProperty("radius")]
+        public partial double Radius { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("radiusMove")]
-        long radiusMove;
+        [ObservableProperty]
+        
+        [JsonProperty("radiusMove")]
+        public partial long RadiusMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("repeat")]
-        long repeat;
+        [ObservableProperty]
+        
+        [JsonProperty("repeat")]
+        public partial long Repeat { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slicer")]
-        string slicer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slicer")]
+        public partial string Slicer { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state")]
-        string state = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("state")]
+        public partial string State { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version")]
-        long version;
+        [ObservableProperty]
+        
+        [JsonProperty("version")]
+        public partial long Version { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("volumeTotal")]
-        double volumeTotal;
+        [ObservableProperty]
+        
+        [JsonProperty("volumeTotal")]
+        public partial double VolumeTotal { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("volumeUsage")]
-        List<double> volumeUsage = [];
+        [ObservableProperty]
+        
+        [JsonProperty("volumeUsage")]
+        public partial List<double> VolumeUsage { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("volumetric")]
-        bool volumetric;
+        [ObservableProperty]
+        
+        [JsonProperty("volumetric")]
+        public partial bool Volumetric { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMax")]
-        double xMax;
+        [ObservableProperty]
+        
+        [JsonProperty("xMax")]
+        public partial double XMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMaxMove")]
-        double xMaxMove;
+        [ObservableProperty]
+        
+        [JsonProperty("xMaxMove")]
+        public partial double XMaxMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMaxView")]
-        double xMaxView;
+        [ObservableProperty]
+        
+        [JsonProperty("xMaxView")]
+        public partial double XMaxView { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMin")]
-        long xMin;
+        [ObservableProperty]
+        
+        [JsonProperty("xMin")]
+        public partial long XMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMinMove")]
-        long xMinMove;
+        [ObservableProperty]
+        
+        [JsonProperty("xMinMove")]
+        public partial long XMinMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMinView")]
-        double xMinView;
+        [ObservableProperty]
+        
+        [JsonProperty("xMinView")]
+        public partial double XMinView { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMax")]
-        double yMax;
+        [ObservableProperty]
+        
+        [JsonProperty("yMax")]
+        public partial double YMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMaxMove")]
-        long yMaxMove;
+        [ObservableProperty]
+        
+        [JsonProperty("yMaxMove")]
+        public partial long YMaxMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMaxView")]
-        double yMaxView;
+        [ObservableProperty]
+        
+        [JsonProperty("yMaxView")]
+        public partial double YMaxView { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMin")]
-        long yMin;
+        [ObservableProperty]
+        
+        [JsonProperty("yMin")]
+        public partial long YMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMinMove")]
-        long yMinMove;
+        [ObservableProperty]
+        
+        [JsonProperty("yMinMove")]
+        public partial long YMinMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMinView")]
-        double yMinView;
+        [ObservableProperty]
+        
+        [JsonProperty("yMinView")]
+        public partial double YMinView { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zMax")]
-        double zMax;
+        [ObservableProperty]
+        
+        [JsonProperty("zMax")]
+        public partial double ZMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zMin")]
-        long zMin;
+        [ObservableProperty]
+        
+        [JsonProperty("zMin")]
+        public partial long ZMin { get; set; }
 
         #region Interface, unused
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("created")]
+        [ObservableProperty]
+        
+        [JsonProperty("created")]
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
-        double? timeAdded = 0;
+        public partial double? TimeAdded { get; set; } = 0;
+
         partial void OnTimeAddedChanged(double? value)
         {
             if (value is not null)
                 TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? timeAddedGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? TimeAddedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
-        double? timeInQueue = 0;
+        public partial double? TimeInQueue { get; set; } = 0;
+
         partial void OnTimeInQueueChanged(double? value)
         {
             if (value is not null)
                 TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? timeInQueueGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? TimeInQueueGeneralized { get; set; }
         #endregion
 
         #endregion

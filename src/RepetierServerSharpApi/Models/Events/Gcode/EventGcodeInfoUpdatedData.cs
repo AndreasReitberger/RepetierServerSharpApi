@@ -5,21 +5,25 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventGcodeInfoUpdatedData : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("list")]
-        string list = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("list")]
+        public partial string List { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("modelId")]
-        long modelId;
+        [ObservableProperty]
+        
+        [JsonProperty("modelId")]
+        public partial long ModelId { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("modelPath")]
-        string modelPath = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("modelPath")]
+        public partial string ModelPath { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slug")]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slug")]
+        public partial string Slug { get; set; } = string.Empty;
 
         #endregion
 

@@ -9,22 +9,25 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("on")]
-        bool on;
+        [ObservableProperty]
+        
+        [JsonProperty("on")]
+        public partial bool On { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(Speed))]
-        [property: JsonProperty("voltage")]
-        long? voltage;
+        [JsonProperty("voltage")]
+        public partial long? Voltage { get; set; }
 
         #region Json Ignore
         [JsonIgnore]
         public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage ?? 0 / 255m * 100m), 0));
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        int? percent = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial int? Percent { get; set; } = 0;
         #endregion
 
         #endregion

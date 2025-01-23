@@ -5,41 +5,50 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigRecover : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("delayBeforeReconnect")]
-        long delayBeforeReconnect;
+        [ObservableProperty]
+        
+        [JsonProperty("delayBeforeReconnect")]
+        public partial long DelayBeforeReconnect { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enabled")]
-        bool enabled;
+        [ObservableProperty]
+        
+        [JsonProperty("enabled")]
+        public partial bool Enabled { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extraZOnFirmwareDetect")]
-        long extraZOnFirmwareDetect;
+        [ObservableProperty]
+        
+        [JsonProperty("extraZOnFirmwareDetect")]
+        public partial long ExtraZOnFirmwareDetect { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("firmwarePowerlossSignal")]
-        string firmwarePowerlossSignal = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("firmwarePowerlossSignal")]
+        public partial string FirmwarePowerlossSignal { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxTimeForAutocontinue")]
-        long maxTimeForAutocontinue;
+        [ObservableProperty]
+        
+        [JsonProperty("maxTimeForAutocontinue")]
+        public partial long MaxTimeForAutocontinue { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("procedure")]
-        string procedure = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("procedure")]
+        public partial string Procedure { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("reactivateBedOnConnect")]
-        bool reactivateBedOnConnect;
+        [ObservableProperty]
+        
+        [JsonProperty("reactivateBedOnConnect")]
+        public partial bool ReactivateBedOnConnect { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("replayExtruderSwitches")]
-        bool replayExtruderSwitches;
+        [ObservableProperty]
+        
+        [JsonProperty("replayExtruderSwitches")]
+        public partial bool ReplayExtruderSwitches { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("runOnConnect")]
-        string runOnConnect = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("runOnConnect")]
+        public partial string RunOnConnect { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

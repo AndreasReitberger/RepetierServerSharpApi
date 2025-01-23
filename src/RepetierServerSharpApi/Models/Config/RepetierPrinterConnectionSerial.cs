@@ -5,61 +5,75 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConnectionSerial : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("baudrate")]
-        long baudrate;
+        [ObservableProperty]
+        
+        [JsonProperty("baudrate")]
+        public partial long Baudrate { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("communicationTimeout")]
-        long communicationTimeout;
+        [ObservableProperty]
+        
+        [JsonProperty("communicationTimeout")]
+        public partial long CommunicationTimeout { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("connectionDelay")]
-        long connectionDelay;
+        [ObservableProperty]
+        
+        [JsonProperty("connectionDelay")]
+        public partial long ConnectionDelay { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("device")]
-        string device = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("device")]
+        public partial string Device { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("dtr")]
-        long dtr;
+        [ObservableProperty]
+        
+        [JsonProperty("dtr")]
+        public partial long Dtr { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("emergencySolution")]
-        long emergencySolution;
+        [ObservableProperty]
+        
+        [JsonProperty("emergencySolution")]
+        public partial long EmergencySolution { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("inputBufferSize")]
-        long inputBufferSize;
+        [ObservableProperty]
+        
+        [JsonProperty("inputBufferSize")]
+        public partial long InputBufferSize { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("interceptor")]
-        bool interceptor;
+        [ObservableProperty]
+        
+        [JsonProperty("interceptor")]
+        public partial bool Interceptor { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("malyanHack")]
-        bool malyanHack;
+        [ObservableProperty]
+        
+        [JsonProperty("malyanHack")]
+        public partial bool MalyanHack { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxParallelCommands")]
-        bool maxParallelCommands;
+        [ObservableProperty]
+        
+        [JsonProperty("maxParallelCommands")]
+        public partial bool MaxParallelCommands { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pingPong")]
-        bool pingPong;
+        [ObservableProperty]
+        
+        [JsonProperty("pingPong")]
+        public partial bool PingPong { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rts")]
-        long rts;
+        [ObservableProperty]
+        
+        [JsonProperty("rts")]
+        public partial long Rts { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("usbreset")]
-        long usbreset;
+        [ObservableProperty]
+        
+        [JsonProperty("usbreset")]
+        public partial long Usbreset { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("visibleWithoutRunning")]
-        bool visibleWithoutRunning;
+        [ObservableProperty]
+        
+        [JsonProperty("visibleWithoutRunning")]
+        public partial bool VisibleWithoutRunning { get; set; }
         #endregion
 
         #region Overrides

@@ -7,50 +7,50 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierHistorySummaryItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("aborted")]
+        [ObservableProperty]
+        
+        [JsonProperty("aborted")]
+        public partial long Aborted { get; set; }
 
-        long aborted;
+        [ObservableProperty]
+        
+        [JsonProperty("computed")]
+        public partial double Computed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("computed")]
+        [ObservableProperty]
+        
+        [JsonProperty("costs")]
+        public partial double Costs { get; set; }
 
-        double computed;
+        [ObservableProperty]
+        
+        [JsonProperty("filament")]
+        public partial double Filament { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("costs")]
+        [ObservableProperty]
+        
+        [JsonProperty("finished")]
+        public partial long Finished { get; set; }
 
-        double costs;
+        [ObservableProperty]
+        
+        [JsonProperty("month")]
+        public partial long Month { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament")]
+        [ObservableProperty]
+        
+        [JsonProperty("num")]
+        public partial long Num { get; set; }
 
-        double filament;
+        [ObservableProperty]
+        
+        [JsonProperty("real")]
+        public partial double Real { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("finished")]
-
-        long finished;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("month")]
-
-        long month;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("num")]
-
-        long num;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("real")]
-
-        double real;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("year")]
-
-        long year;
+        [ObservableProperty]
+        
+        [JsonProperty("year")]
+        public partial long Year { get; set; }
         #endregion
 
         #region Overrides

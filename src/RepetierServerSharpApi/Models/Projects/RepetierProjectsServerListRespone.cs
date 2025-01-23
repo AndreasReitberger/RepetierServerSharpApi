@@ -6,16 +6,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsServerListRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ok")]
+        [ObservableProperty]
+        
+        [JsonProperty("ok")]
+        public partial bool Ok { get; set; }
 
-        bool ok;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("server")]
-
-        List<ProjectsServer> server = new();
-        #endregion 
+        [ObservableProperty]
+        
+        [JsonProperty("server")]
+        public partial List<ProjectsServer> Server { get; set; } = new();
+        #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);

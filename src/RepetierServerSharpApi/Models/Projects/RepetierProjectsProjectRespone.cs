@@ -5,14 +5,16 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectsProjectRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("ok")]
-        bool? ok;
+        [ObservableProperty]
+        
+        [JsonProperty("ok")]
+        public partial bool? Ok { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("project")]
-        RepetierProjectsProject? project;
-        #endregion 
+        [ObservableProperty]
+        
+        [JsonProperty("project")]
+        public partial RepetierProjectsProject? Project { get; set; }
+        #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);

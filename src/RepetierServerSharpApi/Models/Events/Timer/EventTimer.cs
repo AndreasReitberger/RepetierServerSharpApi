@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventTimer : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        object? data;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial object? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("event")]
-        string? eventName;
+        [ObservableProperty]
+        
+        [JsonProperty("event")]
+        public partial string? EventName { get; set; }
         #endregion
 
         #region Overrides

@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class EventDispatcherCountChanged : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        EventDispatcherCountChangedData? data;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial EventDispatcherCountChangedData? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("event")]
-        string eventName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("event")]
+        public partial string EventName { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

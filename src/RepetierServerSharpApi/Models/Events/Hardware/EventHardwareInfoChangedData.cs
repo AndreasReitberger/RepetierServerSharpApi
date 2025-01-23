@@ -7,13 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("list")]
-        List<HardwareInfo> list = new();
+        [ObservableProperty]
+        
+        [JsonProperty("list")]
+        public partial List<HardwareInfo> List { get; set; } = new();
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxUrgency")]
-        long? maxUrgency;
+        [ObservableProperty]
+        
+        [JsonProperty("maxUrgency")]
+        public partial long? MaxUrgency { get; set; }
         #endregion
 
         #region Overrides

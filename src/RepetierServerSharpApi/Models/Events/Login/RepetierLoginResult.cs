@@ -6,21 +6,25 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLoginResult : ObservableObject//, IPrint3dLoginData
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("login")]
-        string login = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("login")]
+        public partial string Login { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("permissions")]
-        long? permissions;
+        [ObservableProperty]
+        
+        [JsonProperty("permissions")]
+        public partial long? Permissions { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("serverUUID")]
-        Guid serverUUID;
+        [ObservableProperty]
+        
+        [JsonProperty("serverUUID")]
+        public partial Guid ServerUUID { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("settings")]
-        RepetierLoginResultSettings? settings;
+        [ObservableProperty]
+        
+        [JsonProperty("settings")]
+        public partial RepetierLoginResultSettings? Settings { get; set; }
         #endregion
 
         #region Overrides

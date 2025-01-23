@@ -7,37 +7,45 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigShape : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("basicShape")]
-        RepetierPrinterConfigBasicShape? basicShape;
+        [ObservableProperty]
+        
+        [JsonProperty("basicShape")]
+        public partial RepetierPrinterConfigBasicShape? BasicShape { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gridColor")]
-        string gridColor = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("gridColor")]
+        public partial string GridColor { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gridSpacing")]
-        long gridSpacing;
+        [ObservableProperty]
+        
+        [JsonProperty("gridSpacing")]
+        public partial long GridSpacing { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("imageExtension")]
-        string imageExtension = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("imageExtension")]
+        public partial string ImageExtension { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("imageOpacity")]
-        long imageOpacity;
+        [ObservableProperty]
+        
+        [JsonProperty("imageOpacity")]
+        public partial long ImageOpacity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("imageZoom")]
-        long imageZoom;
+        [ObservableProperty]
+        
+        [JsonProperty("imageZoom")]
+        public partial long ImageZoom { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("marker")]
-        List<object> marker = [];
+        [ObservableProperty]
+        
+        [JsonProperty("marker")]
+        public partial List<object> Marker { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("showImage")]
-        bool showImage;
+        [ObservableProperty]
+        
+        [JsonProperty("showImage")]
+        public partial bool ShowImage { get; set; }
         #endregion
 
         #region Overrides

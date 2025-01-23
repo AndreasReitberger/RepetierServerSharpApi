@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierProjectParentElement : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("empty")]
-        bool empty;
+        [ObservableProperty]
+        
+        [JsonProperty("empty")]
+        public partial bool Empty { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("idx")]
-        long idx;
+        [ObservableProperty]
+        
+        [JsonProperty("idx")]
+        public partial long Idx { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

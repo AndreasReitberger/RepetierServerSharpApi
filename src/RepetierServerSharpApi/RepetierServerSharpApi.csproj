@@ -2,7 +2,7 @@
 
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net8</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net8;net9</TargetFrameworks>
     <RootNamespace>AndreasReitberger.API.Repetier</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

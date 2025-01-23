@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierLoginRequiredResultData : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("data")]
-        RepetierLoginRequiredResultDataItem? data;
+        [ObservableProperty]
+        
+        [JsonProperty("data")]
+        public partial RepetierLoginRequiredResultDataItem? Data { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("event")]
-        string eventName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("event")]
+        public partial string EventName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printer")]
-        string printer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("printer")]
+        public partial string Printer { get; set; } = string.Empty;
 
         #endregion
 

@@ -9,44 +9,55 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
+
         partial void OnNameChanged(string value)
         {
             DirectoryName = value;
         }
 
         #region Interface
-        [ObservableProperty, JsonIgnore]
-        string directoryName = string.Empty;
+        [ObservableProperty]
+        
+        public partial string DirectoryName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        string path = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Path { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        string root = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Root { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
-        double? modified;
+        public partial double? Modified { get; set; }
+
         partial void OnModifiedChanged(double? value)
         {
             if (value is not null)
                 ModifiedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? modifiedGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? ModifiedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        long size;
+        [ObservableProperty]
+        
+        public partial long Size { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        string permissions = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Permissions { get; set; } = string.Empty;
         #endregion
 
         #endregion

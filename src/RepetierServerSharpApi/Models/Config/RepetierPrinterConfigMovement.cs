@@ -6,165 +6,205 @@ namespace AndreasReitberger.API.Repetier.Models
     public partial class RepetierPrinterConfigMovement : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G10Distance")]
-        long g10Distance;
+        [ObservableProperty]
+        
+        [JsonProperty("G10Distance")]
+        public partial long G10Distance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G10LongDistance")]
-        long g10LongDistance;
+        [ObservableProperty]
+        
+        [JsonProperty("G10LongDistance")]
+        public partial long G10LongDistance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G10Speed")]
-        long g10Speed;
+        [ObservableProperty]
+        
+        [JsonProperty("G10Speed")]
+        public partial long G10Speed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G10ZLift")]
-        long g10ZLift;
+        [ObservableProperty]
+        
+        [JsonProperty("G10ZLift")]
+        public partial long G10ZLift { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G11ExtraDistance")]
-        long g11ExtraDistance;
+        [ObservableProperty]
+        
+        [JsonProperty("G11ExtraDistance")]
+        public partial long G11ExtraDistance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G11ExtraLongDistance")]
-        long g11ExtraLongDistance;
+        [ObservableProperty]
+        
+        [JsonProperty("G11ExtraLongDistance")]
+        public partial long G11ExtraLongDistance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("G11Speed")]
-        long g11Speed;
+        [ObservableProperty]
+        
+        [JsonProperty("G11Speed")]
+        public partial long G11Speed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("allEndstops")]
-        bool allEndstops;
+        [ObservableProperty]
+        
+        [JsonProperty("allEndstops")]
+        public partial bool AllEndstops { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("autolevel")]
-        bool autolevel;
+        [ObservableProperty]
+        
+        [JsonProperty("autolevel")]
+        public partial bool Autolevel { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("defaultAcceleration")]
-        long defaultAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("defaultAcceleration")]
+        public partial long DefaultAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("defaultRetractAcceleration")]
-        long defaultRetractAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("defaultRetractAcceleration")]
+        public partial long DefaultRetractAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("defaultTravelAcceleration")]
-        long defaultTravelAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("defaultTravelAcceleration")]
+        public partial long DefaultTravelAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("invertX")]
-        bool invertX;
+        [ObservableProperty]
+        
+        [JsonProperty("invertX")]
+        public partial bool InvertX { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("invertY")]
-        bool invertY;
+        [ObservableProperty]
+        
+        [JsonProperty("invertY")]
+        public partial bool InvertY { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("invertZ")]
-        bool invertZ;
+        [ObservableProperty]
+        
+        [JsonProperty("invertZ")]
+        public partial bool InvertZ { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxXYSpeed")]
-        long maxXySpeed;
+        [ObservableProperty]
+        
+        [JsonProperty("maxXYSpeed")]
+        public partial long MaxXySpeed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("maxZSpeed")]
-        long maxZSpeed;
+        [ObservableProperty]
+        
+        [JsonProperty("maxZSpeed")]
+        public partial long MaxZSpeed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("movebuffer")]
-        long movebuffer;
+        [ObservableProperty]
+        
+        [JsonProperty("movebuffer")]
+        public partial long Movebuffer { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("startWithAbsolutePositions")]
-        bool startWithAbsolutePositions;
+        [ObservableProperty]
+        
+        [JsonProperty("startWithAbsolutePositions")]
+        public partial bool StartWithAbsolutePositions { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("timeMultiplier")]
-        double timeMultiplier;
+        [ObservableProperty]
+        
+        [JsonProperty("timeMultiplier")]
+        public partial double TimeMultiplier { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xEndstop")]
-        bool xEndstop;
+        [ObservableProperty]
+        
+        [JsonProperty("xEndstop")]
+        public partial bool XEndstop { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xHome")]
-        long xHome;
+        [ObservableProperty]
+        
+        [JsonProperty("xHome")]
+        public partial long XHome { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMax")]
-        long xMax;
+        [ObservableProperty]
+        
+        [JsonProperty("xMax")]
+        public partial long XMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xMin")]
-        long xMin;
+        [ObservableProperty]
+        
+        [JsonProperty("xMin")]
+        public partial long XMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xyJerk")]
-        long xyJerk;
+        [ObservableProperty]
+        
+        [JsonProperty("xyJerk")]
+        public partial long XyJerk { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xyPrintAcceleration")]
-        long xyPrintAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("xyPrintAcceleration")]
+        public partial long XyPrintAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xySpeed")]
-        long xySpeed;
+        [ObservableProperty]
+        
+        [JsonProperty("xySpeed")]
+        public partial long XySpeed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("xyTravelAcceleration")]
-        long xyTravelAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("xyTravelAcceleration")]
+        public partial long XyTravelAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yEndstop")]
-        bool yEndstop;
+        [ObservableProperty]
+        
+        [JsonProperty("yEndstop")]
+        public partial bool YEndstop { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yHome")]
-        long yHome;
+        [ObservableProperty]
+        
+        [JsonProperty("yHome")]
+        public partial long YHome { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMax")]
-        long yMax;
+        [ObservableProperty]
+        
+        [JsonProperty("yMax")]
+        public partial long YMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("yMin")]
-        long yMin;
+        [ObservableProperty]
+        
+        [JsonProperty("yMin")]
+        public partial long YMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zEndstop")]
-        bool zEndstop;
+        [ObservableProperty]
+        
+        [JsonProperty("zEndstop")]
+        public partial bool ZEndstop { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zHome")]
-        long zHome;
+        [ObservableProperty]
+        
+        [JsonProperty("zHome")]
+        public partial long ZHome { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zJerk")]
-        double zJerk;
+        [ObservableProperty]
+        
+        [JsonProperty("zJerk")]
+        public partial double ZJerk { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zMax")]
-        long zMax;
+        [ObservableProperty]
+        
+        [JsonProperty("zMax")]
+        public partial long ZMax { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zMin")]
-        long zMin;
+        [ObservableProperty]
+        
+        [JsonProperty("zMin")]
+        public partial long ZMin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zPrintAcceleration")]
-        long zPrintAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("zPrintAcceleration")]
+        public partial long ZPrintAcceleration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zSpeed")]
-        long zSpeed;
+        [ObservableProperty]
+        
+        [JsonProperty("zSpeed")]
+        public partial long ZSpeed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("zTravelAcceleration")]
-        long zTravelAcceleration;
+        [ObservableProperty]
+        
+        [JsonProperty("zTravelAcceleration")]
+        public partial long ZTravelAcceleration { get; set; }
         #endregion
 
         #region Overrides
