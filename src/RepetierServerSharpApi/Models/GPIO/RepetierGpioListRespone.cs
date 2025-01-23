@@ -7,12 +7,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("list")]
         public partial List<RepetierGpioListItem> List { get; set; } = new();
 
         [ObservableProperty]
-        
+
         [JsonProperty("ok")]
         public partial bool Ok { get; set; }
         #endregion

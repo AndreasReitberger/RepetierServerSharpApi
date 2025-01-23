@@ -7,12 +7,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("ok")]
         public partial bool Ok { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("server")]
         public partial List<ProjectsServer> Server { get; set; } = new();
         #endregion

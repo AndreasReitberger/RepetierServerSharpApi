@@ -6,13 +6,13 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("groupNames")]
         public partial string[] GroupNames { get; set; } = [];
 
         [JsonProperty("ok")]
         [ObservableProperty]
-        
+
         public partial bool Ok { get; set; }
         #endregion
 

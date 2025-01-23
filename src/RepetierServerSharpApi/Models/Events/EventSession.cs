@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("callback_id")]
         public partial long CallbackId { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("data")]
         public partial object? Data { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("session")]
         public partial string Session { get; set; } = string.Empty;
         #endregion

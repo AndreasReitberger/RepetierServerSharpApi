@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("session")]
         public partial string Session { get; set; } = string.Empty;
         #endregion

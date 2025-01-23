@@ -7,27 +7,27 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("folder")]
         public partial long Folder { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("preview")]
         public partial string Preview { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("uuid")]
         public partial Guid Uuid { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("version")]
         public partial long Version { get; set; }
         #endregion

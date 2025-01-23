@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("layer")]
         public partial long Layer { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("maxLayer")]
         public partial long MaxLayer { get; set; }
         #endregion

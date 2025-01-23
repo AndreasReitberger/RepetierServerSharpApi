@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("slug")]
         public partial string Slug { get; set; } = string.Empty;
         #endregion

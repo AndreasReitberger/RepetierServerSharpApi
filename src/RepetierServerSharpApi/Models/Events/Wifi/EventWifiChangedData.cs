@@ -8,92 +8,92 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("activeRouter")]
         public partial bool? ActiveRouter { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("activeSSID")]
         public partial string ActiveSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("apMode")]
         public partial long? ApMode { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("apSSID")]
         public partial string ApSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("channel")]
         public partial long? Channel { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("channels")]
         public partial List<long> Channels { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("connections")]
         public partial List<WifiConnection> Connections { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("country")]
         public partial string Country { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("ethernet")]
         public partial EthernetConnection? Ethernet { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("hostname")]
         public partial string Hostname { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("manageable")]
         public partial bool? Manageable { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("manualWifi")]
         public partial bool ManualWifi { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("mode")]
         public partial long? Mode { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("routerList")]
         public partial List<RouterList> RouterList { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("screensaver")]
         public partial bool? Screensaver { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("supportAP")]
         public partial bool? SupportAp { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("timezone")]
         public partial string Timezone { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("version")]
         public partial long? Version { get; set; }
         #endregion

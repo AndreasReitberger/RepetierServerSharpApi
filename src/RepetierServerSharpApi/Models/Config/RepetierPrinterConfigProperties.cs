@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("firmwareuploader_board")]
         public partial long FirmwareuploaderBoard { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("firmwareuploader_extraPort")]
         public partial string FirmwareuploaderExtraPort { get; set; } = string.Empty;
         #endregion

@@ -453,7 +453,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "download",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() {{ "id", $"{fileId}" } }
+                       urlSegments: new() { { "id", $"{fileId}" } }
                        )
                     .ConfigureAwait(false);
                 return result?.Result;

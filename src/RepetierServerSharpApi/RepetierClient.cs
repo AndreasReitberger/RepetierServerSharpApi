@@ -280,7 +280,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Download
- 
+
         public async Task<byte[]> GetDynamicRenderImageAsync(long modelId, bool thumbnail, int timeout = 20000, string? targetUri = "dyn/render_image")
         {
             try

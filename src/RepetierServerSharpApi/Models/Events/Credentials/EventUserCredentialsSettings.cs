@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("gcodeGroup")]
         public partial string GcodeGroup { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("gcodeSortBy")]
         public partial long GcodeSortBy { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("gcodeViewMode")]
         public partial long GcodeViewMode { get; set; }
         #endregion

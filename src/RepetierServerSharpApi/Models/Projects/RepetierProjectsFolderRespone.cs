@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("folder")]
         public partial RepetierProjectFolder? Folder { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("ok")]
         public partial bool Ok { get; set; }
         #endregion

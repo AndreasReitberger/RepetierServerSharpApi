@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("state")]
         public partial long State { get; set; }
         #endregion

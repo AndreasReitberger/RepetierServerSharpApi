@@ -10,12 +10,12 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("on")]
         public partial bool On { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(Speed))]
         [JsonProperty("voltage")]
         public partial long? Voltage { get; set; }
@@ -25,7 +25,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage ?? 0 / 255m * 100m), 0));
 
         [ObservableProperty]
-        
+
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public partial int? Percent { get; set; } = 0;
         #endregion
