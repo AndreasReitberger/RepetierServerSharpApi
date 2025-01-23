@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("data")]
         public partial List<RepetierPrinter> Printers { get; set; } = new();
         #endregion

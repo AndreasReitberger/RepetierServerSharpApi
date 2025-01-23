@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("data")]
         public partial EventNetworkInfoData? Data { get; set; }
         #endregion

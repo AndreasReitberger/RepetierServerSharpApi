@@ -7,37 +7,37 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("alias")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("cooldownPerSecond")]
         public partial double? CooldownPerSecond { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("heatupPerSecond")]
         public partial double? HeatupPerSecond { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("lastTemp")]
         public partial long? LastTemp { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("maxTemp")]
         public partial long? MaxTemp { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("offset")]
         public partial long? Offset { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("temperatures")]
         public partial List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = [];
         #endregion

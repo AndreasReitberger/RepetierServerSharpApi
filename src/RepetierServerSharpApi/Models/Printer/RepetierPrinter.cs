@@ -10,11 +10,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("active")]
         public partial bool IsActive { get; set; }
 
@@ -24,12 +24,12 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonProperty("analysed")]
         public partial int? Analysed { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("done")]
         public partial double? Done { get; set; }
 
@@ -42,12 +42,12 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonProperty("job")]
         public partial string ActiveJobName { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(ActiveJobId))]
         [JsonProperty("jobid")]
         public partial int JobId { get; set; } = -1;
@@ -58,31 +58,31 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial string ActiveJobId { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("jobstate")]
         public partial string? ActiveJobState { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("linesSend")]
         public partial long? LineSent { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("ofLayer")]
         public partial long? Layers { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(IsOnline))]
         [JsonProperty("online")]
         public partial long Online { get; set; }
@@ -93,16 +93,16 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial bool IsOnline { get; set; } = false;
 
         [ObservableProperty]
-        
+
         [JsonProperty("pauseState")]
         public partial long? PauseState { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("paused")]
         public partial bool Paused { get; set; }
 
@@ -113,11 +113,12 @@ namespace AndreasReitberger.API.Repetier.Models
         */
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         public partial
         //[property: JsonProperty("printTime")]
-        double? PrintTime { get; set; }
+        double? PrintTime
+        { get; set; }
 
         partial void OnPrintTimeChanged(double? value)
         {
@@ -128,11 +129,11 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintTimeGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintedTimeCompGeneralized))]
         [JsonProperty("printedTimeComp")]
         public partial double? PrintedTimeComp { get; set; }
@@ -144,21 +145,21 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintedTimeCompGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("repeat")]
         public partial int? Repeat { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintStarted))]
         [JsonProperty("start")]
         public partial long? Start { get; set; }
@@ -169,7 +170,7 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintStartedGeneralized))]
         [JsonProperty("printStart")]
         public partial double? PrintStarted { get; set; } = 0;
@@ -180,11 +181,11 @@ namespace AndreasReitberger.API.Repetier.Models
                 PrintStartedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
         [ObservableProperty]
-        
+
         public partial DateTime? PrintStartedGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
         [JsonProperty("printTime")]
         public partial double? PrintDuration { get; set; } = 0;
@@ -198,11 +199,11 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintDurationGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintDurationEstimatedGeneralized))]
         public partial double? PrintDurationEstimated { get; set; } = 0;
 
@@ -213,57 +214,57 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintDurationEstimatedGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("totalLines")]
         public partial long? TotalLines { get; set; }
 
         #region JsonIgnored
 
         [ObservableProperty]
-        
+
         public partial double? Extruder1Temperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? Extruder2Temperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? Extruder3Temperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? Extruder4Temperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? Extruder5Temperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? HeatedBedTemperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? HeatedChamberTemperature { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         public partial double? PrintProgress { get; set; } = 0;
 
         partial void OnPrintProgressChanged(double? value)
         {
             if (value > 0)
                 RemainingPrintDuration = value * PrintDuration;
-                //RemainingPrintDuration = value * PrintTime;
+            //RemainingPrintDuration = value * PrintTime;
         }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(RemainingPrintDurationGeneralized))]
         public partial double? RemainingPrintDuration { get; set; } = 0;
 
@@ -273,23 +274,23 @@ namespace AndreasReitberger.API.Repetier.Models
                 RemainingPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
         [ObservableProperty]
-        
+
         public partial TimeSpan? RemainingPrintDurationGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         public partial bool IsPrinting { get; set; } = false;
 
         [ObservableProperty]
-        
+
         public partial bool IsPaused { get; set; } = false;
 
         [ObservableProperty]
-        
+
         public partial bool IsSelected { get; set; } = false;
 
         [ObservableProperty]
-        
+
         public partial byte[] CurrentPrintImage { get; set; } = [];
 
         #endregion

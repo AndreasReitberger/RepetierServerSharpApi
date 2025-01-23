@@ -10,33 +10,33 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("error")]
         public partial long Error { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("output")]
         public partial long Output { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("tempRead")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("tempSet")]
         public partial double? TempSet { get; set; }
 
         #region Interface, unsused
 
         [ObservableProperty]
-        
+
         public partial string Name { get; set; } = string.Empty;
         #endregion
 
@@ -46,7 +46,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty]
-        
+
         public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.Other;
         #endregion
 

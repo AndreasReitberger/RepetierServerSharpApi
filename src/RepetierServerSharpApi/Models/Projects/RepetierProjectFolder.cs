@@ -7,37 +7,37 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("empty")]
         public partial bool Empty { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("folders")]
         public partial List<RepetierProjectSubFolder> Folders { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("idx")]
         public partial long Idx { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("parents")]
         public partial List<RepetierProjectParentElement> Parents { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("projects")]
         public partial List<RepetierProject> Projects { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("version")]
         public partial long Version { get; set; }
         #endregion

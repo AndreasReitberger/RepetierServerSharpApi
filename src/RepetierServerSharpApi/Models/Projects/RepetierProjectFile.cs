@@ -8,19 +8,19 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         public partial RepetierProjectFileType Type { get; set; }
 
         [ObservableProperty]
-        
+
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         public partial Guid ProjectUuid { get; set; } = Guid.Empty;
 
         [ObservableProperty]
-        
+
         public partial RepetierProjectsProjectFile? File { get; set; }
         #endregion
 

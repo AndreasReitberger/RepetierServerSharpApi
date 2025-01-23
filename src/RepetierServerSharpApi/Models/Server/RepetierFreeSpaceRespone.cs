@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("available")]
         public partial long Available { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("capacity")]
         public partial long Capacity { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("free")]
         public partial long Free { get; set; }
         #endregion

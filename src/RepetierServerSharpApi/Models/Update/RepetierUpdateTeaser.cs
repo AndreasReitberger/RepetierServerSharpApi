@@ -8,32 +8,32 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("available")]
         public partial bool Available { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("end")]
         public partial long End { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("msg")]
         public partial string Msg { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("start")]
         public partial long Start { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("updated")]
         public partial long Updated { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("url")]
         public partial Uri? Url { get; set; }
         #endregion

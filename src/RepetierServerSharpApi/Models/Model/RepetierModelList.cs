@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("data")]
         public partial List<RepetierModel> Data { get; set; } = new();
 

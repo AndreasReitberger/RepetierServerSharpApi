@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("count")]
         public partial long Count { get; set; }
         #endregion

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("start")]
         public partial long? Start { get; set; }
         #endregion

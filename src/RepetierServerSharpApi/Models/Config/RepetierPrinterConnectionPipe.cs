@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("file")]
         public partial string File { get; set; } = string.Empty;
         #endregion
