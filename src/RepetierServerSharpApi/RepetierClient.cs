@@ -2979,7 +2979,10 @@ namespace AndreasReitberger.API.Repetier
                 RepetierHistoryListRespone? historyList =
                     await GetHistoryListResponeAsync(printerNameForHistory, serverUuid, limit, page, start, allPrinter)
                     .ConfigureAwait(false);
-                return [.. historyList?.List];
+                if (historyList?.List is not null)
+                    return [.. historyList.List];
+                else
+                    return [];
             }
             catch (Exception exc)
             {
@@ -3057,7 +3060,10 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 RepetierHistorySummaryRespone? list = await GetHistorySummaryAsync(printerNameForHistory, year, allPrinter).ConfigureAwait(false);
-                return [.. list?.Summaries];
+                if (list?.Summaries is not null)
+                    return [.. list.Summaries];
+                else
+                    return [];
             }
             catch (Exception exc)
             {
