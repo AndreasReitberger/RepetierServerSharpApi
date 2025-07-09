@@ -69,7 +69,10 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 RepetierPrinterConfig? config = await GetPrinterConfigAsync(slug);
-                return [.. config?.Webcams];
+                if (config?.Webcams is not null)
+                    return [.. config.Webcams];
+                else
+                    return null;
             }
             catch (Exception exc)
             {
