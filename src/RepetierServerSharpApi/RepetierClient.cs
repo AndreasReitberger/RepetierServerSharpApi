@@ -190,7 +190,7 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) //: base(serverAddress, api, port = 3344, isSecure = false)
+        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) : base(serverAddress, api, port, isSecure)
         {
             Id = Guid.NewGuid();
             LoadDefaults();
@@ -198,7 +198,7 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) //: base(serverAddress, port = 3344, isSecure = false)
+        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) : base(serverAddress, port, isSecure)
         {
             Id = Guid.NewGuid();
             LoadDefaults();
@@ -210,29 +210,14 @@ namespace AndreasReitberger.API.Repetier
         #region Destructor
         ~RepetierClient()
         {
-            /* Done in Dtor of Print3dServerClient
-            if (WebSocket is not null && WebSocket.IsRunning)
-            {
-                WebSocket.Stop(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, $"{nameof(RepetierClient)} was disposed...");
-            }
-            */
             WebSocketMessageReceived -= Client_WebSocketMessageReceived;
         }
         #endregion
 
         #region Init
 
-        public static void UpdateSingleInstance(RepetierClient Inst)
-        {
-            try
-            {
-                Instance = Inst;
-            }
-            catch (Exception)
-            {
-                //OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
+        public static void UpdateSingleInstance(RepetierClient Inst) => Instance = Inst;
+
         public new void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
         {
             try
@@ -3193,28 +3178,15 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            try
-            {
-                return FullWebAddress;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return string.Empty;
-            }
-        }
+        public override string ToString() =>  FullWebAddress;
         public override bool Equals(object? obj)
         {
             if (obj is not RepetierClient item)
                 return false;
             return Id.Equals(item.Id);
         }
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
+        
         #endregion
     }
 }

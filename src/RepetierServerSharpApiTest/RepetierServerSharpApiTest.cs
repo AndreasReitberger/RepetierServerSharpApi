@@ -3,7 +3,6 @@ using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.Core.Utilities;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -92,10 +91,9 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                List<Type> types = AppDomain.CurrentDomain.GetAssemblies()
+                List<Type> types = [.. AppDomain.CurrentDomain.GetAssemblies()
                        .SelectMany(t => t.GetTypes())
-                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Repetier") is true)
-                       .ToList()
+                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Repetier") is true)]
                        ;
                 //Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
                 Regex r = new(@"^[A-Z][A-Za-z0-9]*$");
@@ -118,10 +116,9 @@ namespace RepetierServerSharpApiTest
                     if (serializedString == "{}") continue;
 
                     // Get all property infos
-                    List<PropertyInfo> p = t
+                    List<PropertyInfo> p = [.. t
                         .GetProperties()
-                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)
-                        .ToList()
+                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)]
                         ;
 
                     // Get the property names from the json text
@@ -146,9 +143,7 @@ namespace RepetierServerSharpApiTest
                     // set to cleanuped string
                     serializedString = sb.ToString();
                     var splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    List<string> properties = splitted
-                        .Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)
-                        .ToList()
+                    List<string> properties = [.. splitted.Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)]
                         ;
                     /*
                     serializedString = string.Join(Environment.NewLine, splitString);
@@ -250,24 +245,24 @@ namespace RepetierServerSharpApiTest
                     {
                         Ip = new() { Address = "192.168.1.1", Port = 3344 },
                     },
-                    Extruders = new()
-                    {
+                    Extruders =
+                    [
                         new() { Acceleration = 5000, Alias = "My #1 Extruder", ExtrudeSpeed = 5000, MaxTemp = 300, Num = 0 },
                         new() { Acceleration = 5000, Alias = "My #2 Extruder", ExtrudeSpeed = 5000, MaxTemp = 300, Num = 1 },
-                    },
-                    HeatedBeds = new()
-                    {
-                        new() { Alias = "My Heated bed", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() { Temp = 75 } } }
-                    },
-                    HeatedChambers = new()
-                    {
-                        new() { Alias = "My Heated chamber", MaxTemp = 110, LastTemp = 75, Temperatures = new() { new() { Temp = 75 } } }
-                    },
-                    Webcams = new()
-                    {
+                    ],
+                    HeatedBeds =
+                    [
+                        new() { Alias = "My Heated bed", MaxTemp = 110, LastTemp = 75, Temperatures = [new() { Temp = 75 }] }
+                    ],
+                    HeatedChambers =
+                    [
+                        new() { Alias = "My Heated chamber", MaxTemp = 110, LastTemp = 75, Temperatures = [new() { Temp = 75 }] }
+                    ],
+                    Webcams =
+                    [
                         new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 0, Orientation = 90 },
                         new() { WebCamUrlDynamic = new("https://some.url.de/"), Position = 1, Orientation = 180 },
-                    }
+                    ]
 
                 }.ToString();
             }
