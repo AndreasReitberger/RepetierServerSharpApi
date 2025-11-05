@@ -2,7 +2,7 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
-using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -390,7 +390,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
 
                     await _server.RefreshModelGroupsAsync();
-                    Assert.IsTrue(_server.Groups?.Count > 0);
+                    Assert.IsGreaterThan(0, _server.Groups.Count);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -422,27 +422,27 @@ namespace RepetierServerSharpApiTest
                     );
                     Stopwatch sw = Stopwatch.StartNew();
                     List<IGcode> models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.IsTrue(models?.Count > 0);
+                    Assert.IsGreaterThan(0, models.Count);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (without images)");
 
                     sw = Stopwatch.StartNew();
                     models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Thumbnail, progress);
-                    Assert.IsTrue(models?.Count > 0);
+                    Assert.IsGreaterThan(0, models.Count);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with thumbnails)");
 
                     sw = Stopwatch.StartNew();
                     models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
-                    Assert.IsTrue(models?.Count > 0);
+                    Assert.IsGreaterThan(0, models.Count);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with images)");
 
                     models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.IsTrue(models?.Count > 0);
+                    Assert.IsGreaterThan(0, models.Count);
 
                     List<IGcode> filesCollection = [.. models.Take(25)];
                     Dictionary<long, byte[]>? images = await _server.GetModelImagesAsync(filesCollection, imageType: AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
@@ -477,7 +477,7 @@ namespace RepetierServerSharpApiTest
                         await _server.SetPrinterActiveAsync(-1, true);
 
                     ObservableCollection<IPrint3dJob> jobs = await _server.GetJobListAsync();
-                    Assert.IsTrue(jobs != null);
+                    Assert.IsNotNull(jobs);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -545,7 +545,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsNotNull(historyItem);
 
                     byte[]? report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
-                    Assert.IsTrue(report?.Length > 0);
+                    Assert.IsGreaterThan(0, report.Length);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
                     Assert.IsTrue(File.Exists(downloadTarget));
@@ -575,7 +575,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await _server.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierGpioListItem> report = await _server.GetGPIOListAsync();
-                    Assert.IsTrue(report.Count > 0);
+                    Assert.IsNotEmpty(report);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -601,7 +601,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await _server.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierHistoryListItem>? report = await _server.GetHistoryListAsync(_server?.ActivePrinter?.Slug ?? "");
-                    Assert.IsTrue(report.Count > 0);
+                    Assert.IsNotEmpty(report);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -627,7 +627,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await _server.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierWebCallAction> report = await _server.GetWebCallActionsAsync();
-                    Assert.IsTrue(report.Count > 0);
+                    Assert.IsNotEmpty(report);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -653,7 +653,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await _server.SetPrinterActiveAsync(1);
                     ObservableCollection<ExternalCommand> commands = await _server.GetExternalCommandsAsync();
-                    Assert.IsTrue(commands.Count > 0);
+                    Assert.IsNotEmpty(commands);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -730,7 +730,7 @@ namespace RepetierServerSharpApiTest
 
                 type = RepetierWebcamType.Dynamic;
                 var webCams = await _server.GetWebCamConfigsAsync();
-                Assert.IsTrue(webCams?.Count > 0);
+                Assert.IsGreaterThan(0, webCams.Count);
                 foreach (var cam in webCams)
                 {
                     webcamUriDynamic = await _server.GetWebCamUriAsync((int)cam.Position, type);
@@ -843,7 +843,7 @@ namespace RepetierServerSharpApiTest
 
                     if (result)
                     {
-                        double? temp = 0;
+                        double temp = 0;
                         // Wait till temp rises
                         while (temp < 23)
                         {
@@ -857,10 +857,10 @@ namespace RepetierServerSharpApiTest
                                     break;
                                 }
                                 var bed = beds[0];
-                                temp = bed.TempRead;
+                                temp = bed.TempRead ?? 0;
                             }
                         }
-                        Assert.IsTrue(temp >= 23);
+                        Assert.IsGreaterThanOrEqualTo(23, temp);
                         // Turn off bed
                         result = await _server.SetBedTemperatureAsync(0, 0);
                         // Set timeout to 5 minutes
@@ -880,10 +880,10 @@ namespace RepetierServerSharpApiTest
                                         break;
                                     }
                                     var bed = beds[0];
-                                    temp = bed.TempRead;
+                                    temp = bed.TempRead ?? 0;
                                 }
                             }
-                            Assert.IsTrue(temp <= 23);
+                            Assert.IsLessThanOrEqualTo(23, temp);
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -924,7 +924,7 @@ namespace RepetierServerSharpApiTest
 
                     if (result)
                     {
-                        double? extruderTemp = 0;
+                        double extruderTemp = 0;
                         // Wait till temp rises
                         while (extruderTemp < 28)
                         {
@@ -938,10 +938,10 @@ namespace RepetierServerSharpApiTest
                                     break;
                                 }
                                 RepetierPrinterToolhead extruder = extruders[0];
-                                extruderTemp = extruder.TempRead;
+                                extruderTemp = extruder.TempRead ?? 0;
                             }
                         }
-                        Assert.IsTrue(extruderTemp >= 28);
+                        Assert.IsGreaterThanOrEqualTo(28, extruderTemp);
                         // Turn off extruder
                         result = await _server.SetExtruderTemperatureAsync(0, 0);
                         // Set timeout to 3 minutes
@@ -961,10 +961,10 @@ namespace RepetierServerSharpApiTest
                                         break;
                                     }
                                     var extruder = extruders[0];
-                                    extruderTemp = extruder.TempRead;
+                                    extruderTemp = extruder.TempRead ?? 0;
                                 }
                             }
-                            Assert.IsTrue(extruderTemp <= 28);
+                            Assert.IsLessThanOrEqualTo(28, extruderTemp);
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -1127,12 +1127,12 @@ namespace RepetierServerSharpApiTest
                     Assert.IsNotNull(files);
 
                     byte[]? file = await _server.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
-                    Assert.IsTrue(file?.Length > 0);
+                    Assert.IsGreaterThan(0, file.Length);
 
                     byte[]? file2 = await _server.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
-                    Assert.IsTrue(file2?.Length > 0);
+                    Assert.IsGreaterThan(0, file2.Length);
 
-                    Assert.IsTrue(file.Length == file2.Length);
+                    Assert.HasCount(file2.Length, file);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");

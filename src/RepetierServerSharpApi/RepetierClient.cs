@@ -7,7 +7,7 @@ using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -1764,9 +1764,9 @@ namespace AndreasReitberger.API.Repetier
                     await RefreshPrinterStateAsync().ConfigureAwait(false);
 
                 RepetierPrinterConfigMovement? shape = Config?.Movement;
-                var newX = MathHelper.Clamp(relative ? State?.X ?? 0 + x : x, shape?.XMin ?? 0, shape?.XMax ?? 0);
-                var newY = MathHelper.Clamp(relative ? State?.Y ?? 0 + y : y, shape?.YMin ?? 0, shape?.YMax ?? 0);
-                var newZ = MathHelper.Clamp(relative ? State?.Z ?? 0 + z : z, shape?.ZMin ?? 0, shape?.ZMax ?? 0);
+                var newX = Math.Clamp(relative ? State?.X ?? 0 + x : x, shape?.XMin ?? 0, shape?.XMax ?? 0);
+                var newY = Math.Clamp(relative ? State?.Y ?? 0 + y : y, shape?.YMin ?? 0, shape?.YMax ?? 0);
+                var newZ = Math.Clamp(relative ? State?.Z ?? 0 + z : z, shape?.ZMin ?? 0, shape?.ZMax ?? 0);
 
                 string data = $"{{\"speed\":{speed}" +
                     string.Format(",\"relative\":{0}", relative ? "true" : "false") +
