@@ -32,35 +32,30 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer,
-                    RepetierCommandFeature.list)
-                    .ConfigureAwait(false);
-                */
+
                 RepetierPrinterListRespone? respone = GetObjectFromJson<RepetierPrinterListRespone>(result?.Result);
                 if (respone is not null)
                 {
-                    repetierPrinterList = new List<IPrinter3d>(respone.Printers);
+                    repetierPrinterList = [.. respone.Printers];
                     foreach (RepetierPrinter? printer in repetierPrinterList.Cast<RepetierPrinter>())
                     {
                         if (printer is not null)
                         {
-                            if (printer?.JobId > 0)
+                            if (printer.JobId > 0)
                             {
                                 IPrinter3d? prevPrinter = Printers?.FirstOrDefault(p => p.Slug == printer.Slug);
                                 if (prevPrinter is null) continue;
                                 // Avoid unnecessary calls if the image or the job hasn't changed
-                                if (prevPrinter?.ActiveJobId != printer?.ActiveJobId || prevPrinter?.CurrentPrintImage?.Length <= 0)
+                                if (prevPrinter.ActiveJobId != printer.ActiveJobId || prevPrinter.CurrentPrintImage?.Length <= 0)
                                 {
-                                    if (printer is not null) printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
+                                    printer.CurrentPrintImage = await GetDynamicRenderImageByJobIdAsync(printer.JobId, false).ConfigureAwait(false);
                                 }
                                 else
                                 {
-                                    if (printer is not null) printer.CurrentPrintImage = prevPrinter?.CurrentPrintImage ?? [];
+                                    printer?.CurrentPrintImage = prevPrinter.CurrentPrintImage ?? [];
                                 }
                             }
-                            else if (printer is not null) printer.CurrentPrintImage = [];
+                            else printer.CurrentPrintImage = [];
                         }
                     }
                     Printers = [.. repetierPrinterList];

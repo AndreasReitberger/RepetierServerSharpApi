@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
 
         [JsonProperty("data")]
-        public partial List<RepetierPrinter> Printers { get; set; } = new();
+        public partial List<RepetierPrinter> Printers { get; set; } = [];
         #endregion
 
         #region Overrides

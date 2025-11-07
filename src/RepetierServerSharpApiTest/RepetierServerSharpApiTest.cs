@@ -13,7 +13,6 @@ using System.Xml.Serialization;
 
 namespace RepetierServerSharpApiTest
 {
-    [TestClass]
     public class RepetierServerSharpApiTest
     {
 
@@ -24,9 +23,41 @@ namespace RepetierServerSharpApiTest
         private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
 
+        private RepetierClient? client;
+
         private readonly bool _skipPrinterActionTests = true;
 
-        [TestMethod]
+        #region Setup
+        [SetUp]
+        public void Setup()
+        {
+            string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+            string ws = $"{(_ssl ? "wss://" : "ws://")}{_host}:{_port}/socket";
+            client = new RepetierClient.RepetierConnectionBuilder()
+                .WithServerAddress(host)
+                .WithApiKey(_api)
+                .WithWebSocket(ws)
+                .WithTimeout(100)
+                .Build();
+            client.Error += (sender, args) =>
+            {
+                if (!client.ReThrowOnError)
+                {
+                    Assert.Fail($"Error: {args?.ToString()}");
+                }
+            };
+            client.RestApiError += (sender, args) =>
+            {
+                if (!client.ReThrowOnError)
+                {
+                    Assert.Fail($"REST-Error: {args?.ToString()}");
+                }
+            };
+        }
+        #endregion
+
+        #region Serialize
+        [Test]
         public void SerializeJsonTest()
         {
             var dir = @"TestResults\Serialization\";
@@ -35,8 +66,8 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-
-                RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                RepetierClient.Instance = new RepetierClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
@@ -54,7 +85,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void SerializeNewetonsoftJsonTest()
         {
             var dir = @"TestResults\Serialization\";
@@ -63,7 +94,8 @@ namespace RepetierServerSharpApiTest
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                RepetierClient.Instance = new RepetierClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
@@ -82,7 +114,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void SerializeAllTypesWithJsonNewtonsoftTest()
         {
             var dir = @"TestResults\Serialization\";
@@ -192,7 +224,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void SerializeTest()
         {
 
@@ -205,7 +237,9 @@ namespace RepetierServerSharpApiTest
                 var xmlSerializer = new XmlSerializer(typeof(RepetierClient));
                 using (var fileStream = new FileStream(serverConfig, FileMode.Create))
                 {
-                    RepetierClient.Instance = new RepetierClient(_host, _api, _port, _ssl)
+                    string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                    RepetierClient _server = new(host);
+                    RepetierClient.Instance = new RepetierClient(host)
                     {
                         ActiveToolheadIndex = 1,
                         FreeDiskSpace = 1523165212,
@@ -231,7 +265,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ExtendedSerializeTest()
         {
             try
@@ -271,24 +305,27 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
+        #endregion
 
-        [TestMethod]
+        #region Server Tests
+        [Test]
         public async Task ServerInitTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                //CancellationTokenSource cts = new(new TimeSpan(0, 0, 50));
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
-
-                    await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
+                    // Takes very long, not recommended
+                    await client.RefreshAllAsync();
+                    Assert.IsTrue(client.InitialDataFetched);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -296,43 +333,43 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerLoginTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
                     bool succeed = false;
                     // Wait 1 minutes
                     CancellationTokenSource cts = new(new TimeSpan(0, 1, 0));
-                    _server.LoginResultReceived += ((sender, args) =>
+                    client.LoginResultReceived += ((sender, args) =>
                     {
                         Assert.IsTrue(args.LoginSucceeded);
                         succeed = true;
                         cts.Cancel();
                     });
-                    await _server.SetPrinterActiveAsync();
-                    await _server.StartListeningAsync();
+                    await client.SetPrinterActiveAsync();
+                    await client.StartListeningAsync();
                     // Wait till session is esstablished
-                    while (_server.Session == null && !cts.IsCancellationRequested)
+                    while (client.Session == null && !cts.IsCancellationRequested)
                     {
                         await Task.Delay(250);
                     }
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
-                    _server.Login(_user, SecureStringHelper.ConvertToSecureString(_pw), _server.SessionId);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
+                    client.Login(_user, SecureStringHelper.ConvertToSecureString(_pw), client.SessionId);
                     while (!cts.IsCancellationRequested && !succeed)
                     {
                         await Task.Delay(100);
                     }
                     Assert.IsTrue(succeed);
-                    await _server.LogoutAsync();
+                    await client.LogoutAsync();
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -340,27 +377,24 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task FetchPrintersTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
-                {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
+                if (client is null) throw new NullReferenceException($"The client was null!");
 
-                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
+                {
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
+
+                    List<IPrinter3d> printers = await client.GetPrintersAsync();
                     Assert.IsTrue(printers != null && printers.Count > 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -368,32 +402,29 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task FetchPrintModelGroupsTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
+                    if (client.ActivePrinter == null)
                     {
-                        await _server.SetPrinterActiveAsync();
+                        await client.SetPrinterActiveAsync();
                     }
 
-                    List<IGcodeGroup> modelgroups = await _server.GetModelGroupsAsync();
+                    List<IGcodeGroup> modelgroups = await client.GetModelGroupsAsync();
                     Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
 
-                    await _server.RefreshModelGroupsAsync();
-                    Assert.IsGreaterThan(0, _server.Groups.Count);
+                    await client.RefreshModelGroupsAsync();
+                    Assert.Greater(client.Groups.Count, 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -401,58 +432,55 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task FetchPrintModelsTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
 
                     IProgress<int> progress = new Progress<int>(prog =>
                         Debug.WriteLine($"Done: {prog:N0}")
                     );
                     Stopwatch sw = Stopwatch.StartNew();
-                    List<IGcode> models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.IsGreaterThan(0, models.Count);
+                    List<IGcode> models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
+                    Assert.Greater(models.Count, 0);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (without images)");
 
                     sw = Stopwatch.StartNew();
-                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Thumbnail, progress);
-                    Assert.IsGreaterThan(0, models.Count);
+                    models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Thumbnail, progress);
+                    Assert.Greater(models.Count, 0);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with thumbnails)");
 
                     sw = Stopwatch.StartNew();
-                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
-                    Assert.IsGreaterThan(0, models.Count);
+                    models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    Assert.Greater(models.Count, 0);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with images)");
 
-                    models = await _server.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.IsGreaterThan(0, models.Count);
+                    models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
+                    Assert.Greater(models.Count, 0);
 
                     List<IGcode> filesCollection = [.. models.Take(25)];
-                    Dictionary<long, byte[]>? images = await _server.GetModelImagesAsync(filesCollection, imageType: AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    Dictionary<long, byte[]>? images = await client.GetModelImagesAsync(filesCollection, imageType: AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
                     Assert.IsTrue(images?.Select(kp => kp.Value).Any(image => image.Length > 0));
 
-                    IList<IGcode>? updatedModels = await _server.UpdateModelImagesAsync(filesCollection, AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
+                    IList<IGcode>? updatedModels = await client.UpdateModelImagesAsync(filesCollection, AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
                     Assert.IsTrue(updatedModels?.Select(model => model.Image).Any(image => image?.Length > 0));
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -460,27 +488,24 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task FetchJobListTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) =>
-                {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(-1, true);
+                if (client is null) throw new NullReferenceException($"The client was null!");
 
-                    ObservableCollection<IPrint3dJob> jobs = await _server.GetJobListAsync();
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
+                {
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(-1, true);
+
+                    ObservableCollection<IPrint3dJob> jobs = await client.GetJobListAsync();
                     Assert.IsNotNull(jobs);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -488,23 +513,23 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task PrintModelTest()
         {
             try
             {
-                if (_skipPrinterActionTests) return;
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(-1, true);
+                if (client is null) throw new NullReferenceException($"The client was null!");
 
-                    List<IGcode> models = await _server.GetModelsAsync();
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
+                {
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(-1, true);
+
+                    List<IGcode> models = await client.GetModelsAsync();
                     if (models?.Count > 0)
                     {
-                        bool printed = await _server.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: false);
+                        bool printed = await client.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: false);
                         Assert.IsTrue(printed);
                     }
                     else
@@ -513,7 +538,7 @@ namespace RepetierServerSharpApiTest
                     }
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -521,38 +546,35 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task DownloadPrintReport()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync();
-                    ObservableCollection<RepetierHistorySummaryItem>? history = await _server.GetHistorySummaryItemsAsync("", 2022, true);
+                    await client.SetPrinterActiveAsync();
+                    ObservableCollection<RepetierHistorySummaryItem>? history = await client.GetHistorySummaryItemsAsync("", 2022, true);
                     Assert.IsTrue(history?.Any());
 
-                    ObservableCollection<RepetierHistoryListItem> list = await _server.GetHistoryListAsync("", "", 50, 0, 0, true);
+                    ObservableCollection<RepetierHistoryListItem> list = await client.GetHistoryListAsync("", "", 50, 0, 0, true);
                     Assert.IsTrue(list?.Any());
 
                     RepetierHistoryListItem? historyItem = list?.FirstOrDefault();
                     Assert.IsNotNull(historyItem);
 
                     byte[]? report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
-                    Assert.IsGreaterThan(0, report.Length);
+                    Assert.Greater(report.Length, 0);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
                     Assert.IsTrue(File.Exists(downloadTarget));
                     //Process.Start(downloadTarget);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -560,25 +582,22 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetGPIOList()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierGpioListItem> report = await _server.GetGPIOListAsync();
+                    await client.SetPrinterActiveAsync(1);
+                    ObservableCollection<RepetierGpioListItem> report = await client.GetGPIOListAsync();
                     Assert.IsNotEmpty(report);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -586,25 +605,22 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetHistoryList()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierHistoryListItem>? report = await _server.GetHistoryListAsync(_server?.ActivePrinter?.Slug ?? "");
+                    await client.SetPrinterActiveAsync(1);
+                    ObservableCollection<RepetierHistoryListItem>? report = await client.GetHistoryListAsync(client?.ActivePrinter?.Slug ?? "");
                     Assert.IsNotEmpty(report);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -612,25 +628,22 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetWebcalls()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierWebCallAction> report = await _server.GetWebCallActionsAsync();
+                    await client.SetPrinterActiveAsync(1);
+                    ObservableCollection<RepetierWebCallAction> report = await client.GetWebCallActionsAsync();
                     Assert.IsNotEmpty(report);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -638,25 +651,22 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetExternalCommands()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync(1);
-                    ObservableCollection<ExternalCommand> commands = await _server.GetExternalCommandsAsync();
+                    await client.SetPrinterActiveAsync(1);
+                    ObservableCollection<ExternalCommand> commands = await client.GetExternalCommandsAsync();
                     Assert.IsNotEmpty(commands);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -665,37 +675,30 @@ namespace RepetierServerSharpApiTest
         }
 
         /**/
-        [TestMethod]
+        [Test]
         public async Task OnlineTest()
         {
             //if (_skipOnlineTests) return;
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.SetPrinterActiveAsync(1);
-                _server.Error += (o, args) =>
-                {
-                    Assert.Fail(args.ToString());
-                };
-                _server.ServerWentOffline += (o, args) =>
-                {
-                    Assert.Fail(args.ToString());
-                };
-                await _server.CheckOnlineAsync(3500);//.ConfigureAwait(false);
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync(3500);//.ConfigureAwait(false);
+                await client.SetPrinterActiveAsync(1);
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 do
                 {
                     await Task.Delay(10000);
-                    await _server.CheckOnlineAsync();
-                    await _server.RefreshAllAsync();
-                    if (_server.IsPrinting)
+                    await client.CheckOnlineAsync();
+                    await client.RefreshAllAsync();
+                    if (client.IsPrinting)
                     {
-                        IPrint3dJobStatus? info = _server.ActiveJob;
+                        IPrint3dJobStatus? info = client.ActiveJob;
                         if (info == null)
                             Assert.Fail("Print info was null");
                     }
-                } while (_server.IsOnline && !cts.IsCancellationRequested);
+                } while (client.IsOnline && !cts.IsCancellationRequested);
                 Assert.IsTrue(cts.IsCancellationRequested);
             }
             catch (Exception exc)
@@ -704,39 +707,35 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task WebcamTest()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                Assert.IsTrue(_server.IsOnline);
+                if (client is null) throw new NullReferenceException($"The client was null!");
 
-                await _server.SetPrinterActiveAsync();
+                await client.CheckOnlineAsync();
+                Assert.IsTrue(client.IsOnline);
 
-                _server.Error += (o, args) =>
-                {
-                    Assert.Fail(args.ToString());
-                };
+                await client.SetPrinterActiveAsync();
 
                 RepetierWebcamType type = RepetierWebcamType.Dynamic;
-                string webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
+                string webcamUriDynamic = await client.GetWebCamUriAsync(0, type);
                 Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
                 type = RepetierWebcamType.Static;
-                webcamUriDynamic = await _server.GetWebCamUriAsync(0, type);
+                webcamUriDynamic = await client.GetWebCamUriAsync(0, type);
                 Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
                 type = RepetierWebcamType.Dynamic;
-                var webCams = await _server.GetWebCamConfigsAsync();
-                Assert.IsGreaterThan(0, webCams.Count);
+                var webCams = await client.GetWebCamConfigsAsync();
+                Assert.Greater(webCams.Count, 0);
                 foreach (var cam in webCams)
                 {
-                    webcamUriDynamic = await _server.GetWebCamUriAsync((int)cam.Position, type);
+                    webcamUriDynamic = await client.GetWebCamUriAsync((int)cam.Position, type);
                     Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
 
-                    webcamUriDynamic = _server.GetWebCamUri(cam);
+                    webcamUriDynamic = client.GetWebCamUri(cam);
                     Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
                 }
             }
@@ -746,29 +745,22 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task WebsocketTest()
         {
             try
             {
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
                 Dictionary<DateTime, string> websocketMessages = [];
                 Dictionary<string, string> unkownJsonRespones = [];
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                await _server.SetPrinterActiveAsync();
+
+                await client.CheckOnlineAsync();
+                await client.SetPrinterActiveAsync();
                 DateTime start = DateTime.Now;
-                await _server.StartListeningAsync();
+                await client.StartListeningAsync();
 
-                _server.Error += (o, args) =>
-                {
-                    Assert.Fail(args.ToString());
-                };
-                _server.ServerWentOffline += (o, args) =>
-                {
-                    Assert.Fail(args.ToString());
-                };
-
-                _server.WebSocketDataReceived += (o, args) =>
+                client.WebSocketDataReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {
@@ -777,19 +769,19 @@ namespace RepetierServerSharpApiTest
                     }
                 };
 
-                _server.WebSocketMessageReceived += (o, args) =>
+                client.WebSocketMessageReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {
                         websocketMessages.Add(DateTime.Now, args.Message);
-                        Console.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
-                _server.WebSocketError += (o, args) =>
+                client.WebSocketError += (o, args) =>
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
-                _server.IgnoredJsonResultsChanged += (o, args) =>
+                client.IgnoredJsonResultsChanged += (o, args) =>
                 {
                     foreach (var keyPair in args.NewIgnoredJsonResults)
                     {
@@ -799,7 +791,7 @@ namespace RepetierServerSharpApiTest
                 };
                 // Wait 30 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 60, 0));
-                _server.WebSocketDisconnected += (o, args) =>
+                client.WebSocketDisconnected += (o, args) =>
                 {
                     var duraton = DateTime.Now - start;
                     var messages = websocketMessages;
@@ -810,9 +802,9 @@ namespace RepetierServerSharpApiTest
                 do
                 {
                     await Task.Delay(10000);
-                    await _server.CheckOnlineAsync();
-                } while (_server.IsOnline && !cts.IsCancellationRequested);
-                await _server.StopListeningAsync();
+                    await client.CheckOnlineAsync();
+                } while (client.IsOnline && !cts.IsCancellationRequested);
+                await client.StopListeningAsync();
 
 
                 Assert.IsTrue(cts.IsCancellationRequested && websocketMessages?.Count > 50);
@@ -824,20 +816,20 @@ namespace RepetierServerSharpApiTest
         }
 
         /**/
-        [TestMethod]
+        [Test]
         public async Task SetHeatedbedTest()
         {
             if (_skipPrinterActionTests) return;
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(1, true);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(1, true);
 
-                    bool result = await _server.SetBedTemperatureAsync(0, 25);
+                    bool result = await client.SetBedTemperatureAsync(0, 25);
                     // Set timeout to 5 minutes
                     var cts = new CancellationTokenSource(new TimeSpan(0, 5, 0));
 
@@ -847,7 +839,7 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (temp < 23)
                         {
-                            var state = await _server.GetStatesAsync();
+                            var state = await client.GetStatesAsync();
                             if (state != null && state?.Count > 0)
                             {
                                 var beds = state.FirstOrDefault().Value.HeatedBeds;
@@ -860,9 +852,9 @@ namespace RepetierServerSharpApiTest
                                 temp = bed.TempRead ?? 0;
                             }
                         }
-                        Assert.IsGreaterThanOrEqualTo(23, temp);
+                        Assert.GreaterOrEqual(temp, 23);
                         // Turn off bed
-                        result = await _server.SetBedTemperatureAsync(0, 0);
+                        result = await client.SetBedTemperatureAsync(0, 0);
                         // Set timeout to 5 minutes
                         cts = new CancellationTokenSource(new TimeSpan(0, 5, 0));
                         if (result)
@@ -870,7 +862,7 @@ namespace RepetierServerSharpApiTest
 
                             while (temp > 23)
                             {
-                                var state = await _server.GetStatesAsync();
+                                var state = await client.GetStatesAsync();
                                 if (state != null && state?.Count > 0)
                                 {
                                     var beds = state.FirstOrDefault().Value.HeatedBeds;
@@ -883,7 +875,7 @@ namespace RepetierServerSharpApiTest
                                     temp = bed.TempRead ?? 0;
                                 }
                             }
-                            Assert.IsLessThanOrEqualTo(23, temp);
+                            Assert.LessOrEqual(23, temp);
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -892,7 +884,7 @@ namespace RepetierServerSharpApiTest
                         Assert.Fail("Command failed to be sent.");
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (TaskCanceledException texc)
             {
@@ -905,20 +897,20 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task SetExtruderTest()
         {
             if (_skipPrinterActionTests) return;
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(1, true);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(1, true);
 
-                    bool result = await _server.SetExtruderTemperatureAsync(extruder: 0, temperature: 30);
+                    bool result = await client.SetExtruderTemperatureAsync(extruder: 0, temperature: 30);
                     // Set timeout to 3 minutes
                     var cts = new CancellationTokenSource(new TimeSpan(0, 3, 0));
 
@@ -928,7 +920,7 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (extruderTemp < 28)
                         {
-                            var state = await _server.GetStatesAsync();
+                            var state = await client.GetStatesAsync();
                             if (state != null && state?.Count > 0)
                             {
                                 List<RepetierPrinterToolhead> extruders = state.FirstOrDefault().Value.Extruder;
@@ -941,9 +933,9 @@ namespace RepetierServerSharpApiTest
                                 extruderTemp = extruder.TempRead ?? 0;
                             }
                         }
-                        Assert.IsGreaterThanOrEqualTo(28, extruderTemp);
+                        Assert.GreaterOrEqual(extruderTemp, 28);
                         // Turn off extruder
-                        result = await _server.SetExtruderTemperatureAsync(0, 0);
+                        result = await client.SetExtruderTemperatureAsync(0, 0);
                         // Set timeout to 3 minutes
                         cts = new CancellationTokenSource(new TimeSpan(0, 3, 0));
                         if (result)
@@ -951,7 +943,7 @@ namespace RepetierServerSharpApiTest
 
                             while (extruderTemp > 28)
                             {
-                                var state = await _server.GetStatesAsync();
+                                var state = await client.GetStatesAsync();
                                 if (state != null && state?.Count > 0)
                                 {
                                     var extruders = state.FirstOrDefault().Value.Extruder;
@@ -964,7 +956,7 @@ namespace RepetierServerSharpApiTest
                                     extruderTemp = extruder.TempRead ?? 0;
                                 }
                             }
-                            Assert.IsLessThanOrEqualTo(28, extruderTemp);
+                            Assert.LessOrEqual(extruderTemp, 28);
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -973,7 +965,7 @@ namespace RepetierServerSharpApiTest
                         Assert.Fail("Command failed to be sent.");
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (TaskCanceledException texc)
             {
@@ -986,119 +978,117 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ConnectionBuilderTest()
         {
+            string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
             using RepetierClient client = new RepetierClient.RepetierConnectionBuilder()
-                .WithServerAddress(_host, _port, false)
+                .WithServerAddress(host)
                 .WithApiKey(_api)
                 .Build();
             await client.CheckOnlineAsync();
             Assert.IsTrue(client?.IsOnline ?? false);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerQueryTests()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
 
 
-                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    List<IPrinter3d> printers = await client.GetPrintersAsync();
                     Assert.IsNotNull(printers);
                     string json = JsonConvert.SerializeObject(printers, Formatting.Indented);
 
-                    RepetierAvailableUpdateInfo? update = await _server.GetAvailableServerUpdateAsync();
+                    RepetierAvailableUpdateInfo? update = await client.GetAvailableServerUpdateAsync();
                     Assert.IsNotNull(update);
                     json = JsonConvert.SerializeObject(update, Formatting.Indented);
 
-                    RepetierCurrentPrintInfo? printInfo = await _server.GetCurrentPrintInfoAsync();
+                    RepetierCurrentPrintInfo? printInfo = await client.GetCurrentPrintInfoAsync();
                     Assert.IsNotNull(printInfo);
                     json = JsonConvert.SerializeObject(printInfo, Formatting.Indented);
 
-                    var printInfos = await _server.GetCurrentPrintInfosAsync();
+                    var printInfos = await client.GetCurrentPrintInfosAsync();
                     Assert.IsNotNull(printInfos);
                     json = JsonConvert.SerializeObject(printInfos, Formatting.Indented);
 
-                    var cmds = await _server.GetExternalCommandsAsync();
+                    var cmds = await client.GetExternalCommandsAsync();
                     Assert.IsNotNull(cmds);
                     json = JsonConvert.SerializeObject(cmds, Formatting.Indented);
 
-                    var gpios = await _server.GetGPIOListAsync();
+                    var gpios = await client.GetGPIOListAsync();
                     Assert.IsNotNull(gpios);
                     json = JsonConvert.SerializeObject(gpios, Formatting.Indented);
 
-                    var history = await _server.GetHistoryListAsync(_server.ActivePrinter?.Slug);
+                    var history = await client.GetHistoryListAsync(client.ActivePrinter?.Slug);
                     Assert.IsNotNull(history);
                     json = JsonConvert.SerializeObject(history, Formatting.Indented);
 
                     // Only works if enabled in Settings
                     /*
                     var hid = history?.FirstOrDefault()?.Id;
-                    var historyReport = await _server.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
+                    var historyReport = await client.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
                     Assert.IsNotNull(historyReport);
                     json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
                     */
 
-                    var historySummary = await _server.GetHistorySummaryItemsAsync(_server.ActivePrinter?.Slug, 2023, true);
+                    var historySummary = await client.GetHistorySummaryItemsAsync(client.ActivePrinter?.Slug, 2023, true);
                     Assert.IsNotNull(historySummary);
                     json = JsonConvert.SerializeObject(historySummary, Formatting.Indented);
 
-                    var jobList = await _server.GetJobListAsync();
+                    var jobList = await client.GetJobListAsync();
                     Assert.IsNotNull(jobList);
                     json = JsonConvert.SerializeObject(jobList, Formatting.Indented);
 
-                    var license = await _server.GetLicenseDataAsync();
+                    var license = await client.GetLicenseDataAsync();
                     Assert.IsNotNull(license);
                     json = JsonConvert.SerializeObject(license, Formatting.Indented);
 
-                    var messages = await _server.GetMessagesAsync();
+                    var messages = await client.GetMessagesAsync();
                     Assert.IsNotNull(messages);
                     json = JsonConvert.SerializeObject(messages, Formatting.Indented);
 
-                    var groups = await _server.GetModelGroupsAsync();
+                    var groups = await client.GetModelGroupsAsync();
                     Assert.IsNotNull(groups);
                     json = JsonConvert.SerializeObject(groups, Formatting.Indented);
 
-                    List<IGcode> files = await _server.GetModelsAsync();
+                    List<IGcode> files = await client.GetModelsAsync();
                     Assert.IsNotNull(files);
                     json = JsonConvert.SerializeObject(files, Formatting.Indented);
 
-                    var config = await _server.GetPrinterConfigAsync();
+                    var config = await client.GetPrinterConfigAsync();
                     Assert.IsNotNull(config);
                     json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
-                    var servers = await _server.GetProjectsListServerAsync();
+                    var servers = await client.GetProjectsListServerAsync();
                     Assert.IsNotNull(servers);
                     json = JsonConvert.SerializeObject(servers, Formatting.Indented);
 
-                    var projects = await _server.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
+                    var projects = await client.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.IsNotNull(projects);
                     json = JsonConvert.SerializeObject(projects, Formatting.Indented);
 
-                    var folders = await _server.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
+                    var folders = await client.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.IsNotNull(folders);
                     json = JsonConvert.SerializeObject(folders, Formatting.Indented);
 
-                    var state = await _server.GetStatesAsync();
+                    var state = await client.GetStatesAsync();
                     Assert.IsNotNull(state);
                     json = JsonConvert.SerializeObject(state, Formatting.Indented);
 
-                    //await _server.RefreshAllAsync();
-                    //Assert.IsTrue(_server.InitialDataFetched);
+                    //await client.RefreshAllAsync();
+                    //Assert.IsTrue(client.InitialDataFetched);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1106,41 +1096,47 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task DownloadGcodeTestAsync()
         {
             try
             {
-                RepetierClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    Assert.Fail(e.ToString());
-                };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    if (_server.ActivePrinter == null)
-                        await _server.SetPrinterActiveAsync(0, true);
+                    if (client.ActivePrinter == null)
+                        await client.SetPrinterActiveAsync(0, true);
 
 
-                    List<IGcode> files = await _server.GetFilesAsync();
+                    List<IGcode> files = await client.GetFilesAsync();
                     Assert.IsNotNull(files);
 
-                    byte[]? file = await _server.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
-                    Assert.IsGreaterThan(0, file.Length);
+                    byte[]? file = await client.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
+                    Assert.Greater(file.Length, 0);
 
-                    byte[]? file2 = await _server.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
-                    Assert.IsGreaterThan(0, file2.Length);
+                    byte[]? file2 = await client.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
+                    Assert.Greater(file2.Length, 0);
 
-                    Assert.HasCount(file2.Length, file);
+                    Assert.AreEqual(file2.Length, file.Length);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
         }
+        #endregion
+
+        #region Cleanup
+        [TearDown]
+        public void BaseTearDown()
+        {
+            client?.Dispose();
+        }
+        #endregion
     }
 }

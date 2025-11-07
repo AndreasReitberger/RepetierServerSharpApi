@@ -20,17 +20,17 @@ namespace AndreasReitberger.API.Repetier
                 if (e == null || string.IsNullOrEmpty(e.Message))
                     return;
                 string text = e.Message;
-                if (text.ToLower().Contains("login"))
+                if (text.Contains("login", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //var login = GetObjectFromJson<RepetierLoginRequiredResult>(text, NewtonsoftJsonSerializerSettings);
                     //var login = GetObjectFromJson<RepetierLoginResult>(text, NewtonsoftJsonSerializerSettings);
                 }
-                if (text.ToLower().Contains("session"))
+                if (text.Contains("session", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Session = GetObjectFromJson<EventSession>(text, NewtonsoftJsonSerializerSettings);
                     Session = GetObjectFromJson<EventSession>(text);
                 }
-                else if (text.ToLower().Contains("event"))
+                else if (text.Contains("event", StringComparison.CurrentCultureIgnoreCase))
                 {
                     RepetierEventContainer? repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
                     if (repetierEvent is not null)
@@ -53,7 +53,7 @@ namespace AndreasReitberger.API.Repetier
                                             LoginSucceeded = true,
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
-                                            Printer = obj.Printer,
+                                            Message = obj.Printer,
                                         });
                                     }
                                     break;
@@ -267,17 +267,17 @@ namespace AndreasReitberger.API.Repetier
                     return;
                 base.WebSocket_MessageReceived(msg);
                 string text = msg.Text;
-                if (text.ToLower().Contains("login"))
+                if (text.Contains("login", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //var login = GetObjectFromJson<RepetierLoginRequiredResult>(text, NewtonsoftJsonSerializerSettings);
                     //var login = GetObjectFromJson<RepetierLoginResult>(text, NewtonsoftJsonSerializerSettings);
                 }
-                if (text.ToLower().Contains("session"))
+                if (text.Contains("session", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Session = GetObjectFromJson<EventSession>(text, NewtonsoftJsonSerializerSettings);
                     Session = GetObjectFromJson<EventSession>(text);
                 }
-                else if (text.ToLower().Contains("event"))
+                else if (text.Contains("event", StringComparison.CurrentCultureIgnoreCase))
                 {
                     RepetierEventContainer? repetierEvent = GetObjectFromJson<RepetierEventContainer>(text, NewtonsoftJsonSerializerSettings);
                     if (repetierEvent is not null)
@@ -300,7 +300,7 @@ namespace AndreasReitberger.API.Repetier
                                             LoginSucceeded = true,
                                             CallbackId = PingCounter,
                                             SessionId = SessionId,
-                                            Printer = obj.Printer,
+                                            Message = obj.Printer,
                                         });
                                     }
                                     break;

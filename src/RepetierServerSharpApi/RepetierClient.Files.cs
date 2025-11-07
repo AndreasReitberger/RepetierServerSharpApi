@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
-using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.Structs;
@@ -7,7 +6,6 @@ using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
 using Newtonsoft.Json;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,7 +41,7 @@ namespace AndreasReitberger.API.Repetier
                     List<RepetierModel> modelList = modelInfo.Data;
                     if (modelList is not null)
                     {
-                        List<IGcode> models = new(modelList);
+                        List<IGcode> models = [.. modelList];
                         if (ImageType != GcodeImageType.None)
                         {
                             int lastProgres = -1;

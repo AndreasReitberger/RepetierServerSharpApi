@@ -16,11 +16,10 @@
                 return _client;
             }
 
-            public RepetierConnectionBuilder WithServerAddress(string serverAddress, int port = 3344, bool https = false)
+            public RepetierConnectionBuilder WithServerAddress(string serverAddress, string version = "")
             {
-                _client.IsSecure = https;
-                _client.ServerAddress = serverAddress;
-                _client.Port = port;
+                _client.ApiTargetPath = serverAddress;
+                _client.ApiVersion = version;
                 return this;
             }
 
@@ -36,12 +35,26 @@
                 return this;
             }
 
-            public RepetierConnectionBuilder WithPingInterval(int interval = 5)
+            public RepetierConnectionBuilder WithPingInterval(bool enablePing, int interval = 5)
             {
+                _client.EnablePing = enablePing;
                 _client.PingInterval = interval;
                 return this;
             }
 
+            public RepetierConnectionBuilder WithTimeout(int timeout = 100)
+            {
+                _client.DefaultTimeout = timeout;
+                return this;
+            }
+            public RepetierConnectionBuilder WithWebSocket(string websocketTarget, string pingCommand = "", int pingInterval = 5, bool enablePing = true)
+            {
+                _client.WebSocketTargetUri = websocketTarget;
+                _client.PingCommand = pingCommand;
+                _client.PingInterval = pingInterval;
+                _client.EnablePing = enablePing;
+                return this;
+            }
             #endregion
         }
     }

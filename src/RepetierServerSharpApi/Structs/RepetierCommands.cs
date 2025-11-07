@@ -2,19 +2,18 @@
 {
     public struct RepetierCommands
     {
-        public static string Base = "printer";
-
-        public static string Api = "api";
-        public static string Ping = "ping";
-        public static string Info = "info";
-        public static string LayerAnalysis = "layeranalysis";
-        public static string List = "list";
-        public static string Layer = "layer";
-        public static string Gcode = "gcode";
-        public static string Log = "log";
-        public static string Model = "model";
-        public static string PConfig = "pconfig";
-        public static string Export = "export";
+        public const string Base = "printer";
+        public const string Api = "api";
+        public const string Ping = "ping";
+        public const string Info = "info";
+        public const string LayerAnalysis = "layeranalysis";
+        public const string List = "list";
+        public const string Layer = "layer";
+        public const string Gcode = "gcode";
+        public const string Log = "log";
+        public const string Model = "model";
+        public const string PConfig = "pconfig";
+        public const string Export = "export";
 
         #region Ctor
         public RepetierCommands() { }

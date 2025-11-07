@@ -190,19 +190,19 @@ namespace AndreasReitberger.API.Repetier
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, string api, int port = 3344, bool isSecure = false) : base(serverAddress, api, port, isSecure)
+        public RepetierClient(string serverAddress, string api) : base(serverAddress, api)
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, port, api, isSecure);
+            InitInstance(serverAddress, api);
             UpdateRestClientInstance();
         }
 
-        public RepetierClient(string serverAddress, int port = 3344, bool isSecure = false) : base(serverAddress, port, isSecure)
+        public RepetierClient(string serverAddress) : base(serverAddress)
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, port, "", isSecure);
+            InitInstance(serverAddress, "");
             UpdateRestClientInstance();
         }
         #endregion
@@ -218,18 +218,14 @@ namespace AndreasReitberger.API.Repetier
 
         public static void UpdateSingleInstance(RepetierClient Inst) => Instance = Inst;
 
-        public new void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
+        public new void InitInstance(string serverAddress, string api = "")
         {
             try
             {
-                ServerAddress = serverAddress;
+                ApiTargetPath = serverAddress;
                 ApiKey = api;
-                Port = port;
-                IsSecure = isSecure;
-                //WebSocketTargetUri = GetWebSocketTargetUri();
 
                 Instance = this;
-
                 if (Instance is not null)
                 {
                     Instance.UpdateInstance = false;
@@ -672,8 +668,8 @@ namespace AndreasReitberger.API.Repetier
         */
         public void Login(string userName, SecureString password, string sessionId, bool remember = true)
         {
-            if (string.IsNullOrEmpty(sessionId)) sessionId = this.SessionId;
-            if (string.IsNullOrEmpty(sessionId) || !IsListeningToWebsocket)
+            if (string.IsNullOrEmpty(sessionId)) sessionId = SessionId;
+            if (string.IsNullOrEmpty(sessionId) || !IsListening)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
 
             // Password is MD5(sessionId + MD5(login + password))
@@ -685,8 +681,8 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task LoginAsync(string userName, SecureString password, string sessionId, bool remember = true)
         {
-            if (string.IsNullOrEmpty(sessionId)) sessionId = this.SessionId;
-            if (string.IsNullOrEmpty(sessionId) || !IsListeningToWebsocket)
+            if (string.IsNullOrEmpty(sessionId)) sessionId = SessionId;
+            if (string.IsNullOrEmpty(sessionId) || !IsListening)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
 
             // Password is MD5(sessionId + MD5(login + password))
@@ -698,7 +694,7 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task LogoutAsync()
         {
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
+            if (string.IsNullOrEmpty(SessionId) || !IsListening)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
             //_ = await SendRestApiRequestAsync("", "logout").ConfigureAwait(false);
 
@@ -719,7 +715,7 @@ namespace AndreasReitberger.API.Repetier
 
         public void Logout()
         {
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
+            if (string.IsNullOrEmpty(SessionId) || !IsListening)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
 
             string command =
@@ -729,7 +725,7 @@ namespace AndreasReitberger.API.Repetier
 
         public async Task LogoutViaWebSocketCommandAsync()
         {
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
+            if (string.IsNullOrEmpty(SessionId) || !IsListening)
                 throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
 
             string command =
@@ -747,18 +743,19 @@ namespace AndreasReitberger.API.Repetier
             // Hash credentials first
             md5.ComputeHash(Encoding.UTF8.GetBytes(credentials));
             List<byte> inputBuffer = [.. Encoding.UTF8.GetBytes(sessionId)];
+            if (md5?.Hash is null) return string.Empty;
 
-            if (md5?.Hash is null) return "";
-
-            string hexHash = BitConverter.ToString(md5.Hash).Replace("-", string.Empty).ToLowerInvariant();
+            string hexHash
+#if NETSTANDARD
+                = BitConverter.ToString(md5.Hash).Replace("-", string.Empty).ToLowerInvariant();
+#else
+                = Convert.ToHexString(md5.Hash).Replace("-", string.Empty).ToLowerInvariant();
+#endif
             inputBuffer.AddRange(Encoding.UTF8.GetBytes(hexHash));
-
             md5.ComputeHash([.. inputBuffer]);
 
             // Get hash result after compute it  
-            byte[] hashedCredentials = md5
-                .Hash;
-
+            byte[] hashedCredentials = md5.Hash;
             StringBuilder strBuilder = new();
             for (int i = 0; i < hashedCredentials.Length; i++)
             {
@@ -768,7 +765,7 @@ namespace AndreasReitberger.API.Repetier
             }
             return strBuilder.ToString();
         }
-        #endregion
+#endregion
 
         #region ActivePrinter
         public override async Task SetPrinterActiveAsync(int index = -1, bool refreshPrinterList = true)
@@ -1067,12 +1064,10 @@ namespace AndreasReitberger.API.Repetier
                 else
                 {
                     return
-                    !(ServerAddress == tempServer.ServerAddress &&
-                        Port == tempServer.Port &&
-                        ApiKey == tempServer.ApiKey &&
-                        IsSecure == tempServer.IsSecure
-                        )
-                    ;
+                    !(ApiTargetPath == tempServer.ApiTargetPath &&
+                        ApiVersion == tempServer.ApiVersion &&
+                        ApiKey == tempServer.ApiKey
+                        );
                 }
             }
             catch (Exception exc)
@@ -1110,7 +1105,7 @@ namespace AndreasReitberger.API.Repetier
                 {
                     UpdateRestClientInstance();
                 }
-                RestRequest request = new(string.Format("/printer/model/{2}", ServerAddress, Port, printerName.Replace(" ", "_")))
+                RestRequest request = new(string.Format("/printer/model/{0}", printerName.Replace(" ", "_")))
                 {
                     Method = Method.Post,
                     Timeout = TimeSpan.FromMilliseconds(timeout),
@@ -1190,12 +1185,11 @@ namespace AndreasReitberger.API.Repetier
 
                 RepetierJobListRespone? result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
                 Jobs = result is not null ? new(result.Data) : jobList;
-
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Jobs = new();
+                Jobs = [];
             }
         }
 
@@ -1584,7 +1578,7 @@ namespace AndreasReitberger.API.Repetier
         }
         public async Task<ObservableCollection<RepetierCurrentPrintInfo>> GetCurrentPrintInfosAsync(string printerName = "")
         {
-            ObservableCollection<RepetierCurrentPrintInfo> resultObject = new();
+            ObservableCollection<RepetierCurrentPrintInfo> resultObject = [];
 
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -1673,7 +1667,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ActiveJobs = new();
+                ActiveJobs = [];
                 //ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
             }
         }
@@ -1971,7 +1965,7 @@ namespace AndreasReitberger.API.Repetier
         public async Task<ObservableCollection<ExternalCommand>> GetExternalCommandsAsync()
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<ExternalCommand> resultObject = new();
+            ObservableCollection<ExternalCommand> resultObject = [];
 
             try
             {
@@ -2062,7 +2056,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ExternalCommands = new ObservableCollection<ExternalCommand>();
+                ExternalCommands = [];
             }
         }
 
@@ -2104,7 +2098,7 @@ namespace AndreasReitberger.API.Repetier
         public async Task<ObservableCollection<RepetierMessage>> GetMessagesAsync(string printerName = "")
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<RepetierMessage> resultObject = new();
+            ObservableCollection<RepetierMessage> resultObject = [];
 
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -2151,7 +2145,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierMessage> temp = new();
+                ObservableCollection<RepetierMessage> temp = [];
                 ObservableCollection<RepetierMessage> result = await GetMessagesAsync().ConfigureAwait(false);
                 if (result is not null)
                 {
@@ -2164,7 +2158,7 @@ namespace AndreasReitberger.API.Repetier
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Messages = new ObservableCollection<RepetierMessage>();
+                Messages = [];
             }
         }
         #endregion
@@ -2480,12 +2474,12 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 ObservableCollection<RepetierWebCallAction> result = await GetWebCallActionsAsync().ConfigureAwait(false);
-                WebCallActions = result ?? new ObservableCollection<RepetierWebCallAction>();
+                WebCallActions = result ?? [];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                WebCallActions = new ObservableCollection<RepetierWebCallAction>();
+                WebCallActions = [];
             }
         }
 
@@ -3162,20 +3156,20 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 ObservableCollection<RepetierGpioListItem> result = await GetGPIOListAsync().ConfigureAwait(false);
-                GPIOList = result ?? new ObservableCollection<RepetierGpioListItem>();
+                GPIOList = result ?? [];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                GPIOList = new ObservableCollection<RepetierGpioListItem>();
+                GPIOList = [];
             }
         }
 
         #endregion
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
         #region Overrides
         public override string ToString() =>  FullWebAddress;
