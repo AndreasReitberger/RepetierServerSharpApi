@@ -8,7 +8,6 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
         [JsonProperty("O")]
         public partial long O { get; set; }
 
@@ -18,7 +17,6 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-
         [JsonProperty("S")]
         public partial long S { get; set; }
 
@@ -28,7 +26,6 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-
         [JsonProperty("T")]
         public partial double T { get; set; }
 
@@ -38,30 +35,24 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-
         [JsonProperty("id")]
         public partial long EventId { get; set; }
 
         [ObservableProperty]
-
         [JsonProperty("t")]
         public partial long DataT { get; set; }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-
         public partial double? TemperatureOffset { get; set; }
 
         [ObservableProperty]
-
         public partial double? TemperatureSet { get; set; }
 
         [ObservableProperty]
-
         public partial double? TemperatureTarget { get; set; }
 
         #endregion

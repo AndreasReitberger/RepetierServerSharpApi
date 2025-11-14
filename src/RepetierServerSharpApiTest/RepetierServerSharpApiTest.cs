@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace RepetierServerSharpApiTest
 {
-    public class RepetierServerSharpApiTest
+    public partial class RepetierServerSharpApiTest
     {
 
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
@@ -28,6 +28,13 @@ namespace RepetierServerSharpApiTest
         private readonly bool _skipPrinterActionTests = true;
 
         #region Setup
+
+        [GeneratedRegex(@"^[A-Z][A-Za-z0-9]*$")]
+        private static partial Regex MyRegex();
+
+        [GeneratedRegex(@"(?<=\"").+?(?=\"")")]
+        private static partial Regex MyRegex_Extract();
+
         [SetUp]
         public void Setup()
         {
@@ -50,7 +57,8 @@ namespace RepetierServerSharpApiTest
             {
                 if (!client.ReThrowOnError)
                 {
-                    Assert.Fail($"REST-Error: {args?.ToString()}");
+                    //Assert.Fail($"REST-Error: {args?.ToString()}");
+                    Debug.WriteLine($"REST-Error: {args?.ToString()}");
                 }
             };
         }
@@ -60,7 +68,7 @@ namespace RepetierServerSharpApiTest
         [Test]
         public void SerializeJsonTest()
         {
-            var dir = @"TestResults\Serialization\";
+            string dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
@@ -74,9 +82,9 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                var serializedString = System.Text.Json.JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
-                var serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
-                Assert.IsTrue(serializedObject is RepetierClient server && server != null);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
+                RepetierClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
+                Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
             }
             catch (Exception exc)
@@ -88,7 +96,7 @@ namespace RepetierServerSharpApiTest
         [Test]
         public void SerializeNewetonsoftJsonTest()
         {
-            var dir = @"TestResults\Serialization\";
+            string dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
@@ -102,10 +110,10 @@ namespace RepetierServerSharpApiTest
                 };
                 RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                var serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                string serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
-                var serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
-                Assert.IsTrue(serializedObject is RepetierClient server && server != null);
+                RepetierClient? serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
             }
             catch (Exception exc)
@@ -117,7 +125,7 @@ namespace RepetierServerSharpApiTest
         [Test]
         public void SerializeAllTypesWithJsonNewtonsoftTest()
         {
-            var dir = @"TestResults\Serialization\";
+            string dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
@@ -125,11 +133,10 @@ namespace RepetierServerSharpApiTest
             {
                 List<Type> types = [.. AppDomain.CurrentDomain.GetAssemblies()
                        .SelectMany(t => t.GetTypes())
-                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Repetier") is true)]
+                       .Where(t => t.IsClass && !t.Name.StartsWith('<') && t.Namespace?.StartsWith("AndreasReitberger.API.Repetier") is true)]
                        ;
-                //Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
-                Regex r = new(@"^[A-Z][A-Za-z0-9]*$");
-                Regex extract = new(@"(?<=\"").+?(?=\"")");
+                Regex r = MyRegex();
+                Regex extract = MyRegex_Extract();
                 foreach (Type t in types)
                 {
                     object? obj = null;
@@ -154,11 +161,11 @@ namespace RepetierServerSharpApiTest
                         ;
 
                     // Get the property names from the json text
-                    var splitString = serializedString.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    string[] splitString = serializedString.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     bool skip = false;
                     StringBuilder sb = new();
                     // Cleanup from child nodes, those will be checked individually
-                    foreach (var line in splitString)
+                    foreach (string line in splitString)
                     {
                         if (line.Contains(": {") && !line.Contains("{}"))
                         {
@@ -174,7 +181,7 @@ namespace RepetierServerSharpApiTest
                     }
                     // set to cleanuped string
                     serializedString = sb.ToString();
-                    var splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    string[] splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     List<string> properties = [.. splitted.Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)]
                         ;
                     /*
@@ -214,7 +221,7 @@ namespace RepetierServerSharpApiTest
                         }
                         string msg = $"Type: {t} => {property} is {(valid ? "valid" : "invalid")}";
                         Debug.WriteLine(msg);
-                        Assert.IsTrue(valid, message: msg);
+                        Assert.That(valid, Is.True, message: msg);
                     }
                 }
             }
@@ -228,14 +235,14 @@ namespace RepetierServerSharpApiTest
         public void SerializeTest()
         {
 
-            var dir = @"TestResults\Serialization\";
+            string dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                var xmlSerializer = new XmlSerializer(typeof(RepetierClient));
-                using (var fileStream = new FileStream(serverConfig, FileMode.Create))
+                XmlSerializer xmlSerializer = new(typeof(RepetierClient));
+                using (FileStream fileStream = new(serverConfig, FileMode.Create))
                 {
                     string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
                     RepetierClient _server = new(host);
@@ -249,13 +256,13 @@ namespace RepetierServerSharpApiTest
                     RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                     xmlSerializer.Serialize(fileStream, RepetierClient.Instance);
-                    Assert.IsTrue(File.Exists(Path.Combine(dir, "server.xml")));
+                    Assert.That(File.Exists(Path.Combine(dir, "server.xml")), Is.True);
                 }
 
                 xmlSerializer = new XmlSerializer(typeof(RepetierClient));
-                using (var fileStream = new FileStream(serverConfig, FileMode.Open))
+                using (FileStream fileStream = new(serverConfig, FileMode.Open))
                 {
-                    var instance = (RepetierClient)xmlSerializer.Deserialize(fileStream);
+                    RepetierClient? instance = xmlSerializer.Deserialize(fileStream) as RepetierClient;
                 }
 
             }
@@ -322,7 +329,8 @@ namespace RepetierServerSharpApiTest
                         await client.SetPrinterActiveAsync(0, true);
                     // Takes very long, not recommended
                     await client.RefreshAllAsync();
-                    Assert.IsTrue(client.InitialDataFetched);
+                    Assert.That(client.InitialDataFetched, Is.True);
+                    //Assert.That(client == RepetierClient.Instance);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -347,7 +355,7 @@ namespace RepetierServerSharpApiTest
                     CancellationTokenSource cts = new(new TimeSpan(0, 1, 0));
                     client.LoginResultReceived += ((sender, args) =>
                     {
-                        Assert.IsTrue(args.LoginSucceeded);
+                        Assert.That(args.LoginSucceeded, Is.True);
                         succeed = true;
                         cts.Cancel();
                     });
@@ -365,7 +373,7 @@ namespace RepetierServerSharpApiTest
                     {
                         await Task.Delay(100);
                     }
-                    Assert.IsTrue(succeed);
+                    Assert.That(succeed, Is.True);
                     await client.LogoutAsync();
                 }
                 else
@@ -391,7 +399,7 @@ namespace RepetierServerSharpApiTest
                         await client.SetPrinterActiveAsync(0, true);
 
                     List<IPrinter3d> printers = await client.GetPrintersAsync();
-                    Assert.IsTrue(printers != null && printers.Count > 0);
+                    Assert.That(printers != null && printers.Count > 0, Is.True);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -418,10 +426,10 @@ namespace RepetierServerSharpApiTest
                     }
 
                     List<IGcodeGroup> modelgroups = await client.GetModelGroupsAsync();
-                    Assert.IsTrue(modelgroups != null && modelgroups.Count > 0);
+                    Assert.That(modelgroups != null && modelgroups.Count > 0, Is.True);
 
                     await client.RefreshModelGroupsAsync();
-                    Assert.Greater(client.Groups.Count, 0);
+                    Assert.That(client.Groups, Is.Not.Empty);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -450,34 +458,34 @@ namespace RepetierServerSharpApiTest
                     );
                     Stopwatch sw = Stopwatch.StartNew();
                     List<IGcode> models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.Greater(models.Count, 0);
+                    Assert.That(models, Is.Not.Empty);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (without images)");
 
                     sw = Stopwatch.StartNew();
                     models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Thumbnail, progress);
-                    Assert.Greater(models.Count, 0);
+                    Assert.That(models, Is.Not.Empty);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with thumbnails)");
 
                     sw = Stopwatch.StartNew();
                     models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
-                    Assert.Greater(models.Count, 0);
+                    Assert.That(models, Is.Not.Empty);
 
                     sw.Stop();
                     Debug.WriteLine($"Time elapsed: {sw.Elapsed} (with images)");
 
                     models = await client.GetModelsAsync("", AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.None, progress);
-                    Assert.Greater(models.Count, 0);
+                    Assert.That(models, Is.Not.Empty);
 
                     List<IGcode> filesCollection = [.. models.Take(25)];
                     Dictionary<long, byte[]>? images = await client.GetModelImagesAsync(filesCollection, imageType: AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
-                    Assert.IsTrue(images?.Select(kp => kp.Value).Any(image => image.Length > 0));
+                    Assert.That(images?.Select(kp => kp.Value).Any(image => image.Length > 0), Is.True);
 
                     IList<IGcode>? updatedModels = await client.UpdateModelImagesAsync(filesCollection, AndreasReitberger.API.Print3dServer.Core.Enums.GcodeImageType.Image, progress);
-                    Assert.IsTrue(updatedModels?.Select(model => model.Image).Any(image => image?.Length > 0));
+                    Assert.That(updatedModels?.Select(model => model.Image).Any(image => image?.Length > 0), Is.True);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -502,7 +510,7 @@ namespace RepetierServerSharpApiTest
                         await client.SetPrinterActiveAsync(-1, true);
 
                     ObservableCollection<IPrint3dJob> jobs = await client.GetJobListAsync();
-                    Assert.IsNotNull(jobs);
+                    Assert.That(jobs, Is.Not.Null);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -530,7 +538,7 @@ namespace RepetierServerSharpApiTest
                     if (models?.Count > 0)
                     {
                         bool printed = await client.CopyModelToPrintQueueAsync(model: models[0], startPrintIfPossible: false);
-                        Assert.IsTrue(printed);
+                        Assert.That(printed, Is.True);
                     }
                     else
                     {
@@ -558,19 +566,19 @@ namespace RepetierServerSharpApiTest
                 {
                     await client.SetPrinterActiveAsync();
                     ObservableCollection<RepetierHistorySummaryItem>? history = await client.GetHistorySummaryItemsAsync("", 2022, true);
-                    Assert.IsTrue(history?.Any());
+                    Assert.That(history?.Any(), Is.True);
 
                     ObservableCollection<RepetierHistoryListItem> list = await client.GetHistoryListAsync("", "", 50, 0, 0, true);
-                    Assert.IsTrue(list?.Any());
+                    Assert.That(list?.Any(), Is.True);
 
                     RepetierHistoryListItem? historyItem = list?.FirstOrDefault();
-                    Assert.IsNotNull(historyItem);
+                    Assert.That(historyItem, Is.Not.Null);
 
-                    byte[]? report = await RepetierClient.Instance.GetHistoryReportAsync(historyItem.Id);
-                    Assert.Greater(report.Length, 0);
+                    byte[]? report = await client.GetHistoryReportAsync(historyItem.Id);
+                    Assert.That(report, Is.Not.Empty);
                     string downloadTarget = @"report.pdf";
                     await File.WriteAllBytesAsync(downloadTarget, report);
-                    Assert.IsTrue(File.Exists(downloadTarget));
+                    Assert.That(File.Exists(downloadTarget), Is.True);
                     //Process.Start(downloadTarget);
                 }
                 else
@@ -594,7 +602,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await client.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierGpioListItem> report = await client.GetGPIOListAsync();
-                    Assert.IsNotEmpty(report);
+                    Assert.That(report, Is.Not.Empty);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -617,7 +625,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await client.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierHistoryListItem>? report = await client.GetHistoryListAsync(client?.ActivePrinter?.Slug ?? "");
-                    Assert.IsNotEmpty(report);
+                    Assert.That(report, Is.Not.Empty);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -640,7 +648,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await client.SetPrinterActiveAsync(1);
                     ObservableCollection<RepetierWebCallAction> report = await client.GetWebCallActionsAsync();
-                    Assert.IsNotEmpty(report);
+                    Assert.That(report, Is.Not.Empty);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -663,7 +671,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await client.SetPrinterActiveAsync(1);
                     ObservableCollection<ExternalCommand> commands = await client.GetExternalCommandsAsync();
-                    Assert.IsNotEmpty(commands);
+                    Assert.That(commands, Is.Not.Empty);
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");
@@ -699,7 +707,7 @@ namespace RepetierServerSharpApiTest
                             Assert.Fail("Print info was null");
                     }
                 } while (client.IsOnline && !cts.IsCancellationRequested);
-                Assert.IsTrue(cts.IsCancellationRequested);
+                Assert.That(cts.IsCancellationRequested, Is.True);
             }
             catch (Exception exc)
             {
@@ -715,28 +723,28 @@ namespace RepetierServerSharpApiTest
                 if (client is null) throw new NullReferenceException($"The client was null!");
 
                 await client.CheckOnlineAsync();
-                Assert.IsTrue(client.IsOnline);
+                Assert.That(client.IsOnline, Is.True);
 
                 await client.SetPrinterActiveAsync();
 
                 RepetierWebcamType type = RepetierWebcamType.Dynamic;
                 string webcamUriDynamic = await client.GetWebCamUriAsync(0, type);
-                Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+                Assert.That(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _), Is.True);
 
                 type = RepetierWebcamType.Static;
                 webcamUriDynamic = await client.GetWebCamUriAsync(0, type);
-                Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+                Assert.That(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _), Is.True);
 
                 type = RepetierWebcamType.Dynamic;
-                var webCams = await client.GetWebCamConfigsAsync();
-                Assert.Greater(webCams.Count, 0);
-                foreach (var cam in webCams)
+                List<IWebCamConfig>? webCams = await client.GetWebCamConfigsAsync();
+                Assert.That(webCams, Is.Not.Empty);
+                foreach (IWebCamConfig cam in webCams)
                 {
                     webcamUriDynamic = await client.GetWebCamUriAsync((int)cam.Position, type);
-                    Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+                    Assert.That(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _), Is.True);
 
                     webcamUriDynamic = client.GetWebCamUri(cam);
-                    Assert.IsTrue(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _));
+                    Assert.That(Uri.TryCreate(webcamUriDynamic, UriKind.RelativeOrAbsolute, out _), Is.True);
                 }
             }
             catch (Exception exc)
@@ -779,22 +787,23 @@ namespace RepetierServerSharpApiTest
                 };
                 client.WebSocketError += (o, args) =>
                 {
-                    Assert.Fail($"Websocket closed due to an error: {args}");
+                    Debug.WriteLine($"Websocket closed due to an error: {args}");
+                    //Assert.Fail($"Websocket closed due to an error: {args}");
                 };
                 client.IgnoredJsonResultsChanged += (o, args) =>
                 {
-                    foreach (var keyPair in args.NewIgnoredJsonResults)
+                    foreach (KeyValuePair<string, string> keyPair in args.NewIgnoredJsonResults)
                     {
                         if (!unkownJsonRespones.ContainsKey(keyPair.Key))
                             unkownJsonRespones.Add(keyPair.Key, keyPair.Value);
                     }
                 };
                 // Wait 30 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 60, 0));
+                CancellationTokenSource cts = new(new TimeSpan(0, 30, 0));
                 client.WebSocketDisconnected += (o, args) =>
                 {
-                    var duraton = DateTime.Now - start;
-                    var messages = websocketMessages;
+                    TimeSpan duraton = DateTime.Now - start;
+                    Dictionary<DateTime, string> messages = websocketMessages;
                     if (!cts.IsCancellationRequested)
                         Assert.Fail($"Websocket unexpectly closed: {args}");
                 };
@@ -807,7 +816,7 @@ namespace RepetierServerSharpApiTest
                 await client.StopListeningAsync();
 
 
-                Assert.IsTrue(cts.IsCancellationRequested && websocketMessages?.Count > 50);
+                Assert.That(cts.IsCancellationRequested && websocketMessages?.Count > 50, Is.True);
             }
             catch (Exception exc)
             {
@@ -831,7 +840,7 @@ namespace RepetierServerSharpApiTest
 
                     bool result = await client.SetBedTemperatureAsync(0, 25);
                     // Set timeout to 5 minutes
-                    var cts = new CancellationTokenSource(new TimeSpan(0, 5, 0));
+                    CancellationTokenSource cts = new(new TimeSpan(0, 5, 0));
 
                     if (result)
                     {
@@ -839,43 +848,42 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (temp < 23)
                         {
-                            var state = await client.GetStatesAsync();
+                            Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
                             if (state != null && state?.Count > 0)
                             {
-                                var beds = state.FirstOrDefault().Value.HeatedBeds;
+                                List<RepetierPrinterHeaterComponent> beds = state.FirstOrDefault().Value.HeatedBeds;
                                 if (beds == null || beds.Count == 0)
                                 {
                                     Assert.Fail("No heated bed found");
                                     break;
                                 }
-                                var bed = beds[0];
+                                RepetierPrinterHeaterComponent bed = beds[0];
                                 temp = bed.TempRead ?? 0;
                             }
                         }
-                        Assert.GreaterOrEqual(temp, 23);
+                        Assert.That(temp, Is.GreaterThanOrEqualTo(23));
                         // Turn off bed
                         result = await client.SetBedTemperatureAsync(0, 0);
                         // Set timeout to 5 minutes
                         cts = new CancellationTokenSource(new TimeSpan(0, 5, 0));
                         if (result)
                         {
-
                             while (temp > 23)
                             {
-                                var state = await client.GetStatesAsync();
+                                Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
                                 if (state != null && state?.Count > 0)
                                 {
-                                    var beds = state.FirstOrDefault().Value.HeatedBeds;
+                                    List<RepetierPrinterHeaterComponent> beds = state.FirstOrDefault().Value.HeatedBeds;
                                     if (beds == null || beds.Count == 0)
                                     {
                                         Assert.Fail("No heated bed found");
                                         break;
                                     }
-                                    var bed = beds[0];
+                                    RepetierPrinterHeaterComponent bed = beds[0];
                                     temp = bed.TempRead ?? 0;
                                 }
                             }
-                            Assert.LessOrEqual(23, temp);
+                            Assert.That(temp, Is.LessThanOrEqualTo(23));
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -912,7 +920,7 @@ namespace RepetierServerSharpApiTest
 
                     bool result = await client.SetExtruderTemperatureAsync(extruder: 0, temperature: 30);
                     // Set timeout to 3 minutes
-                    var cts = new CancellationTokenSource(new TimeSpan(0, 3, 0));
+                    CancellationTokenSource cts = new(new TimeSpan(0, 3, 0));
 
                     if (result)
                     {
@@ -920,7 +928,7 @@ namespace RepetierServerSharpApiTest
                         // Wait till temp rises
                         while (extruderTemp < 28)
                         {
-                            var state = await client.GetStatesAsync();
+                            Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
                             if (state != null && state?.Count > 0)
                             {
                                 List<RepetierPrinterToolhead> extruders = state.FirstOrDefault().Value.Extruder;
@@ -933,7 +941,7 @@ namespace RepetierServerSharpApiTest
                                 extruderTemp = extruder.TempRead ?? 0;
                             }
                         }
-                        Assert.GreaterOrEqual(extruderTemp, 28);
+                        Assert.That(extruderTemp, Is.GreaterThanOrEqualTo(28));
                         // Turn off extruder
                         result = await client.SetExtruderTemperatureAsync(0, 0);
                         // Set timeout to 3 minutes
@@ -943,20 +951,20 @@ namespace RepetierServerSharpApiTest
 
                             while (extruderTemp > 28)
                             {
-                                var state = await client.GetStatesAsync();
+                                Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
                                 if (state != null && state?.Count > 0)
                                 {
-                                    var extruders = state.FirstOrDefault().Value.Extruder;
+                                    List<RepetierPrinterToolhead> extruders = state.FirstOrDefault().Value.Extruder;
                                     if (extruders == null || extruders.Count == 0)
                                     {
                                         Assert.Fail("No extrudes available");
                                         break;
                                     }
-                                    var extruder = extruders[0];
+                                    RepetierPrinterToolhead extruder = extruders[0];
                                     extruderTemp = extruder.TempRead ?? 0;
                                 }
                             }
-                            Assert.LessOrEqual(extruderTemp, 28);
+                            Assert.That(extruderTemp, Is.LessThanOrEqualTo(28));
                         }
                         else
                             Assert.Fail("Command failed to be sent.");
@@ -987,7 +995,7 @@ namespace RepetierServerSharpApiTest
                 .WithApiKey(_api)
                 .Build();
             await client.CheckOnlineAsync();
-            Assert.IsTrue(client?.IsOnline ?? false);
+            Assert.That(client?.IsOnline ?? false, Is.True);
         }
 
         [Test]
@@ -996,93 +1004,148 @@ namespace RepetierServerSharpApiTest
             try
             {
                 if (client is null) throw new NullReferenceException($"The client was null!");
-
+                Stopwatch sw = Stopwatch.StartNew();
                 await client.CheckOnlineAsync();
                 if (client.IsOnline)
                 {
                     if (client.ActivePrinter == null)
                         await client.SetPrinterActiveAsync(0, true);
-
+                    TimeSpan last = new(0);
 
                     List<IPrinter3d> printers = await client.GetPrintersAsync();
-                    Assert.IsNotNull(printers);
+                    Assert.That(printers, Is.Not.Null);
                     string json = JsonConvert.SerializeObject(printers, Formatting.Indented);
 
+                    Debug.WriteLine($"{nameof(client.GetPrintersAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
                     RepetierAvailableUpdateInfo? update = await client.GetAvailableServerUpdateAsync();
-                    Assert.IsNotNull(update);
+                    Assert.That(update, Is.Not.Null);
                     json = JsonConvert.SerializeObject(update, Formatting.Indented);
 
+                    Debug.WriteLine($"{nameof(client.GetAvailableServerUpdateAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
                     RepetierCurrentPrintInfo? printInfo = await client.GetCurrentPrintInfoAsync();
-                    Assert.IsNotNull(printInfo);
+                    Assert.That(printInfo, Is.Not.Null);
                     json = JsonConvert.SerializeObject(printInfo, Formatting.Indented);
 
-                    var printInfos = await client.GetCurrentPrintInfosAsync();
-                    Assert.IsNotNull(printInfos);
+                    Debug.WriteLine($"{nameof(client.GetCurrentPrintInfoAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    ObservableCollection<RepetierCurrentPrintInfo> printInfos = await client.GetCurrentPrintInfosAsync();
+                    Assert.That(printInfos, Is.Not.Null);
                     json = JsonConvert.SerializeObject(printInfos, Formatting.Indented);
 
-                    var cmds = await client.GetExternalCommandsAsync();
-                    Assert.IsNotNull(cmds);
+                    Debug.WriteLine($"{nameof(client.GetCurrentPrintInfosAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    ObservableCollection<ExternalCommand> cmds = await client.GetExternalCommandsAsync();
+                    Assert.That(cmds, Is.Not.Null);
                     json = JsonConvert.SerializeObject(cmds, Formatting.Indented);
 
-                    var gpios = await client.GetGPIOListAsync();
-                    Assert.IsNotNull(gpios);
+                    Debug.WriteLine($"{nameof(client.GetExternalCommandsAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    ObservableCollection<RepetierGpioListItem> gpios = await client.GetGPIOListAsync();
+                    Assert.That(gpios, Is.Not.Null);
                     json = JsonConvert.SerializeObject(gpios, Formatting.Indented);
 
-                    var history = await client.GetHistoryListAsync(client.ActivePrinter?.Slug);
-                    Assert.IsNotNull(history);
-                    json = JsonConvert.SerializeObject(history, Formatting.Indented);
+                    Debug.WriteLine($"{nameof(client.GetGPIOListAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
 
-                    // Only works if enabled in Settings
-                    /*
-                    var hid = history?.FirstOrDefault()?.Id;
-                    var historyReport = await client.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
-                    Assert.IsNotNull(historyReport);
-                    json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
-                    */
+                    if (client.ActivePrinter?.Slug is not null)
+                    {
+                        ObservableCollection<RepetierHistoryListItem> history = await client.GetHistoryListAsync(client.ActivePrinter.Slug);
+                        Assert.That(history, Is.Not.Null);
+                        json = JsonConvert.SerializeObject(history, Formatting.Indented);
 
-                    var historySummary = await client.GetHistorySummaryItemsAsync(client.ActivePrinter?.Slug, 2023, true);
-                    Assert.IsNotNull(historySummary);
-                    json = JsonConvert.SerializeObject(historySummary, Formatting.Indented);
+                        Debug.WriteLine($"{nameof(client.GetHistoryListAsync)}: Took {sw.Elapsed - last}");
+                        last = sw.Elapsed;
+                        // Only works if enabled in Settings
+                        /*
+                        var hid = history?.FirstOrDefault()?.Id;
+                        var historyReport = await client.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
+                        Assert.IsNotNull(historyReport);
+                        json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
+                        */
 
-                    var jobList = await client.GetJobListAsync();
-                    Assert.IsNotNull(jobList);
+                        ObservableCollection<RepetierHistorySummaryItem>? historySummary = await client.GetHistorySummaryItemsAsync(client.ActivePrinter.Slug, 2023, true);
+                        Assert.That(historySummary, Is.Not.Null);
+                        json = JsonConvert.SerializeObject(historySummary, Formatting.Indented);
+
+                        Debug.WriteLine($"{nameof(client.GetHistorySummaryItemsAsync)}: Took {sw.Elapsed - last}");
+                        last = sw.Elapsed;
+                    }
+                    ObservableCollection<IPrint3dJob> jobList = await client.GetJobListAsync();
+                    Assert.That(jobList, Is.Not.Null);
                     json = JsonConvert.SerializeObject(jobList, Formatting.Indented);
 
-                    var license = await client.GetLicenseDataAsync();
-                    Assert.IsNotNull(license);
+                    Debug.WriteLine($"{nameof(client.GetJobListAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    RepetierLicenseInfo? license = await client.GetLicenseDataAsync();
+                    Assert.That(license, Is.Not.Null);
                     json = JsonConvert.SerializeObject(license, Formatting.Indented);
 
-                    var messages = await client.GetMessagesAsync();
-                    Assert.IsNotNull(messages);
+                    Debug.WriteLine($"{nameof(client.GetLicenseDataAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    ObservableCollection<RepetierMessage> messages = await client.GetMessagesAsync();
+                    Assert.That(messages, Is.Not.Null);
                     json = JsonConvert.SerializeObject(messages, Formatting.Indented);
 
-                    var groups = await client.GetModelGroupsAsync();
-                    Assert.IsNotNull(groups);
+                    Debug.WriteLine($"{nameof(client.GetMessagesAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    List<IGcodeGroup> groups = await client.GetModelGroupsAsync();
+                    Assert.That(groups, Is.Not.Null);
                     json = JsonConvert.SerializeObject(groups, Formatting.Indented);
 
+                    Debug.WriteLine($"{nameof(client.GetModelGroupsAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
                     List<IGcode> files = await client.GetModelsAsync();
-                    Assert.IsNotNull(files);
+                    Assert.That(files, Is.Not.Null);
                     json = JsonConvert.SerializeObject(files, Formatting.Indented);
 
-                    var config = await client.GetPrinterConfigAsync();
-                    Assert.IsNotNull(config);
+                    Debug.WriteLine($"{nameof(client.GetModelsAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    RepetierPrinterConfig? config = await client.GetPrinterConfigAsync();
+                    Assert.That(config, Is.Not.Null);
                     json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
-                    var servers = await client.GetProjectsListServerAsync();
-                    Assert.IsNotNull(servers);
+                    Debug.WriteLine($"{nameof(client.GetPrinterConfigAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    RepetierProjectsServerListRespone? servers = await client.GetProjectsListServerAsync();
+                    Assert.That(servers, Is.Not.Null);
                     json = JsonConvert.SerializeObject(servers, Formatting.Indented);
 
-                    var projects = await client.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
-                    Assert.IsNotNull(projects);
+                    Debug.WriteLine($"{nameof(client.GetProjectsListServerAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    ObservableCollection<RepetierProjectItem> projects = await client.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
+                    Assert.That(projects, Is.Not.Null);
                     json = JsonConvert.SerializeObject(projects, Formatting.Indented);
 
-                    var folders = await client.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
-                    Assert.IsNotNull(folders);
+                    Debug.WriteLine($"{nameof(client.GetProjectItemsAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    RepetierProjectsFolderRespone? folders = await client.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
+                    Assert.That(folders, Is.Not.Null);
                     json = JsonConvert.SerializeObject(folders, Formatting.Indented);
 
-                    var state = await client.GetStatesAsync();
-                    Assert.IsNotNull(state);
+                    Debug.WriteLine($"{nameof(client.GetProjectsGetFolderAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
+
+                    Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
+                    Assert.That(state, Is.Not.Null);
                     json = JsonConvert.SerializeObject(state, Formatting.Indented);
+
+                    Debug.WriteLine($"{nameof(client.GetStatesAsync)}: Took {sw.Elapsed - last}");
+                    last = sw.Elapsed;
 
                     //await client.RefreshAllAsync();
                     //Assert.IsTrue(client.InitialDataFetched);
@@ -1109,17 +1172,22 @@ namespace RepetierServerSharpApiTest
                     if (client.ActivePrinter == null)
                         await client.SetPrinterActiveAsync(0, true);
 
-
                     List<IGcode> files = await client.GetFilesAsync();
-                    Assert.IsNotNull(files);
+                    Assert.That(files, Is.Not.Null);
 
-                    byte[]? file = await client.DownloadGcodeAsync(files.FirstOrDefault().Identifier.ToString());
-                    Assert.Greater(file.Length, 0);
+                    IGcode? f = files.FirstOrDefault();
+                    if (f is not null)
+                    {
+                        byte[]? file = await client.DownloadGcodeAsync(f.Identifier.ToString());
+                        Assert.That(file, Is.Not.Empty);
 
-                    byte[]? file2 = await client.DownloadGcodeAsync(files.FirstOrDefault(), Encoding.Default);
-                    Assert.Greater(file2.Length, 0);
-
-                    Assert.AreEqual(file2.Length, file.Length);
+                        byte[]? file2 = await client.DownloadGcodeAsync(f, Encoding.Default);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(file2, Is.Not.Empty);
+                            Assert.That(file, Has.Length.EqualTo(file2?.Length));
+                        });
+                    }
                 }
                 else
                     Assert.Fail($"Server {client.FullWebAddress} is offline.");

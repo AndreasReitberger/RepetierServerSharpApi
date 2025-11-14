@@ -83,6 +83,7 @@ namespace AndreasReitberger.API.Repetier
                                         Prog.Report(100);
                                     }
                                 }
+                                await Task.Delay(1);
                             }
                         }
                         else
@@ -444,15 +445,18 @@ namespace AndreasReitberger.API.Repetier
                 {
                     return null;
                 }
+                // Example: http://IP/printer/model/PRINTER?a=download&id=FILEID
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Model}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Get,
-                       command: "download",
+                       command: "",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "id", $"{fileId}" } }
-                       )
+                       urlSegments: new() { 
+                           { "a", "download" },
+                           { "id", $"{fileId}" }
+                       })
                     .ConfigureAwait(false);
                 return result?.Result;
             }
@@ -603,7 +607,7 @@ namespace AndreasReitberger.API.Repetier
                 Groups = [];
             }
         }
-        public async Task<bool> AddModelGroupAsync(IGcodeGroup? group) => await AddModelGroupAsync(group?.Name);
+        public Task<bool> AddModelGroupAsync(IGcodeGroup? group) => AddModelGroupAsync(group?.Name);
 
         public async Task<bool> AddModelGroupAsync(string? groupName)
         {
@@ -615,24 +619,17 @@ namespace AndreasReitberger.API.Repetier
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
-                    groupName = groupName,
+                    groupName,
                 };
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
+                   jsonObject: null,
+                   authHeaders: AuthHeaders,
+                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                    )
                 .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
@@ -641,7 +638,7 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public async Task<bool> AddModelGroupAsync(string printerName, IGcodeGroup group) => await AddModelGroupAsync(printerName, group.Name);
+        public Task<bool> AddModelGroupAsync(string printerName, IGcodeGroup group) => AddModelGroupAsync(printerName, group.Name);
         public async Task<bool> AddModelGroupAsync(string printerName, string groupName)
         {
             try
@@ -649,24 +646,17 @@ namespace AndreasReitberger.API.Repetier
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 object data = new
                 {
-                    groupName = groupName,
+                    groupName,
                 };
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
+                   jsonObject: null,
+                   authHeaders: AuthHeaders,
+                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                    )
                 .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "addModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: printerName)
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
@@ -676,7 +666,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<bool> RemoveModelGroupAsync(IGcodeGroup group) => await RemoveModelGroupAsync(group.Name);
+        public Task<bool> RemoveModelGroupAsync(IGcodeGroup group) => RemoveModelGroupAsync(group.Name);
         public async Task<bool> RemoveModelGroupAsync(string groupName)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -687,24 +677,17 @@ namespace AndreasReitberger.API.Repetier
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
-                    groupName = groupName,
+                    groupName,
                 };
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
+                   jsonObject: null,
+                   authHeaders: AuthHeaders,
+                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                    )
                 .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
@@ -714,7 +697,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<bool> RemoveModelGroupAsync(string printerName, IGcodeGroup group) => await RemoveModelGroupAsync(printerName, group.Name);
+        public Task<bool> RemoveModelGroupAsync(string printerName, IGcodeGroup group) => RemoveModelGroupAsync(printerName, group.Name);
         public async Task<bool> RemoveModelGroupAsync(string printerName, string groupName)
         {
             try
@@ -722,24 +705,17 @@ namespace AndreasReitberger.API.Repetier
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{printerName}";
                 object data = new
                 {
-                    groupName = groupName,
+                     groupName,
                 };
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
+                   jsonObject: null,
+                   authHeaders: AuthHeaders,
+                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                    )
                 .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "delModelGroup", jsonData: string.Format("{{\"groupName\":\"{0}\"}}", groupName),
-                        printerName: printerName)
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
@@ -749,7 +725,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<bool> MoveModelToGroupAsync(string groupName, IGcode file) => await MoveModelToGroupAsync(groupName, file.Identifier);
+        public Task<bool> MoveModelToGroupAsync(string groupName, IGcode file) => MoveModelToGroupAsync(groupName, file.Identifier);
         public async Task<bool> MoveModelToGroupAsync(string groupName, long id)
         {
             string currentPrinter = GetActivePrinterSlug();
@@ -760,26 +736,18 @@ namespace AndreasReitberger.API.Repetier
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 object data = new
                 {
-                    groupName = groupName,
-                    id = id,
+                    groupName,
+                    id,
                 };
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "moveModelFileToGroup",
-                   jsonObject: data,
-                   authHeaders: AuthHeaders
+                   jsonObject: null,
+                   authHeaders: AuthHeaders,
+                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                    )
                 .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "moveModelFileToGroup", jsonData: string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", groupName, id),
-                        printerName: currentPrinter
-                        )
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
@@ -788,29 +756,22 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public async Task<bool> MoveModelToGroupAsync(string printerName, IGcodeGroup group, IGcode file) => await MoveModelToGroupAsync(printerName, group.Name, file.Identifier);
+        public Task<bool> MoveModelToGroupAsync(string printerName, IGcodeGroup group, IGcode file) => MoveModelToGroupAsync(printerName, group.Name, file.Identifier);
         public async Task<bool> MoveModelToGroupAsync(string printerName, string groupName, long id)
         {
             try
             {
+                object data = new { groupName, id };
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                         command: "removeModel",
-                       jsonObject: new { groupName = groupName, id = id },
-                       authHeaders: AuthHeaders
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                        )
                     .ConfigureAwait(false);
-                /*
-                RepetierApiRequestRespone result =
-                    await SendRestApiRequestAsync(
-                        RepetierCommandBase.printer, RepetierCommandFeature.api,
-                        command: "moveModelFileToGroup", jsonData: string.Format("{{\"groupName\":\"{0}\", \"id\":{1}}}", groupName, id),
-                        printerName: printerName
-                        )
-                    .ConfigureAwait(false);
-                */
                 return GetQueryResult(result?.Result);
             }
             catch (Exception exc)
