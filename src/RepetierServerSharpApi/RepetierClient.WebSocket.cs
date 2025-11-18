@@ -4,6 +4,7 @@ using AndreasReitberger.API.REST.Events;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Websocket.Client;
 
 namespace AndreasReitberger.API.Repetier
@@ -12,6 +13,16 @@ namespace AndreasReitberger.API.Repetier
     {
 
         #region WebSocket
+
+        public new Task StartListeningAsync(bool stopActiveListening = false, string[]? commandsOnConnect = null) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async () =>
+        {
+            List<Task> tasks =
+            [
+                RefreshPrinterStateAsync(),
+                RefreshCurrentPrintInfosAsync(),
+            ];
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }), commandsOnConnect: commandsOnConnect);
 
         protected void Client_WebSocketMessageReceived(object? sender, WebsocketEventArgs e)
         {
@@ -61,6 +72,24 @@ namespace AndreasReitberger.API.Repetier
                                     EventTempData? eventTempData = GetObjectFromJson<EventTempData>(jsonBody);
                                     if (eventTempData is not null)
                                     {
+                                        if (obj.Printer == ActivePrinter?.Slug)
+                                        {
+                                            switch (eventTempData.EventId)
+                                            {
+                                                case 0:
+                                                    ActivePrinter?.Extruder1Temperature = eventTempData.TemperatureTarget;
+                                                    ActiveToolhead?.TempRead = eventTempData.TemperatureTarget;
+                                                    ActiveToolhead?.TempSet = eventTempData.TemperatureSet;
+                                                    break;
+                                                case 1000:
+                                                    ActivePrinter?.HeatedBedTemperature = eventTempData.TemperatureTarget;
+                                                    ActiveHeatedBed?.TempRead = eventTempData.TemperatureTarget;
+                                                    ActiveHeatedBed?.TempSet = eventTempData.TemperatureSet;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
                                         OnTemperatureDataReceived(new TemperatureDataEventArgs()
                                         {
                                             TemperatureInfo = eventTempData,

@@ -75,14 +75,14 @@ namespace RepetierServerSharpApiTest
             try
             {
                 string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                RepetierClient.Instance = new RepetierClient(host)
+                var sClient = new RepetierClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                 };
-                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                string serializedString = System.Text.Json.JsonSerializer.Serialize(RepetierClient.Instance, RepetierClient.DefaultJsonSerializerSettings);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, RepetierClient.DefaultJsonSerializerSettings);
                 RepetierClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
                 Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
@@ -103,16 +103,16 @@ namespace RepetierServerSharpApiTest
             try
             {
                 string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                RepetierClient.Instance = new RepetierClient(host)
+                var sClient = new RepetierClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                 };
-                RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                string serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(RepetierClient.Instance, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                string serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(sClient, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
-                RepetierClient? serializedObject = RepetierClient.Instance.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                RepetierClient? serializedObject = sClient.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
             }
@@ -245,17 +245,16 @@ namespace RepetierServerSharpApiTest
                 using (FileStream fileStream = new(serverConfig, FileMode.Create))
                 {
                     string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                    RepetierClient _server = new(host);
-                    RepetierClient.Instance = new RepetierClient(host)
+                    var sClient = new RepetierClient(host)
                     {
                         ActiveToolheadIndex = 1,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
                         IsMultiExtruder = true,
                     };
-                    RepetierClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                    sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                    xmlSerializer.Serialize(fileStream, RepetierClient.Instance);
+                    xmlSerializer.Serialize(fileStream, sClient);
                     Assert.That(File.Exists(Path.Combine(dir, "server.xml")), Is.True);
                 }
 

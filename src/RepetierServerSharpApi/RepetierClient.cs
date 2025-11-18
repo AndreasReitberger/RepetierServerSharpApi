@@ -25,32 +25,6 @@ namespace AndreasReitberger.API.Repetier
 {
     public partial class RepetierClient : Print3dServerClient, IPrint3dServerClient
     {
-        #region Instance
-
-        static RepetierClient? _instance = null;
-        static readonly object Lock = new();
-        public new static RepetierClient Instance
-        {
-            get
-            {
-                lock (Lock)
-                {
-                    _instance ??= new RepetierClient();
-                }
-                return _instance;
-            }
-            set
-            {
-                if (_instance == value) return;
-                lock (Lock)
-                {
-                    _instance = value;
-                }
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         #region Connection
@@ -187,7 +161,6 @@ namespace AndreasReitberger.API.Repetier
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, api);
             UpdateRestClientInstance();
         }
 
@@ -195,7 +168,6 @@ namespace AndreasReitberger.API.Repetier
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, "");
             UpdateRestClientInstance();
         }
         #endregion
@@ -207,35 +179,6 @@ namespace AndreasReitberger.API.Repetier
         }
         #endregion
 
-        #region Init
-
-        public static void UpdateSingleInstance(RepetierClient Inst) => Instance = Inst;
-
-        public new void InitInstance(string serverAddress, string api = "")
-        {
-            try
-            {
-                ApiTargetPath = serverAddress;
-                ApiKey = api;
-
-                Instance = this;
-                if (Instance is not null)
-                {
-                    Instance.UpdateInstance = false;
-                    Instance.IsInitialized = true;
-                }
-                UpdateInstance = false;
-                IsInitialized = true;
-            }
-            catch (Exception exc)
-            {
-                //UpdateInstance = true;
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                IsInitialized = false;
-            }
-        }
-        #endregion
-
         #region Methods
 
         #region Private
@@ -243,6 +186,8 @@ namespace AndreasReitberger.API.Repetier
         #region Misc
         void LoadDefaults()
         {
+            RefreshInterval = 1;
+            OnRefreshInterval = 1;
             PingInterval = 5;
             Target = Print3dServerTarget.RepetierServer;
 #if NET6_0_OR_GREATER
@@ -605,15 +550,6 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Refresh
-        public new Task StartListeningAsync(bool stopActiveListening = false, string[]? commandsOnConnect = null) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async () =>
-        {
-            List<Task> tasks =
-            [
-                RefreshPrinterStateAsync(),
-                RefreshCurrentPrintInfosAsync(),
-            ];
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-        }), commandsOnConnect: commandsOnConnect);
         public new Task RefreshAllAsync() => RefreshAllAsync(GcodeImageType.Thumbnail);
         public async Task RefreshAllAsync(GcodeImageType imageType = GcodeImageType.Thumbnail)
         {
@@ -1617,11 +1553,6 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "listPrinter", printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
                 RepetierCurrentPrintInfo[]? info = GetObjectFromJson<RepetierCurrentPrintInfo[]>(result?.Result);
                 if (info is not null)
                 {

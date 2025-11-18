@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Print3dServer.Core" Version="1.0.4-preview3" />
+    <PackageReference Include="Print3dServer.Core" Version="1.0.4-preview4" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
