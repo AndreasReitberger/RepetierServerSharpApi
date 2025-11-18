@@ -1,5 +1,4 @@
-﻿using AndreasReitberger.API.Repetier.Events;
-using AndreasReitberger.API.Repetier.Models;
+﻿using AndreasReitberger.API.Repetier.Models;
 using System;
 
 namespace AndreasReitberger.API.Repetier
