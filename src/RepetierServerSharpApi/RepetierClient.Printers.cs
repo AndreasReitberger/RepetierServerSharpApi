@@ -28,12 +28,12 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
 
-                RepetierPrinterListRespone? respone = GetObjectFromJson<RepetierPrinterListRespone>(result?.Result);
+                RepetierPrinterListRespone? respone = GetObjectFromJsonSystem<RepetierPrinterListRespone>(result?.Result, DefaultJsonSerializerSettings);
                 if (respone is not null)
                 {
                     repetierPrinterList = [.. respone.Printers];
@@ -122,7 +122,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "getPrinterConfig",
-                       jsonObject: new { printer = currentPrinter },
+                       body: new { printer = currentPrinter },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -133,7 +133,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierPrinterConfig? config = GetObjectFromJson<RepetierPrinterConfig>(result?.Result);
+                RepetierPrinterConfig? config = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, DefaultJsonSerializerSettings);
                 if (config is not null)
                 {
                     Config = resultObject = config;
@@ -188,7 +188,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setPrinterConfig",
-                       jsonObject: newConfig,
+                       body: newConfig,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);

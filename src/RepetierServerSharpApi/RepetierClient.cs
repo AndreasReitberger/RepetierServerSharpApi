@@ -439,7 +439,7 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "listJobs",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
@@ -451,7 +451,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJson<RepetierJobListRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierJobListRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -483,7 +483,7 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "webCallsList",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
@@ -496,7 +496,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJson<RepetierWebCallList>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierWebCallList>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -660,7 +660,7 @@ namespace AndreasReitberger.API.Repetier
                requestTargetUri: targetUri,
                method: Method.Post,
                command: "logout",
-               jsonObject: null,
+               body: null,
                authHeaders: AuthHeaders
                )
             .ConfigureAwait(false);
@@ -789,7 +789,7 @@ namespace AndreasReitberger.API.Repetier
                            requestTargetUri: targetUri,
                            method: Method.Post,
                            command: pingCommand,
-                           jsonObject: null,
+                           body: null,
                            authHeaders: AuthHeaders,
                            cts: new(timeout)
                            )
@@ -842,7 +842,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "checkForUpdates",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -888,7 +888,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "autoupdate",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -935,7 +935,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "updateAvailable",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -944,7 +944,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "updateAvailable")
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJson<RepetierAvailableUpdateInfo>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierAvailableUpdateInfo>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -977,7 +977,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "getLicenceData",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -988,7 +988,7 @@ namespace AndreasReitberger.API.Repetier
                 */
                 if (result is not null)
                 {
-                    return GetObjectFromJson<RepetierLicenseInfo>(result?.Result);
+                    return GetObjectFromJsonSystem<RepetierLicenseInfo>(result?.Result, DefaultJsonSerializerSettings);
                 }
                 else
                     return null;
@@ -1115,7 +1115,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 RepetierJobListRespone? info = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
                 if (info is not null && info.Data is not null)
-                    return new ObservableCollection<IPrint3dJob>(info.Data);
+                    return [with(info.Data)];
                 else
                     return resultObject;
             }
@@ -1140,7 +1140,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierJobListRespone? result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
-                Jobs = result is not null ? new(result.Data) : jobList;
+                Jobs = result is not null ? [with(result.Data)] : jobList;
             }
             catch (Exception exc)
             {
@@ -1163,7 +1163,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "startJob",
-                       jsonObject: new { id },
+                       body: new { id },
                        authHeaders: AuthHeaders
                        //urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                        )
@@ -1198,7 +1198,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "startJob",
-                       jsonObject: new { id },
+                       body: new { id },
                        authHeaders: AuthHeaders
                        //urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
                        )
@@ -1238,7 +1238,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeJob",
-                       jsonObject: new { id = jobId },
+                       body: new { id = jobId },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1273,7 +1273,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeJob",
-                       jsonObject: new { id = jobId },
+                       body: new { id = jobId },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1316,7 +1316,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "continueJob",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1369,7 +1369,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "stopJob",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1404,7 +1404,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setShutdownAfterPrint",
-                       jsonObject: new { shutdown = shutdown ? "true" : "false" },
+                       body: new { shutdown = shutdown ? "true" : "false" },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1450,7 +1450,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "stateList",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1460,7 +1460,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "stateList", printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                Dictionary<string, RepetierPrinterState>? state = GetObjectFromJson<Dictionary<string, RepetierPrinterState>>(result?.Result);
+                Dictionary<string, RepetierPrinterState>? state = GetObjectFromJsonSystem<Dictionary<string, RepetierPrinterState>>(result?.Result, DefaultJsonSerializerSettings);
                 if (state is not null && IsPrinterSlugSelected(currentPrinter))
                 {
                     State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
@@ -1549,14 +1549,14 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "listPrinter",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierCurrentPrintInfo[]? info = GetObjectFromJson<RepetierCurrentPrintInfo[]>(result?.Result);
+                RepetierCurrentPrintInfo[]? info = GetObjectFromJsonSystem<RepetierCurrentPrintInfo[]>(result?.Result, DefaultJsonSerializerSettings);
                 if (info is not null)
                 {
-                    resultObject = new ObservableCollection<RepetierCurrentPrintInfo>(info);
+                    resultObject = [with(info)];
                 }
                 return resultObject;
             }
@@ -1581,7 +1581,7 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 ObservableCollection<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
-                ActiveJobs = new(result);
+                ActiveJobs = [with(result)];
 
                 RepetierCurrentPrintInfo? job = ActiveJobs
                     .Cast<RepetierCurrentPrintInfo>()
@@ -1725,9 +1725,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "move",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
             }
@@ -1755,7 +1755,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setExtruderTemperature",
-                       jsonObject: new { temperature, extruder },
+                       body: new { temperature, extruder },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1790,7 +1790,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setBedTemperature",
-                       jsonObject: new { temperature, bedId },
+                       body: new { temperature, bedId },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1825,7 +1825,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setChamberTemperature",
-                       jsonObject: new { temperature, chamberId },
+                       body: new { temperature, chamberId },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1879,7 +1879,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setFanSpeed",
-                       jsonObject: new { speed, fanId },
+                       body: new { speed, fanId },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1918,7 +1918,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "listExternalCommands",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -1929,8 +1929,8 @@ namespace AndreasReitberger.API.Repetier
                    command: "listExternalCommands")
                     .ConfigureAwait(false);
                 */
-                ExternalCommand[]? cmds = GetObjectFromJson<ExternalCommand[]>(result?.Result);
-                return new ObservableCollection<ExternalCommand>(cmds ?? [new ExternalCommand()]);
+                ExternalCommand[]? cmds = GetObjectFromJsonSystem<ExternalCommand[]>(result?.Result, DefaultJsonSerializerSettings);
+                return [with(cmds ?? [new ExternalCommand()])];
             }
             catch (JsonException jecx)
             {
@@ -1958,7 +1958,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "runExternalCommand",
-                       jsonObject: new { id = command.Id },
+                       body: new { id = command.Id },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2019,7 +2019,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeMessage",
-                       jsonObject: new { id = message.Id, a = unPause ? "unpause" : "" },
+                       body: new { id = message.Id, a = unPause ? "unpause" : "" },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2054,7 +2054,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "messages",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2064,9 +2064,9 @@ namespace AndreasReitberger.API.Repetier
                     command: "messages", printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierMessage[]? info = GetObjectFromJson<RepetierMessage[]>(result?.Result);
+                RepetierMessage[]? info = GetObjectFromJsonSystem<RepetierMessage[]>(result?.Result, DefaultJsonSerializerSettings);
                 if (info is not null)
-                    resultObject = new ObservableCollection<RepetierMessage>(info);
+                    resultObject = [with(info)];
                 return resultObject;
             }
             catch (JsonException jecx)
@@ -2120,7 +2120,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setFlowMultiply",
-                       jsonObject: new { speed = multiplier },
+                       body: new { speed = multiplier },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2152,7 +2152,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setSpeedMultiply",
-                       jsonObject: new { speed },
+                       body: new { speed },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2184,7 +2184,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "emergencyStop",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2220,7 +2220,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "getScript",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2231,7 +2231,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetObjectFromJson<RepetierGcodeScript>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierGcodeScript>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -2263,7 +2263,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "setScript",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders
                        //urlSegments: new() { { "data", JsonConvert.SerializeObject(cmd) } }
                        )
@@ -2297,7 +2297,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "runScript",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2331,7 +2331,7 @@ namespace AndreasReitberger.API.Repetier
                 RepetierWebCallList? script = await GetWebCallListAsync(currentPrinter).ConfigureAwait(false);
                 if (script is not null && script.List is not null)
                 {
-                    resultObject = new ObservableCollection<RepetierWebCallAction>(script.List);
+                    resultObject = [with(script.List)];
                 }
                 return resultObject;
             }
@@ -2357,7 +2357,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "webCallExecute",
-                       jsonObject: new { name = action.Name, @params = new string[] { action.Question } },
+                       body: new { name = action.Name, @params = new string[] { action.Question } },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2394,7 +2394,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "webCallRemove",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2520,7 +2520,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectsListServer",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2529,7 +2529,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "projectsListServer", printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJson<RepetierProjectsServerListRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierProjectsServerListRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -2564,12 +2564,12 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectsGetFolder",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierProjectsFolderRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierProjectsFolderRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -2672,12 +2672,12 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectsGetFolder",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierProjectsProjectRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierProjectsProjectRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -2712,9 +2712,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectsUpdateProject",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2769,9 +2769,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectsDeleteFile",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2800,9 +2800,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "projectDelComment",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2841,12 +2841,12 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "historyList",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data",  JsonConvert.SerializeObject(data)} }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierHistoryListRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierHistoryListRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (JsonException jecx)
             {
@@ -2903,12 +2903,12 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "historySummary",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierHistorySummaryRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierHistorySummaryRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (Exception exc)
             {
@@ -2967,9 +2967,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "historyDeleteEntry",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2995,7 +2995,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "GPIOGetList",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -3008,7 +3008,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 */
 
-                return GetObjectFromJson<RepetierGpioListRespone>(result?.Result);
+                return GetObjectFromJsonSystem<RepetierGpioListRespone>(result?.Result, DefaultJsonSerializerSettings);
             }
             catch (Exception exc)
             {
