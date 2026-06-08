@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -118,7 +119,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                RepetierModelList? list = GetObjectFromJsonSystem<RepetierModelList>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierModelList? list = GetObjectFromJsonSystem<RepetierModelList>(result?.Result, RepetierSourceGenerationContext.Default);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -346,7 +347,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                 .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone? space = GetObjectFromJsonSystem<RepetierFreeSpaceRespone>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierFreeSpaceRespone? space = GetObjectFromJsonSystem<RepetierFreeSpaceRespone>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (space is not null)
                 {
                     FreeDiskSpace = space.Free;
@@ -559,7 +560,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierModelGroups? info = GetObjectFromJsonSystem<RepetierModelGroups>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierModelGroups? info = GetObjectFromJsonSystem<RepetierModelGroups>(result?.Result, RepetierSourceGenerationContext.Default);
                 return
                     info is not null && info.GroupNames is not null ?
                     [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;

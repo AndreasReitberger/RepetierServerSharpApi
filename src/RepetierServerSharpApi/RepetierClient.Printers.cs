@@ -1,5 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -33,7 +34,7 @@ namespace AndreasReitberger.API.Repetier
                        )
                     .ConfigureAwait(false);
 
-                RepetierPrinterListRespone? respone = GetObjectFromJsonSystem<RepetierPrinterListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierPrinterListRespone? respone = GetObjectFromJsonSystem<RepetierPrinterListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (respone is not null)
                 {
                     repetierPrinterList = [.. respone.Printers];
@@ -133,7 +134,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierPrinterConfig? config = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierPrinterConfig? config = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (config is not null)
                 {
                     Config = resultObject = config;

@@ -3,6 +3,7 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -451,7 +452,7 @@ namespace AndreasReitberger.API.Repetier
                    printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJsonSystem<RepetierJobListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierJobListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -496,7 +497,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJsonSystem<RepetierWebCallList>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierWebCallList>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -944,7 +945,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "updateAvailable")
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJsonSystem<RepetierAvailableUpdateInfo>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierAvailableUpdateInfo>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -988,7 +989,7 @@ namespace AndreasReitberger.API.Repetier
                 */
                 if (result is not null)
                 {
-                    return GetObjectFromJsonSystem<RepetierLicenseInfo>(result?.Result, DefaultJsonSerializerSettings);
+                    return GetObjectFromJsonSystem<RepetierLicenseInfo>(result?.Result, RepetierSourceGenerationContext.Default);
                 }
                 else
                     return null;
@@ -1460,7 +1461,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "stateList", printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                Dictionary<string, RepetierPrinterState>? state = GetObjectFromJsonSystem<Dictionary<string, RepetierPrinterState>>(result?.Result, DefaultJsonSerializerSettings);
+                Dictionary<string, RepetierPrinterState>? state = GetObjectFromJsonSystem<Dictionary<string, RepetierPrinterState>>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (state is not null && IsPrinterSlugSelected(currentPrinter))
                 {
                     State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
@@ -1553,7 +1554,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierCurrentPrintInfo[]? info = GetObjectFromJsonSystem<RepetierCurrentPrintInfo[]>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierCurrentPrintInfo[]? info = GetObjectFromJsonSystem<RepetierCurrentPrintInfo[]>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (info is not null)
                 {
                     resultObject = [with(info)];
@@ -1929,7 +1930,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "listExternalCommands")
                     .ConfigureAwait(false);
                 */
-                ExternalCommand[]? cmds = GetObjectFromJsonSystem<ExternalCommand[]>(result?.Result, DefaultJsonSerializerSettings);
+                ExternalCommand[]? cmds = GetObjectFromJsonSystem<ExternalCommand[]>(result?.Result, RepetierSourceGenerationContext.Default);
                 return [with(cmds ?? [new ExternalCommand()])];
             }
             catch (JsonException jecx)
@@ -2064,7 +2065,7 @@ namespace AndreasReitberger.API.Repetier
                     command: "messages", printerName: currentPrinter)
                     .ConfigureAwait(false);
                 */
-                RepetierMessage[]? info = GetObjectFromJsonSystem<RepetierMessage[]>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierMessage[]? info = GetObjectFromJsonSystem<RepetierMessage[]>(result?.Result, RepetierSourceGenerationContext.Default);
                 if (info is not null)
                     resultObject = [with(info)];
                 return resultObject;
@@ -2231,7 +2232,7 @@ namespace AndreasReitberger.API.Repetier
                     printerName: currentPrinter
                     ).ConfigureAwait(false);
                 */
-                return GetObjectFromJsonSystem<RepetierGcodeScript>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierGcodeScript>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2529,7 +2530,7 @@ namespace AndreasReitberger.API.Repetier
                     RepetierCommandBase.printer, RepetierCommandFeature.api, command: "projectsListServer", printerName: printerName)
                     .ConfigureAwait(false);
                 */
-                return GetObjectFromJsonSystem<RepetierProjectsServerListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierProjectsServerListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2569,7 +2570,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierProjectsFolderRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierProjectsFolderRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2677,7 +2678,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierProjectsProjectRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierProjectsProjectRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2846,7 +2847,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierHistoryListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierHistoryListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2908,7 +2909,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierHistorySummaryRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierHistorySummaryRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {
@@ -3008,7 +3009,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 */
 
-                return GetObjectFromJsonSystem<RepetierGpioListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return GetObjectFromJsonSystem<RepetierGpioListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {

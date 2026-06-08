@@ -1,5 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.REST.Events;
 using Newtonsoft.Json;
 using System;
@@ -39,11 +40,11 @@ namespace AndreasReitberger.API.Repetier
                 if (text.Contains("session", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Session = GetObjectFromJson<EventSession>(text, NewtonsoftJsonSerializerSettings);
-                    Session = GetObjectFromJsonSystem<EventSession>(text, DefaultJsonSerializerSettings);
+                    Session = GetObjectFromJsonSystem<EventSession>(text, RepetierSourceGenerationContext.Default);
                 }
                 else if (text.Contains("event", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    RepetierEventContainer? repetierEvent = GetObjectFromJsonSystem<RepetierEventContainer>(text, DefaultJsonSerializerSettings);
+                    RepetierEventContainer? repetierEvent = GetObjectFromJsonSystem<RepetierEventContainer>(text, RepetierSourceGenerationContext.Default);
                     if (repetierEvent is not null)
                     {
                         string name = string.Empty;
@@ -55,7 +56,7 @@ namespace AndreasReitberger.API.Repetier
                             switch (name)
                             {
                                 case "userCredentials":
-                                    RepetierLoginResult? login = GetObjectFromJsonSystem<RepetierLoginResult>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierLoginResult? login = GetObjectFromJsonSystem<RepetierLoginResult>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (login is not null)
                                     {
                                         OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
@@ -69,7 +70,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "temp":
-                                    EventTempData? eventTempData = GetObjectFromJsonSystem<EventTempData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventTempData? eventTempData = GetObjectFromJsonSystem<EventTempData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventTempData is not null)
                                     {
                                         if (obj.Printer == ActivePrinter?.Slug)
@@ -100,7 +101,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "jobStarted":
-                                    EventJobStartedData? eventJobStarted = GetObjectFromJsonSystem<EventJobStartedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobStartedData? eventJobStarted = GetObjectFromJsonSystem<EventJobStartedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnJobStarted(new RepetierJobStartedEventArgs()
                                     {
                                         Job = eventJobStarted,
@@ -110,7 +111,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "jobsChanged":
-                                    EventJobChangedData? eventJobsChanged = GetObjectFromJsonSystem<EventJobChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobChangedData? eventJobsChanged = GetObjectFromJsonSystem<EventJobChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventJobsChanged is not null)
                                     {
                                         /*
@@ -133,7 +134,7 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "jobDeactivated":
                                 case "jobFinished":
-                                    EventJobFinishedData? eventJobFinished = GetObjectFromJsonSystem<EventJobFinishedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobFinishedData? eventJobFinished = GetObjectFromJsonSystem<EventJobFinishedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventJobFinished is not null)
                                     {
                                         /*
@@ -155,7 +156,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "messagesChanged":
-                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJsonSystem<EventMessageChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJsonSystem<EventMessageChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventMessageChanged is not null)
                                     {
                                         OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
@@ -168,7 +169,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "hardwareInfo":
-                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJsonSystem<EventHardwareInfoChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJsonSystem<EventHardwareInfoChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
                                     {
                                         Info = eventHardwareInfoChanged,
@@ -178,7 +179,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "wifiChanged":
-                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJsonSystem<EventWifiChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJsonSystem<EventWifiChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
                                     {
                                         Data = eventWifiChanged,
@@ -188,13 +189,13 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "gcodeInfoUpdated":
-                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJsonSystem<EventGcodeInfoUpdatedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJsonSystem<EventGcodeInfoUpdatedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "layerChanged":
-                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJsonSystem<RepetierLayerChangedEvent>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJsonSystem<RepetierLayerChangedEvent>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "updatePrinterState":
-                                    RepetierPrinterState? updatePrinterState = GetObjectFromJsonSystem<RepetierPrinterState>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierPrinterState? updatePrinterState = GetObjectFromJsonSystem<RepetierPrinterState>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "timelapseChanged":
 #if DEBUG
@@ -304,11 +305,11 @@ namespace AndreasReitberger.API.Repetier
                 if (text.Contains("session", StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Session = GetObjectFromJson<EventSession>(text, NewtonsoftJsonSerializerSettings);
-                    Session = GetObjectFromJsonSystem<EventSession>(text, DefaultJsonSerializerSettings);
+                    Session = GetObjectFromJsonSystem<EventSession>(text, RepetierSourceGenerationContext.Default);
                 }
                 else if (text.Contains("event", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    RepetierEventContainer? repetierEvent = GetObjectFromJsonSystem<RepetierEventContainer>(text, DefaultJsonSerializerSettings);
+                    RepetierEventContainer? repetierEvent = GetObjectFromJsonSystem<RepetierEventContainer>(text, RepetierSourceGenerationContext.Default);
                     if (repetierEvent is not null)
                     {
                         string name = string.Empty;
@@ -320,7 +321,7 @@ namespace AndreasReitberger.API.Repetier
                             switch (name)
                             {
                                 case "userCredentials":
-                                    RepetierLoginResult? login = GetObjectFromJsonSystem<RepetierLoginResult>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierLoginResult? login = GetObjectFromJsonSystem<RepetierLoginResult>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (login is not null)
                                     {
                                         OnLoginResultReceived(new RepetierLoginRequiredEventArgs()
@@ -334,7 +335,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "temp":
-                                    EventTempData? eventTempData = GetObjectFromJsonSystem<EventTempData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventTempData? eventTempData = GetObjectFromJsonSystem<EventTempData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventTempData is not null)
                                     {
                                         OnTemperatureDataReceived(new TemperatureDataEventArgs()
@@ -347,7 +348,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "jobStarted":
-                                    EventJobStartedData? eventJobStarted = GetObjectFromJsonSystem<EventJobStartedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobStartedData? eventJobStarted = GetObjectFromJsonSystem<EventJobStartedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnJobStarted(new RepetierJobStartedEventArgs()
                                     {
                                         Job = eventJobStarted,
@@ -357,7 +358,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "jobsChanged":
-                                    EventJobChangedData? eventJobsChanged = GetObjectFromJsonSystem<EventJobChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobChangedData? eventJobsChanged = GetObjectFromJsonSystem<EventJobChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventJobsChanged is not null)
                                     {
                                         /*
@@ -380,7 +381,7 @@ namespace AndreasReitberger.API.Repetier
                                     break;
                                 case "jobDeactivated":
                                 case "jobFinished":
-                                    EventJobFinishedData? eventJobFinished = GetObjectFromJsonSystem<EventJobFinishedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventJobFinishedData? eventJobFinished = GetObjectFromJsonSystem<EventJobFinishedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventJobFinished is not null)
                                     {
                                         /*
@@ -402,7 +403,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "messagesChanged":
-                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJsonSystem<EventMessageChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventMessageChangedData? eventMessageChanged = GetObjectFromJsonSystem<EventMessageChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     if (eventMessageChanged is not null)
                                     {
                                         OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
@@ -415,7 +416,7 @@ namespace AndreasReitberger.API.Repetier
                                     }
                                     break;
                                 case "hardwareInfo":
-                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJsonSystem<EventHardwareInfoChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventHardwareInfoChangedData? eventHardwareInfoChanged = GetObjectFromJsonSystem<EventHardwareInfoChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnHardwareInfoChangedEvent(new RepetierHardwareInfoChangedEventArgs()
                                     {
                                         Info = eventHardwareInfoChanged,
@@ -425,7 +426,7 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "wifiChanged":
-                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJsonSystem<EventWifiChangedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventWifiChangedData? eventWifiChanged = GetObjectFromJsonSystem<EventWifiChangedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     OnWifiChangedEvent(new RepetierWifiChangedEventArgs()
                                     {
                                         Data = eventWifiChanged,
@@ -435,13 +436,13 @@ namespace AndreasReitberger.API.Repetier
                                     });
                                     break;
                                 case "gcodeInfoUpdated":
-                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJsonSystem<EventGcodeInfoUpdatedData>(jsonBody, DefaultJsonSerializerSettings);
+                                    EventGcodeInfoUpdatedData? eventGcodeInfoUpdatedChanged = GetObjectFromJsonSystem<EventGcodeInfoUpdatedData>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "layerChanged":
-                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJsonSystem<RepetierLayerChangedEvent>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierLayerChangedEvent? eventLayerChanged = GetObjectFromJsonSystem<RepetierLayerChangedEvent>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "updatePrinterState":
-                                    RepetierPrinterState? updatePrinterState = GetObjectFromJsonSystem<RepetierPrinterState>(jsonBody, DefaultJsonSerializerSettings);
+                                    RepetierPrinterState? updatePrinterState = GetObjectFromJsonSystem<RepetierPrinterState>(jsonBody, RepetierSourceGenerationContext.Default);
                                     break;
                                 case "timelapseChanged":
 #if DEBUG
