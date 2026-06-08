@@ -114,11 +114,11 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "listModels",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                RepetierModelList? list = GetObjectFromJson<RepetierModelList>(result?.Result);
+                RepetierModelList? list = GetObjectFromJsonSystem<RepetierModelList>(result?.Result, DefaultJsonSerializerSettings);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -263,7 +263,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeModel",
-                       jsonObject: new { id = model.Identifier },
+                       body: new { id = model.Identifier },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -310,7 +310,7 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "removeModel",
-                       jsonObject: new { id = model.Identifier, autostart = (startPrintIfPossible ? "true" : "false") },
+                       body: new { id = model.Identifier, autostart = (startPrintIfPossible ? "true" : "false") },
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -346,7 +346,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                 .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone? space = GetObjectFromJson<RepetierFreeSpaceRespone>(result?.Result);
+                RepetierFreeSpaceRespone? space = GetObjectFromJsonSystem<RepetierFreeSpaceRespone>(result?.Result, DefaultJsonSerializerSettings);
                 if (space is not null)
                 {
                     FreeDiskSpace = space.Free;
@@ -451,12 +451,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { 
-                           { "a", "download" },
-                           { "id", $"{fileId}" }
-                       })
+                       urlSegments: [new ("a", "download"), new ("id", $"{fileId}")])
                     .ConfigureAwait(false);
                 return result?.Result;
             }
@@ -515,7 +512,7 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "listModelGroups",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
@@ -558,11 +555,11 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "listModelGroups",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierModelGroups? info = GetObjectFromJson<RepetierModelGroups>(result?.Result);
+                RepetierModelGroups? info = GetObjectFromJsonSystem<RepetierModelGroups>(result?.Result, DefaultJsonSerializerSettings);
                 return
                     info is not null && info.GroupNames is not null ?
                     [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;
@@ -625,9 +622,9 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -652,9 +649,9 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "addModelGroup",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                   urlSegments: [new("data", JsonConvert.SerializeObject(data))]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -683,9 +680,9 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -711,9 +708,9 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "delModelGroup",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                   urlSegments: [new("data", JsonConvert.SerializeObject(data))]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -743,9 +740,9 @@ namespace AndreasReitberger.API.Repetier
                    requestTargetUri: targetUri,
                    method: Method.Post,
                    command: "moveModelFileToGroup",
-                   jsonObject: null,
+                   body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -767,9 +764,9 @@ namespace AndreasReitberger.API.Repetier
                        requestTargetUri: targetUri,
                        method: Method.Post,
                         command: "removeModel",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: new() { { "data", JsonConvert.SerializeObject(data) } }
+                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
