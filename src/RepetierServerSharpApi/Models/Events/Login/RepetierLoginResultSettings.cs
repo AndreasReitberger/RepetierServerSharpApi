@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,48 +7,39 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("gcodeGroup")]
+        [JsonProperty("gcodeGroup"), JsonPropertyName("gcodeGroup")]
         public partial string GcodeGroup { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeSortBy")]
+        [JsonProperty("gcodeSortBy"), JsonPropertyName("gcodeSortBy")]
         public partial long? GcodeSortBy { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeViewMode")]
+        [JsonProperty("gcodeViewMode"), JsonPropertyName("gcodeViewMode")]
         public partial long? GcodeViewMode { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempDiagActive")]
+        [JsonProperty("tempDiagActive"), JsonPropertyName("tempDiagActive")]
         public partial long? TempDiagActive { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempDiagAll")]
+        [JsonProperty("tempDiagAll"), JsonPropertyName("tempDiagAll")]
         public partial long? TempDiagAll { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempDiagBed")]
+        [JsonProperty("tempDiagBed"), JsonPropertyName("tempDiagBed")]
         public partial long? TempDiagBed { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempDiagChamber")]
+        [JsonProperty("tempDiagChamber"), JsonPropertyName("tempDiagChamber")]
         public partial long? TempDiagChamber { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempDiagMode")]
+        [JsonProperty("tempDiagMode"), JsonPropertyName("tempDiagMode")]
         public partial long? TempDiagMode { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("theme")]
+        [JsonProperty("theme"), JsonPropertyName("theme")]
         public partial string Theme { get; set; } = string.Empty;
         #endregion
 

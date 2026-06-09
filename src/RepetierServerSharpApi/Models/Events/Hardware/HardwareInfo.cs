@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,43 +9,35 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial long? Icon { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("msgType")]
+        [JsonProperty("msgType"), JsonPropertyName("msgType")]
         public partial long? MsgType { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("text")]
+        [JsonProperty("text"), JsonPropertyName("text")]
         public partial string Text { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("unit")]
+        [JsonProperty("unit"), JsonPropertyName("unit")]
         public partial string Unit { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("urgency")]
+        [JsonProperty("urgency"), JsonPropertyName("urgency")]
         public partial long? Urgency { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("url")]
+        [JsonProperty("url"), JsonPropertyName("url")]
         public partial string Url { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("value")]
+        [JsonProperty("value"), JsonPropertyName("value")]
         public partial double? Value { get; set; }
         #endregion
 

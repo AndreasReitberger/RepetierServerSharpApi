@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,13 +9,11 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("list")]
+        [JsonProperty("list"), JsonPropertyName("list")]
         public partial List<HardwareInfo> List { get; set; } = new();
 
         [ObservableProperty]
-
-        [JsonProperty("maxUrgency")]
+        [JsonProperty("maxUrgency"), JsonPropertyName("maxUrgency")]
         public partial long? MaxUrgency { get; set; }
         #endregion
 

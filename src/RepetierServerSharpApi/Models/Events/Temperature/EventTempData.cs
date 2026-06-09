@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,42 +9,39 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("O")]
+        [JsonProperty("O"), JsonPropertyName("O")]
         public partial long O { get; set; }
-
         partial void OnOChanged(long value)
         {
             TemperatureOffset = value;
         }
 
         [ObservableProperty]
-        [JsonProperty("S")]
+        [JsonProperty("S"), JsonPropertyName("S")]
         public partial long S { get; set; }
-
         partial void OnSChanged(long value)
         {
             TemperatureSet = value;
         }
 
         [ObservableProperty]
-        [JsonProperty("T")]
+        [JsonProperty("T"), JsonPropertyName("T")]
         public partial double T { get; set; }
-
         partial void OnTChanged(double value)
         {
             TemperatureTarget = value;
         }
 
         [ObservableProperty]
-        [JsonProperty("id")]
+        [JsonProperty("id"), JsonPropertyName("id")]
         public partial long EventId { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("t")]
+        [JsonProperty("t"), JsonPropertyName("t")]
         public partial long DataT { get; set; }
 
         [ObservableProperty]
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]

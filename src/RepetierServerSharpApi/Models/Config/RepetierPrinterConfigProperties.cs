@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("firmwareuploader_board")]
+        [JsonProperty("firmwareuploader_board"), JsonPropertyName("firmwareuploader_board")]
         public partial long FirmwareuploaderBoard { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("firmwareuploader_extraPort")]
+        [JsonProperty("firmwareuploader_extraPort"), JsonPropertyName("firmwareuploader_extraPort")]
         public partial string FirmwareuploaderExtraPort { get; set; } = string.Empty;
         #endregion
 

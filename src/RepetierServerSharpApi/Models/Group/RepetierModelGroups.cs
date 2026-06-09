@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("groupNames")]
+        [JsonProperty("groupNames"), JsonPropertyName("groupNames")]
         public partial string[] GroupNames { get; set; } = [];
 
-        [JsonProperty("ok")]
         [ObservableProperty]
-
+        [JsonProperty("ok"), JsonPropertyName("ok")]
         public partial bool Ok { get; set; }
         #endregion
 

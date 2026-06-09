@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,107 +9,86 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("alias")]
+        [JsonProperty("alias"), JsonPropertyName("alias")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("dynamicUrl")]
+        [JsonProperty("dynamicUrl"), JsonPropertyName("dynamicUrl")]
         public partial Uri? WebCamUrlDynamic { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("forceSnapshotPosition")]
+        [JsonProperty("forceSnapshotPosition"), JsonPropertyName("forceSnapshotPosition")]
         public partial bool ForceSnapshotPosition { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("method")]
+        [JsonProperty("method"), JsonPropertyName("method")]
         public partial long Method { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("orientation")]
+        [JsonProperty("orientation"), JsonPropertyName("orientation")]
         public partial long Orientation { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pos")]
+        [JsonProperty("pos"), JsonPropertyName("pos")]
         public partial long Position { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore), JsonPropertyName("rec")]
         public partial long Rec { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("reloadInterval")]
+        [JsonProperty("reloadInterval"), JsonPropertyName("reloadInterval")]
         public partial long ReloadInterval { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("snapshotDelay")]
+        [JsonProperty("snapshotDelay"), JsonPropertyName("snapshotDelay")]
         public partial long SnapshotDelay { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("snapshotStabilizeTime")]
+        [JsonProperty("snapshotStabilizeTime"), JsonPropertyName("snapshotStabilizeTime")]
         public partial long SnapshotStabilizeTime { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("snapshotX")]
+        [JsonProperty("snapshotX"), JsonPropertyName("snapshotX")]
         public partial long SnapshotX { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("snapshotY")]
+        [JsonProperty("snapshotY"), JsonPropertyName("snapshotY")]
         public partial long SnapshotY { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("staticUrl")]
+        [JsonProperty("staticUrl"), JsonPropertyName("staticUrl")]
         public partial Uri? WebCamUrlStatic { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseBitrate")]
+        [JsonProperty("timelapseBitrate"), JsonPropertyName("timelapseBitrate")]
         public partial long TimelapseBitrate { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseFramerate")]
+        [JsonProperty("timelapseFramerate"), JsonPropertyName("timelapseFramerate")]
         public partial long TimelapseFramerate { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseHeight")]
+        [JsonProperty("timelapseHeight"), JsonPropertyName("timelapseHeight")]
         public partial double TimelapseHeight { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseInterval")]
+        [JsonProperty("timelapseInterval"), JsonPropertyName("timelapseInterval")]
         public partial long TimelapseInterval { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseLayer")]
+        [JsonProperty("timelapseLayer"), JsonPropertyName("timelapseLayer")]
         public partial long TimelapseLayer { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseMethod")]
+        [JsonProperty("timelapseMethod"), JsonPropertyName("timelapseMethod")]
         public partial long TimelapseMethod { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timelapseSelected")]
+        [JsonProperty("timelapseSelected"), JsonPropertyName("timelapseSelected")]
         public partial long TimelapseSelected { get; set; }
         #endregion
 

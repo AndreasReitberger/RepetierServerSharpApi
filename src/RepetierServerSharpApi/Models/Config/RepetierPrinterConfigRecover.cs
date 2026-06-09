@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,48 +7,39 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("delayBeforeReconnect")]
+        [JsonProperty("delayBeforeReconnect"), JsonPropertyName("delayBeforeReconnect")]
         public partial long DelayBeforeReconnect { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("enabled")]
+        [JsonProperty("enabled"), JsonPropertyName("enabled")]
         public partial bool Enabled { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("extraZOnFirmwareDetect")]
+        [JsonProperty("extraZOnFirmwareDetect"), JsonPropertyName("extraZOnFirmwareDetect")]
         public partial long ExtraZOnFirmwareDetect { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("firmwarePowerlossSignal")]
+        [JsonProperty("firmwarePowerlossSignal"), JsonPropertyName("firmwarePowerlossSignal")]
         public partial string FirmwarePowerlossSignal { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("maxTimeForAutocontinue")]
+        [JsonProperty("maxTimeForAutocontinue"), JsonPropertyName("maxTimeForAutocontinue")]
         public partial long MaxTimeForAutocontinue { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("procedure")]
+        [JsonProperty("procedure"), JsonPropertyName("procedure")]
         public partial string Procedure { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("reactivateBedOnConnect")]
+        [JsonProperty("reactivateBedOnConnect"), JsonPropertyName("reactivateBedOnConnect")]
         public partial bool ReactivateBedOnConnect { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("replayExtruderSwitches")]
+        [JsonProperty("replayExtruderSwitches"), JsonPropertyName("replayExtruderSwitches")]
         public partial bool ReplayExtruderSwitches { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("runOnConnect")]
+        [JsonProperty("runOnConnect"), JsonPropertyName("runOnConnect")]
         public partial string RunOnConnect { get; set; } = string.Empty;
         #endregion
 

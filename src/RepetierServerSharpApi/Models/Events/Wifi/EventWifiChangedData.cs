@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,92 +9,92 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
 
-        [JsonProperty("activeRouter")]
+        [JsonProperty("activeRouter"), JsonPropertyName("activeRouter")]
         public partial bool? ActiveRouter { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("activeSSID")]
+        [JsonProperty("activeSSID"), JsonPropertyName("activeSSID")]
         public partial string ActiveSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("apMode")]
+        [JsonProperty("apMode"), JsonPropertyName("apMode")]
         public partial long? ApMode { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("apSSID")]
+        [JsonProperty("apSSID"), JsonPropertyName("apSSID")]
         public partial string ApSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("channel")]
+        [JsonProperty("channel"), JsonPropertyName("channel")]
         public partial long? Channel { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("channels")]
+        [JsonProperty("channels"), JsonPropertyName("channels")]
         public partial List<long> Channels { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("connections")]
+        [JsonProperty("connections"), JsonPropertyName("connections")]
         public partial List<WifiConnection> Connections { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("country")]
+        [JsonProperty("country"), JsonPropertyName("country")]
         public partial string Country { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("ethernet")]
+        [JsonProperty("ethernet"), JsonPropertyName("ethernet")]
         public partial EthernetConnection? Ethernet { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("hostname")]
+        [JsonProperty("hostname"), JsonPropertyName("hostname")]
         public partial string Hostname { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("manageable")]
+        [JsonProperty("manageable"), JsonPropertyName("manageable")]
         public partial bool? Manageable { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("manualWifi")]
+        [JsonProperty("manualWifi"), JsonPropertyName("manualWifi")]
         public partial bool ManualWifi { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("mode")]
+        [JsonProperty("mode"), JsonPropertyName("mode")]
         public partial long? Mode { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("routerList")]
+        [JsonProperty("routerList"), JsonPropertyName("routerList")]
         public partial List<RouterList> RouterList { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("screensaver")]
+        [JsonProperty("screensaver"), JsonPropertyName("screensaver")]
         public partial bool? Screensaver { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("supportAP")]
+        [JsonProperty("supportAP"), JsonPropertyName("supportAP")]
         public partial bool? SupportAp { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("timezone")]
+        [JsonProperty("timezone"), JsonPropertyName("timezone")]
         public partial string Timezone { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("version")]
+        [JsonProperty("version"), JsonPropertyName("version")]
         public partial long? Version { get; set; }
         #endregion
 

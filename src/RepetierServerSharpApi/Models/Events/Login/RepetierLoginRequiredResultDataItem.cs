@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,8 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("session")]
+        [JsonProperty("session"), JsonPropertyName("session")]
         public partial string Session { get; set; } = string.Empty;
         #endregion
 

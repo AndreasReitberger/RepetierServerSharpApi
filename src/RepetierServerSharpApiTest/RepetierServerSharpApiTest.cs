@@ -2,6 +2,7 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -82,8 +83,8 @@ namespace RepetierServerSharpApiTest
                 };
                 sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, RepetierClient.DefaultJsonSerializerSettings);
-                RepetierClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, typeof(RepetierClient), RepetierSourceGenerationContext.Default);
+                RepetierClient? serializedObject = (RepetierClient?)System.Text.Json.JsonSerializer.Deserialize(serializedString, typeof(RepetierClient), context: RepetierSourceGenerationContext.Default);
                 Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
             }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("SSID")]
+        [JsonProperty("SSID"), JsonPropertyName("SSID")]
         public partial string Ssid { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("device")]
+        [JsonProperty("device"), JsonPropertyName("device")]
         public partial string Device { get; set; } = string.Empty;
         #endregion
 

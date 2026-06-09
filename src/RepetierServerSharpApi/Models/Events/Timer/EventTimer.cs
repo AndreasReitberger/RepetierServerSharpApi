@@ -6,13 +6,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("data")]
+        [JsonProperty("data"), JsonPropertyName("data")]
         public partial object? Data { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("event")]
+        [JsonProperty("event"), JsonPropertyName("event")]
         public partial string? EventName { get; set; }
         #endregion
 

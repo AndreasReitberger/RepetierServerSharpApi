@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,128 +9,103 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("active")]
+        [JsonProperty("active"), JsonPropertyName("active")]
         public partial bool Active { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("defaultVolumetric")]
+        [JsonProperty("defaultVolumetric"), JsonPropertyName("defaultVolumetric")]
         public partial bool DefaultVolumetric { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("deleteJobAfterManualStop")]
+        [JsonProperty("deleteJobAfterManualStop"), JsonPropertyName("deleteJobAfterManualStop")]
         public partial bool DeleteJobAfterManualStop { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("doorHandling")]
+        [JsonProperty("doorHandling"), JsonPropertyName("doorHandling")]
         public partial long DoorHandling { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("eepromType")]
+        [JsonProperty("eepromType"), JsonPropertyName("eepromType")]
         public partial string EepromType { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("enableQueue")]
+        [JsonProperty("enableQueue"), JsonPropertyName("enableQueue")]
         public partial bool EnableQueue { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("firmwareName")]
+        [JsonProperty("firmwareName"), JsonPropertyName("firmwareName")]
         public partial string FirmwareName { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("heatedBed")]
+        [JsonProperty("heatedBed"), JsonPropertyName("heatedBed")]
         public partial bool HeatedBed { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("logHistory")]
+        [JsonProperty("logHistory"), JsonPropertyName("logHistory")]
         public partial bool LogHistory { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("manufacturer")]
+        [JsonProperty("manufacturer"), JsonPropertyName("manufacturer")]
         public partial string Manufacturer { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("model")]
+        [JsonProperty("model"), JsonPropertyName("model")]
         public partial string Model { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("numFans")]
+        [JsonProperty("numFans"), JsonPropertyName("numFans")]
         public partial long NumFans { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pauseHandling")]
+        [JsonProperty("pauseHandling"), JsonPropertyName("pauseHandling")]
         public partial long PauseHandling { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pauseSeconds")]
+        [JsonProperty("pauseSeconds"), JsonPropertyName("pauseSeconds")]
         public partial long PauseSeconds { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("printerHomepage")]
+        [JsonProperty("printerHomepage"), JsonPropertyName("printerHomepage")]
         public partial Uri? PrinterHomepage { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("printerManual")]
+        [JsonProperty("printerManual"), JsonPropertyName("printerManual")]
         public partial string PrinterManual { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("printerVariant")]
+        [JsonProperty("printerVariant"), JsonPropertyName("printerVariant")]
         public partial string PrinterVariant { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("sdcard")]
+        [JsonProperty("sdcard"), JsonPropertyName("sdcard")]
         public partial bool Sdcard { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("slug")]
+        [JsonProperty("slug"), JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("softwareLight")]
+        [JsonProperty("softwareLight"), JsonPropertyName("softwareLight")]
         public partial bool SoftwareLight { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("softwarePower")]
+        [JsonProperty("softwarePower"), JsonPropertyName("softwarePower")]
         public partial bool SoftwarePower { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempUpdateEvery")]
+        [JsonProperty("tempUpdateEvery"), JsonPropertyName("tempUpdateEvery")]
         public partial long TempUpdateEvery { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("useModelFromSlug")]
+        [JsonProperty("useModelFromSlug"), JsonPropertyName("useModelFromSlug")]
         public partial string UseModelFromSlug { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("useOwnModelRepository")]
+        [JsonProperty("useOwnModelRepository"), JsonPropertyName("useOwnModelRepository")]
         public partial bool UseOwnModelRepository { get; set; }
 
         #endregion

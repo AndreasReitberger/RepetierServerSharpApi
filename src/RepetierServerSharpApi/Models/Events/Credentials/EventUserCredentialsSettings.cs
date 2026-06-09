@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,18 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("gcodeGroup")]
+        [JsonProperty("gcodeGroup"), JsonPropertyName("gcodeGroup")]
         public partial string GcodeGroup { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeSortBy")]
+        [JsonProperty("gcodeSortBy"), JsonPropertyName("gcodeSortBy")]
         public partial long GcodeSortBy { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeViewMode")]
+        [JsonProperty("gcodeViewMode"), JsonPropertyName("gcodeViewMode")]
         public partial long GcodeViewMode { get; set; }
         #endregion
 

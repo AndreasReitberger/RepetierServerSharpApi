@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,13 +7,11 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("data")]
+        [JsonProperty("data"), JsonPropertyName("data")]
         public partial List<EventPrinterListChangedData> Data { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("event")]
+        [JsonProperty("event"), JsonPropertyName("event")]
         public partial string EventName { get; set; } = string.Empty;
         #endregion
 

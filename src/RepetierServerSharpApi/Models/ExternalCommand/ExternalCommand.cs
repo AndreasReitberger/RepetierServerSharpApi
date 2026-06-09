@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,78 +7,63 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("confirm")]
+        [JsonProperty("confirm"), JsonPropertyName("confirm")]
         public partial string Confirm { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("execute")]
+        [JsonProperty("execute"), JsonPropertyName("execute")]
         public partial string Execute { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("id")]
+        [JsonProperty("id"), JsonPropertyName("id")]
         public partial long Id { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("ifAllNotPrinting")]
+        [JsonProperty("ifAllNotPrinting"), JsonPropertyName("ifAllNotPrinting")]
         public partial bool IfAllNotPrinting { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("ifThisNotPrinting")]
+        [JsonProperty("ifThisNotPrinting"), JsonPropertyName("ifThisNotPrinting")]
         public partial bool IfThisNotPrinting { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("local")]
+        [JsonProperty("local"), JsonPropertyName("local")]
         public partial bool Local { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("permAdd")]
+        [JsonProperty("permAdd"), JsonPropertyName("permAdd")]
         public partial bool PermAdd { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("permConfig")]
+        [JsonProperty("permConfig"), JsonPropertyName("permConfig")]
         public partial bool PermConfig { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("permDel")]
+        [JsonProperty("permDel"), JsonPropertyName("permDel")]
         public partial bool PermDel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("permPrint")]
+        [JsonProperty("permPrint"), JsonPropertyName("permPrint")]
         public partial bool PermPrint { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("remote")]
+        [JsonProperty("remote"), JsonPropertyName("remote")]
         public partial bool Remote { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("slug")]
+        [JsonProperty("slug"), JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("terminal")]
+        [JsonProperty("terminal"), JsonPropertyName("terminal")]
         public partial string Terminal { get; set; } = string.Empty;
         #endregion
 

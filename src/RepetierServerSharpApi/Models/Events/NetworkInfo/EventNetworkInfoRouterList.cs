@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,48 +7,39 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("SSID")]
+        [JsonProperty("SSID"), JsonPropertyName("SSID")]
         public partial string Ssid { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("active")]
+        [JsonProperty("active"), JsonPropertyName("active")]
         public partial bool Active { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("bars")]
+        [JsonProperty("bars"), JsonPropertyName("bars")]
         public partial long Bars { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("channel")]
+        [JsonProperty("channel"), JsonPropertyName("channel")]
         public partial long Channel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("data")]
+        [JsonProperty("data"), JsonPropertyName("data")]
         public partial EventNetworkInfoRouterListData? Data { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("mode")]
+        [JsonProperty("mode"), JsonPropertyName("mode")]
         public partial string Mode { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("rate")]
+        [JsonProperty("rate"), JsonPropertyName("rate")]
         public partial string Rate { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("secure")]
+        [JsonProperty("secure"), JsonPropertyName("secure")]
         public partial bool Secure { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("signal")]
+        [JsonProperty("signal"), JsonPropertyName("signal")]
         public partial long Signal { get; set; }
         #endregion
 

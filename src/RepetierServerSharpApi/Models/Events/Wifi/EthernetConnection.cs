@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,43 +7,35 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("ipv4_addresses")]
+        [JsonProperty("ipv4_addresses"), JsonPropertyName("ipv4_addresses")]
         public partial string Ipv4Addresses { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv4_dns")]
+        [JsonProperty("ipv4_dns"), JsonPropertyName("ipv4_dns")]
         public partial string Ipv4Dns { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv4_gateway")]
+        [JsonProperty("ipv4_gateway"), JsonPropertyName("ipv4_gateway")]
         public partial string Ipv4Gateway { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv4_method")]
+        [JsonProperty("ipv4_method"), JsonPropertyName("ipv4_method")]
         public partial string Ipv4Method { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv6_addresses")]
+        [JsonProperty("ipv6_addresses"), JsonPropertyName("ipv6_addresses")]
         public partial string Ipv6Addresses { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv6_dns")]
+        [JsonProperty("ipv6_dns"), JsonPropertyName("ipv6_dns")]
         public partial string Ipv6Dns { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv6_gateway")]
+        [JsonProperty("ipv6_gateway"), JsonPropertyName("ipv6_gateway")]
         public partial string Ipv6Gateway { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ipv6_method")]
+        [JsonProperty("ipv6_method"), JsonPropertyName("ipv6_method")]
         public partial string Ipv6Method { get; set; } = string.Empty;
         #endregion
 

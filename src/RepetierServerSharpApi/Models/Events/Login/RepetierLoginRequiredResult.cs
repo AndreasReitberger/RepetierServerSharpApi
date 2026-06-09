@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,18 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("callback_id")]
+        [JsonProperty("callback_id"), JsonPropertyName("callback_id")]
         public partial long? CallbackId { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("data")]
+        [JsonProperty("data"), JsonPropertyName("data")]
         public partial List<RepetierLoginRequiredResultData> Data { get; set; } = new();
 
         [ObservableProperty]
-
-        [JsonProperty("eventList")]
+        [JsonProperty("eventList"), JsonPropertyName("eventList")]
         public partial bool? EventList { get; set; }
 
         #endregion

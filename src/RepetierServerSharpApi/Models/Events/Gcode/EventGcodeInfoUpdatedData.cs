@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,23 +7,19 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("list")]
+        [JsonProperty("list"), JsonPropertyName("list")]
         public partial string List { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("modelId")]
+        [JsonProperty("modelId"), JsonPropertyName("modelId")]
         public partial long ModelId { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("modelPath")]
+        [JsonProperty("modelPath"), JsonPropertyName("modelPath")]
         public partial string ModelPath { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("slug")]
+        [JsonProperty("slug"), JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         #endregion

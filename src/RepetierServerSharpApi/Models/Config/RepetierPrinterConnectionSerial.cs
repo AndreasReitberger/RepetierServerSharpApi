@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,73 +7,59 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("baudrate")]
+        [JsonProperty("baudrate"), JsonPropertyName("baudrate")]
         public partial long Baudrate { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("communicationTimeout")]
+        [JsonProperty("communicationTimeout"), JsonPropertyName("communicationTimeout")]
         public partial long CommunicationTimeout { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("connectionDelay")]
+        [JsonProperty("connectionDelay"), JsonPropertyName("connectionDelay")]
         public partial long ConnectionDelay { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("device")]
+        [JsonProperty("device"), JsonPropertyName("device")]
         public partial string Device { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("dtr")]
+        [JsonProperty("dtr"), JsonPropertyName("dtr")]
         public partial long Dtr { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("emergencySolution")]
+        [JsonProperty("emergencySolution"), JsonPropertyName("emergencySolution")]
         public partial long EmergencySolution { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("inputBufferSize")]
+        [JsonProperty("inputBufferSize"), JsonPropertyName("inputBufferSize")]
         public partial long InputBufferSize { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("interceptor")]
+        [JsonProperty("interceptor"), JsonPropertyName("interceptor")]
         public partial bool Interceptor { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("malyanHack")]
+        [JsonProperty("malyanHack"), JsonPropertyName("malyanHack")]
         public partial bool MalyanHack { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("maxParallelCommands")]
+        [JsonProperty("maxParallelCommands"), JsonPropertyName("maxParallelCommands")]
         public partial bool MaxParallelCommands { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pingPong")]
+        [JsonProperty("pingPong"), JsonPropertyName("pingPong")]
         public partial bool PingPong { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("rts")]
+        [JsonProperty("rts"), JsonPropertyName("rts")]
         public partial long Rts { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("usbreset")]
+        [JsonProperty("usbreset"), JsonPropertyName("usbreset")]
         public partial long Usbreset { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("visibleWithoutRunning")]
+        [JsonProperty("visibleWithoutRunning"), JsonPropertyName("visibleWithoutRunning")]
         public partial bool VisibleWithoutRunning { get; set; }
         #endregion
 

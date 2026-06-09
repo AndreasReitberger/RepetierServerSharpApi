@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,18 +7,15 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("login")]
+        [JsonProperty("login"), JsonPropertyName("login")]
         public partial string Login { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("permissions")]
+        [JsonProperty("permissions"), JsonPropertyName("permissions")]
         public partial long Permissions { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("settings")]
+        [JsonProperty("settings"), JsonPropertyName("settings")]
         public partial EventUserCredentialsSettings? Settings { get; set; }
 
         #endregion

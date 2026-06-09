@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,58 +7,47 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("compressCommunication")]
+        [JsonProperty("compressCommunication"), JsonPropertyName("compressCommunication")]
         public partial bool CompressCommunication { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("connectionMethod")]
+        [JsonProperty("connectionMethod"), JsonPropertyName("connectionMethod")]
         public partial long ConnectionMethod { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("continueAfterFastReconnect")]
+        [JsonProperty("continueAfterFastReconnect"), JsonPropertyName("continueAfterFastReconnect")]
         public partial bool ContinueAfterFastReconnect { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("ip")]
+        [JsonProperty("ip"), JsonPropertyName("ip")]
         public partial RepetierPrinterConnectionIp? Ip { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("lcdTimeMode")]
+        [JsonProperty("lcdTimeMode"), JsonPropertyName("lcdTimeMode")]
         public partial long LcdTimeMode { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("password")]
+        [JsonProperty("password"), JsonPropertyName("password")]
         public partial string Password { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("pipe")]
+        [JsonProperty("pipe"), JsonPropertyName("pipe")]
         public partial RepetierPrinterConnectionPipe? Pipe { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("powerOffIdleMinutes")]
+        [JsonProperty("powerOffIdleMinutes"), JsonPropertyName("powerOffIdleMinutes")]
         public partial long PowerOffIdleMinutes { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("powerOffMaxTemperature")]
+        [JsonProperty("powerOffMaxTemperature"), JsonPropertyName("powerOffMaxTemperature")]
         public partial long PowerOffMaxTemperature { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("resetScript")]
+        [JsonProperty("resetScript"), JsonPropertyName("resetScript")]
         public partial string ResetScript { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("serial")]
+        [JsonProperty("serial"), JsonPropertyName("serial")]
         public partial RepetierPrinterConnectionSerial? Serial { get; set; }
         #endregion
 

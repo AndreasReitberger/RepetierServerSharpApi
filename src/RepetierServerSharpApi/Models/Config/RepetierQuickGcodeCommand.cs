@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -6,23 +7,19 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("command")]
+        [JsonProperty("command"), JsonPropertyName("command")]
         public partial string Command { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("visibleWhenPrinting")]
+        [JsonProperty("visibleWhenPrinting"), JsonPropertyName("visibleWhenPrinting")]
         public partial bool VisibleWhenPrinting { get; set; }
         #endregion
 

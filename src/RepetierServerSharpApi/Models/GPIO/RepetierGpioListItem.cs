@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,133 +8,107 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("bias")]
+        [JsonProperty("bias"), JsonPropertyName("bias")]
         public partial long? Bias { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("chip")]
+        [JsonProperty("chip"), JsonPropertyName("chip")]
         public partial long? Chip { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("debounceMS")]
+        [JsonProperty("debounceMS"), JsonPropertyName("debounceMS")]
         public partial long? DebounceMs { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("description")]
+        [JsonProperty("description"), JsonPropertyName("description")]
         public partial string Description { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("direction")]
+        [JsonProperty("direction"), JsonPropertyName("direction")]
         public partial long? Direction { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("display")]
+        [JsonProperty("display"), JsonPropertyName("display")]
         public partial string Display { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("drive")]
+        [JsonProperty("drive"), JsonPropertyName("drive")]
         public partial long? Drive { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("edge")]
+        [JsonProperty("edge"), JsonPropertyName("edge")]
         public partial long? Edge { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("error")]
+        [JsonProperty("error"), JsonPropertyName("error")]
         public partial string Error { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("iconOff")]
+        [JsonProperty("iconOff"), JsonPropertyName("iconOff")]
         public partial string IconOff { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("initEnabled")]
+        [JsonProperty("initEnabled"), JsonPropertyName("initEnabled")]
         public partial bool? InitEnabled { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("operation")]
+        [JsonProperty("operation"), JsonPropertyName("operation")]
         public partial long? Operation { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("parameter")]
+        [JsonProperty("parameter"), JsonPropertyName("parameter")]
         public partial string Parameter { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("pinNumber")]
+        [JsonProperty("pinNumber"), JsonPropertyName("pinNumber")]
         public partial long? PinNumber { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pos")]
+        [JsonProperty("pos"), JsonPropertyName("pos")]
         public partial long? Pos { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pwmDutyCycle")]
+        [JsonProperty("pwmDutyCycle"), JsonPropertyName("pwmDutyCycle")]
         public partial long? PwmDutyCycle { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pwmFrequency")]
+        [JsonProperty("pwmFrequency"), JsonPropertyName("pwmFrequency")]
         public partial long? PwmFrequency { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pwmInitDutyCycle")]
+        [JsonProperty("pwmInitDutyCycle"), JsonPropertyName("pwmInitDutyCycle")]
         public partial long? PwmInitDutyCycle { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("pwmPolarity")]
+        [JsonProperty("pwmPolarity"), JsonPropertyName("pwmPolarity")]
         public partial bool? PwmPolarity { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("securityQuestion")]
+        [JsonProperty("securityQuestion"), JsonPropertyName("securityQuestion")]
         public partial bool? SecurityQuestion { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("showInMenu")]
+        [JsonProperty("showInMenu"), JsonPropertyName("showInMenu")]
         public partial bool? ShowInMenu { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("slug")]
+        [JsonProperty("slug"), JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("state")]
+        [JsonProperty("state"), JsonPropertyName("state")]
         public partial bool? State { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("uuid")]
+        [JsonProperty("uuid"), JsonPropertyName("uuid")]
         public partial Guid? Uuid { get; set; }
         #endregion
 

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,48 +8,39 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("author")]
+        [JsonProperty("author"), JsonPropertyName("author")]
         public partial string Author { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("command")]
+        [JsonProperty("command"), JsonPropertyName("command")]
         public partial string Command { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("description")]
+        [JsonProperty("description"), JsonPropertyName("description")]
         public partial string Description { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("source")]
+        [JsonProperty("source"), JsonPropertyName("source")]
         public partial string Source { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("uuid")]
+        [JsonProperty("uuid"), JsonPropertyName("uuid")]
         public partial Guid Uuid { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("version")]
+        [JsonProperty("version"), JsonPropertyName("version")]
         public partial long Version { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("visibleWhenPrinting")]
+        [JsonProperty("visibleWhenPrinting"), JsonPropertyName("visibleWhenPrinting")]
         public partial bool VisibleWhenPrinting { get; set; }
 
         #endregion

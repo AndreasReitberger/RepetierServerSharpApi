@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("data")]
+        [JsonProperty("data"), JsonPropertyName("data")]
         public partial List<RepetierPrinter> Printers { get; set; } = [];
         #endregion
 
