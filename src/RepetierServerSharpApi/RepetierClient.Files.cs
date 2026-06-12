@@ -5,6 +5,7 @@ using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -119,7 +120,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                RepetierModelList? list = GetObjectFromJsonSystem<RepetierModelList>(result?.Result, RepetierSourceGenerationContext.Default);
+                RepetierModelList? list = JsonConvertHelper.ToObject<RepetierModelList>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -347,7 +348,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                 .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone? space = GetObjectFromJsonSystem<RepetierFreeSpaceRespone>(result?.Result, RepetierSourceGenerationContext.Default);
+                RepetierFreeSpaceRespone? space = JsonConvertHelper.ToObject<RepetierFreeSpaceRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 if (space is not null)
                 {
                     FreeDiskSpace = space.Free;
@@ -517,7 +518,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierModelGroups>(result?.Result);
+                return JsonConvertHelper.ToObject<RepetierModelGroups>(result?.Result, settings: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -560,7 +561,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierModelGroups? info = GetObjectFromJsonSystem<RepetierModelGroups>(result?.Result, RepetierSourceGenerationContext.Default);
+                RepetierModelGroups? info = JsonConvertHelper.ToObject<RepetierModelGroups>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 return
                     info is not null && info.GroupNames is not null ?
                     [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;

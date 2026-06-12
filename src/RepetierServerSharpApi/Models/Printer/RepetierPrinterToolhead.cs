@@ -2,6 +2,7 @@
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -10,55 +11,45 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("error")]
+        [JsonProperty("error"), JsonPropertyName("error")]
         public partial long Error { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("output")]
-        public partial long Output { get; set; }
+        [JsonProperty("output"), JsonPropertyName("output")]
+        public partial double Output { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempRead")]
+        [JsonProperty("tempRead"), JsonPropertyName("tempRead")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempSet")]
+        [JsonProperty("tempSet"), JsonPropertyName("tempSet")]
         public partial double? TempSet { get; set; }
 
         #region Interface, unsused
 
         [ObservableProperty]
-
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
         public partial double X { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double Y { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double Z { get; set; } = 0;
         #endregion
 
         #region Json Ignore
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty]
-
         public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.Other;
         #endregion
 

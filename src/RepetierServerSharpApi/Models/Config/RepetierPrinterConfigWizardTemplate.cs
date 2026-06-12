@@ -29,7 +29,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("source"), JsonPropertyName("source")]
-        public partial string Source { get; set; } = string.Empty;
+        public partial long Source { get; set; }
 
         [ObservableProperty]
         [JsonProperty("uuid"), JsonPropertyName("uuid")]

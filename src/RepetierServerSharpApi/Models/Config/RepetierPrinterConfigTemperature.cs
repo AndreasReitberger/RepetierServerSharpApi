@@ -12,7 +12,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("temp"), JsonPropertyName("temp")]
-        public partial long Temp { get; set; }
+        public partial double Temp { get; set; }
 
         #region Json Ignore
         [ObservableProperty]

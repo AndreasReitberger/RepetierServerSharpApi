@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,7 +9,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
 
-        [JsonProperty("list")]
+        [JsonProperty("list"), JsonPropertyName("list")]
         public partial List<RepetierHistoryListItem> List { get; set; } = new();
         #endregion
 

@@ -12,11 +12,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("communicationTimeout"), JsonPropertyName("communicationTimeout")]
-        public partial long CommunicationTimeout { get; set; }
+        public partial double CommunicationTimeout { get; set; }
 
         [ObservableProperty]
         [JsonProperty("connectionDelay"), JsonPropertyName("connectionDelay")]
-        public partial long ConnectionDelay { get; set; }
+        public partial double ConnectionDelay { get; set; }
 
         [ObservableProperty]
         [JsonProperty("device"), JsonPropertyName("device")]
@@ -44,7 +44,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("maxParallelCommands"), JsonPropertyName("maxParallelCommands")]
-        public partial bool MaxParallelCommands { get; set; }
+        public partial int MaxParallelCommands { get; set; }
 
         [ObservableProperty]
         [JsonProperty("pingPong"), JsonPropertyName("pingPong")]

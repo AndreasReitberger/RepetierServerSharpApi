@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -10,20 +11,20 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-        [JsonProperty("on")]
+        [JsonProperty("on"), JsonPropertyName("on")]
         public partial bool On { get; set; }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Speed))]
-        [JsonProperty("voltage")]
-        public partial long? Voltage { get; set; }
+        [JsonProperty("voltage"), JsonPropertyName("voltage")]
+        public partial double? Voltage { get; set; }
 
         #region Json Ignore
-        [JsonIgnore]
-        public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage ?? 0 / 255m * 100m), 0));
+        [Newtonsoft.Json.JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public int? Speed => Convert.ToInt32(Math.Round((double)(Voltage ?? 0.0 / 255.0 * 100.0), 0));
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public partial int? Percent { get; set; } = 0;
         #endregion
 

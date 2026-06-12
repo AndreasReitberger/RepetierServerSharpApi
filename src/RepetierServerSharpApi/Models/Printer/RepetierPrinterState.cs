@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,209 +9,168 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("activeExtruder")]
+        [JsonProperty("activeExtruder"), JsonPropertyName("activeExtruder")]
         public partial long ActiveExtruder { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("autostartNextPrint")]
+        [JsonProperty("autostartNextPrint"), JsonPropertyName("autostartNextPrint")]
         public partial bool AutostartNextPrint { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("condition")]
+        [JsonProperty("condition"), JsonPropertyName("condition")]
         public partial long Condition { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("conditionReason")]
+        [JsonProperty("conditionReason"), JsonPropertyName("conditionReason")]
         public partial string ConditionReason { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("debugLevel")]
+        [JsonProperty("debugLevel"), JsonPropertyName("debugLevel")]
         public partial long DebugLevel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("doorOpen")]
+        [JsonProperty("doorOpen"), JsonPropertyName("doorOpen")]
         public partial bool DoorOpen { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("extruder")]
+        [JsonProperty("extruder"), JsonPropertyName("extruder")]
         public partial List<RepetierPrinterToolhead> Extruder { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("f")]
-        public partial long F { get; set; }
+        [JsonProperty("f"), JsonPropertyName("f")]
+        public partial double F { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("fans")]
+        [JsonProperty("fans"), JsonPropertyName("fans")]
         public partial List<RepetierPrinterFan> Fans { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("filterFan")]
+        [JsonProperty("filterFan"), JsonPropertyName("filterFan")]
         public partial bool FilterFan { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("firmware")]
+        [JsonProperty("firmware"), JsonPropertyName("firmware")]
         public partial string Firmware { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("firmwareStyle")]
+        [JsonProperty("firmwareStyle"), JsonPropertyName("firmwareStyle")]
         public partial string FirmwareStyle { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("firmwareURL")]
+        [JsonProperty("firmwareURL"), JsonPropertyName("firmwareURL")]
         public partial Uri? FirmwareUrl { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("flowMultiply")]
+        [JsonProperty("flowMultiply"), JsonPropertyName("flowMultiply")]
         public partial long FlowMultiply { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("global")]
+        [JsonProperty("global"), JsonPropertyName("global")]
         public partial RepetierPrinterStateGlobal? Global { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("gperm")]
+        [JsonProperty("gperm"), JsonPropertyName("gperm")]
         public partial RepetierPrinterStateGlobal? Gperm { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("hasXHome")]
+        [JsonProperty("hasXHome"), JsonPropertyName("hasXHome")]
         public partial bool HasXHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("hasYHome")]
+        [JsonProperty("hasYHome"), JsonPropertyName("hasYHome")]
         public partial bool HasYHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("hasZHome")]
+        [JsonProperty("hasZHome"), JsonPropertyName("hasZHome")]
         public partial bool HasZHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heatedBeds")]
+        [JsonProperty("heatedBeds"), JsonPropertyName("heatedBeds")]
         public partial List<RepetierPrinterHeaterComponent> HeatedBeds { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("heatedChambers")]
+        [JsonProperty("heatedChambers"), JsonPropertyName("heatedChambers")]
         public partial List<RepetierPrinterHeaterComponent> HeatedChambers { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("layer")]
+        [JsonProperty("layer"), JsonPropertyName("layer")]
         public partial long Layer { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("lights")]
+        [JsonProperty("lights"), JsonPropertyName("lights")]
         public partial long Lights { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("maxLayer")]
+        [JsonProperty("maxLayer"), JsonPropertyName("maxLayer")]
         public partial long MaxLayer { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("notification")]
+        [JsonProperty("notification"), JsonPropertyName("notification")]
         public partial string Notification { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("numExtruder")]
+        [JsonProperty("numExtruder"), JsonPropertyName("numExtruder")]
         public partial long NumExtruder { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("perm")]
+        [JsonProperty("perm"), JsonPropertyName("perm")]
         public partial RepetierPrinterStateGlobal? Perm { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("powerOn")]
+        [JsonProperty("powerOn"), JsonPropertyName("powerOn")]
         public partial bool PowerOn { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("rec")]
+        [JsonProperty("rec"), JsonPropertyName("rec")]
         public partial bool Rec { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("sdcardMounted")]
+        [JsonProperty("sdcardMounted"), JsonPropertyName("sdcardMounted")]
         public partial bool SdcardMounted { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("sglobal")]
+        [JsonProperty("sglobal"), JsonPropertyName("sglobal")]
         public partial RepetierPrinterStateGlobal? Sglobal { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("shutdownAfterPrint")]
+        [JsonProperty("shutdownAfterPrint"), JsonPropertyName("shutdownAfterPrint")]
         public partial bool ShutdownAfterPrint { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("speedMultiply")]
+        [JsonProperty("speedMultiply"), JsonPropertyName("speedMultiply")]
         public partial long SpeedMultiply { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("volumetric")]
+        [JsonProperty("volumetric"), JsonPropertyName("volumetric")]
         public partial bool Volumetric { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("webcams")]
+        [JsonProperty("webcams"), JsonPropertyName("webcams")]
         public partial List<RepetierPrinterConfigWebcam> Webcams { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("x")]
-        public partial long X { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("xOff")]
-        public partial long XOff { get; set; }
+        [JsonProperty("x"), JsonPropertyName("x")]
+        public partial double X { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("y")]
-        public partial long Y { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("yOff")]
-        public partial long YOff { get; set; }
+        [JsonProperty("xOff"), JsonPropertyName("xOff")]
+        public partial double XOff { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("z")]
-        public partial long Z { get; set; }
+        [JsonProperty("y"), JsonPropertyName("y")]
+        public partial double Y { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("yOff"), JsonPropertyName("yOff")]
+        public partial double YOff { get; set; }
 
-        [JsonProperty("zOff")]
-        public partial long ZOff { get; set; }
+        [ObservableProperty]
+        [JsonProperty("z"), JsonPropertyName("z")]
+        public partial double Z { get; set; }
+
+        [ObservableProperty]
+        [JsonProperty("zOff"), JsonPropertyName("zOff")]
+        public partial double ZOff { get; set; }
         #endregion
 
         #region Overrides

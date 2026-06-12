@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("gridSpacing"), JsonPropertyName("gridSpacing")]
-        public partial long GridSpacing { get; set; }
+        public partial double GridSpacing { get; set; }
 
         [ObservableProperty]
         [JsonProperty("imageExtension"), JsonPropertyName("imageExtension")]
@@ -24,11 +24,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("imageOpacity"), JsonPropertyName("imageOpacity")]
-        public partial long ImageOpacity { get; set; }
+        public partial double ImageOpacity { get; set; }
 
         [ObservableProperty]
         [JsonProperty("imageZoom"), JsonPropertyName("imageZoom")]
-        public partial long ImageZoom { get; set; }
+        public partial double ImageZoom { get; set; }
 
         [ObservableProperty]
         [JsonProperty("marker"), JsonPropertyName("marker")]

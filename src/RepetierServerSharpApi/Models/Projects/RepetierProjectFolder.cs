@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,38 +7,31 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("empty")]
+        [JsonProperty("empty"), JsonPropertyName("empty")]
         public partial bool Empty { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("folders")]
+        [JsonProperty("folders"), JsonPropertyName("folders")]
         public partial List<RepetierProjectSubFolder> Folders { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("idx")]
+        [JsonProperty("idx"), JsonPropertyName("idx")]
         public partial long Idx { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("parents")]
+        [JsonProperty("parents"), JsonPropertyName("parents")]
         public partial List<RepetierProjectParentElement> Parents { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("projects")]
+        [JsonProperty("projects"), JsonPropertyName("projects")]
         public partial List<RepetierProject> Projects { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("version")]
+        [JsonProperty("version"), JsonPropertyName("version")]
         public partial long Version { get; set; }
         #endregion
 

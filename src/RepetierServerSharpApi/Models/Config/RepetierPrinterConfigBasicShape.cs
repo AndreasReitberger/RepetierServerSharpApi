@@ -10,7 +10,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
 
         [JsonProperty("angle"), JsonPropertyName("angle")]
-        public partial long Angle { get; set; }
+        public partial double Angle { get; set; }
 
         [ObservableProperty]
 
@@ -20,7 +20,7 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
 
         [JsonProperty("radius"), JsonPropertyName("radius")]
-        public partial long Radius { get; set; }
+        public partial double Radius { get; set; }
 
         [ObservableProperty]
 
@@ -30,32 +30,32 @@ namespace AndreasReitberger.API.Repetier.Models
         [ObservableProperty]
 
         [JsonProperty("x"), JsonPropertyName("x")]
-        public partial long X { get; set; }
+        public partial double X { get; set; }
 
         [ObservableProperty]
 
         [JsonProperty("xMax"), JsonPropertyName("xMax")]
-        public partial long XMax { get; set; }
+        public partial double XMax { get; set; }
 
         [ObservableProperty]
 
         [JsonProperty("xMin"), JsonPropertyName("xMin")]
-        public partial long XMin { get; set; }
+        public partial double XMin { get; set; }
 
         [ObservableProperty]
 
         [JsonProperty("y"), JsonPropertyName("y")]
-        public partial long Y { get; set; }
+        public partial double Y { get; set; }
 
         [ObservableProperty]
 
         [JsonProperty("yMax"), JsonPropertyName("yMax")]
-        public partial long YMax { get; set; }
+        public partial double YMax { get; set; }
 
         [ObservableProperty]
 
         [JsonProperty("yMin"), JsonPropertyName("yMin")]
-        public partial long YMin { get; set; }
+        public partial double YMin { get; set; }
         #endregion
 
         #region Overrides

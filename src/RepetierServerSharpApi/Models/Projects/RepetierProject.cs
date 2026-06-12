@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,28 +8,23 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("folder")]
+        [JsonProperty("folder"), JsonPropertyName("folder")]
         public partial long Folder { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("preview")]
+        [JsonProperty("preview"), JsonPropertyName("preview")]
         public partial string Preview { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("uuid")]
+        [JsonProperty("uuid"), JsonPropertyName("uuid")]
         public partial Guid Uuid { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("version")]
+        [JsonProperty("version"), JsonPropertyName("version")]
         public partial long Version { get; set; }
         #endregion
 

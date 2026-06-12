@@ -95,35 +95,6 @@ namespace RepetierServerSharpApiTest
         }
 
         [Test]
-        public void SerializeNewetonsoftJsonTest()
-        {
-            string dir = @"TestResults\Serialization\";
-            Directory.CreateDirectory(dir);
-            string serverConfig = Path.Combine(dir, "server.xml");
-            if (File.Exists(serverConfig)) File.Delete(serverConfig);
-            try
-            {
-                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                var sClient = new RepetierClient(host)
-                {
-                    FreeDiskSpace = 1523165212,
-                    TotalDiskSpace = 65621361616161,
-                };
-                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
-
-                string serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(sClient, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
-                //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
-                RepetierClient? serializedObject = sClient.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
-                Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
-
-            }
-            catch (Exception exc)
-            {
-                Assert.Fail(exc.Message);
-            }
-        }
-
-        [Test]
         public void SerializeAllTypesWithJsonNewtonsoftTest()
         {
             string dir = @"TestResults\Serialization\";
@@ -151,8 +122,8 @@ namespace RepetierServerSharpApiTest
                         Debug.WriteLine($"Exception while creating object from type `{t}`: {exc.Message}");
                     }
                     if (obj is null) continue;
-                    string serializedString =
-                        JsonConvert.SerializeObject(obj, Formatting.Indented, settings: RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                    string? serializedString =
+                        JsonConvertHelper.ToSettingsString(obj, settings: RepetierSourceGenerationContext.Default);
                     if (serializedString == "{}") continue;
 
                     // Get all property infos

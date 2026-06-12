@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier
 {
@@ -7,23 +8,19 @@ namespace AndreasReitberger.API.Repetier
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("active")]
+        [JsonProperty("active"), JsonPropertyName("active")]
         public partial bool Active { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("hasBranding")]
+        [JsonProperty("hasBranding"), JsonPropertyName("hasBranding")]
         public partial bool HasBranding { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("licence")]
+        [JsonProperty("licence"), JsonPropertyName("licence")]
         public partial string Licence { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("wantsBranding")]
+        [JsonProperty("wantsBranding"), JsonPropertyName("wantsBranding")]
         public partial bool WantsBranding { get; set; }
         #endregion
 

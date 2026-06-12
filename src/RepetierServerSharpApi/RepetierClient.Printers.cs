@@ -4,6 +4,7 @@ using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace AndreasReitberger.API.Repetier
                        )
                     .ConfigureAwait(false);
 
-                RepetierPrinterListRespone? respone = GetObjectFromJsonSystem<RepetierPrinterListRespone>(result?.Result, RepetierSourceGenerationContext.Default);
+                RepetierPrinterListRespone? respone = JsonConvertHelper.ToObject<RepetierPrinterListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 if (respone is not null)
                 {
                     repetierPrinterList = [.. respone.Printers];
@@ -90,16 +91,11 @@ namespace AndreasReitberger.API.Repetier
                     Printers = [.. printers];
                     return;
                 }
-
                 List<IPrinter3d> result = await GetPrintersAsync().ConfigureAwait(false);
                 if (result is not null)
-                {
-                    Printers = [.. result];
-                }
+                    Printers = [.. result];   
                 else
-                {
                     Printers = [.. printers];
-                }
             }
             catch (Exception exc)
             {
@@ -127,14 +123,8 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "getPrinterConfig", jsonData: string.Format("{{\"printer\": \"{0}\"}}", currentPrinter),
-                    printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                RepetierPrinterConfig? config = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, RepetierSourceGenerationContext.Default);
+                RepetierPrinterConfig? config2 = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, serializerContext: RepetierSourceGenerationContext.Default);
+                RepetierPrinterConfig? config = JsonConvertHelper.ToObject<RepetierPrinterConfig>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 if (config is not null)
                 {
                     Config = resultObject = config;

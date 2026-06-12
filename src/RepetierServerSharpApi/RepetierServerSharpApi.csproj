@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj" />
     <ProjectReference Include="..\..\..\RestApiClientSharp\src\RestApiClientSharp\RestApiClientSharp.csproj" />
   </ItemGroup>
 </Project>

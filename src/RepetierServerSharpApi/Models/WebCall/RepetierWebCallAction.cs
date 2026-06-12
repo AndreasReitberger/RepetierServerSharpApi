@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,58 +9,47 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("content_type")]
+        [JsonProperty("content_type"), JsonPropertyName("content_type")]
         public partial string ContentType { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("icon")]
+        [JsonProperty("icon"), JsonPropertyName("icon")]
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("method")]
+        [JsonProperty("method"), JsonPropertyName("method")]
         public partial string Method { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonProperty("name"), JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("pos")]
+        [JsonProperty("pos"), JsonPropertyName("pos")]
         public partial long Pos { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("post")]
+        [JsonProperty("post"), JsonPropertyName("post")]
         public partial string Post { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("question")]
+        [JsonProperty("question"), JsonPropertyName("question") ]
         public partial string Question { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("show_in_menu")]
+        [JsonProperty("show_in_menu"), JsonPropertyName("show_in_menu")]
         public partial bool ShowInMenu { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("show_name")]
+        [JsonProperty("show_name"), JsonPropertyName("show_name")]
         public partial string ShowName { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("slug")]
+        [JsonProperty("slug"), JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("url")]
+        [JsonProperty("url"), JsonPropertyName("url")]
         public partial Uri? Url { get; set; }
         #endregion
 

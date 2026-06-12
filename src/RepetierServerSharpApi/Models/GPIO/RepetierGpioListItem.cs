@@ -77,15 +77,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("pwmDutyCycle"), JsonPropertyName("pwmDutyCycle")]
-        public partial long? PwmDutyCycle { get; set; }
+        public partial double? PwmDutyCycle { get; set; }
 
         [ObservableProperty]
         [JsonProperty("pwmFrequency"), JsonPropertyName("pwmFrequency")]
-        public partial long? PwmFrequency { get; set; }
+        public partial double? PwmFrequency { get; set; }
 
         [ObservableProperty]
         [JsonProperty("pwmInitDutyCycle"), JsonPropertyName("pwmInitDutyCycle")]
-        public partial long? PwmInitDutyCycle { get; set; }
+        public partial double? PwmInitDutyCycle { get; set; }
 
         [ObservableProperty]
         [JsonProperty("pwmPolarity"), JsonPropertyName("pwmPolarity")]

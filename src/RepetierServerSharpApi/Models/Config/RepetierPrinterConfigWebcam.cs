@@ -37,7 +37,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("rec", NullValueHandling = NullValueHandling.Ignore), JsonPropertyName("rec")]
-        public partial long Rec { get; set; }
+        public partial bool Rec { get; set; } = false;
 
         [ObservableProperty]
         [JsonProperty("reloadInterval"), JsonPropertyName("reloadInterval")]
