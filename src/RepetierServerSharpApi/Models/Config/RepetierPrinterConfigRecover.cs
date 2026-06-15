@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("extraZOnFirmwareDetect"), JsonPropertyName("extraZOnFirmwareDetect")]
-        public partial long ExtraZOnFirmwareDetect { get; set; }
+        public partial double ExtraZOnFirmwareDetect { get; set; }
 
         [ObservableProperty]
         [JsonProperty("firmwarePowerlossSignal"), JsonPropertyName("firmwarePowerlossSignal")]

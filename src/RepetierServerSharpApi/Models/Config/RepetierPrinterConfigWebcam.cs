@@ -41,7 +41,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("reloadInterval"), JsonPropertyName("reloadInterval")]
-        public partial long ReloadInterval { get; set; }
+        public partial double ReloadInterval { get; set; }
 
         [ObservableProperty]
         [JsonProperty("snapshotDelay"), JsonPropertyName("snapshotDelay")]
@@ -53,11 +53,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("snapshotX"), JsonPropertyName("snapshotX")]
-        public partial long SnapshotX { get; set; }
+        public partial double SnapshotX { get; set; }
 
         [ObservableProperty]
         [JsonProperty("snapshotY"), JsonPropertyName("snapshotY")]
-        public partial long SnapshotY { get; set; }
+        public partial double SnapshotY { get; set; }
 
         [ObservableProperty]
         [JsonProperty("staticUrl"), JsonPropertyName("staticUrl")]
@@ -77,7 +77,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("timelapseInterval"), JsonPropertyName("timelapseInterval")]
-        public partial long TimelapseInterval { get; set; }
+        public partial double TimelapseInterval { get; set; }
 
         [ObservableProperty]
         [JsonProperty("timelapseLayer"), JsonPropertyName("timelapseLayer")]

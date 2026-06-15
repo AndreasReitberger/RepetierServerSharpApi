@@ -9,7 +9,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("acceleration"), JsonPropertyName("acceleration")]
-        public partial long? Acceleration { get; set; }
+        public partial double? Acceleration { get; set; }
 
         [ObservableProperty]
         [JsonProperty("alias"), JsonPropertyName("alias")]
@@ -17,11 +17,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("changeFastDistance"), JsonPropertyName("changeFastDistance")]
-        public partial long? ChangeFastDistance { get; set; }
+        public partial double? ChangeFastDistance { get; set; }
 
         [ObservableProperty]
         [JsonProperty("changeSlowDistance"), JsonPropertyName("changeSlowDistance")]
-        public partial long? ChangeSlowDistance { get; set; }
+        public partial double? ChangeSlowDistance { get; set; }
 
         [ObservableProperty]
         [JsonProperty("cooldownPerSecond"), JsonPropertyName("cooldownPerSecond")]
@@ -29,11 +29,11 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("eJerk"), JsonPropertyName("eJerk")]
-        public partial long? EJerk { get; set; }
+        public partial double? EJerk { get; set; }
 
         [ObservableProperty]
         [JsonProperty("extrudeSpeed"), JsonPropertyName("extrudeSpeed")]
-        public partial long? ExtrudeSpeed { get; set; }
+        public partial double? ExtrudeSpeed { get; set; }
 
         [ObservableProperty]
         [JsonProperty("filamentDiameter"), JsonPropertyName("filamentDiameter")]
@@ -41,19 +41,19 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("heatupPerSecond"), JsonPropertyName("heatupPerSecond")]
-        public partial long? HeatupPerSecond { get; set; }
+        public partial double? HeatupPerSecond { get; set; }
 
         [ObservableProperty]
         [JsonProperty("lastTemp"), JsonPropertyName("lastTemp")]
-        public partial long? LastTemp { get; set; }
+        public partial double? LastTemp { get; set; }
 
         [ObservableProperty]
         [JsonProperty("maxSpeed"), JsonPropertyName("maxSpeed")]
-        public partial long? MaxSpeed { get; set; }
+        public partial double? MaxSpeed { get; set; }
 
         [ObservableProperty]
         [JsonProperty("maxTemp"), JsonPropertyName("maxTemp")]
-        public partial long? MaxTemp { get; set; }
+        public partial double? MaxTemp { get; set; }
 
         [ObservableProperty]
         [JsonProperty("num"), JsonPropertyName("num")]
@@ -61,19 +61,19 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("offset"), JsonPropertyName("offset")]
-        public partial long? Offset { get; set; }
+        public partial double? Offset { get; set; }
 
         [ObservableProperty]
         [JsonProperty("offsetX"), JsonPropertyName("offsetX")]
-        public partial long? OffsetX { get; set; }
+        public partial double? OffsetX { get; set; }
 
         [ObservableProperty]
         [JsonProperty("offsetY"), JsonPropertyName("offsetY")]
-        public partial long? OffsetY { get; set; }
+        public partial double? OffsetY { get; set; }
 
         [ObservableProperty]
         [JsonProperty("retractSpeed"), JsonPropertyName("retractSpeed")]
-        public partial long? RetractSpeed { get; set; }
+        public partial double? RetractSpeed { get; set; }
 
         [ObservableProperty]
         [JsonProperty("supportTemperature"), JsonPropertyName("supportTemperature")]

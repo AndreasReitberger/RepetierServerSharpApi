@@ -20,15 +20,15 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [JsonProperty("lastTemp"), JsonPropertyName("lastTemp")]
-        public partial long? LastTemp { get; set; }
+        public partial double? LastTemp { get; set; }
 
         [ObservableProperty]
         [JsonProperty("maxTemp"), JsonPropertyName("maxTemp")]
-        public partial long? MaxTemp { get; set; }
+        public partial double? MaxTemp { get; set; }
 
         [ObservableProperty]
         [JsonProperty("offset"), JsonPropertyName("offset")]
-        public partial long? Offset { get; set; }
+        public partial double? Offset { get; set; }
 
         [ObservableProperty]
         [JsonProperty("temperatures"), JsonPropertyName("temperatures")]

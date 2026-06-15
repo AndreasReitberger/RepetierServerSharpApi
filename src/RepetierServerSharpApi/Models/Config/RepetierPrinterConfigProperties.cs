@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("firmwareuploader_board"), JsonPropertyName("firmwareuploader_board")]
-        public partial long FirmwareuploaderBoard { get; set; }
+        public partial string FirmwareuploaderBoard { get; set; }
 
         [ObservableProperty]
         [JsonProperty("firmwareuploader_extraPort"), JsonPropertyName("firmwareuploader_extraPort")]

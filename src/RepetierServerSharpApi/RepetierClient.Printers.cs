@@ -123,7 +123,6 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierPrinterConfig? config2 = GetObjectFromJsonSystem<RepetierPrinterConfig>(result?.Result, serializerContext: RepetierSourceGenerationContext.Default);
                 RepetierPrinterConfig? config = JsonConvertHelper.ToObject<RepetierPrinterConfig>(result?.Result, settings: RepetierSourceGenerationContext.Default);
                 if (config is not null)
                 {
