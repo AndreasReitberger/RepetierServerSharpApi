@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +12,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial Guid Id { get; set; } = Guid.NewGuid();
 
         [ObservableProperty]
-        [JsonProperty("active")]
+        [JsonPropertyName("active")]
         public partial bool IsActive { get; set; }
         partial void OnIsActiveChanged(bool value)
         {
@@ -21,11 +20,11 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        [JsonProperty("analysed")]
+        [JsonPropertyName("analysed")]
         public partial int? Analysed { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("done")]
+        [JsonPropertyName("done")]
         public partial double? Done { get; set; }
         partial void OnDoneChanged(double? value)
         {
@@ -36,12 +35,12 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        [JsonProperty("job")]
+        [JsonPropertyName("job")]
         public partial string ActiveJobName { get; set; } = string.Empty;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ActiveJobId))]
-        [JsonProperty("jobid")]
+        [JsonPropertyName("jobid")]
         public partial int JobId { get; set; } = -1;
         partial void OnJobIdChanged(int value)
         {
@@ -52,24 +51,24 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial string ActiveJobId { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("jobstate")]
+        [JsonPropertyName("jobstate")]
         public partial string? ActiveJobState { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("linesSend")]
+        [JsonPropertyName("linesSend")]
         public partial long? LineSent { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("ofLayer")]
+        [JsonPropertyName("ofLayer")]
         public partial long? Layers { get; set; }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsOnline))]
-        [JsonProperty("online")]
+        [JsonPropertyName("online")]
         public partial long Online { get; set; }
         partial void OnOnlineChanged(long value)
         {
@@ -80,36 +79,16 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial bool IsOnline { get; set; } = false;
 
         [ObservableProperty]
-        [JsonProperty("pauseState")]
+        [JsonPropertyName("pauseState")]
         public partial long? PauseState { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("paused")]
+        [JsonPropertyName("paused")]
         public partial bool Paused { get; set; }
-
-        /*
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printStart")]
-        double? printStart;
-        */
-
-        /*
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
-        [property: JsonProperty("printTime")]
-        public partial double? PrintTime { get; set; }
-        partial void OnPrintTimeChanged(double? value)
-        {
-            if (value is not null)
-                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
-            //if (value > 0)
-            //    RemainingPrintDuration = value * PrintProgress;
-        }
-        */
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PrintedTimeCompGeneralized))]
-        [JsonProperty("printedTimeComp")]
+        [JsonPropertyName("printedTimeComp")]
         public partial double? PrintedTimeComp { get; set; }
         partial void OnPrintedTimeCompChanged(double? value)
         {
@@ -121,16 +100,16 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial TimeSpan? PrintedTimeCompGeneralized { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("repeat")]
+        [JsonPropertyName("repeat")]
         public partial int? Repeat { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("slug")]
+        [JsonPropertyName("slug")]
         public partial string Slug { get; set; } = string.Empty;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PrintStarted))]
-        [JsonProperty("start")]
+        [JsonPropertyName("start")]
         public partial long? Start { get; set; }
         partial void OnStartChanged(long? value)
         {
@@ -139,7 +118,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PrintStartedGeneralized))]
-        [JsonProperty("printStart")]
+        [JsonPropertyName("printStart")]
         public partial double? PrintStarted { get; set; } = 0;
         partial void OnPrintStartedChanged(double? value)
         {
@@ -152,7 +131,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
-        [JsonProperty("printTime")]
+        [JsonPropertyName("printTime")]
         public partial double? PrintDuration { get; set; } = 0;
         partial void OnPrintDurationChanged(double? value)
         {
@@ -178,78 +157,62 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial TimeSpan? PrintDurationEstimatedGeneralized { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("totalLines")]
+        [JsonPropertyName("totalLines")]
         public partial long? TotalLines { get; set; }
 
         #region JsonIgnored
 
         [ObservableProperty]
-
         public partial double? Extruder1Temperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? Extruder2Temperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? Extruder3Temperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? Extruder4Temperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? Extruder5Temperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? HeatedBedTemperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? HeatedChamberTemperature { get; set; } = 0;
 
         [ObservableProperty]
-
         public partial double? PrintProgress { get; set; } = 0;
-
         partial void OnPrintProgressChanged(double? value)
         {
             if (value > 0)
                 RemainingPrintDuration = value * PrintDuration;
-            //RemainingPrintDuration = value * PrintTime;
         }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(RemainingPrintDurationGeneralized))]
         public partial double? RemainingPrintDuration { get; set; } = 0;
-
         partial void OnRemainingPrintDurationChanged(double? value)
         {
             if (value is not null)
                 RemainingPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
-        [ObservableProperty]
 
+        [ObservableProperty]
         public partial TimeSpan? RemainingPrintDurationGeneralized { get; set; }
 
         [ObservableProperty]
-
         public partial bool IsPrinting { get; set; } = false;
 
         [ObservableProperty]
-
         public partial bool IsPaused { get; set; } = false;
 
         [ObservableProperty]
-
         public partial bool IsSelected { get; set; } = false;
 
         [ObservableProperty]
-
         public partial byte[] CurrentPrintImage { get; set; } = [];
 
         #endregion
@@ -263,7 +226,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this, RepetierSourceGenerationContext.Default.RepetierPrinter);
 
         public override bool Equals(object? obj)
         {
@@ -272,10 +235,8 @@ namespace AndreasReitberger.API.Repetier.Models
             return Slug.Equals(item.Slug);
         }
 
-        public override int GetHashCode()
-        {
-            return Slug.GetHashCode();
-        }
+        public override int GetHashCode() => Slug.GetHashCode();
+        
 
         #endregion
 

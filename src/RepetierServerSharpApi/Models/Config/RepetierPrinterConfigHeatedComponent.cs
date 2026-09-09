@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -7,38 +7,31 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("alias")]
+        [JsonProperty("alias"), JsonPropertyName("alias")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("cooldownPerSecond")]
+        [JsonProperty("cooldownPerSecond"), JsonPropertyName("cooldownPerSecond")]
         public partial double? CooldownPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heatupPerSecond")]
+        [JsonProperty("heatupPerSecond"), JsonPropertyName("heatupPerSecond")]
         public partial double? HeatupPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("lastTemp")]
-        public partial long? LastTemp { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("maxTemp")]
-        public partial long? MaxTemp { get; set; }
+        [JsonProperty("lastTemp"), JsonPropertyName("lastTemp")]
+        public partial double? LastTemp { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("offset")]
-        public partial long? Offset { get; set; }
+        [JsonProperty("maxTemp"), JsonPropertyName("maxTemp")]
+        public partial double? MaxTemp { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("offset"), JsonPropertyName("offset")]
+        public partial double? Offset { get; set; }
 
-        [JsonProperty("temperatures")]
+        [ObservableProperty]
+        [JsonProperty("temperatures"), JsonPropertyName("temperatures")]
         public partial List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = [];
         #endregion
 

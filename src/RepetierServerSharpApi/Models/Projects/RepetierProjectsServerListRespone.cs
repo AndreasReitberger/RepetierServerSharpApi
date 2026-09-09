@@ -1,24 +1,21 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierProjectsServerListRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("ok")]
+        [JsonPropertyName("ok")]
         public partial bool Ok { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("server")]
-        public partial List<ProjectsServer> Server { get; set; } = new();
+        [JsonPropertyName("server")]
+        public partial List<ProjectsServer> Server { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierProjectsServerListRespone);
         #endregion
     }
 

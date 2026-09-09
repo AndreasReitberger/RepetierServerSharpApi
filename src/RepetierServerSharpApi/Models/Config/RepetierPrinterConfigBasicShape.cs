@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,53 +9,53 @@ namespace AndreasReitberger.API.Repetier.Models
 
         [ObservableProperty]
 
-        [JsonProperty("angle")]
-        public partial long Angle { get; set; }
+        [JsonProperty("angle"), JsonPropertyName("angle")]
+        public partial double Angle { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("color")]
+        [JsonProperty("color"), JsonPropertyName("color")]
         public partial string Color { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("radius")]
-        public partial long Radius { get; set; }
+        [JsonProperty("radius"), JsonPropertyName("radius")]
+        public partial double Radius { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("shape")]
+        [JsonProperty("shape"), JsonPropertyName("shape")]
         public partial string Shape { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("x")]
-        public partial long X { get; set; }
+        [JsonProperty("x"), JsonPropertyName("x")]
+        public partial double X { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("xMax")]
-        public partial long XMax { get; set; }
+        [JsonProperty("xMax"), JsonPropertyName("xMax")]
+        public partial double XMax { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("xMin")]
-        public partial long XMin { get; set; }
+        [JsonProperty("xMin"), JsonPropertyName("xMin")]
+        public partial double XMin { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("y")]
-        public partial long Y { get; set; }
+        [JsonProperty("y"), JsonPropertyName("y")]
+        public partial double Y { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("yMax")]
-        public partial long YMax { get; set; }
+        [JsonProperty("yMax"), JsonPropertyName("yMax")]
+        public partial double YMax { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("yMin")]
-        public partial long YMin { get; set; }
+        [JsonProperty("yMin"), JsonPropertyName("yMin")]
+        public partial double YMin { get; set; }
         #endregion
 
         #region Overrides

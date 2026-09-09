@@ -1,6 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,43 +7,35 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("basicShape")]
+        [JsonProperty("basicShape"), JsonPropertyName("basicShape")]
         public partial RepetierPrinterConfigBasicShape? BasicShape { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("gridColor")]
+        [JsonProperty("gridColor"), JsonPropertyName("gridColor")]
         public partial string GridColor { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("gridSpacing")]
-        public partial long GridSpacing { get; set; }
+        [JsonProperty("gridSpacing"), JsonPropertyName("gridSpacing")]
+        public partial double GridSpacing { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("imageExtension")]
+        [JsonProperty("imageExtension"), JsonPropertyName("imageExtension")]
         public partial string ImageExtension { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("imageOpacity")]
-        public partial long ImageOpacity { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("imageZoom")]
-        public partial long ImageZoom { get; set; }
+        [JsonProperty("imageOpacity"), JsonPropertyName("imageOpacity")]
+        public partial double ImageOpacity { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("imageZoom"), JsonPropertyName("imageZoom")]
+        public partial double ImageZoom { get; set; }
 
-        [JsonProperty("marker")]
+        [ObservableProperty]
+        [JsonProperty("marker"), JsonPropertyName("marker")]
         public partial List<object> Marker { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("showImage")]
+        [JsonProperty("showImage"), JsonPropertyName("showImage")]
         public partial bool ShowImage { get; set; }
         #endregion
 

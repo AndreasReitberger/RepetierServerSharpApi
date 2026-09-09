@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -8,113 +8,92 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("acceleration")]
-        public partial long? Acceleration { get; set; }
+        [JsonProperty("acceleration"), JsonPropertyName("acceleration")]
+        public partial double? Acceleration { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("alias")]
+        [JsonProperty("alias"), JsonPropertyName("alias")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("changeFastDistance")]
-        public partial long? ChangeFastDistance { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("changeSlowDistance")]
-        public partial long? ChangeSlowDistance { get; set; }
+        [JsonProperty("changeFastDistance"), JsonPropertyName("changeFastDistance")]
+        public partial double? ChangeFastDistance { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("changeSlowDistance"), JsonPropertyName("changeSlowDistance")]
+        public partial double? ChangeSlowDistance { get; set; }
 
-        [JsonProperty("cooldownPerSecond")]
+        [ObservableProperty]
+        [JsonProperty("cooldownPerSecond"), JsonPropertyName("cooldownPerSecond")]
         public partial double? CooldownPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("eJerk")]
-        public partial long? EJerk { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("extrudeSpeed")]
-        public partial long? ExtrudeSpeed { get; set; }
+        [JsonProperty("eJerk"), JsonPropertyName("eJerk")]
+        public partial double? EJerk { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("extrudeSpeed"), JsonPropertyName("extrudeSpeed")]
+        public partial double? ExtrudeSpeed { get; set; }
 
-        [JsonProperty("filamentDiameter")]
+        [ObservableProperty]
+        [JsonProperty("filamentDiameter"), JsonPropertyName("filamentDiameter")]
         public partial double? FilamentDiameter { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heatupPerSecond")]
-        public partial long? HeatupPerSecond { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("lastTemp")]
-        public partial long? LastTemp { get; set; }
+        [JsonProperty("heatupPerSecond"), JsonPropertyName("heatupPerSecond")]
+        public partial double? HeatupPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("maxSpeed")]
-        public partial long? MaxSpeed { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("maxTemp")]
-        public partial long? MaxTemp { get; set; }
+        [JsonProperty("lastTemp"), JsonPropertyName("lastTemp")]
+        public partial double? LastTemp { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("maxSpeed"), JsonPropertyName("maxSpeed")]
+        public partial double? MaxSpeed { get; set; }
 
-        [JsonProperty("num")]
+        [ObservableProperty]
+        [JsonProperty("maxTemp"), JsonPropertyName("maxTemp")]
+        public partial double? MaxTemp { get; set; }
+
+        [ObservableProperty]
+        [JsonProperty("num"), JsonPropertyName("num")]
         public partial long? Num { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("offset")]
-        public partial long? Offset { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("offsetX")]
-        public partial long? OffsetX { get; set; }
+        [JsonProperty("offset"), JsonPropertyName("offset")]
+        public partial double? Offset { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("offsetY")]
-        public partial long? OffsetY { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("retractSpeed")]
-        public partial long? RetractSpeed { get; set; }
+        [JsonProperty("offsetX"), JsonPropertyName("offsetX")]
+        public partial double? OffsetX { get; set; }
 
         [ObservableProperty]
+        [JsonProperty("offsetY"), JsonPropertyName("offsetY")]
+        public partial double? OffsetY { get; set; }
 
-        [JsonProperty("supportTemperature")]
+        [ObservableProperty]
+        [JsonProperty("retractSpeed"), JsonPropertyName("retractSpeed")]
+        public partial double? RetractSpeed { get; set; }
+
+        [ObservableProperty]
+        [JsonProperty("supportTemperature"), JsonPropertyName("supportTemperature")]
         public partial bool? SupportTemperature { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("tempMaster")]
+        [JsonProperty("tempMaster"), JsonPropertyName("tempMaster")]
         public partial long? TempMaster { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("temperatures")]
+        [JsonProperty("temperatures"), JsonPropertyName("temperatures")]
         public partial List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("toolDiameter")]
+        [JsonProperty("toolDiameter"), JsonPropertyName("toolDiameter")]
         public partial double? ToolDiameter { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("toolType")]
+        [JsonProperty("toolType"), JsonPropertyName("toolType")]
         public partial long? ToolType { get; set; }
         #endregion
 

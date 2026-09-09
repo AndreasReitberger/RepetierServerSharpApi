@@ -1,28 +1,23 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class EventUserCredentialsSettings : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("gcodeGroup")]
+        [JsonPropertyName("gcodeGroup")]
         public partial string GcodeGroup { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeSortBy")]
+        [JsonPropertyName("gcodeSortBy")]
         public partial long GcodeSortBy { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("gcodeViewMode")]
+        [JsonPropertyName("gcodeViewMode")]
         public partial long GcodeViewMode { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.EventUserCredentialsSettings);
         #endregion
     }
 }

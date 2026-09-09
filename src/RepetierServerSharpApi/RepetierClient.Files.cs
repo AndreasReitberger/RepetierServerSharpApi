@@ -1,9 +1,11 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -51,7 +53,7 @@ namespace AndreasReitberger.API.Repetier
                                 IGcode model = models[i];
                                 model.PrinterName = currentPrinter;
                                 model.ImageType = ImageType;
-                                // Load image depending on settings
+                                // Load image depending on context:
                                 switch (ImageType)
                                 {
                                     // Blocks thread, however async download leads to bad requestes
@@ -118,7 +120,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                RepetierModelList? list = GetObjectFromJsonSystem<RepetierModelList>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierModelList? list = JsonConvertHelper.ToObject<RepetierModelList>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 await UpdateFreeSpaceAsync().ConfigureAwait(false);
 
                 return list;
@@ -346,7 +348,7 @@ namespace AndreasReitberger.API.Repetier
                    )
                 .ConfigureAwait(false);
 
-                RepetierFreeSpaceRespone? space = GetObjectFromJsonSystem<RepetierFreeSpaceRespone>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierFreeSpaceRespone? space = JsonConvertHelper.ToObject<RepetierFreeSpaceRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (space is not null)
                 {
                     FreeDiskSpace = space.Free;
@@ -516,7 +518,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                return GetObjectFromJson<RepetierModelGroups>(result?.Result);
+                return JsonConvertHelper.ToObject<RepetierModelGroups>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -559,7 +561,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierModelGroups? info = GetObjectFromJsonSystem<RepetierModelGroups>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierModelGroups? info = JsonConvertHelper.ToObject<RepetierModelGroups>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 return
                     info is not null && info.GroupNames is not null ?
                     [.. info.GroupNames.Select(g => new RepetierModelGroup() { Name = g })] : resultObject;

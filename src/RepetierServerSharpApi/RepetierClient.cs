@@ -3,6 +3,7 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -443,15 +444,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listJobs",
-                   printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJsonSystem<RepetierJobListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierJobListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -487,16 +480,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "webCallsList",
-                   printerName: printerName
-                   )
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJsonSystem<RepetierWebCallList>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierWebCallList>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -846,10 +830,6 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "checkForUpdates").ConfigureAwait(false);
-                */
                 if (result is not null)
                 {
                     if (GetQueryResult(result.Result))
@@ -892,11 +872,6 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "autoupdate")
-                    .ConfigureAwait(false);
-                */
                 if (result is not null)
                 {
                     if (GetQueryResult(result.Result))
@@ -939,12 +914,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "updateAvailable")
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJsonSystem<RepetierAvailableUpdateInfo>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierAvailableUpdateInfo>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -981,14 +951,9 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "getLicenceData")
-                    .ConfigureAwait(false);
-                */
                 if (result is not null)
                 {
-                    return GetObjectFromJsonSystem<RepetierLicenseInfo>(result?.Result, DefaultJsonSerializerSettings);
+                    return JsonConvertHelper.ToObject<RepetierLicenseInfo>(result.Result, context: RepetierSourceGenerationContext.Default);
                 }
                 else
                     return null;
@@ -1454,13 +1419,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "stateList", printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                Dictionary<string, RepetierPrinterState>? state = GetObjectFromJsonSystem<Dictionary<string, RepetierPrinterState>>(result?.Result, DefaultJsonSerializerSettings);
+                Dictionary<string, RepetierPrinterState>? state = JsonConvertHelper.ToObject<Dictionary<string, RepetierPrinterState>>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (state is not null && IsPrinterSlugSelected(currentPrinter))
                 {
                     State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
@@ -1553,7 +1512,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierCurrentPrintInfo[]? info = GetObjectFromJsonSystem<RepetierCurrentPrintInfo[]>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierCurrentPrintInfo[]? info = JsonConvertHelper.ToObject<RepetierCurrentPrintInfo[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (info is not null)
                 {
                     resultObject = [with(info)];
@@ -1922,14 +1881,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "listExternalCommands")
-                    .ConfigureAwait(false);
-                */
-                ExternalCommand[]? cmds = GetObjectFromJsonSystem<ExternalCommand[]>(result?.Result, DefaultJsonSerializerSettings);
+                ExternalCommand[]? cmds = JsonConvertHelper.ToObject<ExternalCommand[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 return [with(cmds ?? [new ExternalCommand()])];
             }
             catch (JsonException jecx)
@@ -2058,13 +2010,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "messages", printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-                RepetierMessage[]? info = GetObjectFromJsonSystem<RepetierMessage[]>(result?.Result, DefaultJsonSerializerSettings);
+                RepetierMessage[]? info = JsonConvertHelper.ToObject<RepetierMessage[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (info is not null)
                     resultObject = [with(info)];
                 return resultObject;
@@ -2224,14 +2170,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api,
-                    command: "getScript", jsonData: cmd,
-                    printerName: currentPrinter
-                    ).ConfigureAwait(false);
-                */
-                return GetObjectFromJsonSystem<RepetierGcodeScript>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierGcodeScript>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2524,12 +2463,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                    RepetierCommandBase.printer, RepetierCommandFeature.api, command: "projectsListServer", printerName: printerName)
-                    .ConfigureAwait(false);
-                */
-                return GetObjectFromJsonSystem<RepetierProjectsServerListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierProjectsServerListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2569,7 +2503,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierProjectsFolderRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierProjectsFolderRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2677,7 +2611,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierProjectsProjectRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierProjectsProjectRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2846,7 +2780,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierHistoryListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierHistoryListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2908,7 +2842,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return GetObjectFromJsonSystem<RepetierHistorySummaryRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierHistorySummaryRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {
@@ -2989,7 +2923,6 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
-
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -2999,16 +2932,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(
-                   commandBase: RepetierCommandBase.printer,
-                   commandFeature: RepetierCommandFeature.api,
-                   command: "GPIOGetList",
-                   printerName: currentPrinter)
-                    .ConfigureAwait(false);
-                */
-
-                return GetObjectFromJsonSystem<RepetierGpioListRespone>(result?.Result, DefaultJsonSerializerSettings);
+                return JsonConvertHelper.ToObject<RepetierGpioListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {
