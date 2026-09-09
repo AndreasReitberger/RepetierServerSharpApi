@@ -123,7 +123,7 @@ namespace RepetierServerSharpApiTest
                     }
                     if (obj is null) continue;
                     string? serializedString =
-                        JsonConvertHelper.ToSettingsString(obj, settings: RepetierSourceGenerationContext.Default);
+                        JsonConvertHelper.ToSettingsString(obj, context: RepetierSourceGenerationContext.Default);
                     if (serializedString == "{}") continue;
 
                     // Get all property infos
@@ -1153,11 +1153,11 @@ namespace RepetierServerSharpApiTest
                         Assert.That(file, Is.Not.Empty);
 
                         byte[]? file2 = await client.DownloadGcodeAsync(f, Encoding.Default);
-                        Assert.Multiple(() =>
+                        using (Assert.EnterMultipleScope())
                         {
                             Assert.That(file2, Is.Not.Empty);
                             Assert.That(file, Has.Length.EqualTo(file2?.Length));
-                        });
+                        }
                     }
                 }
                 else

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,16 +6,16 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("name"), JsonPropertyName("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("uuid"), JsonPropertyName("uuid")]
+        [JsonPropertyName("uuid")]
         public partial Guid Uuid { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.ProjectsServer);
         #endregion
     }
 }

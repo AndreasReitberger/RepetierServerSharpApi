@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -8,100 +6,100 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("availableBrandingVersion"), JsonPropertyName("availableBrandingVersion")]
+        [JsonPropertyName("availableBrandingVersion")]
         public partial long AvailableBrandingVersion { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("betaActive"), JsonPropertyName("betaActive")]
+        [JsonPropertyName("betaActive")]
         public partial bool BetaActive { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("branded"), JsonPropertyName("branded")]
+        [JsonPropertyName("branded")]
         public partial bool Branded { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("currentBrandingVersion"), JsonPropertyName("currentBrandingVersion")]
+        [JsonPropertyName("currentBrandingVersion")]
         public partial long CurrentBrandingVersion { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("currentVersion"), JsonPropertyName("currentVersion")]
+        [JsonPropertyName("currentVersion")]
         public partial string CurrentVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("demo"), JsonPropertyName("demo")]
+        [JsonPropertyName("demo")]
         public partial bool Demo { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("downloadUrl"), JsonPropertyName("downloadUrl")]
+        [JsonPropertyName("downloadUrl")]
         public partial Uri? DownloadUrl { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("features"), JsonPropertyName("features")]
+        [JsonPropertyName("features")]
         public partial long Features { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("free"), JsonPropertyName("free")]
+        [JsonPropertyName("free")]
         public partial bool Free { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("ignoreVersion"), JsonPropertyName("ignoreVersion")]
+        [JsonPropertyName("ignoreVersion")]
         public partial string IgnoreVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("installerType"), JsonPropertyName("installerType")]
+        [JsonPropertyName("installerType")]
         public partial long InstallerType { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("licensed"), JsonPropertyName("licensed")]
+        [JsonPropertyName("licensed")]
         public partial bool Licensed { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("message"), JsonPropertyName("message")]
+        [JsonPropertyName("message")]
         public partial string Message { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("messageHtml"), JsonPropertyName("messageHtml")]
+        [JsonPropertyName("messageHtml")]
         public partial string MessageHtml { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("printerFrontendUrl"), JsonPropertyName("printerFrontendUrl")]
+        [JsonPropertyName("printerFrontendUrl")]
         public partial string PrinterFrontendUrl { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("showUpdate"), JsonPropertyName("showUpdate")]
+        [JsonPropertyName("showUpdate")]
         public partial bool ShowUpdate { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("teaser"), JsonPropertyName("teaser")]
+        [JsonPropertyName("teaser")]
         public partial RepetierUpdateTeaser? Teaser { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("testperiodMode"), JsonPropertyName("testperiodMode")]
+        [JsonPropertyName("testperiodMode")]
         public partial long TestperiodMode { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("updateAvailable"), JsonPropertyName("updateAvailable")]
+        [JsonPropertyName("updateAvailable")]
         public partial bool UpdateAvailable { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("versionMessage"), JsonPropertyName("versionMessage")]
+        [JsonPropertyName("versionMessage")]
         public partial string VersionMessage { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("versionMessageHtml"), JsonPropertyName("versionMessageHtml")]
+        [JsonPropertyName("versionMessageHtml")]
         public partial string VersionMessageHtml { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("versionName"), JsonPropertyName("versionName")]
+        [JsonPropertyName("versionName")]
         public partial string VersionName { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("webFrontendUrl"), JsonPropertyName("webFrontendUrl")]
+        [JsonPropertyName("webFrontendUrl")]
         public partial string WebFrontendUrl { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this, RepetierSourceGenerationContext.Default.RepetierAvailableUpdateInfo);
         #endregion
     }
 }

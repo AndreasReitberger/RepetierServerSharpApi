@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using AndreasReitberger.API.Print3dServer.Core.Events;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Repetier.Models
 {

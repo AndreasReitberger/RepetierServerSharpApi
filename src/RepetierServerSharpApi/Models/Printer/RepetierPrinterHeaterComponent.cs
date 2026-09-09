@@ -1,8 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Repetier.Models
@@ -14,19 +12,19 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("error"), JsonPropertyName("error")]
+        [JsonPropertyName("error")]
         public partial long Error { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("output"), JsonPropertyName("output")]
+        [JsonPropertyName("output")]
         public partial double Output { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("tempRead"), JsonPropertyName("tempRead")]
+        [JsonPropertyName("tempRead")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("tempSet"), JsonPropertyName("tempSet")]
+        [JsonPropertyName("tempSet")]
         public partial double? TempSet { get; set; }
 
         #region Interface, unsused
@@ -37,7 +35,7 @@ namespace AndreasReitberger.API.Repetier.Models
 
         #region Json Ignore
 
-        [Newtonsoft.Json.JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty]
@@ -67,7 +65,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierPrinterHeaterComponent);
 
         #endregion
     }

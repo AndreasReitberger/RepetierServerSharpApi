@@ -1,8 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
 using System;
-using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -14,7 +12,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("name"), JsonPropertyName("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
         partial void OnNameChanged(string value)
         {
@@ -53,7 +51,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierModelGroup);
         #endregion
 
     }

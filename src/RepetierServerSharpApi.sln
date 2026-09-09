@@ -12,10 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\common.props = ..\common.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Print3dServer.Core", "..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj", "{1E0E6A1A-7145-7B79-44FA-94E918A57FF5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApiClientSharp", "..\..\RestApiClientSharp\src\RestApiClientSharp\RestApiClientSharp.csproj", "{DF538A6E-01F5-010E-C1D2-94E16E4DF66D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,14 +26,6 @@ Global
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E0E6A1A-7145-7B79-44FA-94E918A57FF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E0E6A1A-7145-7B79-44FA-94E918A57FF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E0E6A1A-7145-7B79-44FA-94E918A57FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E0E6A1A-7145-7B79-44FA-94E918A57FF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DF538A6E-01F5-010E-C1D2-94E16E4DF66D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF538A6E-01F5-010E-C1D2-94E16E4DF66D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF538A6E-01F5-010E-C1D2-94E16E4DF66D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF538A6E-01F5-010E-C1D2-94E16E4DF66D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

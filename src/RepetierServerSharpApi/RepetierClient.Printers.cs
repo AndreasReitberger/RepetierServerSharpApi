@@ -35,7 +35,7 @@ namespace AndreasReitberger.API.Repetier
                        )
                     .ConfigureAwait(false);
 
-                RepetierPrinterListRespone? respone = JsonConvertHelper.ToObject<RepetierPrinterListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                RepetierPrinterListRespone? respone = JsonConvertHelper.ToObject<RepetierPrinterListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (respone is not null)
                 {
                     repetierPrinterList = [.. respone.Printers];
@@ -123,7 +123,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierPrinterConfig? config = JsonConvertHelper.ToObject<RepetierPrinterConfig>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                RepetierPrinterConfig? config = JsonConvertHelper.ToObject<RepetierPrinterConfig>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (config is not null)
                 {
                     Config = resultObject = config;

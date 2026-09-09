@@ -444,7 +444,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierJobListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierJobListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -480,7 +480,7 @@ namespace AndreasReitberger.API.Repetier
                    authHeaders: AuthHeaders
                    )
                 .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierWebCallList>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierWebCallList>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -914,7 +914,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierAvailableUpdateInfo>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierAvailableUpdateInfo>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -953,7 +953,7 @@ namespace AndreasReitberger.API.Repetier
                     .ConfigureAwait(false);
                 if (result is not null)
                 {
-                    return JsonConvertHelper.ToObject<RepetierLicenseInfo>(result.Result, settings: RepetierSourceGenerationContext.Default);
+                    return JsonConvertHelper.ToObject<RepetierLicenseInfo>(result.Result, context: RepetierSourceGenerationContext.Default);
                 }
                 else
                     return null;
@@ -1419,7 +1419,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                Dictionary<string, RepetierPrinterState>? state = JsonConvertHelper.ToObject<Dictionary<string, RepetierPrinterState>>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                Dictionary<string, RepetierPrinterState>? state = JsonConvertHelper.ToObject<Dictionary<string, RepetierPrinterState>>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (state is not null && IsPrinterSlugSelected(currentPrinter))
                 {
                     State = state.FirstOrDefault(keypair => keypair.Key == ActivePrinter?.Slug).Value ?? state.FirstOrDefault().Value;
@@ -1512,7 +1512,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierCurrentPrintInfo[]? info = JsonConvertHelper.ToObject<RepetierCurrentPrintInfo[]>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                RepetierCurrentPrintInfo[]? info = JsonConvertHelper.ToObject<RepetierCurrentPrintInfo[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (info is not null)
                 {
                     resultObject = [with(info)];
@@ -1881,7 +1881,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                ExternalCommand[]? cmds = JsonConvertHelper.ToObject<ExternalCommand[]>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                ExternalCommand[]? cmds = JsonConvertHelper.ToObject<ExternalCommand[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 return [with(cmds ?? [new ExternalCommand()])];
             }
             catch (JsonException jecx)
@@ -2010,7 +2010,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierMessage[]? info = JsonConvertHelper.ToObject<RepetierMessage[]>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                RepetierMessage[]? info = JsonConvertHelper.ToObject<RepetierMessage[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (info is not null)
                     resultObject = [with(info)];
                 return resultObject;
@@ -2170,7 +2170,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierGcodeScript>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierGcodeScript>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2463,7 +2463,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierProjectsServerListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierProjectsServerListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2503,7 +2503,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierProjectsFolderRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierProjectsFolderRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2611,7 +2611,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierProjectsProjectRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierProjectsProjectRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2780,7 +2780,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierHistoryListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierHistoryListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (JsonException jecx)
             {
@@ -2842,7 +2842,7 @@ namespace AndreasReitberger.API.Repetier
                        urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierHistorySummaryRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierHistorySummaryRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {
@@ -2932,7 +2932,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                return JsonConvertHelper.ToObject<RepetierGpioListRespone>(result?.Result, settings: RepetierSourceGenerationContext.Default);
+                return JsonConvertHelper.ToObject<RepetierGpioListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
             }
             catch (Exception exc)
             {
