@@ -1,105 +1,84 @@
-﻿using Newtonsoft.Json;
-using System.Text.Json.Serialization;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class EventWifiChangedData : ObservableObject
     {
         #region Properties
 
         [ObservableProperty]
-
-        [JsonProperty("activeRouter"), JsonPropertyName("activeRouter")]
+        [JsonPropertyName("activeRouter")]
         public partial bool? ActiveRouter { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("activeSSID"), JsonPropertyName("activeSSID")]
+        [JsonPropertyName("activeSSID")]
         public partial string ActiveSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("apMode"), JsonPropertyName("apMode")]
+        [JsonPropertyName("apMode")]
         public partial long? ApMode { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("apSSID"), JsonPropertyName("apSSID")]
+        [JsonPropertyName("apSSID")]
         public partial string ApSsid { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("channel"), JsonPropertyName("channel")]
+        [JsonPropertyName("channel")]
         public partial long? Channel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("channels"), JsonPropertyName("channels")]
+        [JsonPropertyName("channels")]
         public partial List<long> Channels { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("connections"), JsonPropertyName("connections")]
+        [JsonPropertyName("connections")]
         public partial List<WifiConnection> Connections { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("country"), JsonPropertyName("country")]
+        [JsonPropertyName("country")]
         public partial string Country { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("ethernet"), JsonPropertyName("ethernet")]
+        [JsonPropertyName("ethernet")]
         public partial EthernetConnection? Ethernet { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("hostname"), JsonPropertyName("hostname")]
+        [JsonPropertyName("hostname")]
         public partial string Hostname { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("manageable"), JsonPropertyName("manageable")]
+        [JsonPropertyName("manageable")]
         public partial bool? Manageable { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("manualWifi"), JsonPropertyName("manualWifi")]
+        [JsonPropertyName("manualWifi")]
         public partial bool ManualWifi { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("mode"), JsonPropertyName("mode")]
+        [JsonPropertyName("mode")]
         public partial long? Mode { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("routerList"), JsonPropertyName("routerList")]
+        [JsonPropertyName("routerList")]
         public partial List<RouterList> RouterList { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("screensaver"), JsonPropertyName("screensaver")]
+        [JsonPropertyName("screensaver")]
         public partial bool? Screensaver { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("supportAP"), JsonPropertyName("supportAP")]
+        [JsonPropertyName("supportAP")]
         public partial bool? SupportAp { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timezone"), JsonPropertyName("timezone")]
+        [JsonPropertyName("timezone")]
         public partial string Timezone { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("version"), JsonPropertyName("version")]
+        [JsonPropertyName("version")]
         public partial long? Version { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.EventWifiChangedData);
         #endregion
     }
 }

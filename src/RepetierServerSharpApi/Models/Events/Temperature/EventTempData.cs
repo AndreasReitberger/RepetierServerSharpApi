@@ -1,7 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
-using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -9,7 +7,7 @@ namespace AndreasReitberger.API.Repetier.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("O"), JsonPropertyName("O")]
+        [JsonPropertyName("O")]
         public partial long O { get; set; }
         partial void OnOChanged(long value)
         {
@@ -17,7 +15,7 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        [JsonProperty("S"), JsonPropertyName("S")]
+        [JsonPropertyName("S")]
         public partial long S { get; set; }
         partial void OnSChanged(long value)
         {
@@ -25,7 +23,7 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        [JsonProperty("T"), JsonPropertyName("T")]
+        [JsonPropertyName("T")]
         public partial double T { get; set; }
         partial void OnTChanged(double value)
         {
@@ -33,15 +31,15 @@ namespace AndreasReitberger.API.Repetier.Models
         }
 
         [ObservableProperty]
-        [JsonProperty("id"), JsonPropertyName("id")]
+        [JsonPropertyName("id")]
         public partial long EventId { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("t"), JsonPropertyName("t")]
+        [JsonPropertyName("t")]
         public partial long DataT { get; set; }
 
         [ObservableProperty]
-        [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
@@ -56,7 +54,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.EventTempData);
         #endregion
 
         #region Dispose
