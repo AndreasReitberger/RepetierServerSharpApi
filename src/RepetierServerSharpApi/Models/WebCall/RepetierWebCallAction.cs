@@ -15,7 +15,7 @@ namespace AndreasReitberger.API.Repetier.Models
         public partial string Icon { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [J  ("method")]
+        [JsonPropertyName("method")]
         public partial string Method { get; set; } = string.Empty;
 
         [ObservableProperty]

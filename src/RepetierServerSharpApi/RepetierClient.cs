@@ -3,12 +3,10 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
-using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
 using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -31,7 +29,7 @@ namespace AndreasReitberger.API.Repetier
         #region Connection
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial EventSession? Session { get; set; }
         partial void OnSessionChanged(EventSession? value)
         {
@@ -49,21 +47,21 @@ namespace AndreasReitberger.API.Repetier
         #region General
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial RepetierAvailableUpdateInfo? Update { get; set; }
 
         #endregion
 
         #region ExternalCommands
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<ExternalCommand> ExternalCommands { get; set; } = [];
 
         #endregion
 
         #region Messages
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<RepetierMessage> Messages { get; set; } = [];
         partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
         {
@@ -80,7 +78,7 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebCalls
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<RepetierWebCallAction> WebCallActions { get; set; } = [];
         partial void OnWebCallActionsChanged(ObservableCollection<RepetierWebCallAction> value)
         {
@@ -97,14 +95,14 @@ namespace AndreasReitberger.API.Repetier
 
         #region GPIO
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<RepetierGpioListItem> GPIOList { get; set; } = [];
 
         #endregion
 
         #region State & Config
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial RepetierPrinterConfig? Config { get; set; }
         partial void OnConfigChanged(RepetierPrinterConfig? value)
         {
@@ -119,7 +117,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial RepetierPrinterState? State { get; set; }
         partial void OnStateChanged(RepetierPrinterState? value)
         {
@@ -134,7 +132,7 @@ namespace AndreasReitberger.API.Repetier
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<RepetierCurrentPrintInfo> ActivePrintInfos { get; set; } = [];
         partial void OnActivePrintInfosChanged(ObservableCollection<RepetierCurrentPrintInfo> value)
         {

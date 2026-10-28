@@ -1,12 +1,10 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier.Models;
-using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.Repetier.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
 using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Text;
