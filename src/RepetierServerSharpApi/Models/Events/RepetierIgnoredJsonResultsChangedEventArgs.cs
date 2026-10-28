@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Concurrent;
-using AndreasReitberger.API.Print3dServer.Core.Events;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using System;
+using System.Collections.Concurrent;
 
 namespace AndreasReitberger.API.Repetier.Events
 {
@@ -13,10 +12,7 @@ namespace AndreasReitberger.API.Repetier.Events
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierIgnoredJsonResultsChangedEventArgs);
         #endregion
     }
 }

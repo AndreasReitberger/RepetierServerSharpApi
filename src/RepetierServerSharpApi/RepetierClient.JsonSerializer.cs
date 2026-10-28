@@ -3,6 +3,7 @@ using AndreasReitberger.API.Print3dServer.Core.JSON.System;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.REST;
 using AndreasReitberger.API.REST.Interfaces;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -13,7 +14,7 @@ namespace AndreasReitberger.API.Repetier
 
 #if DEBUG
         #region Debug
-
+        [Obsolete("Use `RepetierSourceGenerationContext` instead")]
         public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()
         {
             // Detect if the json respone has more or less properties than the target class
@@ -35,6 +36,7 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 #else
         #region Release
+        [Obsolete("Use `RepetierSourceGenerationContext` instead")]
         public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,

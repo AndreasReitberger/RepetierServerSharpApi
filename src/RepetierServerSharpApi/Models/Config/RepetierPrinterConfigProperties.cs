@@ -1,23 +1,19 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierPrinterConfigProperties : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("firmwareuploader_board")]
-        public partial long FirmwareuploaderBoard { get; set; }
+        [JsonPropertyName("firmwareuploader_board")]
+        public partial string FirmwareuploaderBoard { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("firmwareuploader_extraPort")]
+        [JsonPropertyName("firmwareuploader_extraPort")]
         public partial string FirmwareuploaderExtraPort { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierPrinterConfigProperties);
         #endregion
     }
 }

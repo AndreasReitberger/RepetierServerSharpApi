@@ -2,6 +2,7 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
+using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -82,37 +83,8 @@ namespace RepetierServerSharpApiTest
                 };
                 sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, RepetierClient.DefaultJsonSerializerSettings);
-                RepetierClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<RepetierClient>(serializedString, RepetierClient.DefaultJsonSerializerSettings);
-                Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
-
-            }
-            catch (Exception exc)
-            {
-                Assert.Fail(exc.Message);
-            }
-        }
-
-        [Test]
-        public void SerializeNewetonsoftJsonTest()
-        {
-            string dir = @"TestResults\Serialization\";
-            Directory.CreateDirectory(dir);
-            string serverConfig = Path.Combine(dir, "server.xml");
-            if (File.Exists(serverConfig)) File.Delete(serverConfig);
-            try
-            {
-                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                var sClient = new RepetierClient(host)
-                {
-                    FreeDiskSpace = 1523165212,
-                    TotalDiskSpace = 65621361616161,
-                };
-                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
-
-                string serializedString = Newtonsoft.Json.JsonConvert.SerializeObject(sClient, Newtonsoft.Json.Formatting.Indented, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
-                //var serializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<RepetierClient>(serializedString);
-                RepetierClient? serializedObject = sClient.GetObjectFromJson<RepetierClient>(serializedString, RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, typeof(RepetierClient), RepetierSourceGenerationContext.Default);
+                RepetierClient? serializedObject = (RepetierClient?)System.Text.Json.JsonSerializer.Deserialize(serializedString, typeof(RepetierClient), context: RepetierSourceGenerationContext.Default);
                 Assert.That(serializedObject is RepetierClient server && server != null, Is.True);
 
             }
@@ -150,8 +122,8 @@ namespace RepetierServerSharpApiTest
                         Debug.WriteLine($"Exception while creating object from type `{t}`: {exc.Message}");
                     }
                     if (obj is null) continue;
-                    string serializedString =
-                        JsonConvert.SerializeObject(obj, Formatting.Indented, settings: RepetierClient.DefaultNewtonsoftJsonSerializerSettings);
+                    string? serializedString =
+                        JsonConvertHelper.ToSettingsString(obj, context: RepetierSourceGenerationContext.Default);
                     if (serializedString == "{}") continue;
 
                     // Get all property infos
@@ -1181,11 +1153,11 @@ namespace RepetierServerSharpApiTest
                         Assert.That(file, Is.Not.Empty);
 
                         byte[]? file2 = await client.DownloadGcodeAsync(f, Encoding.Default);
-                        Assert.Multiple(() =>
+                        using (Assert.EnterMultipleScope())
                         {
                             Assert.That(file2, Is.Not.Empty);
                             Assert.That(file, Has.Length.EqualTo(file2?.Length));
-                        });
+                        }
                     }
                 }
                 else

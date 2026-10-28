@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Repetier.Models
 {
@@ -27,10 +25,7 @@ namespace AndreasReitberger.API.Repetier.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.GcodeCommandInfo);
         #endregion
-    }
+        }
 }
