@@ -1472,10 +1472,8 @@ namespace AndreasReitberger.API.Repetier
         public async Task<RepetierCurrentPrintInfo?> GetCurrentPrintInfoAsync()
         {
             RepetierCurrentPrintInfo? resultObject = null;
-
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
-
             try
             {
                 ObservableCollection<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
@@ -1684,7 +1682,8 @@ namespace AndreasReitberger.API.Repetier
                        command: "move",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       //urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", data)]
                        )
                     .ConfigureAwait(false);
             }
@@ -1867,7 +1866,6 @@ namespace AndreasReitberger.API.Repetier
         {
             IRestApiRequestRespone? result = null;
             ObservableCollection<ExternalCommand> resultObject = [];
-
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
@@ -2286,15 +2284,16 @@ namespace AndreasReitberger.API.Repetier
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
 
-                string cmd = string.Format("{{\"name\":\"{0}\",\"params\":{1}}}", action.Name, JsonConvert.SerializeObject(new string[] { action.Question }));
+                //string cmd = string.Format("{{\"name\":\"{0}\",\"params\":{1}}}", action.Name, JsonConvert.SerializeObject(new string[] { action.Question }));
+                //string cmd = $"{{\"name\":\"{action.Name}\",\"params\":{JsonConvertHelper.ToSettingsString(new string[] { action.Question })}}}";
                 CancellationTokenSource cts = new(timeout);
-
+                object body = new { name = action.Name, @params = new string[] { action.Question } };
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "webCallExecute",
-                       body: new { name = action.Name, @params = new string[] { action.Question } },
+                       body: body,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2319,19 +2318,13 @@ namespace AndreasReitberger.API.Repetier
             {
                 string currentPrinter = GetActivePrinterSlug();
                 if (string.IsNullOrEmpty(currentPrinter)) return false;
-                /**/
-                object cmd = new
-                {
-                    name = action.Name,
-                    printer = action.Slug,
-                };
-
+                object body = new { name = action.Name, printer = action.Slug,  };
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "webCallRemove",
-                       body: cmd,
+                       body: body,
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
@@ -2498,7 +2491,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsGetFolder",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierProjectsFolderRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2555,7 +2548,6 @@ namespace AndreasReitberger.API.Repetier
                     // Avoid multiple requests
                     byte[]? emptyProject = await DownloadFileFromUriAsync("img/emptyproject.png").ConfigureAwait(false);
                     byte[]? folder = await DownloadFileFromUriAsync("img/folder_m.png").ConfigureAwait(false);
-
                     foreach (RepetierProjectItem project in items)
                     {
                         if (!project.IsFolder && project.Project is not null)
@@ -2572,9 +2564,7 @@ namespace AndreasReitberger.API.Repetier
                             // Static image from the server
                             project.PreviewImage = folder;
                         }
-
                     }
-
                     return items;
                 }
                 else
@@ -2606,7 +2596,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsGetFolder",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierProjectsProjectRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2646,7 +2636,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsUpdateProject",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2703,7 +2693,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsDeleteFile",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2734,7 +2724,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectDelComment",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2775,7 +2765,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historyList",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierHistoryListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2837,7 +2827,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historySummary",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierHistorySummaryRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2901,7 +2891,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historyDeleteEntry",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);

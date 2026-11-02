@@ -1,9 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Repetier.Models;
-using AndreasReitberger.API.Repetier.SourceGeneration;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;

@@ -624,7 +624,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "addModelGroup",
                    body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                   urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -651,7 +651,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "addModelGroup",
                    body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: [new("data", JsonConvert.SerializeObject(data))]
+                   urlSegments: [new("data", JsonConvertHelper.ToSettingsString(data)!)]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -682,7 +682,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "delModelGroup",
                    body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                   urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -710,7 +710,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "delModelGroup",
                    body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: [new("data", JsonConvert.SerializeObject(data))]
+                   urlSegments: [new("data", JsonConvertHelper.ToSettingsString(data)!)]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -742,7 +742,7 @@ namespace AndreasReitberger.API.Repetier
                    command: "moveModelFileToGroup",
                    body: null,
                    authHeaders: AuthHeaders,
-                   urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                   urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                    )
                 .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -766,7 +766,7 @@ namespace AndreasReitberger.API.Repetier
                         command: "removeModel",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvert.SerializeObject(data))]
+                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
