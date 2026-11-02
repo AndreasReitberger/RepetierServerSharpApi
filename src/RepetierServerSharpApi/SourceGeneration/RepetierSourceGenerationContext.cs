@@ -5,7 +5,7 @@ using AndreasReitberger.API.Repetier.Events;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.TypeConverters;
 using System;
-using System.Text.Json.Serialization;
+using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Repetier.SourceGeneration
 {
@@ -98,8 +98,12 @@ namespace AndreasReitberger.API.Repetier.SourceGeneration
     [JsonSerializable(typeof(RepetierGpioListRespone))]
     [JsonSerializable(typeof(RepetierModelGroups))]
     [JsonSerializable(typeof(RepetierHistoryListItem))]
+    [JsonSerializable(typeof(RepetierHistoryListItem[]))]
+    [JsonSerializable(typeof(ObservableCollection<RepetierHistoryListItem>))]
     [JsonSerializable(typeof(RepetierHistoryListRespone))]
     [JsonSerializable(typeof(RepetierHistorySummaryItem))]
+    [JsonSerializable(typeof(RepetierHistorySummaryItem[]))]
+    [JsonSerializable(typeof(ObservableCollection<RepetierHistorySummaryItem>))]
     [JsonSerializable(typeof(RepetierHistorySummaryRespone))]
     [JsonSerializable(typeof(RepetierCurrentPrintInfo))]
     [JsonSerializable(typeof(RepetierCurrentPrintInfo[]))]
@@ -124,7 +128,6 @@ namespace AndreasReitberger.API.Repetier.SourceGeneration
     [JsonSerializable(typeof(RepetierProject))]
     [JsonSerializable(typeof(RepetierProjectFile))]
     [JsonSerializable(typeof(RepetierProjectFolder))]
-    [JsonSerializable(typeof(RepetierProjectItem))]
     [JsonSerializable(typeof(RepetierProjectParentElement))]
     [JsonSerializable(typeof(RepetierProjectsFolderRespone))]
     [JsonSerializable(typeof(RepetierProjectsProject))]
@@ -142,6 +145,21 @@ namespace AndreasReitberger.API.Repetier.SourceGeneration
     [JsonSerializable(typeof(RepetierWebCallList))]
     [JsonSerializable(typeof(RepetierWebCamSettingsInfo))]
     [JsonSerializable(typeof(RepetierClient))]
+    // Lists
+    [JsonSerializable(typeof(List<RepetierPrinterFan>))]
+    [JsonSerializable(typeof(List<RepetierModelGroup>))]
+    [JsonSerializable(typeof(List<RepetierPrinterHeaterComponent>))]
+    [JsonSerializable(typeof(List<RepetierPrinter>))]
+    [JsonSerializable(typeof(List<RepetierPrinterState>))]
+    [JsonSerializable(typeof(List<RepetierPrinterInfo>))]
+    [JsonSerializable(typeof(List<RepetierMessage>))]
+    [JsonSerializable(typeof(List<ExternalCommand>))]
+    [JsonSerializable(typeof(List<ProjectsServer>))]
+    [JsonSerializable(typeof(List<RepetierProjectItem>))]
+    [JsonSerializable(typeof(List<RepetierProjectFolder>))]
+    [JsonSerializable(typeof(List<RepetierModel>))]
+    [JsonSerializable(typeof(List<RepetierProjectFile>))]
+    [JsonSerializable(typeof(List<RepetierProject>))]
     // Can be removed once `Print3dCoreSourceGenerationContext` is available in the Core project and used as base class for this context
     [JsonSerializable(typeof(ActivePrinterChangedEventArgs))]
     [JsonSerializable(typeof(ActivePrintImageChangedEventArgs))]
@@ -172,6 +190,7 @@ namespace AndreasReitberger.API.Repetier.SourceGeneration
     [JsonSourceGenerationOptions(WriteIndented = true, 
         Converters = new Type[] { 
             typeof(AuthenticationHeaderConverter),
+            /* seems not to be needed?!
             typeof(RepetierModelConverter),
             typeof(RepetierModelGroupConverter),
             typeof(RepetierJobConverter),
@@ -179,6 +198,7 @@ namespace AndreasReitberger.API.Repetier.SourceGeneration
             typeof(RepetierHeaterConverter),
             typeof(RepetierTemperatureInfoConverter),
             typeof(RepetierPrintInfoConverter),
+            */
         }, ReferenceHandler =
 #if DEBUG
         JsonKnownReferenceHandler.Preserve

@@ -55,15 +55,15 @@ namespace AndreasReitberger.API.Repetier
         #region ExternalCommands
         [ObservableProperty]
         [JsonIgnore, XmlIgnore]
-        public partial ObservableCollection<ExternalCommand> ExternalCommands { get; set; } = [];
+        public partial List<ExternalCommand> ExternalCommands { get; set; } = [];
 
         #endregion
 
         #region Messages
         [ObservableProperty]
         [JsonIgnore, XmlIgnore]
-        public partial ObservableCollection<RepetierMessage> Messages { get; set; } = [];
-        partial void OnMessagesChanged(ObservableCollection<RepetierMessage> value)
+        public partial List<RepetierMessage> Messages { get; set; } = [];
+        partial void OnMessagesChanged(List<RepetierMessage> value)
         {
             OnMessagesChangedEvent(new RepetierMessagesChangedEventArgs()
             {
@@ -79,8 +79,8 @@ namespace AndreasReitberger.API.Repetier
         #region WebCalls
         [ObservableProperty]
         [JsonIgnore, XmlIgnore]
-        public partial ObservableCollection<RepetierWebCallAction> WebCallActions { get; set; } = [];
-        partial void OnWebCallActionsChanged(ObservableCollection<RepetierWebCallAction> value)
+        public partial List<RepetierWebCallAction> WebCallActions { get; set; } = [];
+        partial void OnWebCallActionsChanged(List<RepetierWebCallAction> value)
         {
             OnWebCallActionsChangedEvent(new RepetierWebCallActionsChangedEventArgs()
             {
@@ -96,7 +96,7 @@ namespace AndreasReitberger.API.Repetier
         #region GPIO
         [ObservableProperty]
         [JsonIgnore, XmlIgnore]
-        public partial ObservableCollection<RepetierGpioListItem> GPIOList { get; set; } = [];
+        public partial List<RepetierGpioListItem> GPIOList { get; set; } = [];
 
         #endregion
 
@@ -133,8 +133,8 @@ namespace AndreasReitberger.API.Repetier
 
         [ObservableProperty]
         [JsonIgnore, XmlIgnore]
-        public partial ObservableCollection<RepetierCurrentPrintInfo> ActivePrintInfos { get; set; } = [];
-        partial void OnActivePrintInfosChanged(ObservableCollection<RepetierCurrentPrintInfo> value)
+        public partial List<RepetierCurrentPrintInfo> ActivePrintInfos { get; set; } = [];
+        partial void OnActivePrintInfosChanged(List<RepetierCurrentPrintInfo> value)
         {
             OnPrintInfosChangedEvent(new RepetierActivePrintInfosChangedEventArgs()
             {
@@ -1067,9 +1067,9 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region Jobs
-        public async Task<ObservableCollection<IPrint3dJob>> GetJobListAsync()
+        public async Task<List<IPrint3dJob>> GetJobListAsync()
         {
-            ObservableCollection<IPrint3dJob> resultObject = [];
+            List<IPrint3dJob> resultObject = [];
 
             string currentPrinter = GetActivePrinterSlug();
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -1092,10 +1092,10 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<IPrint3dJob> jobList = [];
+                List<IPrint3dJob> jobList = [];
                 if (!IsReady || ActivePrinter == null)
                 {
-                    Jobs = jobList;
+                    Jobs = [with(jobList)];
                     return;
                 }
 
@@ -1103,7 +1103,7 @@ namespace AndreasReitberger.API.Repetier
                 if (string.IsNullOrEmpty(currentPrinter)) return;
 
                 RepetierJobListRespone? result = await GetJobListResponeAsync(currentPrinter).ConfigureAwait(false);
-                Jobs = result is not null ? [with(result.Data)] : jobList;
+                Jobs = result is not null ? [with(result.Data)] : [with(jobList)];
             }
             catch (Exception exc)
             {
@@ -1476,7 +1476,7 @@ namespace AndreasReitberger.API.Repetier
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
             try
             {
-                ObservableCollection<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                List<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
                 if (listResult is not null)
                 {
                     resultObject = listResult.FirstOrDefault(jobInfo => jobInfo.Slug == currentPrinter);
@@ -1489,9 +1489,9 @@ namespace AndreasReitberger.API.Repetier
                 return resultObject;
             }
         }
-        public async Task<ObservableCollection<RepetierCurrentPrintInfo>> GetCurrentPrintInfosAsync(string printerName = "")
+        public async Task<List<RepetierCurrentPrintInfo>> GetCurrentPrintInfosAsync(string printerName = "")
         {
-            ObservableCollection<RepetierCurrentPrintInfo> resultObject = [];
+            List<RepetierCurrentPrintInfo> resultObject = [];
 
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
@@ -1535,7 +1535,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                List<RepetierCurrentPrintInfo> result = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
                 ActiveJobs = [with(result)];
 
                 RepetierCurrentPrintInfo? job = ActiveJobs
@@ -1565,7 +1565,7 @@ namespace AndreasReitberger.API.Repetier
                 }
                 UpdateActivePrintInfo(ActiveJob);
                 /*
-                ActivePrintInfos = result ?? new ObservableCollection<RepetierCurrentPrintInfo>();
+                ActivePrintInfos = result ?? new List<RepetierCurrentPrintInfo>();
                 ActivePrintInfo = ActivePrintInfos.FirstOrDefault(info => info.Slug == GetActivePrinterSlug());
                 CurrentPrintImage = ActivePrintInfo?.JobIdLong > 0
                     ? await GetDynamicRenderImageByJobIdAsync(ActivePrintInfo.JobIdLong, false).ConfigureAwait(false)
@@ -1576,7 +1576,7 @@ namespace AndreasReitberger.API.Repetier
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 ActiveJobs = [];
-                //ActivePrintInfos = new ObservableCollection<RepetierCurrentPrintInfo>();
+                //ActivePrintInfos = new List<RepetierCurrentPrintInfo>();
             }
         }
 
@@ -1585,7 +1585,7 @@ namespace AndreasReitberger.API.Repetier
             RepetierCurrentPrintInfo? resultObject = null;
             try
             {
-                ObservableCollection<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
+                List<RepetierCurrentPrintInfo> listResult = await GetCurrentPrintInfosAsync().ConfigureAwait(false);
                 if (listResult is not null)
                 {
                     resultObject = listResult.FirstOrDefault(jobInfo => jobInfo.Slug == printerName);
@@ -1862,10 +1862,9 @@ namespace AndreasReitberger.API.Repetier
         #endregion
 
         #region External Commands
-        public async Task<ObservableCollection<ExternalCommand>> GetExternalCommandsAsync()
+        public async Task<List<ExternalCommand>> GetExternalCommandsAsync()
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<ExternalCommand> resultObject = [];
             try
             {
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{GetActivePrinterSlug()}";
@@ -1877,8 +1876,8 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                ExternalCommand[]? cmds = JsonConvertHelper.ToObject<ExternalCommand[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
-                return [with(cmds ?? [new ExternalCommand()])];
+                List<ExternalCommand>? cmds = JsonConvertHelper.ToObject<List<ExternalCommand>>(result?.Result, context: RepetierSourceGenerationContext.Default);              
+                return cmds is null? [] : [with(cmds)];
             }
             catch (JsonException jecx)
             {
@@ -1889,12 +1888,12 @@ namespace AndreasReitberger.API.Repetier
                     TargetType = nameof(ExternalCommand),
                     Message = jecx.Message,
                 });
-                return resultObject;
+                return [];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
+                return [];
             }
         }
         public async Task<bool> RunExternalCommandAsync(ExternalCommand command)
@@ -1930,14 +1929,14 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                var commands = new ObservableCollection<ExternalCommand>();
+                var commands = new List<ExternalCommand>();
                 if (!IsReady || ActivePrinter == null)
                 {
                     ExternalCommands = commands;
                     return;
                 }
 
-                ObservableCollection<ExternalCommand> result = await GetExternalCommandsAsync().ConfigureAwait(false);
+                List<ExternalCommand> result = await GetExternalCommandsAsync().ConfigureAwait(false);
                 if (result is not null)
                 {
                     ExternalCommands = result;
@@ -1987,11 +1986,10 @@ namespace AndreasReitberger.API.Repetier
                 return false;
             }
         }
-        public async Task<ObservableCollection<RepetierMessage>> GetMessagesAsync(string printerName = "")
+        public async Task<List<RepetierMessage>> GetMessagesAsync(string printerName = "")
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<RepetierMessage> resultObject = [];
-
+            List<RepetierMessage> resultObject = [];
             string currentPrinter = string.IsNullOrEmpty(printerName) ? GetActivePrinterSlug() : printerName;
             if (string.IsNullOrEmpty(currentPrinter)) return resultObject;
 
@@ -2006,7 +2004,7 @@ namespace AndreasReitberger.API.Repetier
                        authHeaders: AuthHeaders
                        )
                     .ConfigureAwait(false);
-                RepetierMessage[]? info = JsonConvertHelper.ToObject<RepetierMessage[]>(result?.Result, context: RepetierSourceGenerationContext.Default);
+                List<RepetierMessage>? info = JsonConvertHelper.ToObject<List<RepetierMessage>>(result?.Result, context: RepetierSourceGenerationContext.Default);
                 if (info is not null)
                     resultObject = [with(info)];
                 return resultObject;
@@ -2031,8 +2029,8 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierMessage> temp = [];
-                ObservableCollection<RepetierMessage> result = await GetMessagesAsync().ConfigureAwait(false);
+                List<RepetierMessage> temp = [];
+                List<RepetierMessage> result = await GetMessagesAsync().ConfigureAwait(false);
                 if (result is not null)
                 {
                     Messages = result;
@@ -2255,9 +2253,9 @@ namespace AndreasReitberger.API.Repetier
 
         #region WebCalls
 
-        public async Task<ObservableCollection<RepetierWebCallAction>> GetWebCallActionsAsync()
+        public async Task<List<RepetierWebCallAction>> GetWebCallActionsAsync()
         {
-            ObservableCollection<RepetierWebCallAction> resultObject = [];
+            List<RepetierWebCallAction> resultObject = [];
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
@@ -2348,7 +2346,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierWebCallAction> result = await GetWebCallActionsAsync().ConfigureAwait(false);
+                List<RepetierWebCallAction> result = await GetWebCallActionsAsync().ConfigureAwait(false);
                 WebCallActions = result ?? [];
             }
             catch (Exception exc)
@@ -2473,11 +2471,13 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<RepetierProjectsFolderRespone?> GetProjectsGetFolderAsync(Guid serverUuid, int index = 1, string printerName = "")
+        public async Task<RepetierProjectsFolderRespone?> GetProjectsGetFolderAsync(Guid serverUuid, int index = 1, string? printerName = null)
         {
             IRestApiRequestRespone? result = null;
             try
             {
+                printerName ??= GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(printerName)) return null;
                 object data = new
                 {
                     serveruuid = serverUuid,
@@ -2491,7 +2491,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsGetFolder",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierProjectsFolderRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2513,18 +2513,19 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<ObservableCollection<RepetierProjectItem>> GetProjectItemsAsync(Guid serverUuid, int index = 1, string printerName = "")
+        public async Task<List<RepetierProjectItem>> GetProjectItemsAsync(Guid serverUuid, int index = 1, string? printerName = null)
         {
             RepetierProjectsFolderRespone? result;
-            ObservableCollection<RepetierProjectItem> items = [];
+            List<RepetierProjectItem> items = [];
             try
             {
+                printerName ??= GetActivePrinterSlug();
+                if (string.IsNullOrEmpty(printerName)) return items;
                 object data = new
                 {
                     serveruuid = serverUuid,
                     idx = index,
                 };
-
                 result = await GetProjectsGetFolderAsync(serverUuid, index, printerName).ConfigureAwait(false);
                 if (result is not null && result.Folder is not null)
                 {
@@ -2596,7 +2597,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsGetFolder",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierProjectsProjectRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2636,7 +2637,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsUpdateProject",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2693,7 +2694,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectsDeleteFile",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2724,7 +2725,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "projectDelComment",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2747,7 +2748,6 @@ namespace AndreasReitberger.API.Repetier
             try
             {
                 string currentPrinter = GetActivePrinterSlug();
-
                 object data = new
                 {
                     allPrinter,
@@ -2757,7 +2757,6 @@ namespace AndreasReitberger.API.Repetier
                     start = page > 0 && start == 0 ? limit * page : start,
                     uuid = serverUuid,
                 };
-
                 string targetUri = $"{RepetierCommands.Base}/{RepetierCommands.Api}/{currentPrinter}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -2765,7 +2764,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historyList",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierHistoryListRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2787,7 +2786,7 @@ namespace AndreasReitberger.API.Repetier
             }
         }
 
-        public async Task<ObservableCollection<RepetierHistoryListItem>> GetHistoryListAsync(
+        public async Task<List<RepetierHistoryListItem>> GetHistoryListAsync(
             string printerNameForHistory, string serverUuid = "", int limit = 50, int page = 0, int start = 0, bool allPrinter = false)
         {
             try
@@ -2795,10 +2794,7 @@ namespace AndreasReitberger.API.Repetier
                 RepetierHistoryListRespone? historyList =
                     await GetHistoryListResponeAsync(printerNameForHistory, serverUuid, limit, page, start, allPrinter)
                     .ConfigureAwait(false);
-                if (historyList?.List is not null)
-                    return [.. historyList.List];
-                else
-                    return [];
+                return historyList?.List is not null ? [with(historyList.List)] : [];
             }
             catch (Exception exc)
             {
@@ -2827,7 +2823,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historySummary",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return JsonConvertHelper.ToObject<RepetierHistorySummaryRespone>(result?.Result, context: RepetierSourceGenerationContext.Default);
@@ -2856,7 +2852,7 @@ namespace AndreasReitberger.API.Repetier
                 return [];
             }
         }
-        public async Task<ObservableCollection<RepetierHistorySummaryItem>?> GetHistorySummaryItemsAsync(string printerNameForHistory, int year, bool allPrinter = false)
+        public async Task<List<RepetierHistorySummaryItem>?> GetHistorySummaryItemsAsync(string printerNameForHistory, int year, bool allPrinter = false)
         {
             try
             {
@@ -2879,7 +2875,6 @@ namespace AndreasReitberger.API.Repetier
             {
                 if (string.IsNullOrEmpty(printerName))
                     printerName = GetActivePrinterSlug();
-
                 object data = new
                 {
                     id = item.Id,
@@ -2891,7 +2886,7 @@ namespace AndreasReitberger.API.Repetier
                        command: "historyDeleteEntry",
                        body: null,
                        authHeaders: AuthHeaders,
-                       urlSegments: [new ("data", JsonConvertHelper.ToSettingsString(data)!)]
+                       urlSegments: [new ("data", JsonSerializer.Serialize(data)!)]
                        )
                     .ConfigureAwait(false);
                 return GetQueryResult(result?.Result);
@@ -2928,15 +2923,12 @@ namespace AndreasReitberger.API.Repetier
                 return new RepetierGpioListRespone();
             }
         }
-        public async Task<ObservableCollection<RepetierGpioListItem>> GetGPIOListAsync()
+        public async Task<List<RepetierGpioListItem>> GetGPIOListAsync()
         {
             try
             {
                 RepetierGpioListRespone? list = await GetGPIOListResponeAsync().ConfigureAwait(false);
-                if (list?.List is not null)
-                    return [.. list.List];
-                else
-                    return [];
+                return list?.List is not null ? [with(list.List)] : [];
             }
             catch (Exception exc)
             {
@@ -2949,7 +2941,7 @@ namespace AndreasReitberger.API.Repetier
         {
             try
             {
-                ObservableCollection<RepetierGpioListItem> result = await GetGPIOListAsync().ConfigureAwait(false);
+                List<RepetierGpioListItem> result = await GetGPIOListAsync().ConfigureAwait(false);
                 GPIOList = result ?? [];
             }
             catch (Exception exc)

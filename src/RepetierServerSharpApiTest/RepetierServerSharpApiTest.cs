@@ -3,11 +3,14 @@ using AndreasReitberger.API.Repetier;
 using AndreasReitberger.API.Repetier.Enum;
 using AndreasReitberger.API.Repetier.Models;
 using AndreasReitberger.API.Repetier.SourceGeneration;
+using AndreasReitberger.Shared.Core.Contacts;
 using AndreasReitberger.Shared.Core.Utilities;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -17,6 +20,7 @@ namespace RepetierServerSharpApiTest
     {
 
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
+        private readonly string _uuid = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ServerUUID ?? "";
         private readonly string _user = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").User ?? "";
         private readonly string _pw = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Password ?? "";
         private readonly int _port = 3344;
@@ -475,7 +479,7 @@ namespace RepetierServerSharpApiTest
                     if (client.ActivePrinter == null)
                         await client.SetPrinterActiveAsync(-1, true);
 
-                    ObservableCollection<IPrint3dJob> jobs = await client.GetJobListAsync();
+                    List<IPrint3dJob> jobs = await client.GetJobListAsync();
                     Assert.That(jobs, Is.Not.Null);
                 }
                 else
@@ -531,10 +535,10 @@ namespace RepetierServerSharpApiTest
                 if (client.IsOnline)
                 {
                     await client.SetPrinterActiveAsync();
-                    ObservableCollection<RepetierHistorySummaryItem>? history = await client.GetHistorySummaryItemsAsync("", 2022, true);
+                    List<RepetierHistorySummaryItem>? history = await client.GetHistorySummaryItemsAsync("", 2022, true);
                     Assert.That(history?.Any(), Is.True);
 
-                    ObservableCollection<RepetierHistoryListItem> list = await client.GetHistoryListAsync("", "", 50, 0, 0, true);
+                    List<RepetierHistoryListItem> list = await client.GetHistoryListAsync("", "", 50, 0, 0, true);
                     Assert.That(list?.Any(), Is.True);
 
                     RepetierHistoryListItem? historyItem = list?.FirstOrDefault();
@@ -567,7 +571,7 @@ namespace RepetierServerSharpApiTest
                 if (client.IsOnline)
                 {
                     await client.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierGpioListItem> report = await client.GetGPIOListAsync();
+                    List<RepetierGpioListItem> report = await client.GetGPIOListAsync();
                     Assert.That(report, Is.Not.Empty);
                 }
                 else
@@ -590,7 +594,7 @@ namespace RepetierServerSharpApiTest
                 if (client.IsOnline)
                 {
                     await client.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierHistoryListItem>? report = await client.GetHistoryListAsync(client?.ActivePrinter?.Slug ?? "");
+                    List<RepetierHistoryListItem>? report = await client.GetHistoryListAsync(client?.ActivePrinter?.Slug ?? "");
                     Assert.That(report, Is.Not.Empty);
                 }
                 else
@@ -613,7 +617,7 @@ namespace RepetierServerSharpApiTest
                 if (client.IsOnline)
                 {
                     await client.SetPrinterActiveAsync(1);
-                    ObservableCollection<RepetierWebCallAction> report = await client.GetWebCallActionsAsync();
+                    List<RepetierWebCallAction> report = await client.GetWebCallActionsAsync();
                     Assert.That(report, Is.Not.Empty);
                 }
                 else
@@ -636,7 +640,7 @@ namespace RepetierServerSharpApiTest
                 if (client.IsOnline)
                 {
                     await client.SetPrinterActiveAsync(1);
-                    ObservableCollection<ExternalCommand> commands = await client.GetExternalCommandsAsync();
+                    List<ExternalCommand> commands = await client.GetExternalCommandsAsync();
                     Assert.That(commands, Is.Not.Empty);
                 }
                 else
@@ -974,6 +978,14 @@ namespace RepetierServerSharpApiTest
                 await client.CheckOnlineAsync();
                 if (client.IsOnline)
                 {
+                    client.RestJsonConvertError += (a, b) =>
+                    {
+                        Debug.WriteLine($"JSON-Error: ");
+                    };
+                    client.Error += (a, b) =>
+                    {
+                        Debug.WriteLine($"JSON-Error: ");
+                    };
                     if (client.ActivePrinter == null)
                         await client.SetPrinterActiveAsync(0, true);
                     TimeSpan last = new(0);
@@ -981,6 +993,7 @@ namespace RepetierServerSharpApiTest
                     List<IPrinter3d> printers = await client.GetPrintersAsync();
                     Assert.That(printers, Is.Not.Null);
                     string? json = JsonConvertHelper.ToSettingsString(printers, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetPrintersAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -988,6 +1001,7 @@ namespace RepetierServerSharpApiTest
                     RepetierAvailableUpdateInfo? update = await client.GetAvailableServerUpdateAsync();
                     Assert.That(update, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(update, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetAvailableServerUpdateAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -995,57 +1009,58 @@ namespace RepetierServerSharpApiTest
                     RepetierCurrentPrintInfo? printInfo = await client.GetCurrentPrintInfoAsync();
                     Assert.That(printInfo, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(printInfo, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetCurrentPrintInfoAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
-                    ObservableCollection<RepetierCurrentPrintInfo> printInfos = await client.GetCurrentPrintInfosAsync();
+                    List<RepetierCurrentPrintInfo> printInfos = await client.GetCurrentPrintInfosAsync();
                     Assert.That(printInfos, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(printInfos, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetCurrentPrintInfosAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
-                    ObservableCollection<ExternalCommand> cmds = await client.GetExternalCommandsAsync();
+                    List<ExternalCommand> cmds = await client.GetExternalCommandsAsync();
                     Assert.That(cmds, Is.Not.Null);
-                    json = JsonConvertHelper.ToSettingsString(cmds, context: RepetierSourceGenerationContext.Default);
+                    json = JsonConvertHelper.ToSettingsString(cmds, OnError: ex => { Debug.WriteLine(ex.Message); }, context: RepetierSourceGenerationContext.Default);
+                    //json = JsonSerializer.Serialize(cmds, typeof(IEnumerable<ExternalCommand>), RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetExternalCommandsAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
-                    ObservableCollection<RepetierGpioListItem> gpios = await client.GetGPIOListAsync();
+                    List<RepetierGpioListItem> gpios = await client.GetGPIOListAsync();
                     Assert.That(gpios, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(gpios, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetGPIOListAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
                     if (client.ActivePrinter?.Slug is not null)
                     {
-                        ObservableCollection<RepetierHistoryListItem> history = await client.GetHistoryListAsync(client.ActivePrinter.Slug);
+                        List<RepetierHistoryListItem> history = await client.GetHistoryListAsync(client.ActivePrinter.Slug);
                         Assert.That(history, Is.Not.Null);
                         json = JsonConvertHelper.ToSettingsString(history, context: RepetierSourceGenerationContext.Default);
+                        Assert.That(json, Is.Not.Null);
 
                         Debug.WriteLine($"{nameof(client.GetHistoryListAsync)}: Took {sw.Elapsed - last}");
                         last = sw.Elapsed;
-                        // Only works if enabled in Settings
-                        /*
-                        var hid = history?.FirstOrDefault()?.Id;
-                        var historyReport = await client.GetHistoryReportAsync(history?.FirstOrDefault()?.Id ?? 0);
-                        Assert.IsNotNull(historyReport);
-                        json = JsonConvert.SerializeObject(historyReport, Formatting.Indented);
-                        */
 
-                        ObservableCollection<RepetierHistorySummaryItem>? historySummary = await client.GetHistorySummaryItemsAsync(client.ActivePrinter.Slug, 2023, true);
+                        List<RepetierHistorySummaryItem>? historySummary = await client.GetHistorySummaryItemsAsync(client.ActivePrinter.Slug, 2023, true);
                         Assert.That(historySummary, Is.Not.Null);
                         json = JsonConvertHelper.ToSettingsString(historySummary, context: RepetierSourceGenerationContext.Default);
+                        Assert.That(json, Is.Not.Null);
 
                         Debug.WriteLine($"{nameof(client.GetHistorySummaryItemsAsync)}: Took {sw.Elapsed - last}");
                         last = sw.Elapsed;
                     }
-                    ObservableCollection<IPrint3dJob> jobList = await client.GetJobListAsync();
+                    List<IPrint3dJob> jobList = await client.GetJobListAsync();
                     Assert.That(jobList, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(jobList, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetJobListAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1053,13 +1068,15 @@ namespace RepetierServerSharpApiTest
                     RepetierLicenseInfo? license = await client.GetLicenseDataAsync();
                     Assert.That(license, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(license, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetLicenseDataAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
-                    ObservableCollection<RepetierMessage> messages = await client.GetMessagesAsync();
+                    List<RepetierMessage> messages = await client.GetMessagesAsync();
                     Assert.That(messages, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(messages, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetMessagesAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1067,6 +1084,7 @@ namespace RepetierServerSharpApiTest
                     List<IGcodeGroup> groups = await client.GetModelGroupsAsync();
                     Assert.That(groups, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(groups, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetModelGroupsAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1074,6 +1092,7 @@ namespace RepetierServerSharpApiTest
                     List<IGcode> files = await client.GetModelsAsync();
                     Assert.That(files, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(files, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetModelsAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1081,6 +1100,7 @@ namespace RepetierServerSharpApiTest
                     RepetierPrinterConfig? config = await client.GetPrinterConfigAsync();
                     Assert.That(config, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(config, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetPrinterConfigAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1088,13 +1108,15 @@ namespace RepetierServerSharpApiTest
                     RepetierProjectsServerListRespone? servers = await client.GetProjectsListServerAsync();
                     Assert.That(servers, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(servers, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetProjectsListServerAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
 
-                    ObservableCollection<RepetierProjectItem> projects = await client.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
+                    List<RepetierProjectItem> projects = await client.GetProjectItemsAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.That(projects, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(projects, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetProjectItemsAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1102,6 +1124,7 @@ namespace RepetierServerSharpApiTest
                     RepetierProjectsFolderRespone? folders = await client.GetProjectsGetFolderAsync(servers?.Server?.FirstOrDefault()?.Uuid ?? Guid.Empty);
                     Assert.That(folders, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(folders, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetProjectsGetFolderAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;
@@ -1109,6 +1132,7 @@ namespace RepetierServerSharpApiTest
                     Dictionary<string, RepetierPrinterState>? state = await client.GetStatesAsync();
                     Assert.That(state, Is.Not.Null);
                     json = JsonConvertHelper.ToSettingsString(state, context: RepetierSourceGenerationContext.Default);
+                    Assert.That(json, Is.Not.Null);
 
                     Debug.WriteLine($"{nameof(client.GetStatesAsync)}: Took {sw.Elapsed - last}");
                     last = sw.Elapsed;

@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4439C94D-E52D-4AFB-B4A6-DBB88E11F886}"
 	ProjectSection(SolutionItems) = preProject
 		..\common.props = ..\common.props
+		..\JsonResponses.md = ..\JsonResponses.md
 	EndProjectSection
 EndProject
 Global
