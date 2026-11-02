@@ -1,214 +1,171 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierPrinterConfigMovement : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("G10Distance")]
-        public partial long G10Distance { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("G10LongDistance")]
-        public partial long G10LongDistance { get; set; }
+        [JsonPropertyName("G10Distance")]
+        public partial double G10Distance { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("G10Speed")]
-        public partial long G10Speed { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("G10ZLift")]
-        public partial long G10ZLift { get; set; }
+        [JsonPropertyName("G10LongDistance")]
+        public partial double G10LongDistance { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("G11ExtraDistance")]
-        public partial long G11ExtraDistance { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("G11ExtraLongDistance")]
-        public partial long G11ExtraLongDistance { get; set; }
+        [JsonPropertyName("G10Speed")]
+        public partial double G10Speed { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("G11Speed")]
-        public partial long G11Speed { get; set; }
+        [JsonPropertyName("G10ZLift")]
+        public partial double G10ZLift { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("G11ExtraDistance")]
+        public partial double G11ExtraDistance { get; set; }
 
-        [JsonProperty("allEndstops")]
+        [ObservableProperty]
+        [JsonPropertyName("G11ExtraLongDistance")]
+        public partial double G11ExtraLongDistance { get; set; }
+
+        [ObservableProperty]
+        [JsonPropertyName("G11Speed")]
+        public partial double G11Speed { get; set; }
+
+        [ObservableProperty]
+        [JsonPropertyName("allEndstops")]
         public partial bool AllEndstops { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("autolevel")]
+        [JsonPropertyName("autolevel")]
         public partial bool Autolevel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("defaultAcceleration")]
-        public partial long DefaultAcceleration { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("defaultRetractAcceleration")]
-        public partial long DefaultRetractAcceleration { get; set; }
+        [JsonPropertyName("defaultAcceleration")]
+        public partial double DefaultAcceleration { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("defaultTravelAcceleration")]
-        public partial long DefaultTravelAcceleration { get; set; }
+        [JsonPropertyName("defaultRetractAcceleration")]
+        public partial double DefaultRetractAcceleration { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("defaultTravelAcceleration")]
+        public partial double DefaultTravelAcceleration { get; set; }
 
-        [JsonProperty("invertX")]
+        [ObservableProperty]
+        [JsonPropertyName("invertX")]
         public partial bool InvertX { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("invertY")]
+        [JsonPropertyName("invertY")]
         public partial bool InvertY { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("invertZ")]
+        [JsonPropertyName("invertZ")]
         public partial bool InvertZ { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("maxXYSpeed")]
-        public partial long MaxXySpeed { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("maxZSpeed")]
-        public partial long MaxZSpeed { get; set; }
+        [JsonPropertyName("maxXYSpeed")]
+        public partial double MaxXySpeed { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("maxZSpeed")]
+        public partial double MaxZSpeed { get; set; }
 
-        [JsonProperty("movebuffer")]
+        [ObservableProperty]
+        [JsonPropertyName("movebuffer")]
         public partial long Movebuffer { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("startWithAbsolutePositions")]
+        [JsonPropertyName("startWithAbsolutePositions")]
         public partial bool StartWithAbsolutePositions { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("timeMultiplier")]
+        [JsonPropertyName("timeMultiplier")]
         public partial double TimeMultiplier { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("xEndstop")]
+        [JsonPropertyName("xEndstop")]
         public partial bool XEndstop { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("xHome")]
-        public partial long XHome { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("xMax")]
-        public partial long XMax { get; set; }
+        [JsonPropertyName("xHome")]
+        public partial double XHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("xMin")]
-        public partial long XMin { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("xyJerk")]
-        public partial long XyJerk { get; set; }
+        [JsonPropertyName("xMax")]
+        public partial double XMax { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("xyPrintAcceleration")]
-        public partial long XyPrintAcceleration { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("xySpeed")]
-        public partial long XySpeed { get; set; }
+        [JsonPropertyName("xMin")]
+        public partial double XMin { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("xyTravelAcceleration")]
-        public partial long XyTravelAcceleration { get; set; }
+        [JsonPropertyName("xyJerk")]
+        public partial double XyJerk { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("xyPrintAcceleration")]
+        public partial double XyPrintAcceleration { get; set; }
 
-        [JsonProperty("yEndstop")]
+        [ObservableProperty]
+        [JsonPropertyName("xySpeed")]
+        public partial double XySpeed { get; set; }
+
+        [ObservableProperty]
+        [JsonPropertyName("xyTravelAcceleration")]
+        public partial double XyTravelAcceleration { get; set; }
+
+        [ObservableProperty]
+        [JsonPropertyName("yEndstop")]
         public partial bool YEndstop { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("yHome")]
-        public partial long YHome { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("yMax")]
-        public partial long YMax { get; set; }
+        [JsonPropertyName("yHome")]
+        public partial double YHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("yMin")]
-        public partial long YMin { get; set; }
+        [JsonPropertyName("yMax")]
+        public partial double YMax { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("yMin")]
+        public partial double YMin { get; set; }
 
-        [JsonProperty("zEndstop")]
+        [ObservableProperty]
+        [JsonPropertyName("zEndstop")]
         public partial bool ZEndstop { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("zHome")]
-        public partial long ZHome { get; set; }
+        [JsonPropertyName("zHome")]
+        public partial double ZHome { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("zJerk")]
+        [JsonPropertyName("zJerk")]
         public partial double ZJerk { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("zMax")]
-        public partial long ZMax { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("zMin")]
-        public partial long ZMin { get; set; }
+        [JsonPropertyName("zMax")]
+        public partial double ZMax { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("zPrintAcceleration")]
-        public partial long ZPrintAcceleration { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("zSpeed")]
-        public partial long ZSpeed { get; set; }
+        [JsonPropertyName("zMin")]
+        public partial double ZMin { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("zPrintAcceleration")]
+        public partial double ZPrintAcceleration { get; set; }
 
-        [JsonProperty("zTravelAcceleration")]
-        public partial long ZTravelAcceleration { get; set; }
+        [ObservableProperty]
+        [JsonPropertyName("zSpeed")]
+        public partial double ZSpeed { get; set; }
+
+        [ObservableProperty]
+        [JsonPropertyName("zTravelAcceleration")]
+        public partial double ZTravelAcceleration { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierPrinterConfigMovement);
 
         #endregion
     }

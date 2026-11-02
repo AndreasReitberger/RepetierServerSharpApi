@@ -1,49 +1,39 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-
-namespace AndreasReitberger.API.Repetier.Models
+﻿namespace AndreasReitberger.API.Repetier.Models
 {
     public partial class RepetierPrinterConfigHeatedComponent : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("alias")]
+        [JsonPropertyName("alias")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("cooldownPerSecond")]
+        [JsonPropertyName("cooldownPerSecond")]
         public partial double? CooldownPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heatupPerSecond")]
+        [JsonPropertyName("heatupPerSecond")]
         public partial double? HeatupPerSecond { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("lastTemp")]
-        public partial long? LastTemp { get; set; }
-
-        [ObservableProperty]
-
-        [JsonProperty("maxTemp")]
-        public partial long? MaxTemp { get; set; }
+        [JsonPropertyName("lastTemp")]
+        public partial double? LastTemp { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("offset")]
-        public partial long? Offset { get; set; }
+        [JsonPropertyName("maxTemp")]
+        public partial double? MaxTemp { get; set; }
 
         [ObservableProperty]
+        [JsonPropertyName("offset")]
+        public partial double? Offset { get; set; }
 
-        [JsonProperty("temperatures")]
+        [ObservableProperty]
+        [JsonPropertyName("temperatures")]
         public partial List<RepetierPrinterConfigTemperature> Temperatures { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, RepetierSourceGenerationContext.Default.RepetierPrinterConfigHeatedComponent);
 
         #endregion
     }
